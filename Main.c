@@ -251,7 +251,7 @@ int main(void)
 			  FUNCShowAbout();
 		
 			// Show current setting function onto the LCD:
-			LCD_puts_f((char*)pgm_read_word(&MainFunctionNames[CurrFunc]));
+			LCD_puts_f((uint8_t*)pgm_read_word(&MainFunctionNames[CurrFunc]));
 
 			MAIN_WaitForJoyRelease();
 		}
@@ -362,7 +362,7 @@ void MAIN_ShowProgType(uint8_t Letter)
 	LCD_puts(ProgTypeBuffer);
 }
 
-void MAIN_ShowError(const char *pFlashStr)
+void MAIN_ShowError(const uint8_t *pFlashStr)
 {
 	uint8_t ErrorBuff[LCD_TEXTBUFFER_SIZE];       // New buffer, LCD text buffer size
 	
@@ -414,7 +414,7 @@ void FUNCChangeSettings(void)
 			  return;
 		
 			// Show current function onto the LCD:
-			LCD_puts_f((char*)pgm_read_word(&SettingFunctionNames[CurrSFunc]));
+			LCD_puts_f((uint8_t*)pgm_read_word(&SettingFunctionNames[CurrSFunc]));
 
 			MAIN_WaitForJoyRelease();
 		}
@@ -438,7 +438,7 @@ void FUNCShowAbout(void)
 			else if (JoyStatus & JOY_LEFT)
 			  return;
 
-			LCD_puts_f((char*)pgm_read_word(&AboutTextPtrs[InfoNum]));
+			LCD_puts_f((uint8_t*)pgm_read_word(&AboutTextPtrs[InfoNum]));
 
 			MAIN_WaitForJoyRelease();
 		}
@@ -499,7 +499,7 @@ void FUNCProgramAVR(void)
 			else if (JoyStatus & JOY_DOWN)
 			  (ProgMode == 6)? ProgMode = 0 : ProgMode++;
 
-			LCD_puts_f((char*)pgm_read_word(&ProgOptions[ProgMode])); // Show current function onto the LCD
+			LCD_puts_f((uint8_t*)pgm_read_word(&ProgOptions[ProgMode])); // Show current function onto the LCD
 
 			MAIN_WaitForJoyRelease();
 		}
@@ -685,7 +685,7 @@ void FUNCAutoCalib(void)
 
 void FUNCManCalib(void)
 {
-	char Buffer[9];
+	uint8_t Buffer[9];
 
 	JoyStatus = 1;                           // Invalid value to force the LCD to update
 	
@@ -725,7 +725,7 @@ void FUNCManCalib(void)
 
 void FUNCSetContrast(void)
 {
-	char Buffer[6];
+	uint8_t Buffer[6];
 	uint8_t Contrast = (eeprom_read_byte_169(&Sys_LCDContrast) & 0x0F); // Ranges from 0-15 so mask retuns 15 on blank EEPROM (0xFF)
 	
 	JoyStatus = 1;                          // Invalid value to force the LCD to update
@@ -791,7 +791,7 @@ void FUNCSetISPSpeed(void)
 			}
 			
 			// Show selected USI speed value onto the LCD:
-			LCD_puts_f((char*)pgm_read_word(&USIPSNamePtrs[CurrSpeed]));
+			LCD_puts_f((uint8_t*)pgm_read_word(&USIPSNamePtrs[CurrSpeed]));
 
 			MAIN_WaitForJoyRelease();
 		}
@@ -862,7 +862,7 @@ void FUNCStorageInfo(void)
 				}
 			}
 			
-			LCD_puts_f((char*)pgm_read_word(&SIFOOptionPtrs[SelectedItem]));
+			LCD_puts_f((uint8_t*)pgm_read_word(&SIFOOptionPtrs[SelectedItem]));
 
 			MAIN_WaitForJoyRelease();
 		}

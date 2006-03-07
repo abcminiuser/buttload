@@ -100,7 +100,7 @@ void MAIN_ResetCSLine(uint8_t ActiveInactive);
 void MAIN_WaitForJoyRelease(void);
 void MAIN_IntToStr(uint16_t IntV, uint8_t* Buff);
 void MAIN_ShowProgType(uint8_t Letter);
-void MAIN_ShowError(const char *pFlashStr);
+void MAIN_ShowError(const uint8_t *pFlashStr);
 
 void MAIN_Delay10MS(uint8_t loops);
 void MAIN_Delay1MS(uint8_t loops);

@@ -21,13 +21,13 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   8 .debug_pubnames 00000f75  00000000  00000000  00003a37  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_info   000034e4  00000000  00000000  000049ac  2**0
+  9 .debug_info   000034d2  00000000  00000000  000049ac  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_abbrev 00000e45  00000000  00000000  00007e90  2**0
+ 10 .debug_abbrev 00000e45  00000000  00000000  00007e7e  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_line   000030bf  00000000  00000000  00008cd5  2**0
+ 11 .debug_line   000030bf  00000000  00000000  00008cc3  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_str    0000115e  00000000  00000000  0000bd94  2**0
+ 12 .debug_str    0000111d  00000000  00000000  0000bd82  2**0
                   CONTENTS, READONLY, DEBUGGING
 Disassembly of section .text:
 
@@ -469,7 +469,7 @@ void MAIN_ShowProgType(uint8_t Letter)
 	LCD_puts(ProgTypeBuffer);
 }
 
-void MAIN_ShowError(const char *pFlashStr)
+void MAIN_ShowError(const uint8_t *pFlashStr)
 {
 	uint8_t ErrorBuff[LCD_TEXTBUFFER_SIZE];       // New buffer, LCD text buffer size
 	
@@ -521,7 +521,7 @@ void FUNCChangeSettings(void)
 			  return;
 		
 			// Show current function onto the LCD:
-			LCD_puts_f((char*)pgm_read_word(&SettingFunctionNames[CurrSFunc]));
+			LCD_puts_f((uint8_t*)pgm_read_word(&SettingFunctionNames[CurrSFunc]));
 
 			MAIN_WaitForJoyRelease();
 		}
@@ -570,7 +570,7 @@ void FUNCShowAbout(void)
      4b6:	0d c0       	rjmp	.+26     	; 0x4d2 <FUNCShowAbout+0x4c>
 			  return;
 
-			LCD_puts_f((char*)pgm_read_word(&AboutTextPtrs[InfoNum]));
+			LCD_puts_f((uint8_t*)pgm_read_word(&AboutTextPtrs[InfoNum]));
      4b8:	ec 2f       	mov	r30, r28
      4ba:	ff 27       	eor	r31, r31
      4bc:	ee 0f       	add	r30, r30
@@ -1102,7 +1102,7 @@ void FUNCProgramAVR(void)
      894:	01 c0       	rjmp	.+2      	; 0x898 <FUNCProgramAVR+0x74>
      896:	0f 5f       	subi	r16, 0xFF	; 255
 
-			LCD_puts_f((char*)pgm_read_word(&ProgOptions[ProgMode])); // Show current function onto the LCD
+			LCD_puts_f((uint8_t*)pgm_read_word(&ProgOptions[ProgMode])); // Show current function onto the LCD
      898:	e0 2f       	mov	r30, r16
      89a:	ff 27       	eor	r31, r31
      89c:	ee 0f       	add	r30, r30
@@ -1626,7 +1626,7 @@ void FUNCManCalib(void)
      bc0:	de bf       	out	0x3e, r29	; 62
      bc2:	0f be       	out	0x3f, r0	; 63
      bc4:	cd bf       	out	0x3d, r28	; 61
-	char Buffer[9];
+	uint8_t Buffer[9];
 
 	JoyStatus = 1;                           // Invalid value to force the LCD to update
      bc6:	81 e0       	ldi	r24, 0x01	; 1
@@ -1743,7 +1743,7 @@ void FUNCSetContrast(void)
      c76:	de bf       	out	0x3e, r29	; 62
      c78:	0f be       	out	0x3f, r0	; 63
      c7a:	cd bf       	out	0x3d, r28	; 61
-	char Buffer[6];
+	uint8_t Buffer[6];
 	uint8_t Contrast = (eeprom_read_byte_169(&Sys_LCDContrast) & 0x0F); // Ranges from 0-15 so mask retuns 15 on blank EEPROM (0xFF)
      c7c:	84 e0       	ldi	r24, 0x04	; 4
      c7e:	91 e0       	ldi	r25, 0x01	; 1
@@ -1906,7 +1906,7 @@ void FUNCSetISPSpeed(void)
 			}
 			
 			// Show selected USI speed value onto the LCD:
-			LCD_puts_f((char*)pgm_read_word(&USIPSNamePtrs[CurrSpeed]));
+			LCD_puts_f((uint8_t*)pgm_read_word(&USIPSNamePtrs[CurrSpeed]));
      d4a:	ec 2f       	mov	r30, r28
      d4c:	ff 27       	eor	r31, r31
      d4e:	ee 0f       	add	r30, r30
@@ -2070,7 +2070,7 @@ void FUNCStorageInfo(void)
 				}
 			}
 			
-			LCD_puts_f((char*)pgm_read_word(&SIFOOptionPtrs[SelectedItem]));
+			LCD_puts_f((uint8_t*)pgm_read_word(&SIFOOptionPtrs[SelectedItem]));
      e2e:	e1 2f       	mov	r30, r17
      e30:	ff 27       	eor	r31, r31
      e32:	ee 0f       	add	r30, r30
