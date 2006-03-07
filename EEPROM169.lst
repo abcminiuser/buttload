@@ -1,0 +1,102 @@
+   1               		.file	"EEPROM169.c"
+   2               		.arch atmega169
+   3               	__SREG__ = 0x3f
+   4               	__SP_H__ = 0x3e
+   5               	__SP_L__ = 0x3d
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.global __do_copy_data
+   9               		.global __do_clear_bss
+  17               	.Ltext0:
+  18               	.global	eeprom_read_byte_169
+  20               	eeprom_read_byte_169:
+  21               	.LFB2:
+  22               	.LM1:
+  23               	/* prologue: frame size=0 */
+  24               	/* prologue end (size=0) */
+  25 0000 FC01      		movw r30,r24
+  26               	.LM2:
+  27               	/* #APP */
+  28 0002 F894      		cli
+  29               	.LM3:
+  30               	/* #NOAPP */
+  31 0004 8081      		ld r24,Z
+  32 0006 9181      		ldd r25,Z+1
+  33 0008 92BD      		out (65)+1-0x20,r25
+  34 000a 81BD      		out 65-0x20,r24
+  35               	.LM4:
+  36 000c F89A      		sbi 63-0x20,0
+  37               	.LM5:
+  38               	/* #APP */
+  39 000e 7894      		sei
+  40               	.LM6:
+  41               	/* #NOAPP */
+  42 0010 80B5      		in r24,64-0x20
+  43               	.LM7:
+  44 0012 9927      		clr r25
+  45               	/* epilogue: frame size=0 */
+  46 0014 0895      		ret
+  47               	/* epilogue end (size=1) */
+  48               	/* function eeprom_read_byte_169 size 13 (12) */
+  49               	.LFE2:
+  51               	.global	eeprom_write_byte_169
+  53               	eeprom_write_byte_169:
+  54               	.LFB3:
+  55               	.LM8:
+  56               	/* prologue: frame size=0 */
+  57 0016 1F93      		push r17
+  58 0018 CF93      		push r28
+  59 001a DF93      		push r29
+  60               	/* prologue end (size=3) */
+  61 001c EC01      		movw r28,r24
+  62 001e 162F      		mov r17,r22
+  63               	.LM9:
+  64 0020 0E94 0000 		call eeprom_read_byte_169
+  65 0024 8117      		cp r24,r17
+  66 0026 59F0      		breq .L2
+  67               	.LM10:
+  68               	/* #APP */
+  69 0028 F894      		cli
+  70               	.LM11:
+  71               	/* #NOAPP */
+  72 002a 8881      		ld r24,Y
+  73 002c 9981      		ldd r25,Y+1
+  74 002e 92BD      		out (65)+1-0x20,r25
+  75 0030 81BD      		out 65-0x20,r24
+  76               	.LM12:
+  77 0032 10BD      		out 64-0x20,r17
+  78               	.LM13:
+  79 0034 FA9A      		sbi 63-0x20,2
+  80               	.LM14:
+  81 0036 F99A      		sbi 63-0x20,1
+  82               	.LM15:
+  83               	/* #APP */
+  84 0038 7894      		sei
+  85               	/* #NOAPP */
+  86               	.L4:
+  87               	.LM16:
+  88 003a F999      		sbic 63-0x20,1
+  89 003c FECF      		rjmp .L4
+  90               	.L2:
+  91               	/* epilogue: frame size=0 */
+  92 003e DF91      		pop r29
+  93 0040 CF91      		pop r28
+  94 0042 1F91      		pop r17
+  95 0044 0895      		ret
+  96               	/* epilogue end (size=4) */
+  97               	/* function eeprom_write_byte_169 size 26 (19) */
+  98               	.LFE3:
+ 100               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 EEPROM169.c
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccmWaaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccmWaaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccmWaaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccmWaaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccmWaaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccmWaaaa.s:20     .text:00000000 eeprom_read_byte_169
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccmWaaaa.s:53     .text:00000016 eeprom_write_byte_169
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss

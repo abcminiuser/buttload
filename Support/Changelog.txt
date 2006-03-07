@@ -1,0 +1,31 @@
+Current Version: Public Release 1.2
+
+	FROM PUBLIC RELEASE 1.1:
+	=======================================
+	  * PROGRAMMING DONE and PROGRAMMING FAIL messages are now shown for a longer time so they can be fully read
+	  * DATAFLASH ERROR now also shown in PRGM DATAFLASH MODE if no attached dataflash is found
+	  * ISP short detection routines removed for technical reasons
+	  * Atmel LCD driver rewritten for size and speed
+
+	FROM PUBLIC RELEASE 1.0:
+	=======================================
+	  * PROGRAMMING DONE message changed so that it will show PROGRAMMING FAIL after an error
+	  * Unnessesary clearing of invalid JoyStatus values removed
+	  * Seperate external dataflash /CS pin removed, function integrated into slave AVR /RESET pin
+
+	FROM PUBLIC BETA 3:
+	=======================================
+	  * Fixed ISP short detection bug (always returning ISP short)
+	  * ISP Short detection system now checks for Dataflash /CS short correctly
+	  * Added SLEEP MODE option
+	  * Fixed verify fail on large flash micros bug
+	  * Added ButtTag functionality
+	  * Added Storage sizes function
+	  * Fixed dataflash mask address bug
+	  * Fixed /RESET line not being released from hi-impeedance bug
+	  * MAIN_IntToStr now forces null-termination of strings
+	  * Extended address checking moved to a new subroutine; flag now cleared after command
+	  * Interrupts now re-enabled while writing to EEPROM rather than after operation complete
+	  * Packet timeout increased to slightly more than the computer timeout
+	  * Added function to jump to the bootloader
+	  * Programming of the data will not commence if no erase commands are in memory

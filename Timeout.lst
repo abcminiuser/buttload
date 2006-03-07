@@ -1,0 +1,95 @@
+   1               		.file	"Timeout.c"
+   2               		.arch atmega169
+   3               	__SREG__ = 0x3f
+   4               	__SP_H__ = 0x3e
+   5               	__SP_L__ = 0x3d
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.global __do_copy_data
+   9               		.global __do_clear_bss
+  17               	.Ltext0:
+  18               	.global	TimeOut
+  19               	.global	TimeOut
+  20               		.section .bss
+  23               	TimeOut:
+  24 0000 00        		.skip 1,0
+  25               	.global	Ticks
+  26               	.global	Ticks
+  29               	Ticks:
+  30 0001 00        		.skip 1,0
+  31               		.text
+  32               	.global	__vector_9
+  34               	__vector_9:
+  35               	.LFB8:
+  36               	.LM1:
+  37               	/* prologue: frame size=0 */
+  38 0000 7894      		sei
+  39 0002 1F92      		push __zero_reg__
+  40 0004 0F92      		push __tmp_reg__
+  41 0006 0FB6      		in __tmp_reg__,__SREG__
+  42 0008 0F92      		push __tmp_reg__
+  43 000a 1124      		clr __zero_reg__
+  44 000c 8F93      		push r24
+  45               	/* prologue end (size=7) */
+  46               	.LM2:
+  47 000e 8091 0000 		lds r24,Ticks
+  48 0012 8F5F      		subi r24,lo8(-(1))
+  49 0014 8093 0000 		sts Ticks,r24
+  50 0018 8091 0000 		lds r24,Ticks
+  51 001c 8730      		cpi r24,lo8(7)
+  52 001e 29F4      		brne .L1
+  53               	.LM3:
+  54 0020 1092 0000 		sts Ticks,__zero_reg__
+  55               	.LM4:
+  56 0024 81E0      		ldi r24,lo8(1)
+  57 0026 8093 0000 		sts TimeOut,r24
+  58               	.L1:
+  59               	/* epilogue: frame size=0 */
+  60 002a 8F91      		pop r24
+  61 002c 0F90      		pop __tmp_reg__
+  62 002e 0FBE      		out __SREG__,__tmp_reg__
+  63 0030 0F90      		pop __tmp_reg__
+  64 0032 1F90      		pop __zero_reg__
+  65 0034 1895      		reti
+  66               	/* epilogue end (size=6) */
+  67               	/* function __vector_9 size 27 (14) */
+  68               	.LFE8:
+  70               	.global	TIMEOUT_SetupTimeoutTimer
+  72               	TIMEOUT_SetupTimeoutTimer:
+  73               	.LFB9:
+  74               	.LM5:
+  75               	/* prologue: frame size=0 */
+  76               	/* prologue end (size=0) */
+  77               	.LM6:
+  78 0036 1092 8000 		sts 128,__zero_reg__
+  79               	.LM7:
+  80 003a 1092 8100 		sts 129,__zero_reg__
+  81 003e 1092 0000 		sts Ticks,__zero_reg__
+  82 0042 1092 8500 		sts (132)+1,__zero_reg__
+  83 0046 1092 8400 		sts 132,__zero_reg__
+  84               	.LM8:
+  85 004a 1092 8200 		sts 130,__zero_reg__
+  86               	.LM9:
+  87 004e 81E0      		ldi r24,lo8(1)
+  88 0050 8093 6F00 		sts 111,r24
+  89               	/* epilogue: frame size=0 */
+  90 0054 0895      		ret
+  91               	/* epilogue end (size=1) */
+  92               	/* function TIMEOUT_SetupTimeoutTimer size 16 (15) */
+  93               	.LFE9:
+  95               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 Timeout.c
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc2Zaaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc2Zaaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc2Zaaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc2Zaaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc2Zaaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc2Zaaaa.s:23     .bss:00000000 TimeOut
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc2Zaaaa.s:29     .bss:00000001 Ticks
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc2Zaaaa.s:34     .text:00000000 __vector_9
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc2Zaaaa.s:72     .text:00000036 TIMEOUT_SetupTimeoutTimer
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss

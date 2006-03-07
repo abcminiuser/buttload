@@ -1,0 +1,93 @@
+   1               		.file	"SPI.c"
+   2               		.arch atmega169
+   3               	__SREG__ = 0x3f
+   4               	__SP_H__ = 0x3e
+   5               	__SP_L__ = 0x3d
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.global __do_copy_data
+   9               		.global __do_clear_bss
+  17               	.Ltext0:
+  18               	.global	SPI_SPIInit
+  20               	SPI_SPIInit:
+  21               	.LFB8:
+  22               	.LM1:
+  23               	/* prologue: frame size=0 */
+  24               	/* prologue end (size=0) */
+  25               	.LM2:
+  26 0000 8091 6400 		lds r24,100
+  27 0004 8B7F      		andi r24,lo8(-5)
+  28 0006 8093 6400 		sts 100,r24
+  29               	.LM3:
+  30 000a 81E0      		ldi r24,lo8(1)
+  31 000c 8DBD      		out 77-0x20,r24
+  32               	.LM4:
+  33 000e 8EE5      		ldi r24,lo8(94)
+  34 0010 8CBD      		out 76-0x20,r24
+  35               	/* epilogue: frame size=0 */
+  36 0012 0895      		ret
+  37               	/* epilogue end (size=1) */
+  38               	/* function SPI_SPIInit size 10 (9) */
+  39               	.LFE8:
+  41               	.global	SPI_SPITransmit
+  43               	SPI_SPITransmit:
+  44               	.LFB9:
+  45               	.LM5:
+  46               	/* prologue: frame size=0 */
+  47               	/* prologue end (size=0) */
+  48               	.LM6:
+  49 0014 8EBD      		out 78-0x20,r24
+  50               	.L3:
+  51               	.LM7:
+  52 0016 0DB4      		in __tmp_reg__,77-0x20
+  53 0018 07FE      		sbrs __tmp_reg__,7
+  54 001a FDCF      		rjmp .L3
+  55               	.LM8:
+  56 001c 8EB5      		in r24,78-0x20
+  57               	.LM9:
+  58 001e 9927      		clr r25
+  59               	/* epilogue: frame size=0 */
+  60 0020 0895      		ret
+  61               	/* epilogue end (size=1) */
+  62               	/* function SPI_SPITransmit size 7 (6) */
+  63               	.LFE9:
+  65               	.global	SPI_SPITransmitWord
+  67               	SPI_SPITransmitWord:
+  68               	.LFB10:
+  69               	.LM10:
+  70               	/* prologue: frame size=0 */
+  71 0022 0F93      		push r16
+  72 0024 1F93      		push r17
+  73               	/* prologue end (size=2) */
+  74 0026 8C01      		movw r16,r24
+  75               	.LM11:
+  76 0028 812F      		mov r24,r17
+  77 002a 9927      		clr r25
+  78 002c 0E94 0000 		call SPI_SPITransmit
+  79               	.LM12:
+  80 0030 802F      		mov r24,r16
+  81 0032 0E94 0000 		call SPI_SPITransmit
+  82               	.LM13:
+  83 0036 9927      		clr r25
+  84               	/* epilogue: frame size=0 */
+  85 0038 1F91      		pop r17
+  86 003a 0F91      		pop r16
+  87 003c 0895      		ret
+  88               	/* epilogue end (size=3) */
+  89               	/* function SPI_SPITransmitWord size 14 (9) */
+  90               	.LFE10:
+  92               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 SPI.c
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccMTaaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccMTaaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccMTaaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccMTaaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccMTaaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccMTaaaa.s:20     .text:00000000 SPI_SPIInit
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccMTaaaa.s:43     .text:00000014 SPI_SPITransmit
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccMTaaaa.s:67     .text:00000022 SPI_SPITransmitWord
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
