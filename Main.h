@@ -36,12 +36,7 @@ typedef void (*FuncPtr)(void);
 #include "TagManager.h"
 
 // LIB C VERSION CHECK:
-
-#ifdef __AVR_LIBC_VERSION__
- #if (__AVR_LIBC_VERSION__ < 10401UL) // In future requirements may be increased with changes
-  #error AVRLibC Version 1.4.1 or higher is required to compile this project.
- #endif
-#else
+#if (!defined(__AVR_LIBC_VERSION__) || (__AVR_LIBC_VERSION__ < 10401UL)) // In future requirements may be increased with changes
  #error AVRLibC Version 1.4.1 or higher is required to compile this project.
 #endif
 
@@ -53,7 +48,7 @@ extern const uint8_t FAULTERR_ISPShort[];
 
 // DEFINES AND MACROS:
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 2
+#define VERSION_MINOR 3
 
 #define MAGIC_NUM  0b01011010 // Magic number, used for first-run detection or upgrade incompatibility checks
 

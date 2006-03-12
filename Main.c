@@ -190,7 +190,7 @@ const uint8_t*   SIFOOptionPtrs[]        PROGMEM = {SIFO_Size, SIFO_Tags};
 int main(void)
 {
 	uint8_t CurrFunc = 0;
-
+											  
 	MCUCR   = (1 << JTD);                        // Turn off JTAG via code
 	MCUCR   = (1 << JTD);                        // Twice as specified in datasheet
 	
@@ -871,8 +871,9 @@ void FUNCStorageInfo(void)
 
 void FUNCGoBootloader(void)
 {
-	MCUCR &= ~(1 << JTD);           // Turn on JTAG via code
-	MCUCR &= ~(1 << JTD);           // Twice as specified in datasheet
+	uint8_t MD = (MCUCR & ~(1 << JTD)); // Forces compiler to use two OUTs rather than two IN/AND/OUTs
+	MCUCR = MD;  // Turn on JTAG via code
+	MCUCR = MD;  // Twice as specified in datasheet        
 	
 	LCD_puts_f(PSTR("*JTAG ON*"));
 	
