@@ -44,8 +44,3 @@
 #define STATUS_CMD_FAILED         0xC0
 #define STATUS_CKSUM_ERROR        0xC1
 #define STATUS_CMD_UNKNOWN        0xC9
-
-#define SPI_SPEED_921600Hz        0
-#define SPI_SPEED_230400Hz        1
-#define SPI_SPEED_57600Hz         2
-#define SPI_SPEED_28800Hz         3

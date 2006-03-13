@@ -11,345 +11,269 @@
   18               	.global	USIPSValues
   19               		.section	.progmem.data,"a",@progbits
   22               	USIPSValues:
-  23 0000 00        		.byte	0
-  24 0001 01        		.byte	1
-  25 0002 40        		.byte	64
-  26 0003 01        		.byte	1
+  23 0000 03        		.byte	3
+  24 0001 80        		.byte	-128
+  25 0002 02        		.byte	2
+  26 0003 54        		.byte	84
   27 0004 01        		.byte	1
-  28 0005 54        		.byte	84
-  29 0006 02        		.byte	2
-  30 0007 01        		.byte	1
-  31 0008 80        		.byte	-128
-  32 0009 03        		.byte	3
-  33 000a 01        		.byte	1
-  34 000b FF        		.byte	-1
-  35               		.text
-  36               	.global	__vector_10
-  38               	__vector_10:
-  39               	.LFB8:
-  40               	.LM1:
-  41               	/* prologue: frame size=0 */
-  42 0000 1F92      		push __zero_reg__
-  43 0002 0F92      		push __tmp_reg__
-  44 0004 0FB6      		in __tmp_reg__,__SREG__
-  45 0006 0F92      		push __tmp_reg__
-  46 0008 1124      		clr __zero_reg__
-  47 000a 8F93      		push r24
-  48               	/* prologue end (size=6) */
-  49               	.LM2:
-  50 000c 8091 B800 		lds r24,184
-  51 0010 8160      		ori r24,lo8(1)
-  52 0012 8093 B800 		sts 184,r24
-  53               	/* epilogue: frame size=0 */
-  54 0016 8F91      		pop r24
-  55 0018 0F90      		pop __tmp_reg__
-  56 001a 0FBE      		out __SREG__,__tmp_reg__
-  57 001c 0F90      		pop __tmp_reg__
-  58 001e 1F90      		pop __zero_reg__
-  59 0020 1895      		reti
-  60               	/* epilogue end (size=6) */
-  61               	/* function __vector_10 size 17 (5) */
-  62               	.LFE8:
-  64               	.global	__vector_17
-  66               	__vector_17:
-  67               	.LFB9:
-  68               	.LM3:
-  69               	/* prologue: frame size=0 */
-  70 0022 1F92      		push __zero_reg__
-  71 0024 0F92      		push __tmp_reg__
-  72 0026 0FB6      		in __tmp_reg__,__SREG__
-  73 0028 0F92      		push __tmp_reg__
-  74 002a 1124      		clr __zero_reg__
-  75 002c 8F93      		push r24
-  76               	/* prologue end (size=6) */
-  77               	.LM4:
-  78 002e 8091 6E00 		lds r24,110
-  79 0032 8D7F      		andi r24,lo8(-3)
-  80 0034 8093 6E00 		sts 110,r24
-  81               	.LM5:
-  82 0038 80E4      		ldi r24,lo8(64)
-  83 003a 8093 B900 		sts 185,r24
-  84               	.LM6:
-  85 003e 8091 0000 		lds r24,USI_status
-  86 0042 8160      		ori r24,lo8(1)
-  87 0044 8093 0000 		sts USI_status,r24
-  88               	.LM7:
-  89 0048 8091 BA00 		lds r24,186
-  90 004c 8093 0000 		sts storedUSIDR,r24
-  91               	/* epilogue: frame size=0 */
-  92 0050 8F91      		pop r24
-  93 0052 0F90      		pop __tmp_reg__
-  94 0054 0FBE      		out __SREG__,__tmp_reg__
-  95 0056 0F90      		pop __tmp_reg__
-  96 0058 1F90      		pop __zero_reg__
-  97 005a 1895      		reti
-  98               	/* epilogue end (size=6) */
-  99               	/* function __vector_17 size 29 (17) */
- 100               	.LFE9:
- 102               	.global	USI_SPISetSpeed
- 104               	USI_SPISetSpeed:
- 105               	.LFB15:
- 106               	.LM8:
- 107               	/* prologue: frame size=0 */
- 108               	/* prologue end (size=0) */
- 109 005c 982F      		mov r25,r24
- 110               	.LM9:
- 111 005e 8F3F      		cpi r24,lo8(-1)
- 112 0060 09F4      		brne .L4
- 113               	.LM10:
- 114 0062 90E0      		ldi r25,lo8(0)
- 115               	.L4:
- 116               	.LBB2:
- 117               	.LM11:
- 118 0064 40E0      		ldi r20,lo8(0)
- 119 0066 20E0      		ldi r18,lo8(0)
- 120 0068 30E0      		ldi r19,hi8(0)
- 121               	.L10:
- 122               	.LBB3:
- 123               	.LM12:
- 124 006a F901      		movw r30,r18
- 125 006c E050      		subi r30,lo8(-(USIPSValues))
- 126 006e F040      		sbci r31,hi8(-(USIPSValues))
- 127               	/* #APP */
- 128 0070 8491      		lpm r24, Z
- 129               		
- 130               	/* #NOAPP */
- 131               	.LBE3:
- 132 0072 8917      		cp r24,r25
- 133 0074 11F0      		breq .L9
- 134 0076 4330      		cpi r20,lo8(3)
- 135 0078 61F4      		brne .L7
- 136               	.L9:
- 137               	.LBB4:
- 138               	.LM13:
- 139 007a F901      		movw r30,r18
- 140 007c E050      		subi r30,lo8(-(USIPSValues+2))
- 141 007e F040      		sbci r31,hi8(-(USIPSValues+2))
- 142               	/* #APP */
- 143 0080 8491      		lpm r24, Z
- 144               		
- 145               	/* #NOAPP */
- 146               	.LBE4:
- 147 0082 87BD      		out 71-0x20,r24
- 148               	.LBB5:
- 149               	.LM14:
- 150 0084 2050      		subi r18,lo8(-(USIPSValues+1))
- 151 0086 3040      		sbci r19,hi8(-(USIPSValues+1))
- 152 0088 F901      		movw r30,r18
- 153               	/* #APP */
- 154 008a 8491      		lpm r24, Z
- 155               		
- 156               	/* #NOAPP */
- 157               	.LBE5:
- 158 008c 8860      		ori r24,lo8(8)
- 159 008e 84BD      		out 68-0x20,r24
- 160               	.LM15:
- 161 0090 0895      		ret
- 162               	.L7:
- 163               	.LM16:
- 164 0092 4F5F      		subi r20,lo8(-(1))
- 165 0094 2D5F      		subi r18,lo8(-(3))
- 166 0096 3F4F      		sbci r19,hi8(-(3))
- 167 0098 4430      		cpi r20,lo8(4)
- 168 009a 38F3      		brlo .L10
- 169 009c 0895      		ret
- 170               	.LBE2:
- 171               	/* epilogue: frame size=0 */
- 172               	/* epilogue: noreturn */
- 173               	/* epilogue end (size=0) */
- 174               	/* function USI_SPISetSpeed size 42 (42) */
- 175               	.LFE15:
- 177               	.global	USI_SPIInitMaster
- 179               	USI_SPIInitMaster:
- 180               	.LFB10:
- 181               	.LM17:
- 182               	/* prologue: frame size=0 */
- 183               	/* prologue end (size=0) */
- 184               	.LM18:
- 185 009e 9DB1      		in r25,45-0x20
- 186 00a0 9065      		ori r25,lo8(80)
- 187 00a2 9DB9      		out 45-0x20,r25
- 188               	.LM19:
- 189 00a4 6D98      		cbi 45-0x20,5
- 190               	.LM20:
- 191 00a6 759A      		sbi 46-0x20,5
- 192               	.LM21:
- 193 00a8 7698      		cbi 46-0x20,6
- 194               	.LM22:
- 195 00aa 9AE5      		ldi r25,lo8(90)
- 196 00ac 9093 B800 		sts 184,r25
- 197               	.LM23:
- 198 00b0 0E94 0000 		call USI_SPISetSpeed
- 199               	.LM24:
- 200 00b4 8091 0000 		lds r24,USI_status
- 201 00b8 8E7F      		andi r24,lo8(-2)
- 202 00ba 8093 0000 		sts USI_status,r24
- 203               	.LM25:
- 204 00be 8091 0000 		lds r24,USI_status
- 205 00c2 8D7F      		andi r24,lo8(-3)
- 206 00c4 8093 0000 		sts USI_status,r24
- 207               	.LM26:
- 208 00c8 1092 0000 		sts storedUSIDR,__zero_reg__
- 209               	/* epilogue: frame size=0 */
- 210 00cc 0895      		ret
- 211               	/* epilogue end (size=1) */
- 212               	/* function USI_SPIInitMaster size 24 (23) */
- 213               	.LFE10:
- 215               	.global	USI_SPIOff
- 217               	USI_SPIOff:
- 218               	.LFB11:
- 219               	.LM27:
- 220               	/* prologue: frame size=0 */
- 221               	/* prologue end (size=0) */
- 222               	.LM28:
- 223 00ce 8DB1      		in r24,45-0x20
- 224 00d0 8F7A      		andi r24,lo8(-81)
- 225 00d2 8DB9      		out 45-0x20,r24
- 226               	.LM29:
- 227 00d4 8EB1      		in r24,46-0x20
- 228 00d6 8F78      		andi r24,lo8(-113)
- 229 00d8 8EB9      		out 46-0x20,r24
- 230               	.LM30:
- 231 00da 8698      		cbi 48-0x20,6
- 232               	.LM31:
- 233 00dc 8E98      		cbi 49-0x20,6
- 234               	.LM32:
- 235 00de 14BC      		out 68-0x20,__zero_reg__
- 236               	/* epilogue: frame size=0 */
- 237 00e0 0895      		ret
- 238               	/* epilogue end (size=1) */
- 239               	/* function USI_SPIOff size 10 (9) */
- 240               	.LFE11:
- 242               	.global	USI_SPITransmit
- 244               	USI_SPITransmit:
- 245               	.LFB12:
- 246               	.LM33:
- 247               	/* prologue: frame size=0 */
- 248               	/* prologue end (size=0) */
- 249 00e2 282F      		mov r18,r24
- 250               	.LM34:
- 251 00e4 8091 B900 		lds r24,185
- 252 00e8 9927      		clr r25
- 253 00ea 8F70      		andi r24,lo8(15)
- 254 00ec 9070      		andi r25,hi8(15)
- 255 00ee 892B      		or r24,r25
- 256 00f0 41F0      		breq .L15
- 257               	.LM35:
- 258 00f2 8091 0000 		lds r24,USI_status
- 259 00f6 8260      		ori r24,lo8(2)
- 260 00f8 8093 0000 		sts USI_status,r24
- 261               	.LM36:
- 262 00fc 80E0      		ldi r24,lo8(0)
- 263 00fe 90E0      		ldi r25,hi8(0)
- 264 0100 0895      		ret
- 265               	.L15:
- 266               	.LM37:
- 267 0102 8091 0000 		lds r24,USI_status
- 268 0106 8E7F      		andi r24,lo8(-2)
- 269 0108 8093 0000 		sts USI_status,r24
- 270               	.LM38:
- 271 010c 8091 0000 		lds r24,USI_status
- 272 0110 8D7F      		andi r24,lo8(-3)
- 273 0112 8093 0000 		sts USI_status,r24
- 274               	.LM39:
- 275 0116 2093 BA00 		sts 186,r18
- 276               	.LM40:
- 277 011a A99A      		sbi 53-0x20,1
- 278               	.LM41:
- 279 011c 8091 6E00 		lds r24,110
- 280 0120 8260      		ori r24,lo8(2)
- 281 0122 8093 6E00 		sts 110,r24
- 282               	.LM42:
- 283 0126 16BC      		out 70-0x20,__zero_reg__
- 284               	.L16:
- 285               	.LM43:
- 286 0128 8091 0000 		lds r24,USI_status
- 287 012c 80FF      		sbrs r24,0
- 288 012e FCCF      		rjmp .L16
- 289               	.LM44:
- 290 0130 8091 0000 		lds r24,storedUSIDR
- 291 0134 9927      		clr r25
- 292               	.LM45:
- 293 0136 0895      		ret
- 294               	/* epilogue: frame size=0 */
- 295               	/* epilogue: noreturn */
- 296               	/* epilogue end (size=0) */
- 297               	/* function USI_SPITransmit size 43 (43) */
- 298               	.LFE12:
- 300               	.global	USI_SPITransmitWord
- 302               	USI_SPITransmitWord:
- 303               	.LFB13:
- 304               	.LM46:
- 305               	/* prologue: frame size=0 */
- 306 0138 0F93      		push r16
- 307 013a 1F93      		push r17
- 308               	/* prologue end (size=2) */
- 309 013c 8C01      		movw r16,r24
- 310               	.LM47:
- 311 013e 812F      		mov r24,r17
- 312 0140 9927      		clr r25
- 313 0142 0E94 0000 		call USI_SPITransmit
- 314               	.LM48:
- 315 0146 802F      		mov r24,r16
- 316 0148 0E94 0000 		call USI_SPITransmit
- 317               	.LM49:
- 318 014c 9927      		clr r25
- 319               	/* epilogue: frame size=0 */
- 320 014e 1F91      		pop r17
- 321 0150 0F91      		pop r16
- 322 0152 0895      		ret
- 323               	/* epilogue end (size=3) */
- 324               	/* function USI_SPITransmitWord size 14 (9) */
- 325               	.LFE13:
- 327               	.global	USI_SPIToggleClock
- 329               	USI_SPIToggleClock:
- 330               	.LFB14:
- 331               	.LM50:
- 332               	/* prologue: frame size=0 */
- 333               	/* prologue end (size=0) */
- 334               	.LM51:
- 335 0154 81E0      		ldi r24,lo8(1)
- 336 0156 0E94 0000 		call MAIN_Delay1MS
- 337               	.LM52:
- 338 015a 8091 B800 		lds r24,184
- 339 015e 8160      		ori r24,lo8(1)
- 340 0160 8093 B800 		sts 184,r24
- 341               	.LM53:
- 342 0164 81E0      		ldi r24,lo8(1)
- 343 0166 0E94 0000 		call MAIN_Delay1MS
- 344               	.LM54:
- 345 016a 8091 B800 		lds r24,184
- 346 016e 8160      		ori r24,lo8(1)
- 347 0170 8093 B800 		sts 184,r24
- 348               	.LM55:
- 349 0174 81E0      		ldi r24,lo8(1)
- 350 0176 0E94 0000 		call MAIN_Delay1MS
- 351               	/* epilogue: frame size=0 */
- 352 017a 0895      		ret
- 353               	/* epilogue end (size=1) */
- 354               	/* function USI_SPIToggleClock size 20 (19) */
- 355               	.LFE14:
- 357               		.lcomm storedUSIDR,1
- 358               		.lcomm USI_status,1
- 359               	.Letext0:
+  28 0005 40        		.byte	64
+  29 0006 00        		.byte	0
+  30 0007 22        		.byte	34
+  31               		.text
+  32               	.global	__vector_17
+  34               	__vector_17:
+  35               	.LFB8:
+  36               	.LM1:
+  37               	/* prologue: frame size=0 */
+  38 0000 1F92      		push __zero_reg__
+  39 0002 0F92      		push __tmp_reg__
+  40 0004 0FB6      		in __tmp_reg__,__SREG__
+  41 0006 0F92      		push __tmp_reg__
+  42 0008 1124      		clr __zero_reg__
+  43 000a 8F93      		push r24
+  44               	/* prologue end (size=6) */
+  45               	.LM2:
+  46 000c 8091 6E00 		lds r24,110
+  47 0010 8D7F      		andi r24,lo8(-3)
+  48 0012 8093 6E00 		sts 110,r24
+  49               	.LM3:
+  50 0016 80E4      		ldi r24,lo8(64)
+  51 0018 8093 B900 		sts 185,r24
+  52               	.LM4:
+  53 001c 81E0      		ldi r24,lo8(1)
+  54 001e 8093 0000 		sts TransferComplete,r24
+  55               	.LM5:
+  56 0022 8091 BA00 		lds r24,186
+  57 0026 8093 0000 		sts storedUSIDR,r24
+  58               	/* epilogue: frame size=0 */
+  59 002a 8F91      		pop r24
+  60 002c 0F90      		pop __tmp_reg__
+  61 002e 0FBE      		out __SREG__,__tmp_reg__
+  62 0030 0F90      		pop __tmp_reg__
+  63 0032 1F90      		pop __zero_reg__
+  64 0034 1895      		reti
+  65               	/* epilogue end (size=6) */
+  66               	/* function __vector_17 size 27 (15) */
+  67               	.LFE8:
+  69               	.global	USI_SPISetSpeed
+  71               	USI_SPISetSpeed:
+  72               	.LFB14:
+  73               	.LM6:
+  74               	/* prologue: frame size=0 */
+  75               	/* prologue end (size=0) */
+  76 0036 482F      		mov r20,r24
+  77               	.LBB2:
+  78               	.LM7:
+  79 0038 90E0      		ldi r25,lo8(0)
+  80 003a 60E0      		ldi r22,lo8(USIPSValues+1)
+  81 003c 70E0      		ldi r23,hi8(USIPSValues+1)
+  82 003e 9B01      		movw r18,r22
+  83 0040 2150      		subi r18,lo8(-(-1))
+  84 0042 3040      		sbci r19,hi8(-(-1))
+  85               	.L8:
+  86               	.LBB3:
+  87               	.LM8:
+  88 0044 F901      		movw r30,r18
+  89               	/* #APP */
+  90 0046 8491      		lpm r24, Z
+  91               		
+  92               	/* #NOAPP */
+  93               	.LBE3:
+  94 0048 8417      		cp r24,r20
+  95 004a 11F0      		breq .L7
+  96 004c 9330      		cpi r25,lo8(3)
+  97 004e 31F4      		brne .L5
+  98               	.L7:
+  99               	.LBB4:
+ 100               	.LM9:
+ 101 0050 FB01      		movw r30,r22
+ 102               	/* #APP */
+ 103 0052 8491      		lpm r24, Z
+ 104               		
+ 105               	/* #NOAPP */
+ 106               	.LBE4:
+ 107 0054 87BD      		out 71-0x20,r24
+ 108               	.LM10:
+ 109 0056 89E0      		ldi r24,lo8(9)
+ 110 0058 84BD      		out 68-0x20,r24
+ 111               	.LM11:
+ 112 005a 0895      		ret
+ 113               	.L5:
+ 114               	.LM12:
+ 115 005c 9F5F      		subi r25,lo8(-(1))
+ 116 005e 2E5F      		subi r18,lo8(-(2))
+ 117 0060 3F4F      		sbci r19,hi8(-(2))
+ 118 0062 6E5F      		subi r22,lo8(-(2))
+ 119 0064 7F4F      		sbci r23,hi8(-(2))
+ 120 0066 9430      		cpi r25,lo8(4)
+ 121 0068 68F3      		brlo .L8
+ 122 006a 0895      		ret
+ 123               	.LBE2:
+ 124               	/* epilogue: frame size=0 */
+ 125               	/* epilogue: noreturn */
+ 126               	/* epilogue end (size=0) */
+ 127               	/* function USI_SPISetSpeed size 33 (33) */
+ 128               	.LFE14:
+ 130               	.global	USI_SPIInitMaster
+ 132               	USI_SPIInitMaster:
+ 133               	.LFB9:
+ 134               	.LM13:
+ 135               	/* prologue: frame size=0 */
+ 136               	/* prologue end (size=0) */
+ 137               	.LM14:
+ 138 006c 9DB1      		in r25,45-0x20
+ 139 006e 9065      		ori r25,lo8(80)
+ 140 0070 9DB9      		out 45-0x20,r25
+ 141               	.LM15:
+ 142 0072 6D98      		cbi 45-0x20,5
+ 143               	.LM16:
+ 144 0074 759A      		sbi 46-0x20,5
+ 145               	.LM17:
+ 146 0076 7698      		cbi 46-0x20,6
+ 147               	.LM18:
+ 148 0078 9AE5      		ldi r25,lo8(90)
+ 149 007a 9093 B800 		sts 184,r25
+ 150               	.LM19:
+ 151 007e 0E94 0000 		call USI_SPISetSpeed
+ 152               	.LM20:
+ 153 0082 1092 0000 		sts TransferComplete,__zero_reg__
+ 154               	.LM21:
+ 155 0086 1092 0000 		sts storedUSIDR,__zero_reg__
+ 156               	/* epilogue: frame size=0 */
+ 157 008a 0895      		ret
+ 158               	/* epilogue end (size=1) */
+ 159               	/* function USI_SPIInitMaster size 16 (15) */
+ 160               	.LFE9:
+ 162               	.global	USI_SPIOff
+ 164               	USI_SPIOff:
+ 165               	.LFB10:
+ 166               	.LM22:
+ 167               	/* prologue: frame size=0 */
+ 168               	/* prologue end (size=0) */
+ 169               	.LM23:
+ 170 008c 8DB1      		in r24,45-0x20
+ 171 008e 8F7A      		andi r24,lo8(-81)
+ 172 0090 8DB9      		out 45-0x20,r24
+ 173               	.LM24:
+ 174 0092 8EB1      		in r24,46-0x20
+ 175 0094 8F78      		andi r24,lo8(-113)
+ 176 0096 8EB9      		out 46-0x20,r24
+ 177               	.LM25:
+ 178 0098 8698      		cbi 48-0x20,6
+ 179               	.LM26:
+ 180 009a 8E98      		cbi 49-0x20,6
+ 181               	.LM27:
+ 182 009c 14BC      		out 68-0x20,__zero_reg__
+ 183               	/* epilogue: frame size=0 */
+ 184 009e 0895      		ret
+ 185               	/* epilogue end (size=1) */
+ 186               	/* function USI_SPIOff size 10 (9) */
+ 187               	.LFE10:
+ 189               	.global	USI_SPITransmit
+ 191               	USI_SPITransmit:
+ 192               	.LFB11:
+ 193               	.LM28:
+ 194               	/* prologue: frame size=0 */
+ 195               	/* prologue end (size=0) */
+ 196               	.LM29:
+ 197 00a0 1092 0000 		sts TransferComplete,__zero_reg__
+ 198               	.LM30:
+ 199 00a4 8093 BA00 		sts 186,r24
+ 200               	.LM31:
+ 201 00a8 A99A      		sbi 53-0x20,1
+ 202               	.LM32:
+ 203 00aa 8091 6E00 		lds r24,110
+ 204 00ae 8260      		ori r24,lo8(2)
+ 205 00b0 8093 6E00 		sts 110,r24
+ 206               	.LM33:
+ 207 00b4 16BC      		out 70-0x20,__zero_reg__
+ 208               	.L13:
+ 209               	.LM34:
+ 210 00b6 8091 0000 		lds r24,TransferComplete
+ 211 00ba 8823      		tst r24
+ 212 00bc E1F3      		breq .L13
+ 213               	.LM35:
+ 214 00be 8091 0000 		lds r24,storedUSIDR
+ 215               	.LM36:
+ 216 00c2 9927      		clr r25
+ 217               	/* epilogue: frame size=0 */
+ 218 00c4 0895      		ret
+ 219               	/* epilogue end (size=1) */
+ 220               	/* function USI_SPITransmit size 19 (18) */
+ 221               	.LFE11:
+ 223               	.global	USI_SPITransmitWord
+ 225               	USI_SPITransmitWord:
+ 226               	.LFB12:
+ 227               	.LM37:
+ 228               	/* prologue: frame size=0 */
+ 229 00c6 0F93      		push r16
+ 230 00c8 1F93      		push r17
+ 231               	/* prologue end (size=2) */
+ 232 00ca 8C01      		movw r16,r24
+ 233               	.LM38:
+ 234 00cc 812F      		mov r24,r17
+ 235 00ce 9927      		clr r25
+ 236 00d0 0E94 0000 		call USI_SPITransmit
+ 237               	.LM39:
+ 238 00d4 802F      		mov r24,r16
+ 239 00d6 0E94 0000 		call USI_SPITransmit
+ 240               	.LM40:
+ 241 00da 9927      		clr r25
+ 242               	/* epilogue: frame size=0 */
+ 243 00dc 1F91      		pop r17
+ 244 00de 0F91      		pop r16
+ 245 00e0 0895      		ret
+ 246               	/* epilogue end (size=3) */
+ 247               	/* function USI_SPITransmitWord size 14 (9) */
+ 248               	.LFE12:
+ 250               	.global	USI_SPIToggleClock
+ 252               	USI_SPIToggleClock:
+ 253               	.LFB13:
+ 254               	.LM41:
+ 255               	/* prologue: frame size=0 */
+ 256               	/* prologue end (size=0) */
+ 257               	.LM42:
+ 258 00e2 81E0      		ldi r24,lo8(1)
+ 259 00e4 0E94 0000 		call MAIN_Delay1MS
+ 260               	.LM43:
+ 261 00e8 8091 B800 		lds r24,184
+ 262 00ec 8160      		ori r24,lo8(1)
+ 263 00ee 8093 B800 		sts 184,r24
+ 264               	.LM44:
+ 265 00f2 81E0      		ldi r24,lo8(1)
+ 266 00f4 0E94 0000 		call MAIN_Delay1MS
+ 267               	.LM45:
+ 268 00f8 8091 B800 		lds r24,184
+ 269 00fc 8160      		ori r24,lo8(1)
+ 270 00fe 8093 B800 		sts 184,r24
+ 271               	.LM46:
+ 272 0102 81E0      		ldi r24,lo8(1)
+ 273 0104 0E94 0000 		call MAIN_Delay1MS
+ 274               	/* epilogue: frame size=0 */
+ 275 0108 0895      		ret
+ 276               	/* epilogue end (size=1) */
+ 277               	/* function USI_SPIToggleClock size 20 (19) */
+ 278               	.LFE13:
+ 280               		.comm storedUSIDR,1,1
+ 281               		.comm TransferComplete,1,1
+ 282               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 USI.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccENaaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccENaaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccENaaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccENaaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccENaaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccENaaaa.s:22     .progmem.data:00000000 USIPSValues
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccENaaaa.s:38     .text:00000000 __vector_10
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccENaaaa.s:66     .text:00000022 __vector_17
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccENaaaa.s:357    .bss:00000001 USI_status
-                             .bss:00000000 storedUSIDR
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccENaaaa.s:104    .text:0000005c USI_SPISetSpeed
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccENaaaa.s:179    .text:0000009e USI_SPIInitMaster
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccENaaaa.s:217    .text:000000ce USI_SPIOff
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccENaaaa.s:244    .text:000000e2 USI_SPITransmit
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccENaaaa.s:302    .text:00000138 USI_SPITransmitWord
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccENaaaa.s:329    .text:00000154 USI_SPIToggleClock
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccw7aaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccw7aaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccw7aaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccw7aaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccw7aaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccw7aaaa.s:22     .progmem.data:00000000 USIPSValues
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccw7aaaa.s:34     .text:00000000 __vector_17
+                            *COM*:00000001 TransferComplete
+                            *COM*:00000001 storedUSIDR
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccw7aaaa.s:71     .text:00000036 USI_SPISetSpeed
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccw7aaaa.s:132    .text:0000006c USI_SPIInitMaster
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccw7aaaa.s:164    .text:0000008c USI_SPIOff
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccw7aaaa.s:191    .text:000000a0 USI_SPITransmit
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccw7aaaa.s:225    .text:000000c6 USI_SPITransmitWord
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccw7aaaa.s:252    .text:000000e2 USI_SPIToggleClock
 
 UNDEFINED SYMBOLS
 __do_copy_data

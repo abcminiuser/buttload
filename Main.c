@@ -55,8 +55,7 @@ BUTTLOADTAG(Author, "BY DEAN CAMERA");
 /*
 	KNOWN ISSUES:
 
-		1) The maximum speed of the USI system in SPI mode is 115200Hz at 7.3Mhz system clock.
-		   Because of this (and compare granularity), BUTTLOAD's maximum ISP speed is 113,427KHz.
+		1) The maximum speed of ButtLoad's USI system in SPI mode is 210,651Hz.
 
 		2) A maximum of 10 fuse bytes and 10 lock bytes can be stored in memory at any one
 		   time (writing the same fuse overwrites the existing value). If it is attempted to
@@ -117,6 +116,7 @@ BUTTLOADTAG(Author, "BY DEAN CAMERA");
 		ProgramManager.c + Header file           | By Dean Camera
 		EEPROMVariables.c + Header file          | By Dean Camera		
 		JoystickInterrupt.S                      | By Dean Camera
+		USIInterrupt.S                           | By Dean Camera
 		RingBuff.c + Header file                 | By Dean Camera
 		ISRMacro.h                               | By Dean Camera
 		Timeout.c + Header file                  | By Dean Camera
@@ -150,8 +150,8 @@ const uint8_t    Func_PRGMDATAFLASH[]    PROGMEM = "DATAFLASH PRGM MODE";
 const uint8_t    Func_SETTINGS[]         PROGMEM = "SETTINGS";
 const uint8_t    Func_SLEEP[]            PROGMEM = "SLEEP MODE";
 	
-const uint8_t*   MainFunctionNames[] PROGMEM = {Func_ISPPRGM  , Func_STOREPRGM  , Func_PRGMAVR  , Func_PRGMDATAFLASH  , Func_SETTINGS      , Func_SLEEP};
-const FuncPtr    MainFunctionPtrs[]  PROGMEM = {FUNCAVRISPMode, FUNCStoreProgram, FUNCProgramAVR, FUNCProgramDataflash, FUNCChangeSettings , FUNCSleepMode};
+const uint8_t*   MainFunctionNames[]     PROGMEM = {Func_ISPPRGM  , Func_STOREPRGM  , Func_PRGMAVR  , Func_PRGMDATAFLASH  , Func_SETTINGS      , Func_SLEEP};
+const FuncPtr    MainFunctionPtrs[]      PROGMEM = {FUNCAVRISPMode, FUNCStoreProgram, FUNCProgramAVR, FUNCProgramDataflash, FUNCChangeSettings , FUNCSleepMode};
 
 const uint8_t    SFunc_SETCONTRAST[]     PROGMEM = "SET CONTRAST";
 const uint8_t    SFunc_SETSPISPEED[]     PROGMEM = "SET SPI SPEED";
@@ -173,10 +173,10 @@ const uint8_t    PRG_C[]                 PROGMEM = "ERASE ONLY";
 
 const uint8_t*   ProgOptions[]           PROGMEM = {PRG_D, PRG_E, PRG_DE, PRG_F, PRG_L, PRG_FL, PRG_C};
 
-const uint8_t    USI_Speed0[]            PROGMEM = "113427 HZ";
+const uint8_t    USI_Speed0[]            PROGMEM = " 57153 HZ";
 const uint8_t    USI_Speed1[]            PROGMEM = " 86738 HZ";
-const uint8_t    USI_Speed2[]            PROGMEM = " 57600 HZ";
-const uint8_t    USI_Speed3[]            PROGMEM = " 28912 HZ";
+const uint8_t    USI_Speed2[]            PROGMEM = "113427 HZ";
+const uint8_t    USI_Speed3[]            PROGMEM = "210651 HZ";
 
 const uint8_t*   USIPSNamePtrs[USI_PRESET_SPEEDS] PROGMEM = {USI_Speed0, USI_Speed1, USI_Speed2, USI_Speed3};
 
@@ -826,7 +826,7 @@ void FUNCStorageInfo(void)
 	{
 		if (JoyStatus)
 		{
-			if ((JoyStatus & JOY_UP) || (JoyStatus & JOY_DOWN))
+			if (JoyStatus & (JOY_UP | JOY_DOWN))
 			{
 				SelectedItem ^= 1;
 			}

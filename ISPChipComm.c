@@ -67,25 +67,28 @@ void ISPCC_ProgramChip(void)
 	uint16_t BytesToWrite = ((uint16_t)PacketBytes[1] << 8)
 	                      | PacketBytes[2];
 	uint8_t  PollType;
+	uint8_t  ByteToWrite;
 			
 	if (ProgMode & ISPCC_PROG_MODE_PAGE)                 // Page writing mode
 	{
 		for (uint16_t WriteByte = 0; WriteByte < BytesToWrite; WriteByte++) // Transmit the page bytes
 		{
+			ByteToWrite = PacketBytes[10 + WriteByte];
+		
 			if (PacketBytes[0] == CMD_PROGRAM_FLASH_ISP) // Flash write mode - word addresses so MSB/LSB masking 
 			   USI_SPITransmit(WriteCommand | ((WriteByte & 0x01)? ISPCC_HIGH_BYTE_WRITE : ISPCC_LOW_BYTE_WRITE));
 			else                                         // EEPROM write mode - byte addresses so no masking 
 			   USI_SPITransmit(WriteCommand);
 
 			USI_SPITransmitWord(CurrAddress & 0xFFFF);    // Only the LSW of the address should be sent
-			USI_SPITransmit(PacketBytes[10 + WriteByte]); // Send one of the new bytes to be written
+			USI_SPITransmit(ByteToWrite);                 // Send one of the new bytes to be written
 
 			if (!(PollAddress))
 			{
-				if ((PacketBytes[8] != PacketBytes[10 + WriteByte]) // Can do polling
-				   && ((PacketBytes[0] == CMD_PROGRAM_FLASH_ISP) || ((PacketBytes[0] == CMD_PROGRAM_EEPROM_ISP) && (PacketBytes[9] != PacketBytes[10 + BytesToWrite]))))
+				if ((PacketBytes[8] != ByteToWrite)       // Can do polling
+				   && ((PacketBytes[0] == CMD_PROGRAM_FLASH_ISP) || ((PacketBytes[0] == CMD_PROGRAM_EEPROM_ISP) && (PacketBytes[9] != ByteToWrite))))
 				{
-					PollAddress = (CurrAddress & 0xFFFF);    // Save the current address
+					PollAddress = (CurrAddress & 0xFFFF); // Save the current address
 				
 					if (PacketBytes[0] == CMD_PROGRAM_FLASH_ISP)
 					   PollAddress = ((PollAddress << 1) + (WriteByte & 0x01));
@@ -115,18 +118,20 @@ void ISPCC_ProgramChip(void)
 	{
 		for (uint16_t WriteByte = 0; WriteByte < BytesToWrite; WriteByte++)
 		{
+			ByteToWrite = PacketBytes[10 + WriteByte];
+
 			if (PacketBytes[0] == CMD_PROGRAM_FLASH_ISP)
 			   USI_SPITransmit(WriteCommand | ((WriteByte & 0x01)? ISPCC_HIGH_BYTE_WRITE : ISPCC_LOW_BYTE_WRITE));
 			else
 			   USI_SPITransmit(WriteCommand);					
 					
 			USI_SPITransmitWord(CurrAddress & 0xFFFF);    // Transmit the current address to the slave AVR
-			USI_SPITransmit(PacketBytes[10 + WriteByte]); // Send one of the new bytes to be written
+			USI_SPITransmit(ByteToWrite);                 // Send one of the new bytes to be written
 
 			PollType = ProgMode;
 
-			if ((PacketBytes[8] != PacketBytes[10 + WriteByte]) // Can do polling
-			   && ((PacketBytes[0] == CMD_PROGRAM_FLASH_ISP) || ((PacketBytes[0] == CMD_PROGRAM_EEPROM_ISP) && (PacketBytes[9] != PacketBytes[10 + WriteByte]))))
+			if ((PacketBytes[8] != ByteToWrite)           // Can do polling
+			   && ((PacketBytes[0] == CMD_PROGRAM_FLASH_ISP) || ((PacketBytes[0] == CMD_PROGRAM_EEPROM_ISP) && (PacketBytes[9] != ByteToWrite))))
 			{
 				PollAddress = (CurrAddress & 0xFFFF);     // Save the current address;
 

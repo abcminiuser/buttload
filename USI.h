@@ -1,4 +1,9 @@
-#ifndef USI_H
+#if (!defined(USI_H))
+ /* Assember and C Code Defines. */
+ #define USI_CONTROL_REG_FLAGS ((1<<USIOIE) | (1<<USIWM0) | (1<<USICS1) | (1<<USICLK))
+#endif
+
+#if (!defined(USI_H) && !(defined(__ASSEMBLER__)))
 #define USI_H
 
 /* Includes */
@@ -17,10 +22,6 @@
 #define USI_DATAIN_PIN	PE5		//!< USI data input pin.
 #define USI_DATAOUT_PIN	PE6		//!< USI data output pin.
 
-/* SPI Mode Defines */
-#define SPI_SAMPLE_LEADING 0	// Sample on leading _rising_ edge, setup on trailing _falling_ edge.
-#define SPI_SAMPLE_FALLING 1	// Sample on leading _falling_ edge, setup on trailing _rising_ edge.
-
 /*  Prescaler value converted to bit settings. */
 #define TC0_PS_1    (1<<CS00)
 #define TC0_PS_8    (1<<CS01)
@@ -30,6 +31,11 @@
 
 /* Other Defines */
 #define USI_PRESET_SPEEDS 4
+
+#define USI_SPI_SPEED_921600Hz  0
+#define USI_SPI_SPEED_230400Hz  1
+#define USI_SPI_SPEED_57600Hz   2
+#define USI_SPI_SPEED_28800Hz   3
 
 /* Macros */
 #define USI_STOPUSITIMER() TCCR0A = 0;

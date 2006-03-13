@@ -31,42 +31,16 @@
  *  SPI module, which means that the byte must be read before the next transfer
  *  completes and overwrites the current value.
  */
-static uint8_t storedUSIDR;
-
-/*! \brief  Driver status bit structure.
- *
- *  This struct contains status flags for the driver.
- *  The flags have the same meaning as the corresponding status flags
- *  for the native SPI module. The flags should not be changed by the user.
- *  The driver takes care of updating the flags when required.
- */
-struct usidriverStatus_t {
-	unsigned char transferComplete : 1; //!< True when transfer completed.
-	unsigned char writeCollision : 1;   //!< True if put attempted during transfer.
-};
-
-volatile static struct usidriverStatus_t USI_status; //!< The driver status bits.
+uint8_t storedUSIDR;
+volatile uint8_t TransferComplete;
 
 
-                                                          // SPI Clock Duration Value, Timer Prescale, Compare Value
-const uint8_t USIPSValues[USI_PRESET_SPEEDS][3] PROGMEM = {{SPI_SPEED_921600Hz      , TC0_PS_1      , 64           },   // Actual speed = 113,427Hz
-                                                            {SPI_SPEED_230400Hz      , TC0_PS_1      , 84           },   // Actual speed =  86,738Hz
-                                                            {SPI_SPEED_57600Hz       , TC0_PS_1      , 128           },  // Actual speed =  57,600Hz
-                                                            {SPI_SPEED_28800Hz       , TC0_PS_1      , 255           }}; // Actual speed =  28,912Hz
-                                                          // USI Speed = (Fcpu/Prescale/(Compare + 1))Hz    Max Speed = (Fosc/64)
-
-/*! \brief  Timer/Counter 0 Compare Match Interrupt handler.
- *
- *  This interrupt handler is only enabled when transferring data
- *  in master mode. It toggles the USI clock pin, i.e. two interrupts
- *  results in one clock period on the clock pin and for the USI counter.
- */
-ISR(TIMER0_COMP_vect, ISR_BLOCK)
-{
-	USICR |= (1<<USITC);	// Toggle clock output pin.
-}
-
-
+                                                          // SPI Clock Duration Value    , Compare Value
+const uint8_t USIPSValues[USI_PRESET_SPEEDS][2] PROGMEM = {{USI_SPI_SPEED_28800Hz       , 128          },  // Actual speed = 57,153Hz
+                                                            {USI_SPI_SPEED_57600Hz       , 84           },  // Actual speed = 86,738Hz
+                                                            {USI_SPI_SPEED_230400Hz      , 64           },  // Actual speed = 113,427Hz
+                                                            {USI_SPI_SPEED_921600Hz      , 34           }}; // Actual speed = 210,651Hz
+                                                          // USI Speed = (Fcpu/Prescale/(Compare + 1))Hz
 
 /*! \brief  USI Timer Overflow Interrupt handler.
  *
@@ -83,7 +57,7 @@ ISR(USI_OVERFLOW_vect, ISR_BLOCK)
 	
 	// Update flags and clear USI counter
 	USISR = (1<<USIOIF);
-	USI_status.transferComplete = 1;
+	TransferComplete = 1;
 
 	// Copy USIDR to buffer to prevent overwrite on next transfer.
 	storedUSIDR = USIDR;
@@ -108,16 +82,13 @@ void USI_SPIInitMaster(char Freq)
 	USI_OUT_REG &= ~(1<<USI_DATAOUT_PIN) | (1<<USI_CLOCK_PIN); // Pull-ups.
 	
 	// Configure USI to 3-wire master mode with overflow interrupt.
-	USICR = (1<<USIOIE) | (1<<USIWM0) |
-	        (1<<USICS1) | (SPI_SAMPLE_LEADING<<USICS0) |
-	        (1<<USICLK);
+	USICR = USI_CONTROL_REG_FLAGS;
 
 	// Set the compare and prescaler for the requested frequency:
 	USI_SPISetSpeed(Freq);
 	
 	// Init driver status register.
-	USI_status.transferComplete = 0;
-	USI_status.writeCollision   = 0;
+	TransferComplete = 0;
 	
 	storedUSIDR = 0;
 }
@@ -144,17 +115,8 @@ void USI_SPIOff( void )
  */
 uint8_t USI_SPITransmit( unsigned char val )
 {
-	// Check if transmission in progress,
-	// i.e. USI counter unequal to zero.
-	if( (USISR & 0x0F) != 0 ) {
-		// Indicate write collision and return.
-		USI_status.writeCollision = 1;
-		return 0;
-	}
-	
 	// Reinit flags.
-	USI_status.transferComplete = 0;
-	USI_status.writeCollision = 0;
+	TransferComplete = 0;
 
 	// Put data in USI data register.
 	USIDR = val;
@@ -165,7 +127,7 @@ uint8_t USI_SPITransmit( unsigned char val )
 	// Clear the timer 0 value
 	TCNT0 = 0;
 
-	do {} while( USI_status.transferComplete == 0 );
+	while (!(TransferComplete));
 
 	return storedUSIDR;
 }
@@ -187,18 +149,15 @@ void USI_SPIToggleClock(void)
 
 void USI_SPISetSpeed(uint8_t Freq)
 {
-	if (Freq == 0xFF) // Blank EEPROM, default to fastest setting
-	   Freq = SPI_SPEED_921600Hz;
-
 	for (uint8_t MatchIndex = 0; MatchIndex < USI_PRESET_SPEEDS; MatchIndex++)
 	{
 		if ((pgm_read_byte(&USIPSValues[MatchIndex][0]) == Freq) || (MatchIndex == (USI_PRESET_SPEEDS - 1)))
 		{
 			// Init Output Compare Register.
-			OCR0A = pgm_read_byte(&USIPSValues[MatchIndex][2]);
+			OCR0A = pgm_read_byte(&USIPSValues[MatchIndex][1]);
 
 			// Enable 'Clear Timer on Compare match' and set prescaler, which starts the timer
-			TCCR0A = ((1<<WGM01) | pgm_read_byte(&USIPSValues[MatchIndex][1]));
+			TCCR0A = ((1<<WGM01) | TC0_PS_1);
 				
 			return;
 		}
