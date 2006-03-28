@@ -71,7 +71,6 @@ ISR(USI_OVERFLOW_vect, ISR_BLOCK)
  *  Use this function initially or when changing from slave to master mode.
  *  Note that the stored USIDR value is cleared.
  *
- *  \param spi_mode  Required SPI mode, must be 0 or 1.
  */
 void USI_SPIInitMaster(char Freq)
 {

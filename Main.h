@@ -50,7 +50,7 @@ extern const uint8_t FAULTERR_ISPShort[];
 #define VERSION_MAJOR 1
 #define VERSION_MINOR 3
 
-#define MAGIC_NUM  0b01011010 // Magic number, used for first-run detection or upgrade incompatibility checks
+#define MAGIC_NUM  0b01111010 // Magic number, used for first-run detection or upgrade incompatibility checks
 
 #define MAIN_SETSTATUSLED(mask) PORTF = ((PORTF & ~MAIN_STATLED_ORANGE) | (mask))
 #define MAIN_STATLED_GREEN      (1 << 4)

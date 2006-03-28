@@ -620,7 +620,7 @@ void FUNCShowAbout(void)
      512:	82 e0       	ldi	r24, 0x02	; 2
      514:	91 e0       	ldi	r25, 0x01	; 1
      516:	0e 94 b1 08 	call	0x1162 <eeprom_read_byte_169>
-     51a:	8a 35       	cpi	r24, 0x5A	; 90
+     51a:	8a 37       	cpi	r24, 0x7A	; 122
      51c:	09 f1       	breq	.+66     	; 0x560 <__stack+0x61>
      51e:	20 e0       	ldi	r18, 0x00	; 0
      520:	30 e0       	ldi	r19, 0x00	; 0
@@ -645,7 +645,7 @@ void FUNCShowAbout(void)
      550:	82 17       	cp	r24, r18
      552:	93 07       	cpc	r25, r19
      554:	78 f3       	brcs	.-34     	; 0x534 <__stack+0x35>
-     556:	6a e5       	ldi	r22, 0x5A	; 90
+     556:	6a e7       	ldi	r22, 0x7A	; 122
      558:	82 e0       	ldi	r24, 0x02	; 2
      55a:	91 e0       	ldi	r25, 0x01	; 1
      55c:	0e 94 bc 08 	call	0x1178 <eeprom_write_byte_169>
@@ -3013,7 +3013,6 @@ ISR(USI_OVERFLOW_vect, ISR_BLOCK)
  *  Use this function initially or when changing from slave to master mode.
  *  Note that the stored USIDR value is cleared.
  *
- *  \param spi_mode  Required SPI mode, must be 0 or 1.
  */
 void USI_SPIInitMaster(char Freq)
 {
