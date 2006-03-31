@@ -60,9 +60,6 @@ BUTTLOADTAG(Author, "BY DEAN CAMERA");
 		2) A maximum of 10 fuse bytes and 10 lock bytes can be stored in memory at any one
 		   time (writing the same fuse overwrites the existing value). If it is attempted to
 		   write more than this maximum, the extra bytes will be ignored.
-
-		3) All HEX files that are to be stored into the internal dataflash must use continuous
-		   addresses from 0x0000. Direct programming (ie. AVRISP MODE) is not affected by this issue.
 */
 
 /*
@@ -147,11 +144,12 @@ const uint8_t    Func_ISPPRGM[]          PROGMEM = "AVRISP MODE";
 const uint8_t    Func_STOREPRGM[]        PROGMEM = "STORE PRGM";
 const uint8_t    Func_PRGMAVR[]          PROGMEM = "PROGRAM AVR";
 const uint8_t    Func_PRGMDATAFLASH[]    PROGMEM = "DATAFLASH PRGM MODE";
+const uint8_t    Func_PRGMSTOREINFO[]    PROGMEM = "DATASTORE INFO";
 const uint8_t    Func_SETTINGS[]         PROGMEM = "SETTINGS";
 const uint8_t    Func_SLEEP[]            PROGMEM = "SLEEP MODE";
 	
-const uint8_t*   MainFunctionNames[]     PROGMEM = {Func_ISPPRGM  , Func_STOREPRGM  , Func_PRGMAVR  , Func_PRGMDATAFLASH  , Func_SETTINGS      , Func_SLEEP};
-const FuncPtr    MainFunctionPtrs[]      PROGMEM = {FUNCAVRISPMode, FUNCStoreProgram, FUNCProgramAVR, FUNCProgramDataflash, FUNCChangeSettings , FUNCSleepMode};
+const uint8_t*   MainFunctionNames[]     PROGMEM = {Func_ISPPRGM  , Func_STOREPRGM  , Func_PRGMAVR  , Func_PRGMDATAFLASH  , Func_PRGMSTOREINFO, Func_SETTINGS      , Func_SLEEP};
+const FuncPtr    MainFunctionPtrs[]      PROGMEM = {FUNCAVRISPMode, FUNCStoreProgram, FUNCProgramAVR, FUNCProgramDataflash, FUNCStorageInfo   , FUNCChangeSettings , FUNCSleepMode};
 
 const uint8_t    SFunc_SETCONTRAST[]     PROGMEM = "SET CONTRAST";
 const uint8_t    SFunc_SETSPISPEED[]     PROGMEM = "SET SPI SPEED";
@@ -190,9 +188,10 @@ const uint8_t*   SIFOOptionPtrs[]        PROGMEM = {SIFO_Size, SIFO_Tags};
 int main(void)
 {
 	uint8_t CurrFunc = 0;
-											  
-	MCUCR   = (1 << JTD);                        // Turn off JTAG via code
-	MCUCR   = (1 << JTD);                        // Twice as specified in datasheet
+
+	// TODO: REENABLE JTAG
+	//MCUCR   = (1 << JTD);                        // Turn off JTAG via code
+	//MCUCR   = (1 << JTD);                        // Twice as specified in datasheet
 	
 	ACSR    = (1 << ACD);                        // Disable the unused Analogue Comparitor to save power
 	PRR     = ((1 << PRADC) | (1 << PRSPI));     // Disable the ADC (unused) and SPI (for now) to save power
@@ -242,9 +241,9 @@ int main(void)
 		if (JoyStatus)                           // Joystick is in the non-center position
 		{
 			if (JoyStatus & JOY_UP)              // Previous function
-			  (CurrFunc == 0)? CurrFunc = MAIN_TOTALMAINMENUITEMS : CurrFunc--;
+			  (CurrFunc == 0)? CurrFunc = (MAIN_TOTALMAINMENUITEMS - 1): CurrFunc--;
 			else if (JoyStatus & JOY_DOWN)      // Next function
-			  (CurrFunc == MAIN_TOTALMAINMENUITEMS)? CurrFunc = 0 : CurrFunc++;
+			  (CurrFunc == (MAIN_TOTALMAINMENUITEMS - 1))? CurrFunc = 0 : CurrFunc++;
 			else if (JoyStatus & JOY_PRESS)     // Select current function
 			  ((FuncPtr)pgm_read_word(&MainFunctionPtrs[CurrFunc]))(); // Run associated function
 			else if (JoyStatus & JOY_RIGHT)
@@ -300,7 +299,7 @@ void MAIN_ResetCSLine(uint8_t ActiveInactive)
 			  PORTF &= ~(1 << 6);
 		
 			break;
-		case MAIN_RESETCS_DFACTIVE: // Dataflashes are always active low.
+		case MAIN_RESETCS_EXTDFACTIVE: // Dataflashes are always active low.
 			DDRF  |=  (1 << 6);
 			PORTF &= ~(1 << 6);
 			
@@ -643,7 +642,9 @@ void FUNCStoreProgram(void)
 	LCD_puts_f(PSTR("*STORAGE MODE*"));
 
 	InterpretPacketRoutine = (FuncPtr)PM_InterpretAVRISPPacket;
+	InPMMode = TRUE;
 	V2P_RunStateMachine();
+	InPMMode = FALSE;
 	DF_EnableDataflash(FALSE);
 	SPI_SPIOFF();
 }
@@ -871,7 +872,7 @@ void FUNCStorageInfo(void)
 
 void FUNCGoBootloader(void)
 {
-	uint8_t MD = (MCUCR & ~(1 << JTD)); // Forces compiler to use two OUTs rather than two IN/AND/OUTs
+	uint8_t MD = (MCUCR & ~(1 << JTD)); // Forces compiler to use IN, AND plus two OUTs rather than two lots of IN/AND/OUTs
 	MCUCR = MD;  // Turn on JTAG via code
 	MCUCR = MD;  // Twice as specified in datasheet        
 	

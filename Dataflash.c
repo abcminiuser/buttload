@@ -79,10 +79,8 @@ void DF_CopyBufferToFlashPage(uint16_t PageAddress)
 	DF_SENDSPIBYTE((uint8_t)(PageAddress >> PageShiftHigh)); // Send the upper part of the page address
 	DF_SENDSPIBYTE((uint8_t)(PageAddress << PageShiftLow));  // Send the lower part of the page address
 	DF_SENDSPIBYTE(0x00);                         // Send a dummy byte	
-
-	DF_TOGGLEENABLE();
 	
-	while(DF_BUSY());	
+	while (DF_BUSY());	
 }
 
 void DF_CopyFlashPageToBuffer(uint16_t PageAddress)
@@ -93,10 +91,8 @@ void DF_CopyFlashPageToBuffer(uint16_t PageAddress)
 	DF_SENDSPIBYTE((uint8_t)(PageAddress >> PageShiftHigh)); // Send the upper part of the page address
 	DF_SENDSPIBYTE((uint8_t)(PageAddress << PageShiftLow));  // Send the lower part of the page address
 	DF_SENDSPIBYTE(0x00);                         // Send a dummy byte	
-
-	DF_TOGGLEENABLE();
 	
-	while(DF_BUSY());	
+	while (DF_BUSY());	
 }
 
 void DF_BufferWriteEnable(uint16_t BuffAddress)
@@ -143,9 +139,7 @@ void DF_ErasePage(uint16_t PageAddress)
 	DF_SENDSPIBYTE((uint8_t)(PageAddress << PageShiftLow));
 	DF_SENDSPIBYTE(0x00);
 
-	DF_TOGGLEENABLE();
-
-	while(DF_BUSY());
+	while (DF_BUSY());
 }
 
 void DF_EnableDataflash(uint8_t Enabled)
@@ -153,7 +147,7 @@ void DF_EnableDataflash(uint8_t Enabled)
 	if (Enabled == TRUE)
 	{
 		if (UseExernalDF == TRUE)
-		  MAIN_ResetCSLine(MAIN_RESETCS_DFACTIVE);
+		  MAIN_ResetCSLine(MAIN_RESETCS_EXTDFACTIVE);
 		else
 		  PORTB &= ~(1 << 0);
 	}

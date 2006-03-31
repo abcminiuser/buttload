@@ -12,6 +12,7 @@
 #define FlashToBuf2Compare       0x61  // Main memory page to buffer 2 compare
 #define ContArrayRead            0x68  // Continuous Array Read (Note : Only A/B-parts supported)
 #define PageErase                0x81  // Page erase, added by Martin Thomas
+#define BlockErase               0x50  // Block erase, added by Dean Camera
 #define FlashProgBuf1            0x82  // Main memory page program through buffer 1
 #define Buf1ToFlashWE            0x83  // Buffer 1 to main memory page program with built-in erase
 #define Buf1Write                0x84  // Buffer 1 write

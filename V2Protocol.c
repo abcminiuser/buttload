@@ -35,7 +35,6 @@ void V2P_RunStateMachine(void)
 	TIMEOUT_SetupTimeoutTimer();
 
 	InProgrammingMode = FALSE;
-	SequenceNum       = 1;
 	CurrAddress       = 0;
 
 	while (1)
@@ -145,7 +144,18 @@ void V2P_RunStateMachine(void)
 							             | ((uint32_t)PacketBytes[2] << 16)
 							             | ((uint32_t)PacketBytes[3] << 8)
 							             | PacketBytes[4];
-										 							
+										 
+							if (InPMMode)
+							{
+								DF_CopyBufferToFlashPage(CurrPageAddress);  // Save currently written buffer data
+
+								// TODO: BELOW LINE BREAKS STORAGE MODE
+								PM_SetupDFAddressCounters(MemoryType);      // Get partial data saved in page
+
+								DF_CopyFlashPageToBuffer(CurrPageAddress);  // Set up the counters to continue from the new address
+								DF_BufferWriteEnable(CurrBuffByte);         // Enable writing from the new location
+							}
+			 							
 							PacketBytes[1] = STATUS_CMD_OK;
 
 							V2P_SendPacket();

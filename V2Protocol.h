@@ -25,6 +25,7 @@
 #include "EEPROMVariables.h"
 #include "AVRISPCommandBytes.h"
 #include "AVRISPCommandInterpreter.h"
+#include "ProgramManager.h"
 
 // DEFINES AND MACROS:
 #define V2P_MAXBUFFSIZE           275 // Maximum message size length (275 is the same as the STK500)

@@ -47,46 +47,37 @@ extern const uint8_t FAULTERR_ISPShort[];
 #define JoyStatus GPIOR0 // Pseudo-variable; "JoyStatus" becomes an alias for the General Purpose IO Storage Register 0
 
 // DEFINES AND MACROS:
-#define VERSION_MAJOR 1
-#define VERSION_MINOR 3
+#define VERSION_MAJOR            1
+#define VERSION_MINOR            3
 
-#define MAGIC_NUM  0b01111010 // Magic number, used for first-run detection or upgrade incompatibility checks
+#define MAGIC_NUM                0b01111010 // Magic number, used for first-run detection or upgrade incompatibility checks
 
-#define MAIN_SETSTATUSLED(mask) PORTF = ((PORTF & ~MAIN_STATLED_ORANGE) | (mask))
-#define MAIN_STATLED_GREEN      (1 << 4)
-#define MAIN_STATLED_ORANGE     ((1 << 4) | (1 << 5))
-#define MAIN_STATLED_RED        (1 << 5)
+#define MAIN_SETSTATUSLED(mask)  PORTF = ((PORTF & ~MAIN_STATLED_ORANGE) | (mask))
+#define MAIN_STATLED_GREEN       (1 << 4)
+#define MAIN_STATLED_ORANGE      ((1 << 4) | (1 << 5))
+#define MAIN_STATLED_RED         (1 << 5)
 
-#define MAIN_TOTALMAINMENUITEMS 5
+#define MAIN_TOTALMAINMENUITEMS  7
 
-#define JOY_LEFT                (1 << 2)
-#define JOY_RIGHT               (1 << 3)
-#define JOY_UP                  (1 << 6)
-#define JOY_DOWN                (1 << 7)
-#define JOY_PRESS               (1 << 4)
-#define JOY_BMASK               ((1 << 4) | (1 << 6) | (1 << 7))
-#define JOY_EMASK               ((1 << 2) | (1 << 3))
+#define JOY_LEFT                 (1 << 2)
+#define JOY_RIGHT                (1 << 3)
+#define JOY_UP                   (1 << 6)
+#define JOY_DOWN                 (1 << 7)
+#define JOY_PRESS                (1 << 4)
+#define JOY_BMASK                ((1 << 4) | (1 << 6) | (1 << 7))
+#define JOY_EMASK                ((1 << 2) | (1 << 3))
 
-#define TC2_PS_OFF              0
-#define TC2_PS_1                (1 << CS20)
-#define TC2_PS_8                (1 << CS21)
-#define TC2_PS_32               ((1 << CS20) | (1 << CS21))
-#define TC2_PS_64               (1 << CS22)
-#define TC2_PS_128              ((1 << CS20) | (1 << CS22))
-#define TC2_PS_256              ((1 << CS21) | (1 << CS22))
-#define TC2_PS_1024             ((1 << CS20) | (1 << CS21) | (1 << CS22))
+#define TYPE_EEPROM              0
+#define TYPE_FLASH               1
+#define TYPE_FUSE                2
+#define TYPE_LOCK                3
 
-#define TYPE_EEPROM             0
-#define TYPE_FLASH              1
-#define TYPE_FUSE               2
-#define TYPE_LOCK               3
+#define TRUE                     1
+#define FALSE                    0
 
-#define TRUE                    1
-#define FALSE                   0
-
-#define MAIN_RESETCS_ACTIVE     0
-#define MAIN_RESETCS_INACTIVE   1
-#define MAIN_RESETCS_DFACTIVE   2
+#define MAIN_RESETCS_ACTIVE      0
+#define MAIN_RESETCS_INACTIVE    1
+#define MAIN_RESETCS_EXTDFACTIVE 2
 
 #define SLEEP()                 asm volatile ("sleep"::)
 

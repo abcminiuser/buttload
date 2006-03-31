@@ -10,7 +10,8 @@
 // Global Variables:
 uint8_t  MemoryType          = 0;
 uint8_t  CurrentMode         = PM_NO_SETUP;
-uint16_t PageLength          = 0;
+uint16_t GPageLength         = 0;
+uint8_t  InPMMode            = FALSE;
 
 // ======================================================================================
 
@@ -19,7 +20,7 @@ uint32_t PM_GetStoredDataSize(uint8_t Type)
 	/* This take a **LOT** of code (202 bytes), and is accessed several times throughout
 	   the program, so I've put it into a seperate function to save on flash.            */
 
-	uint32_t ProgDataSize  = 0;
+	uint32_t ProgDataSize = 0;
 	uint16_t EEPROMAddress;
 
 	EEPROMAddress = ((Type == TYPE_FLASH)? Prog_DataSize : Prog_EEPROMSize);
@@ -40,9 +41,9 @@ uint32_t PM_GetStoredDataSize(uint8_t Type)
 void PM_SetupDFAddressCounters(uint8_t Type)
 {
 	uint32_t StartAddress;
-
-	MemoryType   = Type;
-	PageLength   = 0;
+	
+	MemoryType = Type;
+	GPageLength = 0;
 
 	if (Type == TYPE_FLASH)                                              // Type 1 = Flash
 		StartAddress = (CurrAddress << 1);                               // Convert flash word address to byte address
@@ -51,7 +52,7 @@ void PM_SetupDFAddressCounters(uint8_t Type)
 	
 	CurrPageAddress = 0;
 
-	while (StartAddress > DF_INTERNALDF_BUFFBYTES)                      // This loop is the equivalent of a DIV and a MOD
+	while (StartAddress >= DF_INTERNALDF_BUFFBYTES)                      // This loop is the equivalent of a DIV and a MOD
 	{
 		StartAddress -= DF_INTERNALDF_BUFFBYTES;                         // Subtract one page's worth of bytes from the desired address
 		CurrPageAddress++;
@@ -65,13 +66,14 @@ void PM_StoreProgramByte(uint8_t Data)
 	if (CurrBuffByte == DF_INTERNALDF_BUFFBYTES)
 	{
 		DF_CopyBufferToFlashPage(CurrPageAddress++);
+		DF_CopyFlashPageToBuffer(CurrPageAddress);
 		DF_BufferWriteEnable(0);
 		CurrBuffByte = 0;
 	}
 	
 	SPI_SPITransmit(Data);                                               // Store the byte, dataflash is in write mode due to DF_BufferWriteEnable
 	CurrBuffByte++;
-	PageLength++;
+	GPageLength++;
 }
 
 void PM_InterpretAVRISPPacket(void)
@@ -141,6 +143,8 @@ void PM_InterpretAVRISPPacket(void)
 				eeprom_write_byte_169(&EEPROMAddress, 0x00);
 				EEPROMAddress++;						
 			}
+			
+			//DF_EraseInternalDF();  TODO: FIX ROUTINE
 			
 			eeprom_write_byte_169(&Prog_EraseCmdStored, TRUE);
 			
@@ -256,16 +260,16 @@ void PM_InterpretAVRISPPacket(void)
 
 			for (uint16_t CurrByte = 0; CurrByte < BytesToWrite; CurrByte++)
 				PM_StoreProgramByte(PacketBytes[10 + CurrByte]);
-						
-			if ((PacketBytes[3] & ISPCC_PROG_MODE_PAGEDONE) && !(PageLength & PM_PAGELENGTH_FOUNDBIT) && PageLength)
+
+			if (!(GPageLength & PM_PAGELENGTH_FOUNDBIT) && (PacketBytes[3] & ISPCC_PROG_MODE_PAGEDONE) && GPageLength)
 			{
 				EEPROMAddress = ((MemoryType == TYPE_FLASH)? Prog_PageLength : Prog_EPageLength);
 	
-				eeprom_write_byte_169(&EEPROMAddress, (uint8_t)(PageLength >> 8));
+				eeprom_write_byte_169(&EEPROMAddress, (uint8_t)(GPageLength >> 8));
 				EEPROMAddress++;
-				eeprom_write_byte_169(&EEPROMAddress, (uint8_t)PageLength);		
+				eeprom_write_byte_169(&EEPROMAddress, (uint8_t)GPageLength);		
 		
-				PageLength |= PM_PAGELENGTH_FOUNDBIT;                 // Bit 15 is used to indicate if the length has been found
+				GPageLength |= PM_PAGELENGTH_FOUNDBIT;                 // Bit 15 is used to indicate if the length has been found
 			}
 
 			PacketBytes[1] = STATUS_CMD_OK;
@@ -391,16 +395,16 @@ void PM_SendEraseCommand(void)
 		EEPROMAddress++;
 	}
 			
-	EEPROMAddress = Prog_EraseChip + 1;                // Poll mode flag address
-	if (eeprom_read_byte_169(&EEPROMAddress))          // Value of 1 indicates a busy flag test
+	EEPROMAddress = Prog_EraseChip + 1;               // Poll mode flag address
+	if (eeprom_read_byte_169(&EEPROMAddress))         // Value of 1 indicates a busy flag test
 	{
 		do
 			USI_SPITransmitWord(0xF000);
 		while (USI_SPITransmitWord(0x0000) & 0x01);
 	}
-	else                                               // Cleared flag means use a predefined delay
+	else                                              // Cleared flag means use a predefined delay
 	{
-		EEPROMAddress = Prog_EraseChip;                 // Delay value address			
+		EEPROMAddress = Prog_EraseChip;               // Delay value address			
 		MAIN_Delay1MS(eeprom_read_byte_169(&EEPROMAddress)); // Wait the erase delay
 	}
 }

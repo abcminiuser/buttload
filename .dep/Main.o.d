@@ -10,8 +10,8 @@ Main.o: Main.c ButtLoadTag.h C:/WinAVR/avr/include/avr/io.h \
   ISRMacro.h OSCCal.h LCD_Driver.h V2Protocol.h lcd_driver.h Timeout.h \
   USART.h RingBuff.h eeprom169.h EEPROMVariables.h EEPROM169.h \
   AVRISPCommandBytes.h AVRISPCommandInterpreter.h SPI.h ISPChipComm.h \
-  USI.h Dataflash.h DataflashCommandBytes.h ProgDataflash.h \
-  ProgramManager.h C:/WinAVR/avr/include/stdlib.h TagManager.h
+  USI.h ProgramManager.h C:/WinAVR/avr/include/stdlib.h Dataflash.h \
+  DataflashCommandBytes.h ProgDataflash.h TagManager.h
 
 ButtLoadTag.h:
 
@@ -73,14 +73,14 @@ ISPChipComm.h:
 
 USI.h:
 
+ProgramManager.h:
+
+C:/WinAVR/avr/include/stdlib.h:
+
 Dataflash.h:
 
 DataflashCommandBytes.h:
 
 ProgDataflash.h:
-
-ProgramManager.h:
-
-C:/WinAVR/avr/include/stdlib.h:
 
 TagManager.h:

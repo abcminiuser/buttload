@@ -17,7 +17,6 @@
 #include "AVRISPCommandBytes.h"
 #include "EEPROMVariables.h"
 
-
 // DEFINES:
 #define PM_NO_SETUP            0
 #define PM_DATAFLASH_WRITE     1
@@ -30,6 +29,10 @@
 #define PM_MAX_FUSELOCKBITS    10
 
 #define PM_EEPROM_OFFSET       (uint32_t)(1024UL * 257UL)
+
+// EXTERNAL VARIABLES:
+extern uint8_t  MemoryType;
+extern uint8_t  InPMMode;
 
 // PROTOTYPES:
 uint32_t PM_GetStoredDataSize(uint8_t Type);
