@@ -130,13 +130,13 @@ uint8_t DF_ReadBufferByte(uint16_t BuffAddress)
 	return DF_SENDSPIBYTE(0x00);                         
 }
 
-void DF_ErasePage(uint16_t PageAddress)
+void DF_EraseBlock(uint16_t BlockToErase)
 {
 	DF_TOGGLEENABLE();
 
-	DF_SENDSPIBYTE(PageErase);                   // Send page erase command
-	DF_SENDSPIBYTE((uint8_t)(PageAddress >> PageShiftHigh));
-	DF_SENDSPIBYTE((uint8_t)(PageAddress << PageShiftLow));
+	DF_SENDSPIBYTE(BlockErase);                   // Send block erase command
+	DF_SENDSPIBYTE((uint8_t)(BlockToErase >> 8));
+	DF_SENDSPIBYTE((uint8_t)(BlockToErase));
 	DF_SENDSPIBYTE(0x00);
 
 	while (DF_BUSY());

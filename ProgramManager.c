@@ -11,7 +11,6 @@
 uint8_t  MemoryType          = 0;
 uint8_t  CurrentMode         = PM_NO_SETUP;
 uint16_t GPageLength         = 0;
-uint8_t  InPMMode            = FALSE;
 
 // ======================================================================================
 
@@ -42,7 +41,7 @@ void PM_SetupDFAddressCounters(uint8_t Type)
 {
 	uint32_t StartAddress;
 	
-	MemoryType = Type;
+	MemoryType  = Type;
 	GPageLength = 0;
 
 	if (Type == TYPE_FLASH)                                              // Type 1 = Flash
@@ -144,7 +143,9 @@ void PM_InterpretAVRISPPacket(void)
 				EEPROMAddress++;						
 			}
 			
-			//DF_EraseInternalDF();  TODO: FIX ROUTINE
+			uint8_t Block = 0xFF;
+			while (Block--)
+			   DF_EraseBlock(Block);
 			
 			eeprom_write_byte_169(&Prog_EraseCmdStored, TRUE);
 			
@@ -155,7 +156,7 @@ void PM_InterpretAVRISPPacket(void)
 			MessageSize = 4;
 
 			PacketBytes[1] = STATUS_CMD_OK;                             // Data byte is encased in CMD_OKs
-			PacketBytes[1] = 0x00;                                      // Return 0x00 for the OSCCAL byte
+			PacketBytes[2] = 0x00;                                      // Return 0x00 for the OSCCAL byte
 			PacketBytes[3] = STATUS_CMD_OK;                             // Data byte is encased in CMD_OKs
 
 			break;

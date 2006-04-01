@@ -190,8 +190,8 @@ int main(void)
 	uint8_t CurrFunc = 0;
 
 	// TODO: REENABLE JTAG
-	//MCUCR   = (1 << JTD);                        // Turn off JTAG via code
-	//MCUCR   = (1 << JTD);                        // Twice as specified in datasheet
+	//MCUCR   = (1 << JTD);                      // Turn off JTAG via code
+	//MCUCR   = (1 << JTD);                      // Twice as specified in datasheet
 	
 	ACSR    = (1 << ACD);                        // Disable the unused Analogue Comparitor to save power
 	PRR     = ((1 << PRADC) | (1 << PRSPI));     // Disable the ADC (unused) and SPI (for now) to save power
@@ -642,9 +642,7 @@ void FUNCStoreProgram(void)
 	LCD_puts_f(PSTR("*STORAGE MODE*"));
 
 	InterpretPacketRoutine = (FuncPtr)PM_InterpretAVRISPPacket;
-	InPMMode = TRUE;
 	V2P_RunStateMachine();
-	InPMMode = FALSE;
 	DF_EnableDataflash(FALSE);
 	SPI_SPIOFF();
 }

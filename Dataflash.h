@@ -52,7 +52,7 @@ void    DF_CopyFlashPageToBuffer(uint16_t PageAddress);
 void    DF_ContinuousReadEnable(uint16_t PageAddress, uint16_t BuffAddress);
 uint8_t DF_ReadBufferByte(uint16_t BuffAddress);
 void    DF_BufferWriteEnable(uint16_t BuffAddress);
-void    DF_ErasePage(uint16_t PageAddress);
+void    DF_EraseBlock(uint16_t BlockToErase);
 void    DF_EnableDataflash(uint8_t Enabled);
 
 #endif

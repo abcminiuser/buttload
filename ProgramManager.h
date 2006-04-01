@@ -32,7 +32,7 @@
 
 // EXTERNAL VARIABLES:
 extern uint8_t  MemoryType;
-extern uint8_t  InPMMode;
+extern uint8_t  CurrentMode;
 
 // PROTOTYPES:
 uint32_t PM_GetStoredDataSize(uint8_t Type);

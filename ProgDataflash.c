@@ -59,8 +59,8 @@ void PD_InterpretAVRISPPacket(void)
 		case CMD_CHIP_ERASE_ISP:
 			MessageSize = 2;
 
-			for (uint16_t PageToErase = 0; PageToErase < DataflashInfo.TotalPages; PageToErase++)
-			   DF_ErasePage(PageToErase);
+			for (uint16_t BlockToErase = 0; BlockToErase < (DataflashInfo.TotalPages >> 3); BlockToErase++)
+			   DF_EraseBlock(BlockToErase);
 
 			PacketBytes[1] = STATUS_CMD_OK;
 			
@@ -110,7 +110,7 @@ void PD_InterpretAVRISPPacket(void)
 
 			for (uint16_t WriteByte = 0; WriteByte < BytesToWrite; WriteByte++)
 			{
-				DF_StoreDataflashByte(PacketBytes[10 + WriteByte]);
+				PD_StoreDataflashByte(PacketBytes[10 + WriteByte]);
 				CurrBuffByte++;
 				V2P_IncrementCurrAddress();
 			}
@@ -167,7 +167,7 @@ void PD_SetupDFAddressCounters(void)
 	CurrBuffByte = (uint16_t)StartAddress;              // The buffer byte is the remainder
 }
 
-void DF_StoreDataflashByte(uint8_t Data)
+void PD_StoreDataflashByte(uint8_t Data)
 {
 	if (CurrBuffByte == DataflashInfo.PageSize)
 	{

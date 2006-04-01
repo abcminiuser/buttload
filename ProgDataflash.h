@@ -22,6 +22,6 @@ extern const uint8_t DataFlashProgMode[] PROGMEM;
 // PROTOTYPES:
 void PD_InterpretAVRISPPacket(void);
 void PD_SetupDFAddressCounters(void);
-void DF_StoreDataflashByte(uint8_t Data);
+void PD_StoreDataflashByte(uint8_t Data);
 
 #endif
