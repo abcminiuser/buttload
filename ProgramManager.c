@@ -142,11 +142,7 @@ void PM_InterpretAVRISPPacket(void)
 				eeprom_write_byte_169(&EEPROMAddress, 0x00);
 				EEPROMAddress++;						
 			}
-			
-			uint8_t Block = 0xFF;
-			while (Block--)
-			   DF_EraseBlock(Block);
-			
+						
 			eeprom_write_byte_169(&Prog_EraseCmdStored, TRUE);
 			
 			PacketBytes[1] = STATUS_CMD_OK;
@@ -484,7 +480,7 @@ void PM_CreateProgrammingPackets(uint8_t Type)
 				PacketBytes[2]  = (uint8_t)(PageLength);
 				PacketBytes[3] |= ISPCC_PROG_MODE_PAGEDONE;
 
-				BytesRead     += PageLength;                          // Increment the counter
+				BytesRead += PageLength;                            // Increment the counter
 			}
 		}
 		else

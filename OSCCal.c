@@ -12,12 +12,12 @@
    mode with an overflow interrupt (clock source is the external 32768Hz crystal on the Butterfly.
    Code will calibrate to 7372800Hz for correct serial transmission at 115200 baud.                 */
 
-volatile static unsigned int ActualCount;
+volatile static uint16_t ActualCount;
 
 void OSCCAL_Calibrate(void)
 {
-	unsigned char SREG_Backup;
-	unsigned char LoopCount = 64; // Maximum range is 128, and starts from the middle, so 64 is the max number of iterations required
+	uint8_t SREG_Backup;
+	uint8_t LoopCount = (0x7F / 2); // Maximum range is 128, and starts from the middle, so 64 is the max number of iterations required
    
 	// Make sure all clock division is turned off (8Mhz RC clock)
 	CLKPR = (1 << CLKPCE);
@@ -26,19 +26,19 @@ void OSCCAL_Calibrate(void)
 	// Inital OSCCAL of half its maximum for speed
 	OSCCAL = (0x7F / 2);
 
-	//Save the SREG
+	// Save the SREG
 	SREG_Backup = SREG;
     
 	// Disable all timer 1 interrupts
 	TIMSK1 = 0;
         
 	// Set timer 2 to asyncronous mode (32.768KHz crystal)
-	ASSR  = (1 << AS2);
+	ASSR   = (1 << AS2);
         
 	// Timer 2 overflow interrupt enable
 	TIMSK2 = (1 << TOIE2);
 
-	//Enable interrupts
+	// Enable interrupts
 	sei();
 
 	// Start both counters with no prescaling
@@ -49,8 +49,8 @@ void OSCCAL_Calibrate(void)
 	while (ASSR & ((1 << TCN2UB) | (1 << TCR2UB) | (1 << OCR2UB)));
     
 	// Clear the timer values
-	TCNT1 = 0;
-	TCNT2 = 0;
+	TCNT1  = 0;
+	TCNT2  = 0;
     
 	while (LoopCount--)
 	{
@@ -58,19 +58,11 @@ void OSCCAL_Calibrate(void)
 		_delay_ms(60);
         
 		if (ActualCount > (TARGETCOUNT + 5))		    // Clock is running too fast
-		{
-			// Bit 7 selects low or high range - only low range is nessesary
-			OSCCAL = ((OSCCAL - 1) & ~(1 << 7));
-		}
+			OSCCAL--;
 		else if (ActualCount < (TARGETCOUNT - 5))		// Clock is running too slow
-		{
-			// Bit 7 selects low or high range - only low range is nessesary
-			OSCCAL = ((OSCCAL + 1) & ~(1 << 7));
-		}
+			OSCCAL++;
 		else		                                    // Clock is just right
-		{
 			break;
-		}		
 	}
             
 	// Disable all timer interrupts

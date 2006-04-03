@@ -95,7 +95,7 @@ void AICI_InterpretPacket(void)
 		case CMD_READ_OSCCAL_ISP:
 			MessageSize = 4;
 	
-			for(uint8_t ByteNum = 1; ByteNum <= 4; ByteNum++)
+			for (uint8_t ByteNum = 1; ByteNum <= 4; ByteNum++)
 			{
 				uint8_t Response = USI_SPITransmit(PacketBytes[1 + ByteNum]); // Transmit the four signature request bytes
 

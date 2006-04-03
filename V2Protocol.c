@@ -145,22 +145,6 @@ void V2P_RunStateMachine(void)
 							             | ((uint32_t)PacketBytes[3] << 8)
 							             | PacketBytes[4];
 
-							if (CurrentMode == PM_DATAFLASH_WRITE)
-							{
-								DF_CopyBufferToFlashPage(CurrPageAddress);  // Save currently written buffer data
-
-								// TODO: Calling this breaks storage mode
-//								PM_SetupDFAddressCounters(MemoryType);
-
-								DF_CopyFlashPageToBuffer(CurrPageAddress);  // Set up the counters to continue from the new address
-								DF_BufferWriteEnable(CurrBuffByte);         // Enable writing from the new location							
-							}
-							else if (CurrentMode == PM_DATAFLASH_READ)
-							{
-								PM_SetupDFAddressCounters(MemoryType);
-								DF_ContinuousReadEnable(CurrPageAddress, CurrBuffByte);
-							}
-
 							PacketBytes[1] = STATUS_CMD_OK;
 
 							V2P_SendPacket();
@@ -195,7 +179,7 @@ void V2P_SendPacket(void)
 	USART_Tx(MessageSize & 0xFF);
 	USART_Tx(TOKEN);
 
-	for(uint16_t SentBytes = 0; SentBytes < MessageSize; SentBytes++)
+	for (uint16_t SentBytes = 0; SentBytes < MessageSize; SentBytes++)
 		USART_Tx(PacketBytes[SentBytes]);
 
 	USART_Tx(V2P_GetChecksum());
@@ -216,8 +200,8 @@ uint8_t V2P_GetChecksum()
 	CheckSumByte ^= (uint8_t)(MessageSize);
 	CheckSumByte ^= TOKEN;
 	
-	for(uint16_t CByteIndex = 0; CByteIndex < MessageSize; CByteIndex++)
-		CheckSumByte ^= PacketBytes[CByteIndex];
+	for (uint16_t CByteIndex = 0; CByteIndex < MessageSize; CByteIndex++)
+	   CheckSumByte ^= PacketBytes[CByteIndex];
 
 	return CheckSumByte;
 }

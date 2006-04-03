@@ -7,10 +7,10 @@ Current Version: Public Release 1.3
 	  * USI Timer0 compare match routine rewritten in optimised ASM for speed, increased USI max speed value
 	  * USI Speed/Compare Value table reordered and blank EEPROM check removed for code size (due to table reorder code still defaults to fastest setting if the EEPROM is blank)
 	  * Removed the WriteCollision flag from the USI driver, since the routine waits for completion before exiting anyway
-	  * Added support for non-consecutive HEX files to be stored into internal memory
-	  * Re-added main menu option for storeage info (accidentally removed in 1.2)
-	  * Changed dataflash erase (onboard and external) method to the faster block erase
-	  * Fixed typo in CMD_READ_OSCCAL_ISP section of the ProgramManager.c packet interpretation routine 
+	  * Re-added main menu option for storage info (accidentally removed in 1.2)
+	  * Changed dataflash erase (external) method to the faster block erase, slow erase now performed after computer reply to prevent a timeout
+	  * Fixed typo in CMD_READ_OSCCAL_ISP section of the ProgramManager.c packet interpretation routine
+	  * External dataflash total pages table corrected
 
 	FROM PUBLIC RELEASE 1.1:
 	=======================================

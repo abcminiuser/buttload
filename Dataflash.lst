@@ -21,14 +21,14 @@
   29      524F 5200 
   30               	.global	DF_Pages
   33               	DF_Pages:
-  34 0010 F900      		.word	249
-  35 0012 F101      		.word	497
-  36 0014 E103      		.word	993
-  37 0016 103E      		.word	15888
-  38 0018 840F      		.word	3972
-  39 001a 840F      		.word	3972
-  40 001c 081F      		.word	7944
-  41 001e 081F      		.word	7944
+  34 0010 0001      		.word	256
+  35 0012 0002      		.word	512
+  36 0014 0004      		.word	1024
+  37 0016 0008      		.word	2048
+  38 0018 0010      		.word	4096
+  39 001a 0010      		.word	4096
+  40 001c 0020      		.word	8192
+  41 001e 0020      		.word	8192
   42               	.global	DF_PageSize
   45               	DF_PageSize:
   46 0020 0801      		.word	264
@@ -568,27 +568,27 @@
  600               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 Dataflash.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm6aaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm6aaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm6aaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm6aaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm6aaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm6aaaa.s:22     .data:00000000 DFSPIRoutinePointer
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm6aaaa.s:28     .progmem.data:00000000 DataFlashError
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm6aaaa.s:33     .progmem.data:00000010 DF_Pages
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm6aaaa.s:45     .progmem.data:00000020 DF_PageSize
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm6aaaa.s:57     .progmem.data:00000030 DF_PageBits
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm6aaaa.s:69     .text:00000000 DF_EnableDataflash
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0iaaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0iaaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0iaaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0iaaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0iaaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0iaaaa.s:22     .data:00000000 DFSPIRoutinePointer
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0iaaaa.s:28     .progmem.data:00000000 DataFlashError
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0iaaaa.s:33     .progmem.data:00000010 DF_Pages
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0iaaaa.s:45     .progmem.data:00000020 DF_PageSize
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0iaaaa.s:57     .progmem.data:00000030 DF_PageBits
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0iaaaa.s:69     .text:00000000 DF_EnableDataflash
                             *COM*:00000001 UseExernalDF
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm6aaaa.s:109    .text:00000024 DF_ReadBufferByte
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm6aaaa.s:163    .text:0000007e DF_ContinuousReadEnable
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm6aaaa.s:242    .text:00000104 DF_BufferWriteEnable
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm6aaaa.s:289    .text:00000150 DF_GetChipCharacteristics
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0iaaaa.s:109    .text:00000024 DF_ReadBufferByte
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0iaaaa.s:163    .text:0000007e DF_ContinuousReadEnable
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0iaaaa.s:242    .text:00000104 DF_BufferWriteEnable
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0iaaaa.s:289    .text:00000150 DF_GetChipCharacteristics
                             *COM*:00000005 DataflashInfo
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm6aaaa.s:381    .text:000001d0 DF_EraseBlock
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm6aaaa.s:433    .text:00000224 DF_CopyFlashPageToBuffer
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm6aaaa.s:497    .text:00000290 DF_CopyBufferToFlashPage
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm6aaaa.s:561    .text:000002fc DF_CheckCorrectOnboardChip
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0iaaaa.s:381    .text:000001d0 DF_EraseBlock
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0iaaaa.s:433    .text:00000224 DF_CopyFlashPageToBuffer
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0iaaaa.s:497    .text:00000290 DF_CopyBufferToFlashPage
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0iaaaa.s:561    .text:000002fc DF_CheckCorrectOnboardChip
                             *COM*:00000002 CurrPageAddress
                             *COM*:00000002 CurrBuffByte
 

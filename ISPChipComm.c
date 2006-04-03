@@ -19,7 +19,7 @@ void ISPCC_EnterChipProgrammingMode(void)
 
 	MAIN_Delay1MS(PacketBytes[2]);         // Wait before continuing, amount specified in the packet
 
-	if ((!(Attempts)) || (Attempts > 100)) // Safety - if no attempts or too high a value is specified, a fixed number is chosen
+	if ((!(Attempts)) || (Attempts > 100)) // if no attempts or too high a value is specified, a fixed number is chosen
 	   Attempts = 24;
 		
 	while (Attempts--)
@@ -32,12 +32,12 @@ void ISPCC_EnterChipProgrammingMode(void)
 		Response = USI_SPITransmit(PacketBytes[10]);
 		MAIN_Delay1MS(ByteDelay);
 
-		if(PacketBytes[7] == ISPCC_POLL_MODE_AVR)
+		if (PacketBytes[7] == ISPCC_POLL_MODE_AVR)
 		  USI_SPITransmit(PacketBytes[11]);
 		else
 		  Response = USI_SPITransmit(PacketBytes[11]);
 				
-		if(!(PacketBytes[7]) || (Response == PacketBytes[6])) // Polling disabled, or returned value matches expected poll value
+		if (!(PacketBytes[7]) || (Response == PacketBytes[6])) // Polling disabled, or returned value matches expected poll value
 		{
 			MAIN_Delay1MS(ByteDelay);
 

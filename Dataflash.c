@@ -19,8 +19,8 @@ const uint8_t DF_PageBits[]  PROGMEM = {  9,  9,  9,  9,  9,  10,  10,  11};    
 // Look-up table for these sizes ->     512k,  1M,  2M,  4M,  8M, 16M, 32M,  64M
 const uint16_t DF_PageSize[] PROGMEM = {264, 264, 264, 264, 264, 528, 528, 1056};        // Index of page sizes
 
-// Look-up table for these sizes ->     512k,  1M,  2M,    4M,   8M,  16M,  32M,  64M
-const uint16_t DF_Pages[]    PROGMEM = {249, 497, 993, 15888, 3972, 3972, 7944, 7944};   // Index of total pages
+// Look-up table for these sizes ->     512k,   1M,   2M,   4M,   8M,  16M,  32M,  64M
+const uint16_t DF_Pages[]    PROGMEM = { 256, 512, 1024, 2048, 4096, 4096, 8192, 8192};  // Index of total pages
 
 const uint8_t DataFlashError[] PROGMEM = "DATAFLASH ERROR";
 

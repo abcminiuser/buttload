@@ -41,6 +41,7 @@ typedef void (*FuncPtr)(void);
 #endif
 
 // EXTERNAL VARIABLES:
+extern const uint8_t WaitText[];
 extern const uint8_t ProgrammerName[];
 extern const uint8_t VersionInfo[];
 extern const uint8_t FAULTERR_ISPShort[];

@@ -13,6 +13,8 @@ const uint8_t DataFlashProgMode[] PROGMEM = "*DATAFLASH MODE*";
 
 void PD_InterpretAVRISPPacket(void)
 {
+	uint8_t EraseDataflash = FALSE;
+
 	switch (PacketBytes[0])
 	{
 		case CMD_ENTER_PROGMODE_ISP:
@@ -59,9 +61,7 @@ void PD_InterpretAVRISPPacket(void)
 		case CMD_CHIP_ERASE_ISP:
 			MessageSize = 2;
 
-			for (uint16_t BlockToErase = 0; BlockToErase < (DataflashInfo.TotalPages >> 3); BlockToErase++)
-			   DF_EraseBlock(BlockToErase);
-
+			EraseDataflash = TRUE;
 			PacketBytes[1] = STATUS_CMD_OK;
 			
 			break;
@@ -92,12 +92,12 @@ void PD_InterpretAVRISPPacket(void)
 		case CMD_READ_FLASH_ISP:
 			MessageSize = (((uint16_t)PacketBytes[1] << 8) | PacketBytes[2]) + 3;
 
-			PacketBytes[1]               = STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
-			PacketBytes[MessageSize - 1] = STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
-		
 			for (uint16_t DB = 1; DB < (MessageSize - 2); DB++)
 			   PacketBytes[DB] = 0xFF;
-		
+
+			PacketBytes[1]               = STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
+			PacketBytes[MessageSize - 1] = STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
+				
 			break;
 		case CMD_PROGRAM_EEPROM_ISP:
 			PD_SetupDFAddressCounters();
@@ -150,6 +150,16 @@ void PD_InterpretAVRISPPacket(void)
 	}
 
 	V2P_SendPacket();                                   // Send the response packet
+
+	if (EraseDataflash)                                 // Very slow dataflash erasing must be done after replying to the message
+	{
+		LCD_puts_f(WaitText);		
+
+		for (uint16_t BlockToErase = 0; BlockToErase < (DataflashInfo.TotalPages >> 3); BlockToErase++)
+		   DF_EraseBlock(BlockToErase);
+	
+		LCD_puts_f(DataFlashProgMode);
+	}
 }
 
 void PD_SetupDFAddressCounters(void)

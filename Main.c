@@ -60,6 +60,10 @@ BUTTLOADTAG(Author, "BY DEAN CAMERA");
 		2) A maximum of 10 fuse bytes and 10 lock bytes can be stored in memory at any one
 		   time (writing the same fuse overwrites the existing value). If it is attempted to
 		   write more than this maximum, the extra bytes will be ignored.
+
+		3) HEX files containing addresses which are non-consecutive (eg. use of .ORG command
+		   in assembler other than .ORG 0) cannot be stored into ButtLoad's non-volatile memory.
+		   Normal AVRISP mode is not affected by this issue.
 */
 
 /*
