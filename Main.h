@@ -49,7 +49,7 @@ extern const uint8_t FAULTERR_ISPShort[];
 
 // DEFINES AND MACROS:
 #define VERSION_MAJOR            1
-#define VERSION_MINOR            3
+#define VERSION_MINOR            4
 
 #define MAGIC_NUM                0b01111010 // Magic number, used for first-run detection or upgrade incompatibility checks
 

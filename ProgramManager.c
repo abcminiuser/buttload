@@ -65,7 +65,6 @@ void PM_StoreProgramByte(uint8_t Data)
 	if (CurrBuffByte == DF_INTERNALDF_BUFFBYTES)
 	{
 		DF_CopyBufferToFlashPage(CurrPageAddress++);
-		DF_CopyFlashPageToBuffer(CurrPageAddress);
 		DF_BufferWriteEnable(0);
 		CurrBuffByte = 0;
 	}

@@ -18,10 +18,10 @@ void OSCCAL_Calibrate(void)
 {
 	uint8_t SREG_Backup;
 	uint8_t LoopCount = (0x7F / 2); // Maximum range is 128, and starts from the middle, so 64 is the max number of iterations required
+	uint8_t PrevOSCALValues[2] = {};
    
 	// Make sure all clock division is turned off (8Mhz RC clock)
-	CLKPR = (1 << CLKPCE);
-	CLKPR = 0;
+	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_CLOCKSPEED_8MHZ);
 
 	// Inital OSCCAL of half its maximum for speed
 	OSCCAL = (0x7F / 2);
@@ -54,17 +54,27 @@ void OSCCAL_Calibrate(void)
     
 	while (LoopCount--)
 	{
-		// Let it take a few readings (60ms, approx 7 readings)
-		_delay_ms(60);
+		// Let it take a few readings (16ms, approx 2 readings)
+		_delay_ms(16);
+
+		PrevOSCALValues[1] = PrevOSCALValues[0];
+		PrevOSCALValues[0] = OSCCAL;
         
-		if (ActualCount > (TARGETCOUNT + 5))		    // Clock is running too fast
+		if (ActualCount > OSCCAL_UPPERCOUNTBOUND)       // Clock is running too fast
 			OSCCAL--;
-		else if (ActualCount < (TARGETCOUNT - 5))		// Clock is running too slow
+		else if (ActualCount < OSCCAL_LOWERCOUNTBOUND ) // Clock is running too slow
 			OSCCAL++;
-		else		                                    // Clock is just right
+		else		                                     // Clock is just right
 			break;
+		
+		// If the routine cannot find a value withing the count tollerance,
+		// it will cause the OSCCAL to hover around the closest two values.
+		// If the current value is the same as the two previous, exit the
+		// routine as the best value has been found.
+		if (OSCCAL == PrevOSCALValues[1])
+		  break;
 	}
-            
+
 	// Disable all timer interrupts
 	TIMSK1 = 0;
 	TIMSK2 = 0;

@@ -249,7 +249,7 @@
  267 017c 9091 0000 		lds r25,(CurrBuffByte)+1
  268 0180 8850      		subi r24,lo8(264)
  269 0182 9140      		sbci r25,hi8(264)
- 270 0184 D9F4      		brne .L15
+ 270 0184 A9F4      		brne .L15
  271               	.LM27:
  272 0186 8091 0000 		lds r24,CurrPageAddress
  273 018a 9091 0000 		lds r25,(CurrPageAddress)+1
@@ -260,1787 +260,1783 @@
  278 019a C901      		movw r24,r18
  279 019c 0E94 0000 		call DF_CopyBufferToFlashPage
  280               	.LM28:
- 281 01a0 8091 0000 		lds r24,CurrPageAddress
- 282 01a4 9091 0000 		lds r25,(CurrPageAddress)+1
- 283 01a8 0E94 0000 		call DF_CopyFlashPageToBuffer
+ 281 01a0 80E0      		ldi r24,lo8(0)
+ 282 01a2 90E0      		ldi r25,hi8(0)
+ 283 01a4 0E94 0000 		call DF_BufferWriteEnable
  284               	.LM29:
- 285 01ac 80E0      		ldi r24,lo8(0)
- 286 01ae 90E0      		ldi r25,hi8(0)
- 287 01b0 0E94 0000 		call DF_BufferWriteEnable
+ 285 01a8 1092 0000 		sts (CurrBuffByte)+1,__zero_reg__
+ 286 01ac 1092 0000 		sts CurrBuffByte,__zero_reg__
+ 287               	.L15:
  288               	.LM30:
- 289 01b4 1092 0000 		sts (CurrBuffByte)+1,__zero_reg__
- 290 01b8 1092 0000 		sts CurrBuffByte,__zero_reg__
- 291               	.L15:
- 292               	.LM31:
- 293 01bc 8C2F      		mov r24,r28
- 294 01be 0E94 0000 		call SPI_SPITransmit
- 295               	.LM32:
- 296 01c2 8091 0000 		lds r24,CurrBuffByte
- 297 01c6 9091 0000 		lds r25,(CurrBuffByte)+1
- 298 01ca 0196      		adiw r24,1
- 299 01cc 9093 0000 		sts (CurrBuffByte)+1,r25
- 300 01d0 8093 0000 		sts CurrBuffByte,r24
- 301               	.LM33:
- 302 01d4 8091 0000 		lds r24,GPageLength
- 303 01d8 9091 0000 		lds r25,(GPageLength)+1
- 304 01dc 0196      		adiw r24,1
- 305 01de 9093 0000 		sts (GPageLength)+1,r25
- 306 01e2 8093 0000 		sts GPageLength,r24
- 307               	/* epilogue: frame size=0 */
- 308 01e6 CF91      		pop r28
- 309 01e8 0895      		ret
- 310               	/* epilogue end (size=2) */
- 311               	/* function PM_StoreProgramByte size 60 (57) */
- 312               	.LFE10:
- 314               	.global	PM_CheckEndOfProgramming
- 316               	PM_CheckEndOfProgramming:
- 317               	.LFB12:
- 318               	.LM34:
- 319               	/* prologue: frame size=2 */
- 320 01ea EF92      		push r14
- 321 01ec FF92      		push r15
- 322 01ee 0F93      		push r16
- 323 01f0 1F93      		push r17
- 324 01f2 CF93      		push r28
- 325 01f4 DF93      		push r29
- 326 01f6 CDB7      		in r28,__SP_L__
- 327 01f8 DEB7      		in r29,__SP_H__
- 328 01fa 2297      		sbiw r28,2
- 329 01fc 0FB6      		in __tmp_reg__,__SREG__
- 330 01fe F894      		cli
- 331 0200 DEBF      		out __SP_H__,r29
- 332 0202 0FBE      		out __SREG__,__tmp_reg__
- 333 0204 CDBF      		out __SP_L__,r28
- 334               	/* prologue end (size=14) */
- 335               	.LM35:
- 336 0206 8091 0000 		lds r24,CurrentMode
- 337 020a 8130      		cpi r24,lo8(1)
- 338 020c 09F0      		breq .+2
- 339 020e 6DC0      		rjmp .L16
- 340               	.LBB2:
- 341               	.LM36:
- 342 0210 8091 0000 		lds r24,CurrBuffByte
- 343 0214 9091 0000 		lds r25,(CurrBuffByte)+1
- 344 0218 892B      		or r24,r25
- 345 021a 31F0      		breq .L18
- 346               	.LM37:
- 347 021c 8091 0000 		lds r24,CurrPageAddress
- 348 0220 9091 0000 		lds r25,(CurrPageAddress)+1
- 349 0224 0E94 0000 		call DF_CopyBufferToFlashPage
- 350               	.L18:
- 351               	.LM38:
- 352 0228 8091 0000 		lds r24,CurrPageAddress
- 353 022c 9091 0000 		lds r25,(CurrPageAddress)+1
- 354 0230 AA27      		clr r26
- 355 0232 BB27      		clr r27
- 356 0234 BC01      		movw r22,r24
- 357 0236 CD01      		movw r24,r26
- 358 0238 28E0      		ldi r18,lo8(264)
- 359 023a 31E0      		ldi r19,hi8(264)
- 360 023c 40E0      		ldi r20,hlo8(264)
- 361 023e 50E0      		ldi r21,hhi8(264)
- 362 0240 0E94 0000 		call __mulsi3
- 363 0244 7B01      		movw r14,r22
- 364 0246 8C01      		movw r16,r24
- 365 0248 8091 0000 		lds r24,CurrBuffByte
- 366 024c 9091 0000 		lds r25,(CurrBuffByte)+1
- 367 0250 AA27      		clr r26
- 368 0252 BB27      		clr r27
- 369 0254 E80E      		add r14,r24
- 370 0256 F91E      		adc r15,r25
- 371 0258 0A1F      		adc r16,r26
- 372 025a 1B1F      		adc r17,r27
+ 289 01b0 8C2F      		mov r24,r28
+ 290 01b2 0E94 0000 		call SPI_SPITransmit
+ 291               	.LM31:
+ 292 01b6 8091 0000 		lds r24,CurrBuffByte
+ 293 01ba 9091 0000 		lds r25,(CurrBuffByte)+1
+ 294 01be 0196      		adiw r24,1
+ 295 01c0 9093 0000 		sts (CurrBuffByte)+1,r25
+ 296 01c4 8093 0000 		sts CurrBuffByte,r24
+ 297               	.LM32:
+ 298 01c8 8091 0000 		lds r24,GPageLength
+ 299 01cc 9091 0000 		lds r25,(GPageLength)+1
+ 300 01d0 0196      		adiw r24,1
+ 301 01d2 9093 0000 		sts (GPageLength)+1,r25
+ 302 01d6 8093 0000 		sts GPageLength,r24
+ 303               	/* epilogue: frame size=0 */
+ 304 01da CF91      		pop r28
+ 305 01dc 0895      		ret
+ 306               	/* epilogue end (size=2) */
+ 307               	/* function PM_StoreProgramByte size 54 (51) */
+ 308               	.LFE10:
+ 310               	.global	PM_CheckEndOfProgramming
+ 312               	PM_CheckEndOfProgramming:
+ 313               	.LFB12:
+ 314               	.LM33:
+ 315               	/* prologue: frame size=2 */
+ 316 01de EF92      		push r14
+ 317 01e0 FF92      		push r15
+ 318 01e2 0F93      		push r16
+ 319 01e4 1F93      		push r17
+ 320 01e6 CF93      		push r28
+ 321 01e8 DF93      		push r29
+ 322 01ea CDB7      		in r28,__SP_L__
+ 323 01ec DEB7      		in r29,__SP_H__
+ 324 01ee 2297      		sbiw r28,2
+ 325 01f0 0FB6      		in __tmp_reg__,__SREG__
+ 326 01f2 F894      		cli
+ 327 01f4 DEBF      		out __SP_H__,r29
+ 328 01f6 0FBE      		out __SREG__,__tmp_reg__
+ 329 01f8 CDBF      		out __SP_L__,r28
+ 330               	/* prologue end (size=14) */
+ 331               	.LM34:
+ 332 01fa 8091 0000 		lds r24,CurrentMode
+ 333 01fe 8130      		cpi r24,lo8(1)
+ 334 0200 09F0      		breq .+2
+ 335 0202 6DC0      		rjmp .L16
+ 336               	.LBB2:
+ 337               	.LM35:
+ 338 0204 8091 0000 		lds r24,CurrBuffByte
+ 339 0208 9091 0000 		lds r25,(CurrBuffByte)+1
+ 340 020c 892B      		or r24,r25
+ 341 020e 31F0      		breq .L18
+ 342               	.LM36:
+ 343 0210 8091 0000 		lds r24,CurrPageAddress
+ 344 0214 9091 0000 		lds r25,(CurrPageAddress)+1
+ 345 0218 0E94 0000 		call DF_CopyBufferToFlashPage
+ 346               	.L18:
+ 347               	.LM37:
+ 348 021c 8091 0000 		lds r24,CurrPageAddress
+ 349 0220 9091 0000 		lds r25,(CurrPageAddress)+1
+ 350 0224 AA27      		clr r26
+ 351 0226 BB27      		clr r27
+ 352 0228 BC01      		movw r22,r24
+ 353 022a CD01      		movw r24,r26
+ 354 022c 28E0      		ldi r18,lo8(264)
+ 355 022e 31E0      		ldi r19,hi8(264)
+ 356 0230 40E0      		ldi r20,hlo8(264)
+ 357 0232 50E0      		ldi r21,hhi8(264)
+ 358 0234 0E94 0000 		call __mulsi3
+ 359 0238 7B01      		movw r14,r22
+ 360 023a 8C01      		movw r16,r24
+ 361 023c 8091 0000 		lds r24,CurrBuffByte
+ 362 0240 9091 0000 		lds r25,(CurrBuffByte)+1
+ 363 0244 AA27      		clr r26
+ 364 0246 BB27      		clr r27
+ 365 0248 E80E      		add r14,r24
+ 366 024a F91E      		adc r15,r25
+ 367 024c 0A1F      		adc r16,r26
+ 368 024e 1B1F      		adc r17,r27
+ 369               	.LM38:
+ 370 0250 8091 0000 		lds r24,MemoryType
+ 371 0254 8130      		cpi r24,lo8(1)
+ 372 0256 39F4      		brne .L19
  373               	.LM39:
- 374 025c 8091 0000 		lds r24,MemoryType
- 375 0260 8130      		cpi r24,lo8(1)
- 376 0262 39F4      		brne .L19
- 377               	.LM40:
- 378 0264 8091 0000 		lds r24,Prog_DataSize
- 379 0268 9091 0000 		lds r25,(Prog_DataSize)+1
- 380 026c 9A83      		std Y+2,r25
- 381 026e 8983      		std Y+1,r24
- 382 0270 0EC0      		rjmp .L20
- 383               	.L19:
- 384               	.LM41:
- 385 0272 8091 0000 		lds r24,Prog_EEPROMSize
- 386 0276 9091 0000 		lds r25,(Prog_EEPROMSize)+1
- 387 027a 9A83      		std Y+2,r25
- 388 027c 8983      		std Y+1,r24
- 389               	.LM42:
- 390 027e 80E0      		ldi r24,lo8(-263168)
- 391 0280 9CEF      		ldi r25,hi8(-263168)
- 392 0282 ABEF      		ldi r26,hlo8(-263168)
- 393 0284 BFEF      		ldi r27,hhi8(-263168)
- 394 0286 E80E      		add r14,r24
- 395 0288 F91E      		adc r15,r25
- 396 028a 0A1F      		adc r16,r26
- 397 028c 1B1F      		adc r17,r27
- 398               	.L20:
- 399               	.LM43:
- 400 028e 812F      		mov r24,r17
- 401 0290 9927      		clr r25
- 402 0292 AA27      		clr r26
- 403 0294 BB27      		clr r27
- 404 0296 682F      		mov r22,r24
- 405 0298 CE01      		movw r24,r28
- 406 029a 0196      		adiw r24,1
- 407 029c 0E94 0000 		call eeprom_write_byte_169
- 408               	.LM44:
- 409 02a0 8981      		ldd r24,Y+1
- 410 02a2 9A81      		ldd r25,Y+2
- 411 02a4 0196      		adiw r24,1
- 412 02a6 9A83      		std Y+2,r25
- 413 02a8 8983      		std Y+1,r24
- 414               	.LM45:
- 415 02aa C801      		movw r24,r16
- 416 02ac AA27      		clr r26
- 417 02ae BB27      		clr r27
- 418 02b0 682F      		mov r22,r24
- 419 02b2 CE01      		movw r24,r28
- 420 02b4 0196      		adiw r24,1
- 421 02b6 0E94 0000 		call eeprom_write_byte_169
- 422               	.LM46:
- 423 02ba 8981      		ldd r24,Y+1
- 424 02bc 9A81      		ldd r25,Y+2
- 425 02be 0196      		adiw r24,1
- 426 02c0 9A83      		std Y+2,r25
- 427 02c2 8983      		std Y+1,r24
- 428               	.LM47:
- 429 02c4 BB27      		clr r27
- 430 02c6 A12F      		mov r26,r17
- 431 02c8 902F      		mov r25,r16
- 432 02ca 8F2D      		mov r24,r15
- 433 02cc 682F      		mov r22,r24
- 434 02ce CE01      		movw r24,r28
- 435 02d0 0196      		adiw r24,1
- 436 02d2 0E94 0000 		call eeprom_write_byte_169
- 437               	.LM48:
- 438 02d6 8981      		ldd r24,Y+1
- 439 02d8 9A81      		ldd r25,Y+2
- 440 02da 0196      		adiw r24,1
- 441 02dc 9A83      		std Y+2,r25
- 442 02de 8983      		std Y+1,r24
- 443               	.LM49:
- 444 02e0 6E2D      		mov r22,r14
- 445 02e2 CE01      		movw r24,r28
- 446 02e4 0196      		adiw r24,1
- 447 02e6 0E94 0000 		call eeprom_write_byte_169
- 448               	.L16:
- 449               	.LBE2:
- 450               	/* epilogue: frame size=2 */
- 451 02ea 2296      		adiw r28,2
- 452 02ec 0FB6      		in __tmp_reg__,__SREG__
- 453 02ee F894      		cli
- 454 02f0 DEBF      		out __SP_H__,r29
- 455 02f2 0FBE      		out __SREG__,__tmp_reg__
- 456 02f4 CDBF      		out __SP_L__,r28
- 457 02f6 DF91      		pop r29
- 458 02f8 CF91      		pop r28
- 459 02fa 1F91      		pop r17
- 460 02fc 0F91      		pop r16
- 461 02fe FF90      		pop r15
- 462 0300 EF90      		pop r14
- 463 0302 0895      		ret
- 464               	/* epilogue end (size=13) */
- 465               	/* function PM_CheckEndOfProgramming size 141 (114) */
- 466               	.LFE12:
- 468               	.global	PM_CheckEndOfFuseLockStore
- 470               	PM_CheckEndOfFuseLockStore:
- 471               	.LFB13:
- 472               	.LM50:
- 473               	/* prologue: frame size=2 */
- 474 0304 CF93      		push r28
- 475 0306 DF93      		push r29
- 476 0308 CDB7      		in r28,__SP_L__
- 477 030a DEB7      		in r29,__SP_H__
- 478 030c 2297      		sbiw r28,2
- 479 030e 0FB6      		in __tmp_reg__,__SREG__
- 480 0310 F894      		cli
- 481 0312 DEBF      		out __SP_H__,r29
- 482 0314 0FBE      		out __SREG__,__tmp_reg__
- 483 0316 CDBF      		out __SP_L__,r28
- 484               	/* prologue end (size=10) */
+ 374 0258 8091 0000 		lds r24,Prog_DataSize
+ 375 025c 9091 0000 		lds r25,(Prog_DataSize)+1
+ 376 0260 9A83      		std Y+2,r25
+ 377 0262 8983      		std Y+1,r24
+ 378 0264 0EC0      		rjmp .L20
+ 379               	.L19:
+ 380               	.LM40:
+ 381 0266 8091 0000 		lds r24,Prog_EEPROMSize
+ 382 026a 9091 0000 		lds r25,(Prog_EEPROMSize)+1
+ 383 026e 9A83      		std Y+2,r25
+ 384 0270 8983      		std Y+1,r24
+ 385               	.LM41:
+ 386 0272 80E0      		ldi r24,lo8(-263168)
+ 387 0274 9CEF      		ldi r25,hi8(-263168)
+ 388 0276 ABEF      		ldi r26,hlo8(-263168)
+ 389 0278 BFEF      		ldi r27,hhi8(-263168)
+ 390 027a E80E      		add r14,r24
+ 391 027c F91E      		adc r15,r25
+ 392 027e 0A1F      		adc r16,r26
+ 393 0280 1B1F      		adc r17,r27
+ 394               	.L20:
+ 395               	.LM42:
+ 396 0282 812F      		mov r24,r17
+ 397 0284 9927      		clr r25
+ 398 0286 AA27      		clr r26
+ 399 0288 BB27      		clr r27
+ 400 028a 682F      		mov r22,r24
+ 401 028c CE01      		movw r24,r28
+ 402 028e 0196      		adiw r24,1
+ 403 0290 0E94 0000 		call eeprom_write_byte_169
+ 404               	.LM43:
+ 405 0294 8981      		ldd r24,Y+1
+ 406 0296 9A81      		ldd r25,Y+2
+ 407 0298 0196      		adiw r24,1
+ 408 029a 9A83      		std Y+2,r25
+ 409 029c 8983      		std Y+1,r24
+ 410               	.LM44:
+ 411 029e C801      		movw r24,r16
+ 412 02a0 AA27      		clr r26
+ 413 02a2 BB27      		clr r27
+ 414 02a4 682F      		mov r22,r24
+ 415 02a6 CE01      		movw r24,r28
+ 416 02a8 0196      		adiw r24,1
+ 417 02aa 0E94 0000 		call eeprom_write_byte_169
+ 418               	.LM45:
+ 419 02ae 8981      		ldd r24,Y+1
+ 420 02b0 9A81      		ldd r25,Y+2
+ 421 02b2 0196      		adiw r24,1
+ 422 02b4 9A83      		std Y+2,r25
+ 423 02b6 8983      		std Y+1,r24
+ 424               	.LM46:
+ 425 02b8 BB27      		clr r27
+ 426 02ba A12F      		mov r26,r17
+ 427 02bc 902F      		mov r25,r16
+ 428 02be 8F2D      		mov r24,r15
+ 429 02c0 682F      		mov r22,r24
+ 430 02c2 CE01      		movw r24,r28
+ 431 02c4 0196      		adiw r24,1
+ 432 02c6 0E94 0000 		call eeprom_write_byte_169
+ 433               	.LM47:
+ 434 02ca 8981      		ldd r24,Y+1
+ 435 02cc 9A81      		ldd r25,Y+2
+ 436 02ce 0196      		adiw r24,1
+ 437 02d0 9A83      		std Y+2,r25
+ 438 02d2 8983      		std Y+1,r24
+ 439               	.LM48:
+ 440 02d4 6E2D      		mov r22,r14
+ 441 02d6 CE01      		movw r24,r28
+ 442 02d8 0196      		adiw r24,1
+ 443 02da 0E94 0000 		call eeprom_write_byte_169
+ 444               	.L16:
+ 445               	.LBE2:
+ 446               	/* epilogue: frame size=2 */
+ 447 02de 2296      		adiw r28,2
+ 448 02e0 0FB6      		in __tmp_reg__,__SREG__
+ 449 02e2 F894      		cli
+ 450 02e4 DEBF      		out __SP_H__,r29
+ 451 02e6 0FBE      		out __SREG__,__tmp_reg__
+ 452 02e8 CDBF      		out __SP_L__,r28
+ 453 02ea DF91      		pop r29
+ 454 02ec CF91      		pop r28
+ 455 02ee 1F91      		pop r17
+ 456 02f0 0F91      		pop r16
+ 457 02f2 FF90      		pop r15
+ 458 02f4 EF90      		pop r14
+ 459 02f6 0895      		ret
+ 460               	/* epilogue end (size=13) */
+ 461               	/* function PM_CheckEndOfProgramming size 141 (114) */
+ 462               	.LFE12:
+ 464               	.global	PM_CheckEndOfFuseLockStore
+ 466               	PM_CheckEndOfFuseLockStore:
+ 467               	.LFB13:
+ 468               	.LM49:
+ 469               	/* prologue: frame size=2 */
+ 470 02f8 CF93      		push r28
+ 471 02fa DF93      		push r29
+ 472 02fc CDB7      		in r28,__SP_L__
+ 473 02fe DEB7      		in r29,__SP_H__
+ 474 0300 2297      		sbiw r28,2
+ 475 0302 0FB6      		in __tmp_reg__,__SREG__
+ 476 0304 F894      		cli
+ 477 0306 DEBF      		out __SP_H__,r29
+ 478 0308 0FBE      		out __SREG__,__tmp_reg__
+ 479 030a CDBF      		out __SP_L__,r28
+ 480               	/* prologue end (size=10) */
+ 481               	.LM50:
+ 482 030c 8091 0000 		lds r24,CurrentMode
+ 483 0310 8330      		cpi r24,lo8(3)
+ 484 0312 A9F4      		brne .L21
  485               	.LM51:
- 486 0318 8091 0000 		lds r24,CurrentMode
- 487 031c 8330      		cpi r24,lo8(3)
- 488 031e A9F4      		brne .L21
- 489               	.LM52:
- 490 0320 8091 0000 		lds r24,MemoryType
- 491 0324 8230      		cpi r24,lo8(2)
- 492 0326 29F4      		brne .L23
- 493 0328 8091 0000 		lds r24,Prog_TotalFuseBytes
- 494 032c 9091 0000 		lds r25,(Prog_TotalFuseBytes)+1
- 495 0330 04C0      		rjmp .L24
- 496               	.L23:
- 497 0332 8091 0000 		lds r24,Prog_TotalLockBytes
- 498 0336 9091 0000 		lds r25,(Prog_TotalLockBytes)+1
- 499               	.L24:
- 500 033a 9A83      		std Y+2,r25
- 501 033c 8983      		std Y+1,r24
- 502               	.LM53:
- 503 033e 6091 0000 		lds r22,CurrBuffByte
- 504 0342 CE01      		movw r24,r28
- 505 0344 0196      		adiw r24,1
- 506 0346 0E94 0000 		call eeprom_write_byte_169
- 507               	.L21:
- 508               	/* epilogue: frame size=2 */
- 509 034a 2296      		adiw r28,2
- 510 034c 0FB6      		in __tmp_reg__,__SREG__
- 511 034e F894      		cli
- 512 0350 DEBF      		out __SP_H__,r29
- 513 0352 0FBE      		out __SREG__,__tmp_reg__
- 514 0354 CDBF      		out __SP_L__,r28
- 515 0356 DF91      		pop r29
- 516 0358 CF91      		pop r28
- 517 035a 0895      		ret
- 518               	/* epilogue end (size=9) */
- 519               	/* function PM_CheckEndOfFuseLockStore size 44 (25) */
- 520               	.LFE13:
- 522               	.global	PM_InterpretAVRISPPacket
- 524               	PM_InterpretAVRISPPacket:
- 525               	.LFB11:
- 526               	.LM54:
- 527               	/* prologue: frame size=2 */
- 528 035c AF92      		push r10
- 529 035e BF92      		push r11
- 530 0360 CF92      		push r12
- 531 0362 DF92      		push r13
- 532 0364 EF92      		push r14
- 533 0366 FF92      		push r15
- 534 0368 0F93      		push r16
- 535 036a 1F93      		push r17
- 536 036c CF93      		push r28
- 537 036e DF93      		push r29
- 538 0370 CDB7      		in r28,__SP_L__
- 539 0372 DEB7      		in r29,__SP_H__
- 540 0374 2297      		sbiw r28,2
- 541 0376 0FB6      		in __tmp_reg__,__SREG__
- 542 0378 F894      		cli
- 543 037a DEBF      		out __SP_H__,r29
- 544 037c 0FBE      		out __SREG__,__tmp_reg__
- 545 037e CDBF      		out __SP_L__,r28
- 546               	/* prologue end (size=18) */
- 547               	.LM55:
- 548 0380 4091 0000 		lds r20,PacketBytes
- 549 0384 842F      		mov r24,r20
- 550 0386 9927      		clr r25
- 551 0388 8631      		cpi r24,22
- 552 038a 9105      		cpc r25,__zero_reg__
- 553 038c 09F4      		brne .+2
- 554 038e 1AC2      		rjmp .L81
- 555               	.LM56:
- 556 0390 8731      		cpi r24,23
- 557 0392 9105      		cpc r25,__zero_reg__
- 558 0394 94F4      		brge .L92
- 559 0396 8231      		cpi r24,18
- 560 0398 9105      		cpc r25,__zero_reg__
- 561 039a 09F4      		brne .+2
- 562 039c 72C0      		rjmp .L34
- 563 039e 8331      		cpi r24,19
- 564 03a0 9105      		cpc r25,__zero_reg__
- 565 03a2 3CF4      		brge .L93
- 566 03a4 8031      		cpi r24,16
- 567 03a6 9105      		cpc r25,__zero_reg__
- 568 03a8 19F1      		breq .L27
- 569 03aa 4197      		sbiw r24,17
- 570 03ac 09F4      		brne .+2
- 571 03ae 49C0      		rjmp .L32
- 572 03b0 7DC2      		rjmp .L91
- 573               	.L93:
- 574 03b2 4497      		sbiw r24,20
- 575 03b4 09F4      		brne .+2
- 576 03b6 06C2      		rjmp .L81
- 577 03b8 73C1      		rjmp .L65
- 578               	.L92:
- 579 03ba 8931      		cpi r24,25
- 580 03bc 9105      		cpc r25,__zero_reg__
- 581 03be 09F4      		brne .+2
- 582 03c0 13C1      		rjmp .L55
- 583 03c2 8A31      		cpi r24,26
- 584 03c4 9105      		cpc r25,__zero_reg__
- 585 03c6 44F4      		brge .L94
- 586 03c8 8731      		cpi r24,23
- 587 03ca 9105      		cpc r25,__zero_reg__
- 588 03cc 09F4      		brne .+2
- 589 03ce 0CC1      		rjmp .L55
- 590 03d0 4897      		sbiw r24,24
- 591 03d2 09F4      		brne .+2
- 592 03d4 A5C0      		rjmp .L46
- 593 03d6 6AC2      		rjmp .L91
- 594               	.L94:
- 595 03d8 8B31      		cpi r24,27
- 596 03da 9105      		cpc r25,__zero_reg__
- 597 03dc 09F4      		brne .+2
- 598 03de 45C0      		rjmp .L33
- 599 03e0 8B31      		cpi r24,27
- 600 03e2 9105      		cpc r25,__zero_reg__
- 601 03e4 0CF4      		brge .+2
- 602 03e6 9CC0      		rjmp .L46
- 603 03e8 4C97      		sbiw r24,28
- 604 03ea 09F4      		brne .+2
- 605 03ec 8CC0      		rjmp .L44
- 606 03ee 5EC2      		rjmp .L91
- 607               	.L27:
- 608               	.LBB3:
- 609               	.LM57:
- 610 03f0 82E0      		ldi r24,lo8(2)
- 611 03f2 90E0      		ldi r25,hi8(2)
- 612 03f4 9093 0000 		sts (MessageSize)+1,r25
- 613 03f8 8093 0000 		sts MessageSize,r24
- 614               	.LM58:
- 615 03fc 8091 0000 		lds r24,Prog_EnterProgMode
- 616 0400 9091 0000 		lds r25,(Prog_EnterProgMode)+1
- 617 0404 9A83      		std Y+2,r25
- 618 0406 8983      		std Y+1,r24
- 619 0408 F0E0      		ldi r31,lo8(PacketBytes)
- 620 040a EF2E      		mov r14,r31
- 621 040c F0E0      		ldi r31,hi8(PacketBytes)
- 622 040e FF2E      		mov r15,r31
- 623 0410 1BE0      		ldi r17,lo8(11)
- 624               	.L31:
- 625               	.LBB4:
- 626               	.LM59:
- 627 0412 F701      		movw r30,r14
- 628 0414 6191      		ld r22,Z+
- 629 0416 7F01      		movw r14,r30
- 630 0418 CE01      		movw r24,r28
- 631 041a 0196      		adiw r24,1
- 632 041c 0E94 0000 		call eeprom_write_byte_169
- 633               	.LM60:
- 634 0420 8981      		ldd r24,Y+1
- 635 0422 9A81      		ldd r25,Y+2
- 636 0424 0196      		adiw r24,1
- 637 0426 9A83      		std Y+2,r25
- 638 0428 8983      		std Y+1,r24
- 639               	.LM61:
- 640 042a 1150      		subi r17,lo8(-(-1))
- 641 042c 17FF      		sbrs r17,7
- 642 042e F1CF      		rjmp .L31
- 643               	.LBE4:
- 644               	.LM62:
- 645 0430 81E0      		ldi r24,lo8(1)
- 646 0432 8093 0000 		sts InProgrammingMode,r24
- 647               	.LM63:
- 648 0436 1092 0000 		sts CurrentMode,__zero_reg__
- 649               	.LM64:
- 650 043a 81B3      		in r24,49-0x20
- 651 043c 8F7C      		andi r24,lo8(-49)
- 652 043e 8062      		ori r24,lo8(32)
- 653 0440 12C0      		rjmp .L113
- 654               	.L32:
- 655               	.LM65:
- 656 0442 82E0      		ldi r24,lo8(2)
- 657 0444 90E0      		ldi r25,hi8(2)
- 658 0446 9093 0000 		sts (MessageSize)+1,r25
- 659 044a 8093 0000 		sts MessageSize,r24
- 660               	.LM66:
- 661 044e 0E94 0000 		call PM_CheckEndOfProgramming
- 662               	.LM67:
- 663 0452 0E94 0000 		call PM_CheckEndOfFuseLockStore
- 664               	.LM68:
- 665 0456 1092 0000 		sts InProgrammingMode,__zero_reg__
- 666               	.LM69:
- 667 045a 80E0      		ldi r24,lo8(0)
- 668 045c 0E94 0000 		call DF_EnableDataflash
- 669               	.LM70:
- 670 0460 81B3      		in r24,49-0x20
- 671 0462 8F7C      		andi r24,lo8(-49)
- 672 0464 8061      		ori r24,lo8(16)
- 673               	.L113:
- 674 0466 81BB      		out 49-0x20,r24
- 675 0468 AAC1      		rjmp .L77
- 676               	.L33:
- 677               	.LM71:
- 678 046a 84E0      		ldi r24,lo8(4)
- 679 046c 90E0      		ldi r25,hi8(4)
- 680 046e 9093 0000 		sts (MessageSize)+1,r25
- 681 0472 8093 0000 		sts MessageSize,r24
- 682               	.LM72:
- 683 0476 1092 0000 		sts PacketBytes+1,__zero_reg__
- 684               	.LM73:
- 685 047a 81E0      		ldi r24,lo8(1)
- 686 047c 8093 0000 		sts PacketBytes+2,r24
- 687 0480 4CC0      		rjmp .L112
- 688               	.L34:
- 689               	.LM74:
- 690 0482 82E0      		ldi r24,lo8(2)
- 691 0484 90E0      		ldi r25,hi8(2)
- 692 0486 9093 0000 		sts (MessageSize)+1,r25
- 693 048a 8093 0000 		sts MessageSize,r24
- 694               	.LM75:
- 695 048e 8091 0000 		lds r24,Prog_EraseChip
- 696 0492 9091 0000 		lds r25,(Prog_EraseChip)+1
- 697 0496 9A83      		std Y+2,r25
- 698 0498 8983      		std Y+1,r24
- 699 049a E0E0      		ldi r30,lo8(PacketBytes+1)
- 700 049c EE2E      		mov r14,r30
- 701 049e E0E0      		ldi r30,hi8(PacketBytes+1)
- 702 04a0 FE2E      		mov r15,r30
- 703 04a2 15E0      		ldi r17,lo8(5)
- 704               	.L38:
- 705               	.LBB5:
- 706               	.LM76:
- 707 04a4 F701      		movw r30,r14
- 708 04a6 6191      		ld r22,Z+
- 709 04a8 7F01      		movw r14,r30
- 710 04aa CE01      		movw r24,r28
- 711 04ac 0196      		adiw r24,1
- 712 04ae 0E94 0000 		call eeprom_write_byte_169
- 713               	.LM77:
- 714 04b2 8981      		ldd r24,Y+1
- 715 04b4 9A81      		ldd r25,Y+2
- 716 04b6 0196      		adiw r24,1
- 717 04b8 9A83      		std Y+2,r25
- 718 04ba 8983      		std Y+1,r24
- 719               	.LM78:
- 720 04bc 1150      		subi r17,lo8(-(-1))
- 721 04be 17FF      		sbrs r17,7
- 722 04c0 F1CF      		rjmp .L38
- 723               	.LBE5:
- 724               	.LM79:
- 725 04c2 8091 0000 		lds r24,Prog_DataSize
- 726 04c6 9091 0000 		lds r25,(Prog_DataSize)+1
- 727 04ca 9A83      		std Y+2,r25
- 728 04cc 8983      		std Y+1,r24
- 729               	.LBB6:
- 730               	.LM80:
- 731 04ce 10E0      		ldi r17,lo8(0)
- 732               	.L43:
- 733               	.LM81:
- 734 04d0 1430      		cpi r17,lo8(4)
- 735 04d2 31F4      		brne .L42
- 736               	.LM82:
- 737 04d4 8091 0000 		lds r24,Prog_EEPROMSize
- 738 04d8 9091 0000 		lds r25,(Prog_EEPROMSize)+1
- 739 04dc 9A83      		std Y+2,r25
- 740 04de 8983      		std Y+1,r24
- 741               	.L42:
- 742               	.LM83:
- 743 04e0 60E0      		ldi r22,lo8(0)
- 744 04e2 CE01      		movw r24,r28
- 745 04e4 0196      		adiw r24,1
- 746 04e6 0E94 0000 		call eeprom_write_byte_169
- 747               	.LM84:
- 748 04ea 8981      		ldd r24,Y+1
- 749 04ec 9A81      		ldd r25,Y+2
- 750 04ee 0196      		adiw r24,1
- 751 04f0 9A83      		std Y+2,r25
- 752 04f2 8983      		std Y+1,r24
- 753               	.LM85:
- 754 04f4 1F5F      		subi r17,lo8(-(1))
- 755 04f6 1830      		cpi r17,lo8(8)
- 756 04f8 58F3      		brlo .L43
- 757               	.LBE6:
- 758               	.LM86:
- 759 04fa 61E0      		ldi r22,lo8(1)
- 760 04fc 80E0      		ldi r24,lo8(Prog_EraseCmdStored)
- 761 04fe 90E0      		ldi r25,hi8(Prog_EraseCmdStored)
- 762 0500 0E94 0000 		call eeprom_write_byte_169
- 763 0504 5CC1      		rjmp .L77
- 764               	.L44:
- 765               	.LM87:
- 766 0506 84E0      		ldi r24,lo8(4)
- 767 0508 90E0      		ldi r25,hi8(4)
- 768 050a 9093 0000 		sts (MessageSize)+1,r25
- 769 050e 8093 0000 		sts MessageSize,r24
- 770               	.LM88:
- 771 0512 1092 0000 		sts PacketBytes+1,__zero_reg__
- 772               	.LM89:
- 773 0516 1092 0000 		sts PacketBytes+2,__zero_reg__
- 774               	.L112:
- 775               	.LM90:
- 776 051a 1092 0000 		sts PacketBytes+3,__zero_reg__
- 777               	.LM91:
- 778 051e CFC1      		rjmp .L26
- 779               	.L46:
- 780               	.LM92:
- 781 0520 84E0      		ldi r24,lo8(4)
- 782 0522 90E0      		ldi r25,hi8(4)
- 783 0524 9093 0000 		sts (MessageSize)+1,r25
- 784 0528 8093 0000 		sts MessageSize,r24
+ 486 0314 8091 0000 		lds r24,MemoryType
+ 487 0318 8230      		cpi r24,lo8(2)
+ 488 031a 29F4      		brne .L23
+ 489 031c 8091 0000 		lds r24,Prog_TotalFuseBytes
+ 490 0320 9091 0000 		lds r25,(Prog_TotalFuseBytes)+1
+ 491 0324 04C0      		rjmp .L24
+ 492               	.L23:
+ 493 0326 8091 0000 		lds r24,Prog_TotalLockBytes
+ 494 032a 9091 0000 		lds r25,(Prog_TotalLockBytes)+1
+ 495               	.L24:
+ 496 032e 9A83      		std Y+2,r25
+ 497 0330 8983      		std Y+1,r24
+ 498               	.LM52:
+ 499 0332 6091 0000 		lds r22,CurrBuffByte
+ 500 0336 CE01      		movw r24,r28
+ 501 0338 0196      		adiw r24,1
+ 502 033a 0E94 0000 		call eeprom_write_byte_169
+ 503               	.L21:
+ 504               	/* epilogue: frame size=2 */
+ 505 033e 2296      		adiw r28,2
+ 506 0340 0FB6      		in __tmp_reg__,__SREG__
+ 507 0342 F894      		cli
+ 508 0344 DEBF      		out __SP_H__,r29
+ 509 0346 0FBE      		out __SREG__,__tmp_reg__
+ 510 0348 CDBF      		out __SP_L__,r28
+ 511 034a DF91      		pop r29
+ 512 034c CF91      		pop r28
+ 513 034e 0895      		ret
+ 514               	/* epilogue end (size=9) */
+ 515               	/* function PM_CheckEndOfFuseLockStore size 44 (25) */
+ 516               	.LFE13:
+ 518               	.global	PM_InterpretAVRISPPacket
+ 520               	PM_InterpretAVRISPPacket:
+ 521               	.LFB11:
+ 522               	.LM53:
+ 523               	/* prologue: frame size=2 */
+ 524 0350 AF92      		push r10
+ 525 0352 BF92      		push r11
+ 526 0354 CF92      		push r12
+ 527 0356 DF92      		push r13
+ 528 0358 EF92      		push r14
+ 529 035a FF92      		push r15
+ 530 035c 0F93      		push r16
+ 531 035e 1F93      		push r17
+ 532 0360 CF93      		push r28
+ 533 0362 DF93      		push r29
+ 534 0364 CDB7      		in r28,__SP_L__
+ 535 0366 DEB7      		in r29,__SP_H__
+ 536 0368 2297      		sbiw r28,2
+ 537 036a 0FB6      		in __tmp_reg__,__SREG__
+ 538 036c F894      		cli
+ 539 036e DEBF      		out __SP_H__,r29
+ 540 0370 0FBE      		out __SREG__,__tmp_reg__
+ 541 0372 CDBF      		out __SP_L__,r28
+ 542               	/* prologue end (size=18) */
+ 543               	.LM54:
+ 544 0374 4091 0000 		lds r20,PacketBytes
+ 545 0378 842F      		mov r24,r20
+ 546 037a 9927      		clr r25
+ 547 037c 8631      		cpi r24,22
+ 548 037e 9105      		cpc r25,__zero_reg__
+ 549 0380 09F4      		brne .+2
+ 550 0382 1AC2      		rjmp .L81
+ 551               	.LM55:
+ 552 0384 8731      		cpi r24,23
+ 553 0386 9105      		cpc r25,__zero_reg__
+ 554 0388 94F4      		brge .L92
+ 555 038a 8231      		cpi r24,18
+ 556 038c 9105      		cpc r25,__zero_reg__
+ 557 038e 09F4      		brne .+2
+ 558 0390 72C0      		rjmp .L34
+ 559 0392 8331      		cpi r24,19
+ 560 0394 9105      		cpc r25,__zero_reg__
+ 561 0396 3CF4      		brge .L93
+ 562 0398 8031      		cpi r24,16
+ 563 039a 9105      		cpc r25,__zero_reg__
+ 564 039c 19F1      		breq .L27
+ 565 039e 4197      		sbiw r24,17
+ 566 03a0 09F4      		brne .+2
+ 567 03a2 49C0      		rjmp .L32
+ 568 03a4 7DC2      		rjmp .L91
+ 569               	.L93:
+ 570 03a6 4497      		sbiw r24,20
+ 571 03a8 09F4      		brne .+2
+ 572 03aa 06C2      		rjmp .L81
+ 573 03ac 73C1      		rjmp .L65
+ 574               	.L92:
+ 575 03ae 8931      		cpi r24,25
+ 576 03b0 9105      		cpc r25,__zero_reg__
+ 577 03b2 09F4      		brne .+2
+ 578 03b4 13C1      		rjmp .L55
+ 579 03b6 8A31      		cpi r24,26
+ 580 03b8 9105      		cpc r25,__zero_reg__
+ 581 03ba 44F4      		brge .L94
+ 582 03bc 8731      		cpi r24,23
+ 583 03be 9105      		cpc r25,__zero_reg__
+ 584 03c0 09F4      		brne .+2
+ 585 03c2 0CC1      		rjmp .L55
+ 586 03c4 4897      		sbiw r24,24
+ 587 03c6 09F4      		brne .+2
+ 588 03c8 A5C0      		rjmp .L46
+ 589 03ca 6AC2      		rjmp .L91
+ 590               	.L94:
+ 591 03cc 8B31      		cpi r24,27
+ 592 03ce 9105      		cpc r25,__zero_reg__
+ 593 03d0 09F4      		brne .+2
+ 594 03d2 45C0      		rjmp .L33
+ 595 03d4 8B31      		cpi r24,27
+ 596 03d6 9105      		cpc r25,__zero_reg__
+ 597 03d8 0CF4      		brge .+2
+ 598 03da 9CC0      		rjmp .L46
+ 599 03dc 4C97      		sbiw r24,28
+ 600 03de 09F4      		brne .+2
+ 601 03e0 8CC0      		rjmp .L44
+ 602 03e2 5EC2      		rjmp .L91
+ 603               	.L27:
+ 604               	.LBB3:
+ 605               	.LM56:
+ 606 03e4 82E0      		ldi r24,lo8(2)
+ 607 03e6 90E0      		ldi r25,hi8(2)
+ 608 03e8 9093 0000 		sts (MessageSize)+1,r25
+ 609 03ec 8093 0000 		sts MessageSize,r24
+ 610               	.LM57:
+ 611 03f0 8091 0000 		lds r24,Prog_EnterProgMode
+ 612 03f4 9091 0000 		lds r25,(Prog_EnterProgMode)+1
+ 613 03f8 9A83      		std Y+2,r25
+ 614 03fa 8983      		std Y+1,r24
+ 615 03fc F0E0      		ldi r31,lo8(PacketBytes)
+ 616 03fe EF2E      		mov r14,r31
+ 617 0400 F0E0      		ldi r31,hi8(PacketBytes)
+ 618 0402 FF2E      		mov r15,r31
+ 619 0404 1BE0      		ldi r17,lo8(11)
+ 620               	.L31:
+ 621               	.LBB4:
+ 622               	.LM58:
+ 623 0406 F701      		movw r30,r14
+ 624 0408 6191      		ld r22,Z+
+ 625 040a 7F01      		movw r14,r30
+ 626 040c CE01      		movw r24,r28
+ 627 040e 0196      		adiw r24,1
+ 628 0410 0E94 0000 		call eeprom_write_byte_169
+ 629               	.LM59:
+ 630 0414 8981      		ldd r24,Y+1
+ 631 0416 9A81      		ldd r25,Y+2
+ 632 0418 0196      		adiw r24,1
+ 633 041a 9A83      		std Y+2,r25
+ 634 041c 8983      		std Y+1,r24
+ 635               	.LM60:
+ 636 041e 1150      		subi r17,lo8(-(-1))
+ 637 0420 17FF      		sbrs r17,7
+ 638 0422 F1CF      		rjmp .L31
+ 639               	.LBE4:
+ 640               	.LM61:
+ 641 0424 81E0      		ldi r24,lo8(1)
+ 642 0426 8093 0000 		sts InProgrammingMode,r24
+ 643               	.LM62:
+ 644 042a 1092 0000 		sts CurrentMode,__zero_reg__
+ 645               	.LM63:
+ 646 042e 81B3      		in r24,49-0x20
+ 647 0430 8F7C      		andi r24,lo8(-49)
+ 648 0432 8062      		ori r24,lo8(32)
+ 649 0434 12C0      		rjmp .L113
+ 650               	.L32:
+ 651               	.LM64:
+ 652 0436 82E0      		ldi r24,lo8(2)
+ 653 0438 90E0      		ldi r25,hi8(2)
+ 654 043a 9093 0000 		sts (MessageSize)+1,r25
+ 655 043e 8093 0000 		sts MessageSize,r24
+ 656               	.LM65:
+ 657 0442 0E94 0000 		call PM_CheckEndOfProgramming
+ 658               	.LM66:
+ 659 0446 0E94 0000 		call PM_CheckEndOfFuseLockStore
+ 660               	.LM67:
+ 661 044a 1092 0000 		sts InProgrammingMode,__zero_reg__
+ 662               	.LM68:
+ 663 044e 80E0      		ldi r24,lo8(0)
+ 664 0450 0E94 0000 		call DF_EnableDataflash
+ 665               	.LM69:
+ 666 0454 81B3      		in r24,49-0x20
+ 667 0456 8F7C      		andi r24,lo8(-49)
+ 668 0458 8061      		ori r24,lo8(16)
+ 669               	.L113:
+ 670 045a 81BB      		out 49-0x20,r24
+ 671 045c AAC1      		rjmp .L77
+ 672               	.L33:
+ 673               	.LM70:
+ 674 045e 84E0      		ldi r24,lo8(4)
+ 675 0460 90E0      		ldi r25,hi8(4)
+ 676 0462 9093 0000 		sts (MessageSize)+1,r25
+ 677 0466 8093 0000 		sts MessageSize,r24
+ 678               	.LM71:
+ 679 046a 1092 0000 		sts PacketBytes+1,__zero_reg__
+ 680               	.LM72:
+ 681 046e 81E0      		ldi r24,lo8(1)
+ 682 0470 8093 0000 		sts PacketBytes+2,r24
+ 683 0474 4CC0      		rjmp .L112
+ 684               	.L34:
+ 685               	.LM73:
+ 686 0476 82E0      		ldi r24,lo8(2)
+ 687 0478 90E0      		ldi r25,hi8(2)
+ 688 047a 9093 0000 		sts (MessageSize)+1,r25
+ 689 047e 8093 0000 		sts MessageSize,r24
+ 690               	.LM74:
+ 691 0482 8091 0000 		lds r24,Prog_EraseChip
+ 692 0486 9091 0000 		lds r25,(Prog_EraseChip)+1
+ 693 048a 9A83      		std Y+2,r25
+ 694 048c 8983      		std Y+1,r24
+ 695 048e E0E0      		ldi r30,lo8(PacketBytes+1)
+ 696 0490 EE2E      		mov r14,r30
+ 697 0492 E0E0      		ldi r30,hi8(PacketBytes+1)
+ 698 0494 FE2E      		mov r15,r30
+ 699 0496 15E0      		ldi r17,lo8(5)
+ 700               	.L38:
+ 701               	.LBB5:
+ 702               	.LM75:
+ 703 0498 F701      		movw r30,r14
+ 704 049a 6191      		ld r22,Z+
+ 705 049c 7F01      		movw r14,r30
+ 706 049e CE01      		movw r24,r28
+ 707 04a0 0196      		adiw r24,1
+ 708 04a2 0E94 0000 		call eeprom_write_byte_169
+ 709               	.LM76:
+ 710 04a6 8981      		ldd r24,Y+1
+ 711 04a8 9A81      		ldd r25,Y+2
+ 712 04aa 0196      		adiw r24,1
+ 713 04ac 9A83      		std Y+2,r25
+ 714 04ae 8983      		std Y+1,r24
+ 715               	.LM77:
+ 716 04b0 1150      		subi r17,lo8(-(-1))
+ 717 04b2 17FF      		sbrs r17,7
+ 718 04b4 F1CF      		rjmp .L38
+ 719               	.LBE5:
+ 720               	.LM78:
+ 721 04b6 8091 0000 		lds r24,Prog_DataSize
+ 722 04ba 9091 0000 		lds r25,(Prog_DataSize)+1
+ 723 04be 9A83      		std Y+2,r25
+ 724 04c0 8983      		std Y+1,r24
+ 725               	.LBB6:
+ 726               	.LM79:
+ 727 04c2 10E0      		ldi r17,lo8(0)
+ 728               	.L43:
+ 729               	.LM80:
+ 730 04c4 1430      		cpi r17,lo8(4)
+ 731 04c6 31F4      		brne .L42
+ 732               	.LM81:
+ 733 04c8 8091 0000 		lds r24,Prog_EEPROMSize
+ 734 04cc 9091 0000 		lds r25,(Prog_EEPROMSize)+1
+ 735 04d0 9A83      		std Y+2,r25
+ 736 04d2 8983      		std Y+1,r24
+ 737               	.L42:
+ 738               	.LM82:
+ 739 04d4 60E0      		ldi r22,lo8(0)
+ 740 04d6 CE01      		movw r24,r28
+ 741 04d8 0196      		adiw r24,1
+ 742 04da 0E94 0000 		call eeprom_write_byte_169
+ 743               	.LM83:
+ 744 04de 8981      		ldd r24,Y+1
+ 745 04e0 9A81      		ldd r25,Y+2
+ 746 04e2 0196      		adiw r24,1
+ 747 04e4 9A83      		std Y+2,r25
+ 748 04e6 8983      		std Y+1,r24
+ 749               	.LM84:
+ 750 04e8 1F5F      		subi r17,lo8(-(1))
+ 751 04ea 1830      		cpi r17,lo8(8)
+ 752 04ec 58F3      		brlo .L43
+ 753               	.LBE6:
+ 754               	.LM85:
+ 755 04ee 61E0      		ldi r22,lo8(1)
+ 756 04f0 80E0      		ldi r24,lo8(Prog_EraseCmdStored)
+ 757 04f2 90E0      		ldi r25,hi8(Prog_EraseCmdStored)
+ 758 04f4 0E94 0000 		call eeprom_write_byte_169
+ 759 04f8 5CC1      		rjmp .L77
+ 760               	.L44:
+ 761               	.LM86:
+ 762 04fa 84E0      		ldi r24,lo8(4)
+ 763 04fc 90E0      		ldi r25,hi8(4)
+ 764 04fe 9093 0000 		sts (MessageSize)+1,r25
+ 765 0502 8093 0000 		sts MessageSize,r24
+ 766               	.LM87:
+ 767 0506 1092 0000 		sts PacketBytes+1,__zero_reg__
+ 768               	.LM88:
+ 769 050a 1092 0000 		sts PacketBytes+2,__zero_reg__
+ 770               	.L112:
+ 771               	.LM89:
+ 772 050e 1092 0000 		sts PacketBytes+3,__zero_reg__
+ 773               	.LM90:
+ 774 0512 CFC1      		rjmp .L26
+ 775               	.L46:
+ 776               	.LM91:
+ 777 0514 84E0      		ldi r24,lo8(4)
+ 778 0516 90E0      		ldi r25,hi8(4)
+ 779 0518 9093 0000 		sts (MessageSize)+1,r25
+ 780 051c 8093 0000 		sts MessageSize,r24
+ 781               	.LM92:
+ 782 0520 8091 0000 		lds r24,CurrentMode
+ 783 0524 8430      		cpi r24,lo8(4)
+ 784 0526 59F0      		breq .L47
  785               	.LM93:
- 786 052c 8091 0000 		lds r24,CurrentMode
- 787 0530 8430      		cpi r24,lo8(4)
- 788 0532 59F0      		breq .L47
- 789               	.LM94:
- 790 0534 0E94 0000 		call PM_CheckEndOfProgramming
- 791               	.LM95:
- 792 0538 0E94 0000 		call PM_CheckEndOfFuseLockStore
- 793               	.LM96:
- 794 053c 1092 0000 		sts (CurrBuffByte)+1,__zero_reg__
- 795 0540 1092 0000 		sts CurrBuffByte,__zero_reg__
+ 786 0528 0E94 0000 		call PM_CheckEndOfProgramming
+ 787               	.LM94:
+ 788 052c 0E94 0000 		call PM_CheckEndOfFuseLockStore
+ 789               	.LM95:
+ 790 0530 1092 0000 		sts (CurrBuffByte)+1,__zero_reg__
+ 791 0534 1092 0000 		sts CurrBuffByte,__zero_reg__
+ 792               	.LM96:
+ 793 0538 84E0      		ldi r24,lo8(4)
+ 794 053a 8093 0000 		sts CurrentMode,r24
+ 795               	.L47:
  796               	.LM97:
- 797 0544 84E0      		ldi r24,lo8(4)
- 798 0546 8093 0000 		sts CurrentMode,r24
- 799               	.L47:
- 800               	.LM98:
- 801 054a 8091 0000 		lds r24,PacketBytes
- 802 054e 8831      		cpi r24,lo8(24)
- 803 0550 29F4      		brne .L48
- 804 0552 8091 0000 		lds r24,Prog_TotalFuseBytes
- 805 0556 9091 0000 		lds r25,(Prog_TotalFuseBytes)+1
- 806 055a 04C0      		rjmp .L49
- 807               	.L48:
- 808 055c 8091 0000 		lds r24,Prog_TotalLockBytes
- 809 0560 9091 0000 		lds r25,(Prog_TotalLockBytes)+1
- 810               	.L49:
- 811 0564 9A83      		std Y+2,r25
- 812 0566 8983      		std Y+1,r24
- 813               	.LM99:
- 814 0568 CE01      		movw r24,r28
- 815 056a 0196      		adiw r24,1
- 816 056c 0E94 0000 		call eeprom_read_byte_169
- 817 0570 9927      		clr r25
- 818 0572 2091 0000 		lds r18,CurrBuffByte
- 819 0576 3091 0000 		lds r19,(CurrBuffByte)+1
- 820 057a 8217      		cp r24,r18
- 821 057c 9307      		cpc r25,r19
- 822 057e 10F4      		brsh .L50
+ 797 053e 8091 0000 		lds r24,PacketBytes
+ 798 0542 8831      		cpi r24,lo8(24)
+ 799 0544 29F4      		brne .L48
+ 800 0546 8091 0000 		lds r24,Prog_TotalFuseBytes
+ 801 054a 9091 0000 		lds r25,(Prog_TotalFuseBytes)+1
+ 802 054e 04C0      		rjmp .L49
+ 803               	.L48:
+ 804 0550 8091 0000 		lds r24,Prog_TotalLockBytes
+ 805 0554 9091 0000 		lds r25,(Prog_TotalLockBytes)+1
+ 806               	.L49:
+ 807 0558 9A83      		std Y+2,r25
+ 808 055a 8983      		std Y+1,r24
+ 809               	.LM98:
+ 810 055c CE01      		movw r24,r28
+ 811 055e 0196      		adiw r24,1
+ 812 0560 0E94 0000 		call eeprom_read_byte_169
+ 813 0564 9927      		clr r25
+ 814 0566 2091 0000 		lds r18,CurrBuffByte
+ 815 056a 3091 0000 		lds r19,(CurrBuffByte)+1
+ 816 056e 8217      		cp r24,r18
+ 817 0570 9307      		cpc r25,r19
+ 818 0572 10F4      		brsh .L50
+ 819               	.LM99:
+ 820 0574 8FEF      		ldi r24,lo8(-1)
+ 821 0576 22C0      		rjmp .L109
+ 822               	.L50:
  823               	.LM100:
- 824 0580 8FEF      		ldi r24,lo8(-1)
- 825 0582 22C0      		rjmp .L109
- 826               	.L50:
- 827               	.LM101:
- 828 0584 A901      		movw r20,r18
- 829 0586 440F      		lsl r20
- 830 0588 551F      		rol r21
- 831 058a 440F      		lsl r20
- 832 058c 551F      		rol r21
- 833 058e 8091 0000 		lds r24,PacketBytes+1
- 834 0592 282F      		mov r18,r24
- 835 0594 3327      		clr r19
- 836 0596 2150      		subi r18,lo8(-(-1))
- 837 0598 3040      		sbci r19,hi8(-(-1))
- 838 059a 8091 0000 		lds r24,PacketBytes
- 839 059e 8831      		cpi r24,lo8(24)
- 840 05a0 29F4      		brne .L52
- 841 05a2 8091 0000 		lds r24,Prog_FuseBytes
- 842 05a6 9091 0000 		lds r25,(Prog_FuseBytes)+1
- 843 05aa 04C0      		rjmp .L108
- 844               	.L52:
- 845 05ac 8091 0000 		lds r24,Prog_LockBytes
- 846 05b0 9091 0000 		lds r25,(Prog_LockBytes)+1
- 847               	.L108:
- 848 05b4 840F      		add r24,r20
- 849 05b6 951F      		adc r25,r21
- 850 05b8 820F      		add r24,r18
- 851 05ba 931F      		adc r25,r19
- 852 05bc 9A83      		std Y+2,r25
- 853 05be 8983      		std Y+1,r24
- 854               	.LM102:
- 855 05c0 CE01      		movw r24,r28
- 856 05c2 0196      		adiw r24,1
- 857 05c4 0E94 0000 		call eeprom_read_byte_169
- 858               	.L109:
- 859 05c8 8093 0000 		sts PacketBytes+2,r24
- 860               	.LM103:
- 861 05cc 1092 0000 		sts PacketBytes+1,__zero_reg__
- 862               	.LM104:
- 863 05d0 1092 0000 		sts PacketBytes+3,__zero_reg__
- 864               	.LM105:
- 865 05d4 8091 0000 		lds r24,CurrBuffByte
- 866 05d8 9091 0000 		lds r25,(CurrBuffByte)+1
- 867 05dc 0196      		adiw r24,1
- 868 05de 9093 0000 		sts (CurrBuffByte)+1,r25
- 869 05e2 8093 0000 		sts CurrBuffByte,r24
- 870               	.LM106:
- 871 05e6 6BC1      		rjmp .L26
- 872               	.L55:
- 873               	.LM107:
- 874 05e8 83E0      		ldi r24,lo8(3)
- 875 05ea 90E0      		ldi r25,hi8(3)
- 876 05ec 9093 0000 		sts (MessageSize)+1,r25
- 877 05f0 8093 0000 		sts MessageSize,r24
+ 824 0578 A901      		movw r20,r18
+ 825 057a 440F      		lsl r20
+ 826 057c 551F      		rol r21
+ 827 057e 440F      		lsl r20
+ 828 0580 551F      		rol r21
+ 829 0582 8091 0000 		lds r24,PacketBytes+1
+ 830 0586 282F      		mov r18,r24
+ 831 0588 3327      		clr r19
+ 832 058a 2150      		subi r18,lo8(-(-1))
+ 833 058c 3040      		sbci r19,hi8(-(-1))
+ 834 058e 8091 0000 		lds r24,PacketBytes
+ 835 0592 8831      		cpi r24,lo8(24)
+ 836 0594 29F4      		brne .L52
+ 837 0596 8091 0000 		lds r24,Prog_FuseBytes
+ 838 059a 9091 0000 		lds r25,(Prog_FuseBytes)+1
+ 839 059e 04C0      		rjmp .L108
+ 840               	.L52:
+ 841 05a0 8091 0000 		lds r24,Prog_LockBytes
+ 842 05a4 9091 0000 		lds r25,(Prog_LockBytes)+1
+ 843               	.L108:
+ 844 05a8 840F      		add r24,r20
+ 845 05aa 951F      		adc r25,r21
+ 846 05ac 820F      		add r24,r18
+ 847 05ae 931F      		adc r25,r19
+ 848 05b0 9A83      		std Y+2,r25
+ 849 05b2 8983      		std Y+1,r24
+ 850               	.LM101:
+ 851 05b4 CE01      		movw r24,r28
+ 852 05b6 0196      		adiw r24,1
+ 853 05b8 0E94 0000 		call eeprom_read_byte_169
+ 854               	.L109:
+ 855 05bc 8093 0000 		sts PacketBytes+2,r24
+ 856               	.LM102:
+ 857 05c0 1092 0000 		sts PacketBytes+1,__zero_reg__
+ 858               	.LM103:
+ 859 05c4 1092 0000 		sts PacketBytes+3,__zero_reg__
+ 860               	.LM104:
+ 861 05c8 8091 0000 		lds r24,CurrBuffByte
+ 862 05cc 9091 0000 		lds r25,(CurrBuffByte)+1
+ 863 05d0 0196      		adiw r24,1
+ 864 05d2 9093 0000 		sts (CurrBuffByte)+1,r25
+ 865 05d6 8093 0000 		sts CurrBuffByte,r24
+ 866               	.LM105:
+ 867 05da 6BC1      		rjmp .L26
+ 868               	.L55:
+ 869               	.LM106:
+ 870 05dc 83E0      		ldi r24,lo8(3)
+ 871 05de 90E0      		ldi r25,hi8(3)
+ 872 05e0 9093 0000 		sts (MessageSize)+1,r25
+ 873 05e4 8093 0000 		sts MessageSize,r24
+ 874               	.LM107:
+ 875 05e8 8091 0000 		lds r24,CurrentMode
+ 876 05ec 8330      		cpi r24,lo8(3)
+ 877 05ee 39F0      		breq .L56
  878               	.LM108:
- 879 05f4 8091 0000 		lds r24,CurrentMode
- 880 05f8 8330      		cpi r24,lo8(3)
- 881 05fa 39F0      		breq .L56
- 882               	.LM109:
- 883 05fc 83E0      		ldi r24,lo8(3)
- 884 05fe 8093 0000 		sts CurrentMode,r24
- 885               	.LM110:
- 886 0602 1092 0000 		sts (CurrBuffByte)+1,__zero_reg__
- 887 0606 1092 0000 		sts CurrBuffByte,__zero_reg__
- 888               	.L56:
- 889 060a 2091 0000 		lds r18,CurrBuffByte
- 890 060e 3091 0000 		lds r19,(CurrBuffByte)+1
- 891               	.LM111:
- 892 0612 4731      		cpi r20,lo8(23)
- 893 0614 71F4      		brne .L57
- 894               	.LM112:
- 895 0616 220F      		lsl r18
- 896 0618 331F      		rol r19
- 897 061a 220F      		lsl r18
- 898 061c 331F      		rol r19
- 899 061e 8091 0000 		lds r24,Prog_FuseBytes
- 900 0622 9091 0000 		lds r25,(Prog_FuseBytes)+1
- 901 0626 820F      		add r24,r18
- 902 0628 931F      		adc r25,r19
- 903 062a 9A83      		std Y+2,r25
- 904 062c 8983      		std Y+1,r24
+ 879 05f0 83E0      		ldi r24,lo8(3)
+ 880 05f2 8093 0000 		sts CurrentMode,r24
+ 881               	.LM109:
+ 882 05f6 1092 0000 		sts (CurrBuffByte)+1,__zero_reg__
+ 883 05fa 1092 0000 		sts CurrBuffByte,__zero_reg__
+ 884               	.L56:
+ 885 05fe 2091 0000 		lds r18,CurrBuffByte
+ 886 0602 3091 0000 		lds r19,(CurrBuffByte)+1
+ 887               	.LM110:
+ 888 0606 4731      		cpi r20,lo8(23)
+ 889 0608 71F4      		brne .L57
+ 890               	.LM111:
+ 891 060a 220F      		lsl r18
+ 892 060c 331F      		rol r19
+ 893 060e 220F      		lsl r18
+ 894 0610 331F      		rol r19
+ 895 0612 8091 0000 		lds r24,Prog_FuseBytes
+ 896 0616 9091 0000 		lds r25,(Prog_FuseBytes)+1
+ 897 061a 820F      		add r24,r18
+ 898 061c 931F      		adc r25,r19
+ 899 061e 9A83      		std Y+2,r25
+ 900 0620 8983      		std Y+1,r24
+ 901               	.LM112:
+ 902 0622 82E0      		ldi r24,lo8(2)
+ 903 0624 0DC0      		rjmp .L110
+ 904               	.L57:
  905               	.LM113:
- 906 062e 82E0      		ldi r24,lo8(2)
- 907 0630 0DC0      		rjmp .L110
- 908               	.L57:
- 909               	.LM114:
- 910 0632 220F      		lsl r18
- 911 0634 331F      		rol r19
- 912 0636 220F      		lsl r18
- 913 0638 331F      		rol r19
- 914 063a 8091 0000 		lds r24,Prog_LockBytes
- 915 063e 9091 0000 		lds r25,(Prog_LockBytes)+1
- 916 0642 820F      		add r24,r18
- 917 0644 931F      		adc r25,r19
- 918 0646 9A83      		std Y+2,r25
- 919 0648 8983      		std Y+1,r24
+ 906 0626 220F      		lsl r18
+ 907 0628 331F      		rol r19
+ 908 062a 220F      		lsl r18
+ 909 062c 331F      		rol r19
+ 910 062e 8091 0000 		lds r24,Prog_LockBytes
+ 911 0632 9091 0000 		lds r25,(Prog_LockBytes)+1
+ 912 0636 820F      		add r24,r18
+ 913 0638 931F      		adc r25,r19
+ 914 063a 9A83      		std Y+2,r25
+ 915 063c 8983      		std Y+1,r24
+ 916               	.LM114:
+ 917 063e 83E0      		ldi r24,lo8(3)
+ 918               	.L110:
+ 919 0640 8093 0000 		sts MemoryType,r24
  920               	.LM115:
- 921 064a 83E0      		ldi r24,lo8(3)
- 922               	.L110:
- 923 064c 8093 0000 		sts MemoryType,r24
- 924               	.LM116:
- 925 0650 8091 0000 		lds r24,CurrBuffByte
- 926 0654 9091 0000 		lds r25,(CurrBuffByte)+1
- 927 0658 0A97      		sbiw r24,10
- 928 065a E8F4      		brsh .L59
- 929 065c 40E0      		ldi r20,lo8(PacketBytes+1)
- 930 065e E42E      		mov r14,r20
- 931 0660 40E0      		ldi r20,hi8(PacketBytes+1)
- 932 0662 F42E      		mov r15,r20
- 933 0664 13E0      		ldi r17,lo8(3)
- 934               	.L63:
- 935               	.LBB7:
- 936               	.LM117:
- 937 0666 F701      		movw r30,r14
- 938 0668 6191      		ld r22,Z+
- 939 066a 7F01      		movw r14,r30
- 940 066c CE01      		movw r24,r28
- 941 066e 0196      		adiw r24,1
- 942 0670 0E94 0000 		call eeprom_write_byte_169
- 943               	.LM118:
- 944 0674 8981      		ldd r24,Y+1
- 945 0676 9A81      		ldd r25,Y+2
- 946 0678 0196      		adiw r24,1
- 947 067a 9A83      		std Y+2,r25
- 948 067c 8983      		std Y+1,r24
- 949               	.LM119:
- 950 067e 1150      		subi r17,lo8(-(-1))
- 951 0680 17FF      		sbrs r17,7
- 952 0682 F1CF      		rjmp .L63
- 953               	.LBE7:
- 954               	.LM120:
- 955 0684 8091 0000 		lds r24,CurrBuffByte
- 956 0688 9091 0000 		lds r25,(CurrBuffByte)+1
- 957 068c 0196      		adiw r24,1
- 958 068e 9093 0000 		sts (CurrBuffByte)+1,r25
- 959 0692 8093 0000 		sts CurrBuffByte,r24
- 960               	.L59:
- 961               	.LM121:
- 962 0696 1092 0000 		sts PacketBytes+1,__zero_reg__
- 963               	.LM122:
- 964 069a 1092 0000 		sts PacketBytes+2,__zero_reg__
- 965               	.LM123:
- 966 069e 0FC1      		rjmp .L26
- 967               	.L65:
- 968               	.LM124:
- 969 06a0 82E0      		ldi r24,lo8(2)
- 970 06a2 90E0      		ldi r25,hi8(2)
- 971 06a4 9093 0000 		sts (MessageSize)+1,r25
- 972 06a8 8093 0000 		sts MessageSize,r24
+ 921 0644 8091 0000 		lds r24,CurrBuffByte
+ 922 0648 9091 0000 		lds r25,(CurrBuffByte)+1
+ 923 064c 0A97      		sbiw r24,10
+ 924 064e E8F4      		brsh .L59
+ 925 0650 40E0      		ldi r20,lo8(PacketBytes+1)
+ 926 0652 E42E      		mov r14,r20
+ 927 0654 40E0      		ldi r20,hi8(PacketBytes+1)
+ 928 0656 F42E      		mov r15,r20
+ 929 0658 13E0      		ldi r17,lo8(3)
+ 930               	.L63:
+ 931               	.LBB7:
+ 932               	.LM116:
+ 933 065a F701      		movw r30,r14
+ 934 065c 6191      		ld r22,Z+
+ 935 065e 7F01      		movw r14,r30
+ 936 0660 CE01      		movw r24,r28
+ 937 0662 0196      		adiw r24,1
+ 938 0664 0E94 0000 		call eeprom_write_byte_169
+ 939               	.LM117:
+ 940 0668 8981      		ldd r24,Y+1
+ 941 066a 9A81      		ldd r25,Y+2
+ 942 066c 0196      		adiw r24,1
+ 943 066e 9A83      		std Y+2,r25
+ 944 0670 8983      		std Y+1,r24
+ 945               	.LM118:
+ 946 0672 1150      		subi r17,lo8(-(-1))
+ 947 0674 17FF      		sbrs r17,7
+ 948 0676 F1CF      		rjmp .L63
+ 949               	.LBE7:
+ 950               	.LM119:
+ 951 0678 8091 0000 		lds r24,CurrBuffByte
+ 952 067c 9091 0000 		lds r25,(CurrBuffByte)+1
+ 953 0680 0196      		adiw r24,1
+ 954 0682 9093 0000 		sts (CurrBuffByte)+1,r25
+ 955 0686 8093 0000 		sts CurrBuffByte,r24
+ 956               	.L59:
+ 957               	.LM120:
+ 958 068a 1092 0000 		sts PacketBytes+1,__zero_reg__
+ 959               	.LM121:
+ 960 068e 1092 0000 		sts PacketBytes+2,__zero_reg__
+ 961               	.LM122:
+ 962 0692 0FC1      		rjmp .L26
+ 963               	.L65:
+ 964               	.LM123:
+ 965 0694 82E0      		ldi r24,lo8(2)
+ 966 0696 90E0      		ldi r25,hi8(2)
+ 967 0698 9093 0000 		sts (MessageSize)+1,r25
+ 968 069c 8093 0000 		sts MessageSize,r24
+ 969               	.LM124:
+ 970 06a0 8091 0000 		lds r24,CurrentMode
+ 971 06a4 8130      		cpi r24,lo8(1)
+ 972 06a6 81F1      		breq .L66
  973               	.LM125:
- 974 06ac 8091 0000 		lds r24,CurrentMode
- 975 06b0 8130      		cpi r24,lo8(1)
- 976 06b2 81F1      		breq .L66
- 977               	.LM126:
- 978 06b4 4331      		cpi r20,lo8(19)
- 979 06b6 41F4      		brne .L67
- 980               	.LM127:
- 981 06b8 8091 0000 		lds r24,Prog_WriteProgram
- 982 06bc 9091 0000 		lds r25,(Prog_WriteProgram)+1
- 983 06c0 9A83      		std Y+2,r25
- 984 06c2 8983      		std Y+1,r24
+ 974 06a8 4331      		cpi r20,lo8(19)
+ 975 06aa 41F4      		brne .L67
+ 976               	.LM126:
+ 977 06ac 8091 0000 		lds r24,Prog_WriteProgram
+ 978 06b0 9091 0000 		lds r25,(Prog_WriteProgram)+1
+ 979 06b4 9A83      		std Y+2,r25
+ 980 06b6 8983      		std Y+1,r24
+ 981               	.LM127:
+ 982 06b8 81E0      		ldi r24,lo8(1)
+ 983 06ba 07C0      		rjmp .L111
+ 984               	.L67:
  985               	.LM128:
- 986 06c4 81E0      		ldi r24,lo8(1)
- 987 06c6 07C0      		rjmp .L111
- 988               	.L67:
- 989               	.LM129:
- 990 06c8 8091 0000 		lds r24,Prog_WriteEEPROM
- 991 06cc 9091 0000 		lds r25,(Prog_WriteEEPROM)+1
- 992 06d0 9A83      		std Y+2,r25
- 993 06d2 8983      		std Y+1,r24
+ 986 06bc 8091 0000 		lds r24,Prog_WriteEEPROM
+ 987 06c0 9091 0000 		lds r25,(Prog_WriteEEPROM)+1
+ 988 06c4 9A83      		std Y+2,r25
+ 989 06c6 8983      		std Y+1,r24
+ 990               	.LM129:
+ 991 06c8 80E0      		ldi r24,lo8(0)
+ 992               	.L111:
+ 993 06ca 0E94 0000 		call PM_SetupDFAddressCounters
  994               	.LM130:
- 995 06d4 80E0      		ldi r24,lo8(0)
- 996               	.L111:
- 997 06d6 0E94 0000 		call PM_SetupDFAddressCounters
+ 995 06ce 8091 0000 		lds r24,CurrBuffByte
+ 996 06d2 9091 0000 		lds r25,(CurrBuffByte)+1
+ 997 06d6 0E94 0000 		call DF_BufferWriteEnable
  998               	.LM131:
- 999 06da 8091 0000 		lds r24,CurrBuffByte
- 1000 06de 9091 0000 		lds r25,(CurrBuffByte)+1
- 1001 06e2 0E94 0000 		call DF_BufferWriteEnable
- 1002               	.LM132:
- 1003 06e6 81E0      		ldi r24,lo8(1)
- 1004 06e8 8093 0000 		sts CurrentMode,r24
- 1005 06ec 30E0      		ldi r19,lo8(PacketBytes+1)
- 1006 06ee E32E      		mov r14,r19
- 1007 06f0 30E0      		ldi r19,hi8(PacketBytes+1)
- 1008 06f2 F32E      		mov r15,r19
- 1009 06f4 18E0      		ldi r17,lo8(8)
- 1010               	.L72:
- 1011               	.LBB8:
- 1012               	.LM133:
- 1013 06f6 F701      		movw r30,r14
- 1014 06f8 6191      		ld r22,Z+
- 1015 06fa 7F01      		movw r14,r30
- 1016 06fc CE01      		movw r24,r28
- 1017 06fe 0196      		adiw r24,1
- 1018 0700 0E94 0000 		call eeprom_write_byte_169
- 1019               	.LM134:
- 1020 0704 8981      		ldd r24,Y+1
- 1021 0706 9A81      		ldd r25,Y+2
- 1022 0708 0196      		adiw r24,1
- 1023 070a 9A83      		std Y+2,r25
- 1024 070c 8983      		std Y+1,r24
- 1025               	.LM135:
- 1026 070e 1150      		subi r17,lo8(-(-1))
- 1027 0710 17FF      		sbrs r17,7
- 1028 0712 F1CF      		rjmp .L72
- 1029               	.L66:
- 1030               	.LBE8:
- 1031               	.LM136:
- 1032 0714 8091 0000 		lds r24,PacketBytes+1
- 1033 0718 9927      		clr r25
- 1034 071a 182F      		mov r17,r24
- 1035 071c 0027      		clr r16
- 1036 071e 8091 0000 		lds r24,PacketBytes+2
- 1037 0722 9927      		clr r25
- 1038 0724 082B      		or r16,r24
- 1039 0726 192B      		or r17,r25
- 1040               	.LBB9:
- 1041               	.LM137:
- 1042 0728 EE24      		clr r14
- 1043 072a FF24      		clr r15
- 1044 072c E016      		cp r14,r16
- 1045 072e F106      		cpc r15,r17
- 1046 0730 78F4      		brsh .L105
- 1047 0732 80E0      		ldi r24,lo8(PacketBytes+10)
- 1048 0734 C82E      		mov r12,r24
- 1049 0736 80E0      		ldi r24,hi8(PacketBytes+10)
- 1050 0738 D82E      		mov r13,r24
- 1051               	.L76:
- 1052               	.LM138:
- 1053 073a F601      		movw r30,r12
- 1054 073c 8191      		ld r24,Z+
- 1055 073e 6F01      		movw r12,r30
- 1056 0740 0E94 0000 		call PM_StoreProgramByte
- 1057               	.LM139:
- 1058 0744 0894      		sec
- 1059 0746 E11C      		adc r14,__zero_reg__
- 1060 0748 F11C      		adc r15,__zero_reg__
- 1061 074a E016      		cp r14,r16
- 1062 074c F106      		cpc r15,r17
- 1063 074e A8F3      		brlo .L76
- 1064               	.L105:
- 1065               	.LBE9:
- 1066               	.LM140:
- 1067 0750 4091 0000 		lds r20,GPageLength
- 1068 0754 5091 0000 		lds r21,(GPageLength)+1
- 1069 0758 57FD      		sbrc r21,7
- 1070 075a 31C0      		rjmp .L77
- 1071 075c 8091 0000 		lds r24,PacketBytes+3
- 1072 0760 87FF      		sbrs r24,7
- 1073 0762 2DC0      		rjmp .L77
- 1074 0764 4115      		cp r20,__zero_reg__
- 1075 0766 5105      		cpc r21,__zero_reg__
- 1076 0768 51F1      		breq .L77
- 1077               	.LM141:
- 1078 076a 8091 0000 		lds r24,MemoryType
- 1079 076e 8130      		cpi r24,lo8(1)
- 1080 0770 29F4      		brne .L78
- 1081 0772 2091 0000 		lds r18,Prog_PageLength
- 1082 0776 3091 0000 		lds r19,(Prog_PageLength)+1
- 1083 077a 04C0      		rjmp .L79
- 1084               	.L78:
- 1085 077c 2091 0000 		lds r18,Prog_EPageLength
- 1086 0780 3091 0000 		lds r19,(Prog_EPageLength)+1
- 1087               	.L79:
- 1088 0784 3A83      		std Y+2,r19
- 1089 0786 2983      		std Y+1,r18
- 1090               	.LM142:
- 1091 0788 852F      		mov r24,r21
- 1092 078a 9927      		clr r25
- 1093 078c 682F      		mov r22,r24
- 1094 078e CE01      		movw r24,r28
- 1095 0790 0196      		adiw r24,1
- 1096 0792 0E94 0000 		call eeprom_write_byte_169
- 1097               	.LM143:
- 1098 0796 8981      		ldd r24,Y+1
- 1099 0798 9A81      		ldd r25,Y+2
- 1100 079a 0196      		adiw r24,1
- 1101 079c 9A83      		std Y+2,r25
- 1102 079e 8983      		std Y+1,r24
- 1103               	.LM144:
- 1104 07a0 6091 0000 		lds r22,GPageLength
- 1105 07a4 CE01      		movw r24,r28
- 1106 07a6 0196      		adiw r24,1
- 1107 07a8 0E94 0000 		call eeprom_write_byte_169
- 1108               	.LM145:
- 1109 07ac 8091 0000 		lds r24,GPageLength
- 1110 07b0 9091 0000 		lds r25,(GPageLength)+1
- 1111 07b4 9068      		ori r25,hi8(-32768)
- 1112 07b6 9093 0000 		sts (GPageLength)+1,r25
- 1113 07ba 8093 0000 		sts GPageLength,r24
- 1114               	.L77:
- 1115               	.LM146:
- 1116 07be 1092 0000 		sts PacketBytes+1,__zero_reg__
- 1117               	.LM147:
- 1118 07c2 7DC0      		rjmp .L26
- 1119               	.L81:
+ 999 06da 81E0      		ldi r24,lo8(1)
+ 1000 06dc 8093 0000 		sts CurrentMode,r24
+ 1001 06e0 30E0      		ldi r19,lo8(PacketBytes+1)
+ 1002 06e2 E32E      		mov r14,r19
+ 1003 06e4 30E0      		ldi r19,hi8(PacketBytes+1)
+ 1004 06e6 F32E      		mov r15,r19
+ 1005 06e8 18E0      		ldi r17,lo8(8)
+ 1006               	.L72:
+ 1007               	.LBB8:
+ 1008               	.LM132:
+ 1009 06ea F701      		movw r30,r14
+ 1010 06ec 6191      		ld r22,Z+
+ 1011 06ee 7F01      		movw r14,r30
+ 1012 06f0 CE01      		movw r24,r28
+ 1013 06f2 0196      		adiw r24,1
+ 1014 06f4 0E94 0000 		call eeprom_write_byte_169
+ 1015               	.LM133:
+ 1016 06f8 8981      		ldd r24,Y+1
+ 1017 06fa 9A81      		ldd r25,Y+2
+ 1018 06fc 0196      		adiw r24,1
+ 1019 06fe 9A83      		std Y+2,r25
+ 1020 0700 8983      		std Y+1,r24
+ 1021               	.LM134:
+ 1022 0702 1150      		subi r17,lo8(-(-1))
+ 1023 0704 17FF      		sbrs r17,7
+ 1024 0706 F1CF      		rjmp .L72
+ 1025               	.L66:
+ 1026               	.LBE8:
+ 1027               	.LM135:
+ 1028 0708 8091 0000 		lds r24,PacketBytes+1
+ 1029 070c 9927      		clr r25
+ 1030 070e 182F      		mov r17,r24
+ 1031 0710 0027      		clr r16
+ 1032 0712 8091 0000 		lds r24,PacketBytes+2
+ 1033 0716 9927      		clr r25
+ 1034 0718 082B      		or r16,r24
+ 1035 071a 192B      		or r17,r25
+ 1036               	.LBB9:
+ 1037               	.LM136:
+ 1038 071c EE24      		clr r14
+ 1039 071e FF24      		clr r15
+ 1040 0720 E016      		cp r14,r16
+ 1041 0722 F106      		cpc r15,r17
+ 1042 0724 78F4      		brsh .L105
+ 1043 0726 80E0      		ldi r24,lo8(PacketBytes+10)
+ 1044 0728 C82E      		mov r12,r24
+ 1045 072a 80E0      		ldi r24,hi8(PacketBytes+10)
+ 1046 072c D82E      		mov r13,r24
+ 1047               	.L76:
+ 1048               	.LM137:
+ 1049 072e F601      		movw r30,r12
+ 1050 0730 8191      		ld r24,Z+
+ 1051 0732 6F01      		movw r12,r30
+ 1052 0734 0E94 0000 		call PM_StoreProgramByte
+ 1053               	.LM138:
+ 1054 0738 0894      		sec
+ 1055 073a E11C      		adc r14,__zero_reg__
+ 1056 073c F11C      		adc r15,__zero_reg__
+ 1057 073e E016      		cp r14,r16
+ 1058 0740 F106      		cpc r15,r17
+ 1059 0742 A8F3      		brlo .L76
+ 1060               	.L105:
+ 1061               	.LBE9:
+ 1062               	.LM139:
+ 1063 0744 4091 0000 		lds r20,GPageLength
+ 1064 0748 5091 0000 		lds r21,(GPageLength)+1
+ 1065 074c 57FD      		sbrc r21,7
+ 1066 074e 31C0      		rjmp .L77
+ 1067 0750 8091 0000 		lds r24,PacketBytes+3
+ 1068 0754 87FF      		sbrs r24,7
+ 1069 0756 2DC0      		rjmp .L77
+ 1070 0758 4115      		cp r20,__zero_reg__
+ 1071 075a 5105      		cpc r21,__zero_reg__
+ 1072 075c 51F1      		breq .L77
+ 1073               	.LM140:
+ 1074 075e 8091 0000 		lds r24,MemoryType
+ 1075 0762 8130      		cpi r24,lo8(1)
+ 1076 0764 29F4      		brne .L78
+ 1077 0766 2091 0000 		lds r18,Prog_PageLength
+ 1078 076a 3091 0000 		lds r19,(Prog_PageLength)+1
+ 1079 076e 04C0      		rjmp .L79
+ 1080               	.L78:
+ 1081 0770 2091 0000 		lds r18,Prog_EPageLength
+ 1082 0774 3091 0000 		lds r19,(Prog_EPageLength)+1
+ 1083               	.L79:
+ 1084 0778 3A83      		std Y+2,r19
+ 1085 077a 2983      		std Y+1,r18
+ 1086               	.LM141:
+ 1087 077c 852F      		mov r24,r21
+ 1088 077e 9927      		clr r25
+ 1089 0780 682F      		mov r22,r24
+ 1090 0782 CE01      		movw r24,r28
+ 1091 0784 0196      		adiw r24,1
+ 1092 0786 0E94 0000 		call eeprom_write_byte_169
+ 1093               	.LM142:
+ 1094 078a 8981      		ldd r24,Y+1
+ 1095 078c 9A81      		ldd r25,Y+2
+ 1096 078e 0196      		adiw r24,1
+ 1097 0790 9A83      		std Y+2,r25
+ 1098 0792 8983      		std Y+1,r24
+ 1099               	.LM143:
+ 1100 0794 6091 0000 		lds r22,GPageLength
+ 1101 0798 CE01      		movw r24,r28
+ 1102 079a 0196      		adiw r24,1
+ 1103 079c 0E94 0000 		call eeprom_write_byte_169
+ 1104               	.LM144:
+ 1105 07a0 8091 0000 		lds r24,GPageLength
+ 1106 07a4 9091 0000 		lds r25,(GPageLength)+1
+ 1107 07a8 9068      		ori r25,hi8(-32768)
+ 1108 07aa 9093 0000 		sts (GPageLength)+1,r25
+ 1109 07ae 8093 0000 		sts GPageLength,r24
+ 1110               	.L77:
+ 1111               	.LM145:
+ 1112 07b2 1092 0000 		sts PacketBytes+1,__zero_reg__
+ 1113               	.LM146:
+ 1114 07b6 7DC0      		rjmp .L26
+ 1115               	.L81:
+ 1116               	.LM147:
+ 1117 07b8 8091 0000 		lds r24,CurrentMode
+ 1118 07bc 8230      		cpi r24,lo8(2)
+ 1119 07be 11F1      		breq .L82
  1120               	.LM148:
- 1121 07c4 8091 0000 		lds r24,CurrentMode
- 1122 07c8 8230      		cpi r24,lo8(2)
- 1123 07ca 11F1      		breq .L82
- 1124               	.LM149:
- 1125 07cc 0E94 0000 		call PM_CheckEndOfProgramming
- 1126               	.LM150:
- 1127 07d0 0E94 0000 		call PM_CheckEndOfFuseLockStore
- 1128               	.LM151:
- 1129 07d4 90E0      		ldi r25,lo8(0)
- 1130 07d6 8091 0000 		lds r24,PacketBytes
- 1131 07da 8431      		cpi r24,lo8(20)
- 1132 07dc 09F4      		brne .L83
- 1133 07de 91E0      		ldi r25,lo8(1)
- 1134               	.L83:
- 1135 07e0 892F      		mov r24,r25
- 1136 07e2 0E94 0000 		call PM_SetupDFAddressCounters
- 1137               	.LM152:
- 1138 07e6 6091 0000 		lds r22,CurrBuffByte
- 1139 07ea 7091 0000 		lds r23,(CurrBuffByte)+1
- 1140 07ee 8091 0000 		lds r24,CurrPageAddress
- 1141 07f2 9091 0000 		lds r25,(CurrPageAddress)+1
- 1142 07f6 0E94 0000 		call DF_ContinuousReadEnable
- 1143               	.LM153:
- 1144 07fa 82E0      		ldi r24,lo8(2)
- 1145 07fc 8093 0000 		sts CurrentMode,r24
- 1146               	.LM154:
- 1147 0800 1092 0000 		sts CurrAddress,__zero_reg__
- 1148 0804 1092 0000 		sts (CurrAddress)+1,__zero_reg__
- 1149 0808 1092 0000 		sts (CurrAddress)+2,__zero_reg__
- 1150 080c 1092 0000 		sts (CurrAddress)+3,__zero_reg__
- 1151               	.L82:
- 1152               	.LM155:
- 1153 0810 8091 0000 		lds r24,PacketBytes+1
- 1154 0814 9927      		clr r25
- 1155 0816 182F      		mov r17,r24
- 1156 0818 0027      		clr r16
- 1157 081a 8091 0000 		lds r24,PacketBytes+2
- 1158 081e 9927      		clr r25
- 1159 0820 082B      		or r16,r24
- 1160 0822 192B      		or r17,r25
- 1161               	.LM156:
- 1162 0824 90E0      		ldi r25,lo8(0)
- 1163 0826 8091 0000 		lds r24,PacketBytes
- 1164 082a 8431      		cpi r24,lo8(20)
- 1165 082c 09F4      		brne .L84
- 1166 082e 91E0      		ldi r25,lo8(1)
- 1167               	.L84:
- 1168 0830 892F      		mov r24,r25
- 1169 0832 0E94 0000 		call PM_GetStoredDataSize
- 1170 0836 DC01      		movw r26,r24
- 1171 0838 CB01      		movw r24,r22
- 1172 083a 6C01      		movw r12,r24
- 1173               	.LBB10:
- 1174               	.LM157:
- 1175 083c EE24      		clr r14
- 1176 083e FF24      		clr r15
- 1177 0840 E016      		cp r14,r16
- 1178 0842 F106      		cpc r15,r17
- 1179 0844 20F5      		brsh .L107
- 1180 0846 F0E0      		ldi r31,lo8(PacketBytes+2)
- 1181 0848 AF2E      		mov r10,r31
- 1182 084a F0E0      		ldi r31,hi8(PacketBytes+2)
- 1183 084c BF2E      		mov r11,r31
- 1184               	.L90:
- 1185               	.LM158:
- 1186 084e 9601      		movw r18,r12
- 1187 0850 4427      		clr r20
- 1188 0852 5527      		clr r21
- 1189 0854 8091 0000 		lds r24,CurrAddress
- 1190 0858 9091 0000 		lds r25,(CurrAddress)+1
- 1191 085c A091 0000 		lds r26,(CurrAddress)+2
- 1192 0860 B091 0000 		lds r27,(CurrAddress)+3
- 1193 0864 8217      		cp r24,r18
- 1194 0866 9307      		cpc r25,r19
- 1195 0868 A407      		cpc r26,r20
- 1196 086a B507      		cpc r27,r21
- 1197 086c 20F4      		brsh .L88
- 1198 086e 80E0      		ldi r24,lo8(0)
- 1199 0870 0E94 0000 		call SPI_SPITransmit
- 1200 0874 01C0      		rjmp .L89
- 1201               	.L88:
- 1202 0876 8FEF      		ldi r24,lo8(-1)
- 1203               	.L89:
- 1204 0878 F501      		movw r30,r10
- 1205 087a 8193      		st Z+,r24
- 1206 087c 5F01      		movw r10,r30
- 1207               	.LM159:
- 1208 087e 0E94 0000 		call V2P_IncrementCurrAddress
- 1209               	.LM160:
- 1210 0882 0894      		sec
- 1211 0884 E11C      		adc r14,__zero_reg__
- 1212 0886 F11C      		adc r15,__zero_reg__
- 1213 0888 E016      		cp r14,r16
- 1214 088a F106      		cpc r15,r17
- 1215 088c 00F3      		brlo .L90
- 1216               	.L107:
- 1217               	.LBE10:
- 1218               	.LM161:
- 1219 088e 0D5F      		subi r16,lo8(-(3))
- 1220 0890 1F4F      		sbci r17,hi8(-(3))
- 1221 0892 1093 0000 		sts (MessageSize)+1,r17
- 1222 0896 0093 0000 		sts MessageSize,r16
- 1223 089a 0350      		subi r16,lo8(-(-3))
- 1224 089c 1040      		sbci r17,hi8(-(-3))
- 1225               	.LM162:
- 1226 089e 1092 0000 		sts PacketBytes+1,__zero_reg__
- 1227               	.LM163:
- 1228 08a2 0050      		subi r16,lo8(-(PacketBytes))
- 1229 08a4 1040      		sbci r17,hi8(-(PacketBytes))
- 1230 08a6 F801      		movw r30,r16
- 1231 08a8 1282      		std Z+2,__zero_reg__
- 1232               	.LM164:
- 1233 08aa 09C0      		rjmp .L26
- 1234               	.L91:
- 1235               	.LM165:
- 1236 08ac 81E0      		ldi r24,lo8(1)
- 1237 08ae 90E0      		ldi r25,hi8(1)
- 1238 08b0 9093 0000 		sts (MessageSize)+1,r25
- 1239 08b4 8093 0000 		sts MessageSize,r24
- 1240               	.LM166:
- 1241 08b8 89EC      		ldi r24,lo8(-55)
- 1242 08ba 8093 0000 		sts PacketBytes+1,r24
- 1243               	.L26:
- 1244               	.LBE3:
- 1245               	.LM167:
- 1246 08be 0E94 0000 		call V2P_SendPacket
- 1247               	/* epilogue: frame size=2 */
- 1248 08c2 2296      		adiw r28,2
- 1249 08c4 0FB6      		in __tmp_reg__,__SREG__
- 1250 08c6 F894      		cli
- 1251 08c8 DEBF      		out __SP_H__,r29
- 1252 08ca 0FBE      		out __SREG__,__tmp_reg__
- 1253 08cc CDBF      		out __SP_L__,r28
- 1254 08ce DF91      		pop r29
- 1255 08d0 CF91      		pop r28
- 1256 08d2 1F91      		pop r17
- 1257 08d4 0F91      		pop r16
- 1258 08d6 FF90      		pop r15
- 1259 08d8 EF90      		pop r14
- 1260 08da DF90      		pop r13
- 1261 08dc CF90      		pop r12
- 1262 08de BF90      		pop r11
- 1263 08e0 AF90      		pop r10
- 1264 08e2 0895      		ret
- 1265               	/* epilogue end (size=17) */
- 1266               	/* function PM_InterpretAVRISPPacket size 713 (678) */
- 1267               	.LFE11:
- 1269               	.global	PM_SendFuseLockBytes
- 1271               	PM_SendFuseLockBytes:
- 1272               	.LFB14:
- 1273               	.LM168:
- 1274               	/* prologue: frame size=2 */
- 1275 08e4 0F93      		push r16
- 1276 08e6 1F93      		push r17
- 1277 08e8 CF93      		push r28
- 1278 08ea DF93      		push r29
- 1279 08ec CDB7      		in r28,__SP_L__
- 1280 08ee DEB7      		in r29,__SP_H__
- 1281 08f0 2297      		sbiw r28,2
- 1282 08f2 0FB6      		in __tmp_reg__,__SREG__
- 1283 08f4 F894      		cli
- 1284 08f6 DEBF      		out __SP_H__,r29
- 1285 08f8 0FBE      		out __SREG__,__tmp_reg__
- 1286 08fa CDBF      		out __SP_L__,r28
- 1287               	/* prologue end (size=12) */
- 1288 08fc 082F      		mov r16,r24
- 1289               	.LM169:
- 1290 08fe 8230      		cpi r24,lo8(2)
- 1291 0900 29F4      		brne .L115
- 1292               	.LM170:
- 1293 0902 8091 0000 		lds r24,Prog_TotalFuseBytes
- 1294 0906 9091 0000 		lds r25,(Prog_TotalFuseBytes)+1
- 1295 090a 04C0      		rjmp .L116
- 1296               	.L115:
- 1297 090c 8091 0000 		lds r24,Prog_TotalLockBytes
- 1298 0910 9091 0000 		lds r25,(Prog_TotalLockBytes)+1
- 1299               	.L116:
- 1300 0914 9A83      		std Y+2,r25
- 1301 0916 8983      		std Y+1,r24
- 1302               	.LM171:
- 1303 0918 CE01      		movw r24,r28
- 1304 091a 0196      		adiw r24,1
- 1305 091c 0E94 0000 		call eeprom_read_byte_169
- 1306 0920 182F      		mov r17,r24
- 1307               	.LM172:
- 1308 0922 0230      		cpi r16,lo8(2)
- 1309 0924 29F4      		brne .L117
- 1310 0926 8091 0000 		lds r24,Prog_FuseBytes
- 1311 092a 9091 0000 		lds r25,(Prog_FuseBytes)+1
- 1312 092e 04C0      		rjmp .L118
- 1313               	.L117:
- 1314 0930 8091 0000 		lds r24,Prog_LockBytes
- 1315 0934 9091 0000 		lds r25,(Prog_LockBytes)+1
- 1316               	.L118:
- 1317 0938 9A83      		std Y+2,r25
- 1318 093a 8983      		std Y+1,r24
- 1319               	.LM173:
- 1320 093c 1150      		subi r17,lo8(-(-1))
- 1321 093e 1F3F      		cpi r17,lo8(-1)
- 1322 0940 B1F0      		breq .L128
- 1323               	.L126:
- 1324 0942 03E0      		ldi r16,lo8(3)
- 1325               	.L124:
- 1326               	.LBB11:
- 1327               	.LM174:
- 1328 0944 CE01      		movw r24,r28
- 1329 0946 0196      		adiw r24,1
- 1330 0948 0E94 0000 		call eeprom_read_byte_169
- 1331 094c 0E94 0000 		call USI_SPITransmit
- 1332               	.LM175:
- 1333 0950 8981      		ldd r24,Y+1
- 1334 0952 9A81      		ldd r25,Y+2
- 1335 0954 0196      		adiw r24,1
- 1336 0956 9A83      		std Y+2,r25
- 1337 0958 8983      		std Y+1,r24
- 1338               	.LM176:
- 1339 095a 0150      		subi r16,lo8(-(-1))
- 1340 095c 07FF      		sbrs r16,7
- 1341 095e F2CF      		rjmp .L124
- 1342               	.LBE11:
- 1343               	.LM177:
- 1344 0960 1123      		tst r17
- 1345 0962 19F0      		breq .L119
- 1346               	.LM178:
- 1347 0964 85E0      		ldi r24,lo8(5)
- 1348 0966 0E94 0000 		call MAIN_Delay10MS
- 1349               	.L119:
- 1350 096a 1150      		subi r17,1
- 1351 096c 50F7      		brcc .L126
- 1352               	.L128:
- 1353               	/* epilogue: frame size=2 */
- 1354 096e 2296      		adiw r28,2
- 1355 0970 0FB6      		in __tmp_reg__,__SREG__
- 1356 0972 F894      		cli
- 1357 0974 DEBF      		out __SP_H__,r29
- 1358 0976 0FBE      		out __SREG__,__tmp_reg__
- 1359 0978 CDBF      		out __SP_L__,r28
- 1360 097a DF91      		pop r29
- 1361 097c CF91      		pop r28
- 1362 097e 1F91      		pop r17
- 1363 0980 0F91      		pop r16
- 1364 0982 0895      		ret
- 1365               	/* epilogue end (size=11) */
- 1366               	/* function PM_SendFuseLockBytes size 81 (58) */
- 1367               	.LFE14:
- 1369               	.global	PM_SendEraseCommand
- 1371               	PM_SendEraseCommand:
- 1372               	.LFB15:
- 1373               	.LM179:
- 1374               	/* prologue: frame size=2 */
- 1375 0984 0F93      		push r16
- 1376 0986 1F93      		push r17
- 1377 0988 CF93      		push r28
- 1378 098a DF93      		push r29
- 1379 098c CDB7      		in r28,__SP_L__
- 1380 098e DEB7      		in r29,__SP_H__
- 1381 0990 2297      		sbiw r28,2
- 1382 0992 0FB6      		in __tmp_reg__,__SREG__
- 1383 0994 F894      		cli
- 1384 0996 DEBF      		out __SP_H__,r29
- 1385 0998 0FBE      		out __SREG__,__tmp_reg__
- 1386 099a CDBF      		out __SP_L__,r28
- 1387               	/* prologue end (size=12) */
- 1388               	.LM180:
- 1389 099c 8091 0000 		lds r24,Prog_EraseChip
- 1390 09a0 9091 0000 		lds r25,(Prog_EraseChip)+1
- 1391 09a4 0296      		adiw r24,2
- 1392 09a6 9A83      		std Y+2,r25
- 1393 09a8 8983      		std Y+1,r24
- 1394 09aa 13E0      		ldi r17,lo8(3)
- 1395               	.L135:
- 1396               	.LBB12:
- 1397               	.LM181:
- 1398 09ac CE01      		movw r24,r28
- 1399 09ae 0196      		adiw r24,1
- 1400 09b0 0E94 0000 		call eeprom_read_byte_169
- 1401 09b4 0E94 0000 		call USI_SPITransmit
- 1402               	.LM182:
- 1403 09b8 8981      		ldd r24,Y+1
- 1404 09ba 9A81      		ldd r25,Y+2
- 1405 09bc 0196      		adiw r24,1
- 1406 09be 9A83      		std Y+2,r25
- 1407 09c0 8983      		std Y+1,r24
- 1408               	.LM183:
- 1409 09c2 1150      		subi r17,lo8(-(-1))
- 1410 09c4 17FF      		sbrs r17,7
- 1411 09c6 F2CF      		rjmp .L135
- 1412               	.LBE12:
- 1413               	.LM184:
- 1414 09c8 0091 0000 		lds r16,Prog_EraseChip
- 1415 09cc 1091 0000 		lds r17,(Prog_EraseChip)+1
- 1416 09d0 0F5F      		subi r16,lo8(-(1))
- 1417 09d2 1F4F      		sbci r17,hi8(-(1))
- 1418 09d4 1A83      		std Y+2,r17
- 1419 09d6 0983      		std Y+1,r16
- 1420 09d8 0150      		subi r16,lo8(-(-1))
- 1421 09da 1040      		sbci r17,hi8(-(-1))
- 1422               	.LM185:
- 1423 09dc CE01      		movw r24,r28
- 1424 09de 0196      		adiw r24,1
- 1425 09e0 0E94 0000 		call eeprom_read_byte_169
- 1426 09e4 8823      		tst r24
- 1427 09e6 59F0      		breq .L136
- 1428               	.L137:
- 1429               	.LM186:
- 1430 09e8 80E0      		ldi r24,lo8(-4096)
- 1431 09ea 90EF      		ldi r25,hi8(-4096)
- 1432 09ec 0E94 0000 		call USI_SPITransmitWord
- 1433 09f0 80E0      		ldi r24,lo8(0)
- 1434 09f2 90E0      		ldi r25,hi8(0)
- 1435 09f4 0E94 0000 		call USI_SPITransmitWord
- 1436 09f8 80FD      		sbrc r24,0
- 1437 09fa F6CF      		rjmp .L137
- 1438 09fc 08C0      		rjmp .L131
- 1439               	.L136:
- 1440               	.LM187:
- 1441 09fe 1A83      		std Y+2,r17
- 1442 0a00 0983      		std Y+1,r16
- 1443               	.LM188:
- 1444 0a02 CE01      		movw r24,r28
- 1445 0a04 0196      		adiw r24,1
- 1446 0a06 0E94 0000 		call eeprom_read_byte_169
- 1447 0a0a 0E94 0000 		call MAIN_Delay1MS
- 1448               	.L131:
- 1449               	/* epilogue: frame size=2 */
- 1450 0a0e 2296      		adiw r28,2
- 1451 0a10 0FB6      		in __tmp_reg__,__SREG__
- 1452 0a12 F894      		cli
- 1453 0a14 DEBF      		out __SP_H__,r29
- 1454 0a16 0FBE      		out __SREG__,__tmp_reg__
- 1455 0a18 CDBF      		out __SP_L__,r28
- 1456 0a1a DF91      		pop r29
- 1457 0a1c CF91      		pop r28
- 1458 0a1e 1F91      		pop r17
- 1459 0a20 0F91      		pop r16
- 1460 0a22 0895      		ret
- 1461               	/* epilogue end (size=11) */
- 1462               	/* function PM_SendEraseCommand size 80 (57) */
- 1463               	.LFE15:
- 1465               	.global	PM_CreateProgrammingPackets
- 1467               	PM_CreateProgrammingPackets:
- 1468               	.LFB16:
- 1469               	.LM189:
- 1470               	/* prologue: frame size=3 */
- 1471 0a24 2F92      		push r2
- 1472 0a26 3F92      		push r3
- 1473 0a28 4F92      		push r4
- 1474 0a2a 5F92      		push r5
- 1475 0a2c 6F92      		push r6
- 1476 0a2e 7F92      		push r7
- 1477 0a30 8F92      		push r8
- 1478 0a32 9F92      		push r9
- 1479 0a34 AF92      		push r10
- 1480 0a36 BF92      		push r11
- 1481 0a38 CF92      		push r12
- 1482 0a3a DF92      		push r13
- 1483 0a3c EF92      		push r14
- 1484 0a3e FF92      		push r15
- 1485 0a40 0F93      		push r16
- 1486 0a42 1F93      		push r17
- 1487 0a44 CF93      		push r28
- 1488 0a46 DF93      		push r29
- 1489 0a48 CDB7      		in r28,__SP_L__
- 1490 0a4a DEB7      		in r29,__SP_H__
- 1491 0a4c 2397      		sbiw r28,3
- 1492 0a4e 0FB6      		in __tmp_reg__,__SREG__
- 1493 0a50 F894      		cli
- 1494 0a52 DEBF      		out __SP_H__,r29
- 1495 0a54 0FBE      		out __SREG__,__tmp_reg__
- 1496 0a56 CDBF      		out __SP_L__,r28
- 1497               	/* prologue end (size=26) */
- 1498 0a58 182F      		mov r17,r24
+ 1121 07c0 0E94 0000 		call PM_CheckEndOfProgramming
+ 1122               	.LM149:
+ 1123 07c4 0E94 0000 		call PM_CheckEndOfFuseLockStore
+ 1124               	.LM150:
+ 1125 07c8 90E0      		ldi r25,lo8(0)
+ 1126 07ca 8091 0000 		lds r24,PacketBytes
+ 1127 07ce 8431      		cpi r24,lo8(20)
+ 1128 07d0 09F4      		brne .L83
+ 1129 07d2 91E0      		ldi r25,lo8(1)
+ 1130               	.L83:
+ 1131 07d4 892F      		mov r24,r25
+ 1132 07d6 0E94 0000 		call PM_SetupDFAddressCounters
+ 1133               	.LM151:
+ 1134 07da 6091 0000 		lds r22,CurrBuffByte
+ 1135 07de 7091 0000 		lds r23,(CurrBuffByte)+1
+ 1136 07e2 8091 0000 		lds r24,CurrPageAddress
+ 1137 07e6 9091 0000 		lds r25,(CurrPageAddress)+1
+ 1138 07ea 0E94 0000 		call DF_ContinuousReadEnable
+ 1139               	.LM152:
+ 1140 07ee 82E0      		ldi r24,lo8(2)
+ 1141 07f0 8093 0000 		sts CurrentMode,r24
+ 1142               	.LM153:
+ 1143 07f4 1092 0000 		sts CurrAddress,__zero_reg__
+ 1144 07f8 1092 0000 		sts (CurrAddress)+1,__zero_reg__
+ 1145 07fc 1092 0000 		sts (CurrAddress)+2,__zero_reg__
+ 1146 0800 1092 0000 		sts (CurrAddress)+3,__zero_reg__
+ 1147               	.L82:
+ 1148               	.LM154:
+ 1149 0804 8091 0000 		lds r24,PacketBytes+1
+ 1150 0808 9927      		clr r25
+ 1151 080a 182F      		mov r17,r24
+ 1152 080c 0027      		clr r16
+ 1153 080e 8091 0000 		lds r24,PacketBytes+2
+ 1154 0812 9927      		clr r25
+ 1155 0814 082B      		or r16,r24
+ 1156 0816 192B      		or r17,r25
+ 1157               	.LM155:
+ 1158 0818 90E0      		ldi r25,lo8(0)
+ 1159 081a 8091 0000 		lds r24,PacketBytes
+ 1160 081e 8431      		cpi r24,lo8(20)
+ 1161 0820 09F4      		brne .L84
+ 1162 0822 91E0      		ldi r25,lo8(1)
+ 1163               	.L84:
+ 1164 0824 892F      		mov r24,r25
+ 1165 0826 0E94 0000 		call PM_GetStoredDataSize
+ 1166 082a DC01      		movw r26,r24
+ 1167 082c CB01      		movw r24,r22
+ 1168 082e 6C01      		movw r12,r24
+ 1169               	.LBB10:
+ 1170               	.LM156:
+ 1171 0830 EE24      		clr r14
+ 1172 0832 FF24      		clr r15
+ 1173 0834 E016      		cp r14,r16
+ 1174 0836 F106      		cpc r15,r17
+ 1175 0838 20F5      		brsh .L107
+ 1176 083a F0E0      		ldi r31,lo8(PacketBytes+2)
+ 1177 083c AF2E      		mov r10,r31
+ 1178 083e F0E0      		ldi r31,hi8(PacketBytes+2)
+ 1179 0840 BF2E      		mov r11,r31
+ 1180               	.L90:
+ 1181               	.LM157:
+ 1182 0842 9601      		movw r18,r12
+ 1183 0844 4427      		clr r20
+ 1184 0846 5527      		clr r21
+ 1185 0848 8091 0000 		lds r24,CurrAddress
+ 1186 084c 9091 0000 		lds r25,(CurrAddress)+1
+ 1187 0850 A091 0000 		lds r26,(CurrAddress)+2
+ 1188 0854 B091 0000 		lds r27,(CurrAddress)+3
+ 1189 0858 8217      		cp r24,r18
+ 1190 085a 9307      		cpc r25,r19
+ 1191 085c A407      		cpc r26,r20
+ 1192 085e B507      		cpc r27,r21
+ 1193 0860 20F4      		brsh .L88
+ 1194 0862 80E0      		ldi r24,lo8(0)
+ 1195 0864 0E94 0000 		call SPI_SPITransmit
+ 1196 0868 01C0      		rjmp .L89
+ 1197               	.L88:
+ 1198 086a 8FEF      		ldi r24,lo8(-1)
+ 1199               	.L89:
+ 1200 086c F501      		movw r30,r10
+ 1201 086e 8193      		st Z+,r24
+ 1202 0870 5F01      		movw r10,r30
+ 1203               	.LM158:
+ 1204 0872 0E94 0000 		call V2P_IncrementCurrAddress
+ 1205               	.LM159:
+ 1206 0876 0894      		sec
+ 1207 0878 E11C      		adc r14,__zero_reg__
+ 1208 087a F11C      		adc r15,__zero_reg__
+ 1209 087c E016      		cp r14,r16
+ 1210 087e F106      		cpc r15,r17
+ 1211 0880 00F3      		brlo .L90
+ 1212               	.L107:
+ 1213               	.LBE10:
+ 1214               	.LM160:
+ 1215 0882 0D5F      		subi r16,lo8(-(3))
+ 1216 0884 1F4F      		sbci r17,hi8(-(3))
+ 1217 0886 1093 0000 		sts (MessageSize)+1,r17
+ 1218 088a 0093 0000 		sts MessageSize,r16
+ 1219 088e 0350      		subi r16,lo8(-(-3))
+ 1220 0890 1040      		sbci r17,hi8(-(-3))
+ 1221               	.LM161:
+ 1222 0892 1092 0000 		sts PacketBytes+1,__zero_reg__
+ 1223               	.LM162:
+ 1224 0896 0050      		subi r16,lo8(-(PacketBytes))
+ 1225 0898 1040      		sbci r17,hi8(-(PacketBytes))
+ 1226 089a F801      		movw r30,r16
+ 1227 089c 1282      		std Z+2,__zero_reg__
+ 1228               	.LM163:
+ 1229 089e 09C0      		rjmp .L26
+ 1230               	.L91:
+ 1231               	.LM164:
+ 1232 08a0 81E0      		ldi r24,lo8(1)
+ 1233 08a2 90E0      		ldi r25,hi8(1)
+ 1234 08a4 9093 0000 		sts (MessageSize)+1,r25
+ 1235 08a8 8093 0000 		sts MessageSize,r24
+ 1236               	.LM165:
+ 1237 08ac 89EC      		ldi r24,lo8(-55)
+ 1238 08ae 8093 0000 		sts PacketBytes+1,r24
+ 1239               	.L26:
+ 1240               	.LBE3:
+ 1241               	.LM166:
+ 1242 08b2 0E94 0000 		call V2P_SendPacket
+ 1243               	/* epilogue: frame size=2 */
+ 1244 08b6 2296      		adiw r28,2
+ 1245 08b8 0FB6      		in __tmp_reg__,__SREG__
+ 1246 08ba F894      		cli
+ 1247 08bc DEBF      		out __SP_H__,r29
+ 1248 08be 0FBE      		out __SREG__,__tmp_reg__
+ 1249 08c0 CDBF      		out __SP_L__,r28
+ 1250 08c2 DF91      		pop r29
+ 1251 08c4 CF91      		pop r28
+ 1252 08c6 1F91      		pop r17
+ 1253 08c8 0F91      		pop r16
+ 1254 08ca FF90      		pop r15
+ 1255 08cc EF90      		pop r14
+ 1256 08ce DF90      		pop r13
+ 1257 08d0 CF90      		pop r12
+ 1258 08d2 BF90      		pop r11
+ 1259 08d4 AF90      		pop r10
+ 1260 08d6 0895      		ret
+ 1261               	/* epilogue end (size=17) */
+ 1262               	/* function PM_InterpretAVRISPPacket size 713 (678) */
+ 1263               	.LFE11:
+ 1265               	.global	PM_SendFuseLockBytes
+ 1267               	PM_SendFuseLockBytes:
+ 1268               	.LFB14:
+ 1269               	.LM167:
+ 1270               	/* prologue: frame size=2 */
+ 1271 08d8 0F93      		push r16
+ 1272 08da 1F93      		push r17
+ 1273 08dc CF93      		push r28
+ 1274 08de DF93      		push r29
+ 1275 08e0 CDB7      		in r28,__SP_L__
+ 1276 08e2 DEB7      		in r29,__SP_H__
+ 1277 08e4 2297      		sbiw r28,2
+ 1278 08e6 0FB6      		in __tmp_reg__,__SREG__
+ 1279 08e8 F894      		cli
+ 1280 08ea DEBF      		out __SP_H__,r29
+ 1281 08ec 0FBE      		out __SREG__,__tmp_reg__
+ 1282 08ee CDBF      		out __SP_L__,r28
+ 1283               	/* prologue end (size=12) */
+ 1284 08f0 082F      		mov r16,r24
+ 1285               	.LM168:
+ 1286 08f2 8230      		cpi r24,lo8(2)
+ 1287 08f4 29F4      		brne .L115
+ 1288               	.LM169:
+ 1289 08f6 8091 0000 		lds r24,Prog_TotalFuseBytes
+ 1290 08fa 9091 0000 		lds r25,(Prog_TotalFuseBytes)+1
+ 1291 08fe 04C0      		rjmp .L116
+ 1292               	.L115:
+ 1293 0900 8091 0000 		lds r24,Prog_TotalLockBytes
+ 1294 0904 9091 0000 		lds r25,(Prog_TotalLockBytes)+1
+ 1295               	.L116:
+ 1296 0908 9A83      		std Y+2,r25
+ 1297 090a 8983      		std Y+1,r24
+ 1298               	.LM170:
+ 1299 090c CE01      		movw r24,r28
+ 1300 090e 0196      		adiw r24,1
+ 1301 0910 0E94 0000 		call eeprom_read_byte_169
+ 1302 0914 182F      		mov r17,r24
+ 1303               	.LM171:
+ 1304 0916 0230      		cpi r16,lo8(2)
+ 1305 0918 29F4      		brne .L117
+ 1306 091a 8091 0000 		lds r24,Prog_FuseBytes
+ 1307 091e 9091 0000 		lds r25,(Prog_FuseBytes)+1
+ 1308 0922 04C0      		rjmp .L118
+ 1309               	.L117:
+ 1310 0924 8091 0000 		lds r24,Prog_LockBytes
+ 1311 0928 9091 0000 		lds r25,(Prog_LockBytes)+1
+ 1312               	.L118:
+ 1313 092c 9A83      		std Y+2,r25
+ 1314 092e 8983      		std Y+1,r24
+ 1315               	.LM172:
+ 1316 0930 1150      		subi r17,lo8(-(-1))
+ 1317 0932 1F3F      		cpi r17,lo8(-1)
+ 1318 0934 B1F0      		breq .L128
+ 1319               	.L126:
+ 1320 0936 03E0      		ldi r16,lo8(3)
+ 1321               	.L124:
+ 1322               	.LBB11:
+ 1323               	.LM173:
+ 1324 0938 CE01      		movw r24,r28
+ 1325 093a 0196      		adiw r24,1
+ 1326 093c 0E94 0000 		call eeprom_read_byte_169
+ 1327 0940 0E94 0000 		call USI_SPITransmit
+ 1328               	.LM174:
+ 1329 0944 8981      		ldd r24,Y+1
+ 1330 0946 9A81      		ldd r25,Y+2
+ 1331 0948 0196      		adiw r24,1
+ 1332 094a 9A83      		std Y+2,r25
+ 1333 094c 8983      		std Y+1,r24
+ 1334               	.LM175:
+ 1335 094e 0150      		subi r16,lo8(-(-1))
+ 1336 0950 07FF      		sbrs r16,7
+ 1337 0952 F2CF      		rjmp .L124
+ 1338               	.LBE11:
+ 1339               	.LM176:
+ 1340 0954 1123      		tst r17
+ 1341 0956 19F0      		breq .L119
+ 1342               	.LM177:
+ 1343 0958 85E0      		ldi r24,lo8(5)
+ 1344 095a 0E94 0000 		call MAIN_Delay10MS
+ 1345               	.L119:
+ 1346 095e 1150      		subi r17,1
+ 1347 0960 50F7      		brcc .L126
+ 1348               	.L128:
+ 1349               	/* epilogue: frame size=2 */
+ 1350 0962 2296      		adiw r28,2
+ 1351 0964 0FB6      		in __tmp_reg__,__SREG__
+ 1352 0966 F894      		cli
+ 1353 0968 DEBF      		out __SP_H__,r29
+ 1354 096a 0FBE      		out __SREG__,__tmp_reg__
+ 1355 096c CDBF      		out __SP_L__,r28
+ 1356 096e DF91      		pop r29
+ 1357 0970 CF91      		pop r28
+ 1358 0972 1F91      		pop r17
+ 1359 0974 0F91      		pop r16
+ 1360 0976 0895      		ret
+ 1361               	/* epilogue end (size=11) */
+ 1362               	/* function PM_SendFuseLockBytes size 81 (58) */
+ 1363               	.LFE14:
+ 1365               	.global	PM_SendEraseCommand
+ 1367               	PM_SendEraseCommand:
+ 1368               	.LFB15:
+ 1369               	.LM178:
+ 1370               	/* prologue: frame size=2 */
+ 1371 0978 0F93      		push r16
+ 1372 097a 1F93      		push r17
+ 1373 097c CF93      		push r28
+ 1374 097e DF93      		push r29
+ 1375 0980 CDB7      		in r28,__SP_L__
+ 1376 0982 DEB7      		in r29,__SP_H__
+ 1377 0984 2297      		sbiw r28,2
+ 1378 0986 0FB6      		in __tmp_reg__,__SREG__
+ 1379 0988 F894      		cli
+ 1380 098a DEBF      		out __SP_H__,r29
+ 1381 098c 0FBE      		out __SREG__,__tmp_reg__
+ 1382 098e CDBF      		out __SP_L__,r28
+ 1383               	/* prologue end (size=12) */
+ 1384               	.LM179:
+ 1385 0990 8091 0000 		lds r24,Prog_EraseChip
+ 1386 0994 9091 0000 		lds r25,(Prog_EraseChip)+1
+ 1387 0998 0296      		adiw r24,2
+ 1388 099a 9A83      		std Y+2,r25
+ 1389 099c 8983      		std Y+1,r24
+ 1390 099e 13E0      		ldi r17,lo8(3)
+ 1391               	.L135:
+ 1392               	.LBB12:
+ 1393               	.LM180:
+ 1394 09a0 CE01      		movw r24,r28
+ 1395 09a2 0196      		adiw r24,1
+ 1396 09a4 0E94 0000 		call eeprom_read_byte_169
+ 1397 09a8 0E94 0000 		call USI_SPITransmit
+ 1398               	.LM181:
+ 1399 09ac 8981      		ldd r24,Y+1
+ 1400 09ae 9A81      		ldd r25,Y+2
+ 1401 09b0 0196      		adiw r24,1
+ 1402 09b2 9A83      		std Y+2,r25
+ 1403 09b4 8983      		std Y+1,r24
+ 1404               	.LM182:
+ 1405 09b6 1150      		subi r17,lo8(-(-1))
+ 1406 09b8 17FF      		sbrs r17,7
+ 1407 09ba F2CF      		rjmp .L135
+ 1408               	.LBE12:
+ 1409               	.LM183:
+ 1410 09bc 0091 0000 		lds r16,Prog_EraseChip
+ 1411 09c0 1091 0000 		lds r17,(Prog_EraseChip)+1
+ 1412 09c4 0F5F      		subi r16,lo8(-(1))
+ 1413 09c6 1F4F      		sbci r17,hi8(-(1))
+ 1414 09c8 1A83      		std Y+2,r17
+ 1415 09ca 0983      		std Y+1,r16
+ 1416 09cc 0150      		subi r16,lo8(-(-1))
+ 1417 09ce 1040      		sbci r17,hi8(-(-1))
+ 1418               	.LM184:
+ 1419 09d0 CE01      		movw r24,r28
+ 1420 09d2 0196      		adiw r24,1
+ 1421 09d4 0E94 0000 		call eeprom_read_byte_169
+ 1422 09d8 8823      		tst r24
+ 1423 09da 59F0      		breq .L136
+ 1424               	.L137:
+ 1425               	.LM185:
+ 1426 09dc 80E0      		ldi r24,lo8(-4096)
+ 1427 09de 90EF      		ldi r25,hi8(-4096)
+ 1428 09e0 0E94 0000 		call USI_SPITransmitWord
+ 1429 09e4 80E0      		ldi r24,lo8(0)
+ 1430 09e6 90E0      		ldi r25,hi8(0)
+ 1431 09e8 0E94 0000 		call USI_SPITransmitWord
+ 1432 09ec 80FD      		sbrc r24,0
+ 1433 09ee F6CF      		rjmp .L137
+ 1434 09f0 08C0      		rjmp .L131
+ 1435               	.L136:
+ 1436               	.LM186:
+ 1437 09f2 1A83      		std Y+2,r17
+ 1438 09f4 0983      		std Y+1,r16
+ 1439               	.LM187:
+ 1440 09f6 CE01      		movw r24,r28
+ 1441 09f8 0196      		adiw r24,1
+ 1442 09fa 0E94 0000 		call eeprom_read_byte_169
+ 1443 09fe 0E94 0000 		call MAIN_Delay1MS
+ 1444               	.L131:
+ 1445               	/* epilogue: frame size=2 */
+ 1446 0a02 2296      		adiw r28,2
+ 1447 0a04 0FB6      		in __tmp_reg__,__SREG__
+ 1448 0a06 F894      		cli
+ 1449 0a08 DEBF      		out __SP_H__,r29
+ 1450 0a0a 0FBE      		out __SREG__,__tmp_reg__
+ 1451 0a0c CDBF      		out __SP_L__,r28
+ 1452 0a0e DF91      		pop r29
+ 1453 0a10 CF91      		pop r28
+ 1454 0a12 1F91      		pop r17
+ 1455 0a14 0F91      		pop r16
+ 1456 0a16 0895      		ret
+ 1457               	/* epilogue end (size=11) */
+ 1458               	/* function PM_SendEraseCommand size 80 (57) */
+ 1459               	.LFE15:
+ 1461               	.global	PM_CreateProgrammingPackets
+ 1463               	PM_CreateProgrammingPackets:
+ 1464               	.LFB16:
+ 1465               	.LM188:
+ 1466               	/* prologue: frame size=3 */
+ 1467 0a18 2F92      		push r2
+ 1468 0a1a 3F92      		push r3
+ 1469 0a1c 4F92      		push r4
+ 1470 0a1e 5F92      		push r5
+ 1471 0a20 6F92      		push r6
+ 1472 0a22 7F92      		push r7
+ 1473 0a24 8F92      		push r8
+ 1474 0a26 9F92      		push r9
+ 1475 0a28 AF92      		push r10
+ 1476 0a2a BF92      		push r11
+ 1477 0a2c CF92      		push r12
+ 1478 0a2e DF92      		push r13
+ 1479 0a30 EF92      		push r14
+ 1480 0a32 FF92      		push r15
+ 1481 0a34 0F93      		push r16
+ 1482 0a36 1F93      		push r17
+ 1483 0a38 CF93      		push r28
+ 1484 0a3a DF93      		push r29
+ 1485 0a3c CDB7      		in r28,__SP_L__
+ 1486 0a3e DEB7      		in r29,__SP_H__
+ 1487 0a40 2397      		sbiw r28,3
+ 1488 0a42 0FB6      		in __tmp_reg__,__SREG__
+ 1489 0a44 F894      		cli
+ 1490 0a46 DEBF      		out __SP_H__,r29
+ 1491 0a48 0FBE      		out __SREG__,__tmp_reg__
+ 1492 0a4a CDBF      		out __SP_L__,r28
+ 1493               	/* prologue end (size=26) */
+ 1494 0a4c 182F      		mov r17,r24
+ 1495               	.LM189:
+ 1496 0a4e 8824      		clr r8
+ 1497 0a50 9924      		clr r9
+ 1498 0a52 5401      		movw r10,r8
  1499               	.LM190:
- 1500 0a5a 8824      		clr r8
- 1501 0a5c 9924      		clr r9
- 1502 0a5e 5401      		movw r10,r8
+ 1500 0a54 0E94 0000 		call PM_GetStoredDataSize
+ 1501 0a58 1B01      		movw r2,r22
+ 1502 0a5a 2C01      		movw r4,r24
  1503               	.LM191:
- 1504 0a60 0E94 0000 		call PM_GetStoredDataSize
- 1505 0a64 1B01      		movw r2,r22
- 1506 0a66 2C01      		movw r4,r24
- 1507               	.LM192:
- 1508 0a68 1B82      		std Y+3,__zero_reg__
- 1509               	.LM193:
- 1510 0a6a 1130      		cpi r17,lo8(1)
- 1511 0a6c 29F4      		brne .L144
- 1512               	.LM194:
- 1513 0a6e 8091 0000 		lds r24,Prog_PageLength
- 1514 0a72 9091 0000 		lds r25,(Prog_PageLength)+1
- 1515 0a76 04C0      		rjmp .L145
- 1516               	.L144:
- 1517 0a78 8091 0000 		lds r24,Prog_EPageLength
- 1518 0a7c 9091 0000 		lds r25,(Prog_EPageLength)+1
- 1519               	.L145:
- 1520 0a80 9A83      		std Y+2,r25
- 1521 0a82 8983      		std Y+1,r24
- 1522               	.LM195:
- 1523 0a84 CE01      		movw r24,r28
- 1524 0a86 0196      		adiw r24,1
- 1525 0a88 0E94 0000 		call eeprom_read_byte_169
- 1526 0a8c 9927      		clr r25
- 1527 0a8e 782E      		mov r7,r24
- 1528 0a90 6624      		clr r6
- 1529               	.LM196:
- 1530 0a92 8981      		ldd r24,Y+1
- 1531 0a94 9A81      		ldd r25,Y+2
- 1532 0a96 0196      		adiw r24,1
- 1533 0a98 9A83      		std Y+2,r25
- 1534 0a9a 8983      		std Y+1,r24
- 1535               	.LM197:
- 1536 0a9c CE01      		movw r24,r28
- 1537 0a9e 0196      		adiw r24,1
- 1538 0aa0 0E94 0000 		call eeprom_read_byte_169
- 1539 0aa4 9927      		clr r25
- 1540 0aa6 682A      		or r6,r24
- 1541 0aa8 792A      		or r7,r25
- 1542               	.LM198:
- 1543 0aaa 1092 0000 		sts CurrAddress,__zero_reg__
- 1544 0aae 1092 0000 		sts (CurrAddress)+1,__zero_reg__
- 1545 0ab2 1092 0000 		sts (CurrAddress)+2,__zero_reg__
- 1546 0ab6 1092 0000 		sts (CurrAddress)+3,__zero_reg__
- 1547               	.LM199:
- 1548 0aba 1130      		cpi r17,lo8(1)
- 1549 0abc 69F4      		brne .L146
- 1550               	.LM200:
- 1551 0abe 8091 0000 		lds r24,Prog_WriteProgram
- 1552 0ac2 9091 0000 		lds r25,(Prog_WriteProgram)+1
- 1553 0ac6 9A83      		std Y+2,r25
- 1554 0ac8 8983      		std Y+1,r24
- 1555               	.LM201:
- 1556 0aca 60E0      		ldi r22,lo8(0)
- 1557 0acc 70E0      		ldi r23,hi8(0)
- 1558 0ace CB01      		movw r24,r22
- 1559 0ad0 0E94 0000 		call DF_ContinuousReadEnable
+ 1504 0a5c 1B82      		std Y+3,__zero_reg__
+ 1505               	.LM192:
+ 1506 0a5e 1130      		cpi r17,lo8(1)
+ 1507 0a60 29F4      		brne .L144
+ 1508               	.LM193:
+ 1509 0a62 8091 0000 		lds r24,Prog_PageLength
+ 1510 0a66 9091 0000 		lds r25,(Prog_PageLength)+1
+ 1511 0a6a 04C0      		rjmp .L145
+ 1512               	.L144:
+ 1513 0a6c 8091 0000 		lds r24,Prog_EPageLength
+ 1514 0a70 9091 0000 		lds r25,(Prog_EPageLength)+1
+ 1515               	.L145:
+ 1516 0a74 9A83      		std Y+2,r25
+ 1517 0a76 8983      		std Y+1,r24
+ 1518               	.LM194:
+ 1519 0a78 CE01      		movw r24,r28
+ 1520 0a7a 0196      		adiw r24,1
+ 1521 0a7c 0E94 0000 		call eeprom_read_byte_169
+ 1522 0a80 9927      		clr r25
+ 1523 0a82 782E      		mov r7,r24
+ 1524 0a84 6624      		clr r6
+ 1525               	.LM195:
+ 1526 0a86 8981      		ldd r24,Y+1
+ 1527 0a88 9A81      		ldd r25,Y+2
+ 1528 0a8a 0196      		adiw r24,1
+ 1529 0a8c 9A83      		std Y+2,r25
+ 1530 0a8e 8983      		std Y+1,r24
+ 1531               	.LM196:
+ 1532 0a90 CE01      		movw r24,r28
+ 1533 0a92 0196      		adiw r24,1
+ 1534 0a94 0E94 0000 		call eeprom_read_byte_169
+ 1535 0a98 9927      		clr r25
+ 1536 0a9a 682A      		or r6,r24
+ 1537 0a9c 792A      		or r7,r25
+ 1538               	.LM197:
+ 1539 0a9e 1092 0000 		sts CurrAddress,__zero_reg__
+ 1540 0aa2 1092 0000 		sts (CurrAddress)+1,__zero_reg__
+ 1541 0aa6 1092 0000 		sts (CurrAddress)+2,__zero_reg__
+ 1542 0aaa 1092 0000 		sts (CurrAddress)+3,__zero_reg__
+ 1543               	.LM198:
+ 1544 0aae 1130      		cpi r17,lo8(1)
+ 1545 0ab0 69F4      		brne .L146
+ 1546               	.LM199:
+ 1547 0ab2 8091 0000 		lds r24,Prog_WriteProgram
+ 1548 0ab6 9091 0000 		lds r25,(Prog_WriteProgram)+1
+ 1549 0aba 9A83      		std Y+2,r25
+ 1550 0abc 8983      		std Y+1,r24
+ 1551               	.LM200:
+ 1552 0abe 60E0      		ldi r22,lo8(0)
+ 1553 0ac0 70E0      		ldi r23,hi8(0)
+ 1554 0ac2 CB01      		movw r24,r22
+ 1555 0ac4 0E94 0000 		call DF_ContinuousReadEnable
+ 1556               	.LM201:
+ 1557 0ac8 83E1      		ldi r24,lo8(19)
+ 1558 0aca 0DC0      		rjmp .L185
+ 1559               	.L146:
  1560               	.LM202:
- 1561 0ad4 83E1      		ldi r24,lo8(19)
- 1562 0ad6 0DC0      		rjmp .L185
- 1563               	.L146:
- 1564               	.LM203:
- 1565 0ad8 8091 0000 		lds r24,Prog_WriteEEPROM
- 1566 0adc 9091 0000 		lds r25,(Prog_WriteEEPROM)+1
- 1567 0ae0 9A83      		std Y+2,r25
- 1568 0ae2 8983      		std Y+1,r24
- 1569               	.LM204:
- 1570 0ae4 60EE      		ldi r22,lo8(224)
- 1571 0ae6 70E0      		ldi r23,hi8(224)
- 1572 0ae8 84EE      		ldi r24,lo8(996)
- 1573 0aea 93E0      		ldi r25,hi8(996)
- 1574 0aec 0E94 0000 		call DF_ContinuousReadEnable
- 1575               	.LM205:
- 1576 0af0 85E1      		ldi r24,lo8(21)
- 1577               	.L185:
- 1578 0af2 8093 0000 		sts PacketBytes,r24
- 1579 0af6 F0E0      		ldi r31,lo8(PacketBytes+1)
- 1580 0af8 EF2E      		mov r14,r31
- 1581 0afa F0E0      		ldi r31,hi8(PacketBytes+1)
- 1582 0afc FF2E      		mov r15,r31
- 1583 0afe 18E0      		ldi r17,lo8(8)
- 1584               	.L151:
- 1585               	.LBB13:
- 1586               	.LM206:
- 1587 0b00 CE01      		movw r24,r28
- 1588 0b02 0196      		adiw r24,1
- 1589 0b04 0E94 0000 		call eeprom_read_byte_169
- 1590 0b08 F701      		movw r30,r14
- 1591 0b0a 8193      		st Z+,r24
- 1592 0b0c 7F01      		movw r14,r30
- 1593               	.LM207:
- 1594 0b0e 8981      		ldd r24,Y+1
- 1595 0b10 9A81      		ldd r25,Y+2
- 1596 0b12 0196      		adiw r24,1
- 1597 0b14 9A83      		std Y+2,r25
- 1598 0b16 8983      		std Y+1,r24
- 1599               	.LM208:
- 1600 0b18 1150      		subi r17,lo8(-(-1))
- 1601 0b1a 17FF      		sbrs r17,7
- 1602 0b1c F1CF      		rjmp .L151
- 1603               	.LBE13:
- 1604               	.LM209:
- 1605 0b1e 8091 0000 		lds r24,PacketBytes+1
- 1606 0b22 9927      		clr r25
- 1607 0b24 D82E      		mov r13,r24
- 1608 0b26 CC24      		clr r12
- 1609 0b28 8091 0000 		lds r24,PacketBytes+2
- 1610 0b2c 9927      		clr r25
- 1611 0b2e C82A      		or r12,r24
- 1612 0b30 D92A      		or r13,r25
- 1613               	.LM210:
- 1614 0b32 8214      		cp r8,r2
- 1615 0b34 9304      		cpc r9,r3
- 1616 0b36 A404      		cpc r10,r4
- 1617 0b38 B504      		cpc r11,r5
- 1618 0b3a 08F0      		brlo .+2
- 1619 0b3c B7C0      		rjmp .L178
- 1620               	.L174:
- 1621               	.LM211:
- 1622 0b3e 2091 0000 		lds r18,PacketBytes+3
- 1623 0b42 822F      		mov r24,r18
- 1624 0b44 9927      		clr r25
- 1625 0b46 AC01      		movw r20,r24
- 1626 0b48 4170      		andi r20,lo8(1)
- 1627 0b4a 5070      		andi r21,hi8(1)
- 1628 0b4c 80FF      		sbrs r24,0
- 1629 0b4e 58C0      		rjmp .L154
- 1630               	.LM212:
- 1631 0b50 F1EA      		ldi r31,lo8(161)
- 1632 0b52 6F16      		cp r6,r31
- 1633 0b54 7104      		cpc r7,__zero_reg__
- 1634 0b56 88F1      		brlo .L155
+ 1561 0acc 8091 0000 		lds r24,Prog_WriteEEPROM
+ 1562 0ad0 9091 0000 		lds r25,(Prog_WriteEEPROM)+1
+ 1563 0ad4 9A83      		std Y+2,r25
+ 1564 0ad6 8983      		std Y+1,r24
+ 1565               	.LM203:
+ 1566 0ad8 60EE      		ldi r22,lo8(224)
+ 1567 0ada 70E0      		ldi r23,hi8(224)
+ 1568 0adc 84EE      		ldi r24,lo8(996)
+ 1569 0ade 93E0      		ldi r25,hi8(996)
+ 1570 0ae0 0E94 0000 		call DF_ContinuousReadEnable
+ 1571               	.LM204:
+ 1572 0ae4 85E1      		ldi r24,lo8(21)
+ 1573               	.L185:
+ 1574 0ae6 8093 0000 		sts PacketBytes,r24
+ 1575 0aea F0E0      		ldi r31,lo8(PacketBytes+1)
+ 1576 0aec EF2E      		mov r14,r31
+ 1577 0aee F0E0      		ldi r31,hi8(PacketBytes+1)
+ 1578 0af0 FF2E      		mov r15,r31
+ 1579 0af2 18E0      		ldi r17,lo8(8)
+ 1580               	.L151:
+ 1581               	.LBB13:
+ 1582               	.LM205:
+ 1583 0af4 CE01      		movw r24,r28
+ 1584 0af6 0196      		adiw r24,1
+ 1585 0af8 0E94 0000 		call eeprom_read_byte_169
+ 1586 0afc F701      		movw r30,r14
+ 1587 0afe 8193      		st Z+,r24
+ 1588 0b00 7F01      		movw r14,r30
+ 1589               	.LM206:
+ 1590 0b02 8981      		ldd r24,Y+1
+ 1591 0b04 9A81      		ldd r25,Y+2
+ 1592 0b06 0196      		adiw r24,1
+ 1593 0b08 9A83      		std Y+2,r25
+ 1594 0b0a 8983      		std Y+1,r24
+ 1595               	.LM207:
+ 1596 0b0c 1150      		subi r17,lo8(-(-1))
+ 1597 0b0e 17FF      		sbrs r17,7
+ 1598 0b10 F1CF      		rjmp .L151
+ 1599               	.LBE13:
+ 1600               	.LM208:
+ 1601 0b12 8091 0000 		lds r24,PacketBytes+1
+ 1602 0b16 9927      		clr r25
+ 1603 0b18 D82E      		mov r13,r24
+ 1604 0b1a CC24      		clr r12
+ 1605 0b1c 8091 0000 		lds r24,PacketBytes+2
+ 1606 0b20 9927      		clr r25
+ 1607 0b22 C82A      		or r12,r24
+ 1608 0b24 D92A      		or r13,r25
+ 1609               	.LM209:
+ 1610 0b26 8214      		cp r8,r2
+ 1611 0b28 9304      		cpc r9,r3
+ 1612 0b2a A404      		cpc r10,r4
+ 1613 0b2c B504      		cpc r11,r5
+ 1614 0b2e 08F0      		brlo .+2
+ 1615 0b30 B7C0      		rjmp .L178
+ 1616               	.L174:
+ 1617               	.LM210:
+ 1618 0b32 2091 0000 		lds r18,PacketBytes+3
+ 1619 0b36 822F      		mov r24,r18
+ 1620 0b38 9927      		clr r25
+ 1621 0b3a AC01      		movw r20,r24
+ 1622 0b3c 4170      		andi r20,lo8(1)
+ 1623 0b3e 5070      		andi r21,hi8(1)
+ 1624 0b40 80FF      		sbrs r24,0
+ 1625 0b42 58C0      		rjmp .L154
+ 1626               	.LM211:
+ 1627 0b44 F1EA      		ldi r31,lo8(161)
+ 1628 0b46 6F16      		cp r6,r31
+ 1629 0b48 7104      		cpc r7,__zero_reg__
+ 1630 0b4a 88F1      		brlo .L155
+ 1631               	.LM212:
+ 1632 0b4c 8B81      		ldd r24,Y+3
+ 1633 0b4e 8823      		tst r24
+ 1634 0b50 49F4      		brne .L156
  1635               	.LM213:
- 1636 0b58 8B81      		ldd r24,Y+3
- 1637 0b5a 8823      		tst r24
- 1638 0b5c 49F4      		brne .L156
+ 1636 0b52 70EA      		ldi r23,lo8(160)
+ 1637 0b54 C72E      		mov r12,r23
+ 1638 0b56 D12C      		mov r13,__zero_reg__
  1639               	.LM214:
- 1640 0b5e 70EA      		ldi r23,lo8(160)
- 1641 0b60 C72E      		mov r12,r23
- 1642 0b62 D12C      		mov r13,__zero_reg__
- 1643               	.LM215:
- 1644 0b64 2F77      		andi r18,lo8(127)
- 1645 0b66 2093 0000 		sts PacketBytes+3,r18
- 1646               	.LM216:
- 1647 0b6a E1E0      		ldi r30,lo8(1)
- 1648 0b6c EB83      		std Y+3,r30
- 1649 0b6e 0AC0      		rjmp .L157
- 1650               	.L156:
- 1651               	.LM217:
- 1652 0b70 60E6      		ldi r22,lo8(-160)
- 1653 0b72 C62E      		mov r12,r22
- 1654 0b74 6FEF      		ldi r22,hi8(-160)
- 1655 0b76 D62E      		mov r13,r22
- 1656 0b78 C60C      		add r12,r6
- 1657 0b7a D71C      		adc r13,r7
- 1658               	.LM218:
- 1659 0b7c 2068      		ori r18,lo8(-128)
- 1660 0b7e 2093 0000 		sts PacketBytes+3,r18
+ 1640 0b58 2F77      		andi r18,lo8(127)
+ 1641 0b5a 2093 0000 		sts PacketBytes+3,r18
+ 1642               	.LM215:
+ 1643 0b5e E1E0      		ldi r30,lo8(1)
+ 1644 0b60 EB83      		std Y+3,r30
+ 1645 0b62 0AC0      		rjmp .L157
+ 1646               	.L156:
+ 1647               	.LM216:
+ 1648 0b64 60E6      		ldi r22,lo8(-160)
+ 1649 0b66 C62E      		mov r12,r22
+ 1650 0b68 6FEF      		ldi r22,hi8(-160)
+ 1651 0b6a D62E      		mov r13,r22
+ 1652 0b6c C60C      		add r12,r6
+ 1653 0b6e D71C      		adc r13,r7
+ 1654               	.LM217:
+ 1655 0b70 2068      		ori r18,lo8(-128)
+ 1656 0b72 2093 0000 		sts PacketBytes+3,r18
+ 1657               	.LM218:
+ 1658 0b76 1B82      		std Y+3,__zero_reg__
+ 1659               	.L157:
+ 1660               	.LBB14:
  1661               	.LM219:
- 1662 0b82 1B82      		std Y+3,__zero_reg__
- 1663               	.L157:
- 1664               	.LBB14:
- 1665               	.LM220:
- 1666 0b84 00E0      		ldi r16,lo8(0)
- 1667 0b86 10E0      		ldi r17,hi8(0)
- 1668 0b88 0C15      		cp r16,r12
- 1669 0b8a 1D05      		cpc r17,r13
- 1670 0b8c 78F4      		brsh .L180
- 1671 0b8e 50E0      		ldi r21,lo8(PacketBytes+10)
- 1672 0b90 E52E      		mov r14,r21
- 1673 0b92 50E0      		ldi r21,hi8(PacketBytes+10)
- 1674 0b94 F52E      		mov r15,r21
- 1675               	.L161:
- 1676               	.LM221:
- 1677 0b96 80E0      		ldi r24,lo8(0)
- 1678 0b98 0E94 0000 		call SPI_SPITransmit
- 1679 0b9c F701      		movw r30,r14
- 1680 0b9e 8193      		st Z+,r24
- 1681 0ba0 7F01      		movw r14,r30
- 1682               	.LM222:
- 1683 0ba2 0F5F      		subi r16,lo8(-(1))
- 1684 0ba4 1F4F      		sbci r17,hi8(-(1))
- 1685 0ba6 0C15      		cp r16,r12
- 1686 0ba8 1D05      		cpc r17,r13
- 1687 0baa A8F3      		brlo .L161
- 1688               	.L180:
- 1689               	.LBE14:
+ 1662 0b78 00E0      		ldi r16,lo8(0)
+ 1663 0b7a 10E0      		ldi r17,hi8(0)
+ 1664 0b7c 0C15      		cp r16,r12
+ 1665 0b7e 1D05      		cpc r17,r13
+ 1666 0b80 78F4      		brsh .L180
+ 1667 0b82 50E0      		ldi r21,lo8(PacketBytes+10)
+ 1668 0b84 E52E      		mov r14,r21
+ 1669 0b86 50E0      		ldi r21,hi8(PacketBytes+10)
+ 1670 0b88 F52E      		mov r15,r21
+ 1671               	.L161:
+ 1672               	.LM220:
+ 1673 0b8a 80E0      		ldi r24,lo8(0)
+ 1674 0b8c 0E94 0000 		call SPI_SPITransmit
+ 1675 0b90 F701      		movw r30,r14
+ 1676 0b92 8193      		st Z+,r24
+ 1677 0b94 7F01      		movw r14,r30
+ 1678               	.LM221:
+ 1679 0b96 0F5F      		subi r16,lo8(-(1))
+ 1680 0b98 1F4F      		sbci r17,hi8(-(1))
+ 1681 0b9a 0C15      		cp r16,r12
+ 1682 0b9c 1D05      		cpc r17,r13
+ 1683 0b9e A8F3      		brlo .L161
+ 1684               	.L180:
+ 1685               	.LBE14:
+ 1686               	.LM222:
+ 1687 0ba0 8D2D      		mov r24,r13
+ 1688 0ba2 9927      		clr r25
+ 1689 0ba4 8093 0000 		sts PacketBytes+1,r24
  1690               	.LM223:
- 1691 0bac 8D2D      		mov r24,r13
- 1692 0bae 9927      		clr r25
- 1693 0bb0 8093 0000 		sts PacketBytes+1,r24
- 1694               	.LM224:
- 1695 0bb4 C092 0000 		sts PacketBytes+2,r12
- 1696 0bb8 4BC0      		rjmp .L184
- 1697               	.L155:
- 1698               	.LBB15:
- 1699               	.LM225:
- 1700 0bba 00E0      		ldi r16,lo8(0)
- 1701 0bbc 10E0      		ldi r17,hi8(0)
- 1702 0bbe 0615      		cp r16,r6
- 1703 0bc0 1705      		cpc r17,r7
- 1704 0bc2 78F4      		brsh .L182
- 1705 0bc4 30E0      		ldi r19,lo8(PacketBytes+10)
- 1706 0bc6 E32E      		mov r14,r19
- 1707 0bc8 30E0      		ldi r19,hi8(PacketBytes+10)
- 1708 0bca F32E      		mov r15,r19
- 1709               	.L166:
- 1710               	.LM226:
- 1711 0bcc 80E0      		ldi r24,lo8(0)
- 1712 0bce 0E94 0000 		call SPI_SPITransmit
- 1713 0bd2 F701      		movw r30,r14
- 1714 0bd4 8193      		st Z+,r24
- 1715 0bd6 7F01      		movw r14,r30
- 1716               	.LM227:
- 1717 0bd8 0F5F      		subi r16,lo8(-(1))
- 1718 0bda 1F4F      		sbci r17,hi8(-(1))
- 1719 0bdc 0615      		cp r16,r6
- 1720 0bde 1705      		cpc r17,r7
- 1721 0be0 A8F3      		brlo .L166
- 1722               	.L182:
- 1723               	.LBE15:
+ 1691 0ba8 C092 0000 		sts PacketBytes+2,r12
+ 1692 0bac 4BC0      		rjmp .L184
+ 1693               	.L155:
+ 1694               	.LBB15:
+ 1695               	.LM224:
+ 1696 0bae 00E0      		ldi r16,lo8(0)
+ 1697 0bb0 10E0      		ldi r17,hi8(0)
+ 1698 0bb2 0615      		cp r16,r6
+ 1699 0bb4 1705      		cpc r17,r7
+ 1700 0bb6 78F4      		brsh .L182
+ 1701 0bb8 30E0      		ldi r19,lo8(PacketBytes+10)
+ 1702 0bba E32E      		mov r14,r19
+ 1703 0bbc 30E0      		ldi r19,hi8(PacketBytes+10)
+ 1704 0bbe F32E      		mov r15,r19
+ 1705               	.L166:
+ 1706               	.LM225:
+ 1707 0bc0 80E0      		ldi r24,lo8(0)
+ 1708 0bc2 0E94 0000 		call SPI_SPITransmit
+ 1709 0bc6 F701      		movw r30,r14
+ 1710 0bc8 8193      		st Z+,r24
+ 1711 0bca 7F01      		movw r14,r30
+ 1712               	.LM226:
+ 1713 0bcc 0F5F      		subi r16,lo8(-(1))
+ 1714 0bce 1F4F      		sbci r17,hi8(-(1))
+ 1715 0bd0 0615      		cp r16,r6
+ 1716 0bd2 1705      		cpc r17,r7
+ 1717 0bd4 A8F3      		brlo .L166
+ 1718               	.L182:
+ 1719               	.LBE15:
+ 1720               	.LM227:
+ 1721 0bd6 872D      		mov r24,r7
+ 1722 0bd8 9927      		clr r25
+ 1723 0bda 8093 0000 		sts PacketBytes+1,r24
  1724               	.LM228:
- 1725 0be2 872D      		mov r24,r7
- 1726 0be4 9927      		clr r25
- 1727 0be6 8093 0000 		sts PacketBytes+1,r24
- 1728               	.LM229:
- 1729 0bea 6092 0000 		sts PacketBytes+2,r6
+ 1725 0bde 6092 0000 		sts PacketBytes+2,r6
+ 1726               	.LM229:
+ 1727 0be2 8091 0000 		lds r24,PacketBytes+3
+ 1728 0be6 8068      		ori r24,lo8(-128)
+ 1729 0be8 8093 0000 		sts PacketBytes+3,r24
  1730               	.LM230:
- 1731 0bee 8091 0000 		lds r24,PacketBytes+3
- 1732 0bf2 8068      		ori r24,lo8(-128)
- 1733 0bf4 8093 0000 		sts PacketBytes+3,r24
- 1734               	.LM231:
- 1735 0bf8 C301      		movw r24,r6
- 1736 0bfa AA27      		clr r26
- 1737 0bfc BB27      		clr r27
- 1738 0bfe 2BC0      		rjmp .L186
- 1739               	.L154:
- 1740               	.LM232:
- 1741 0c00 C601      		movw r24,r12
- 1742 0c02 AA27      		clr r26
- 1743 0c04 BB27      		clr r27
- 1744 0c06 880D      		add r24,r8
- 1745 0c08 991D      		adc r25,r9
- 1746 0c0a AA1D      		adc r26,r10
- 1747 0c0c BB1D      		adc r27,r11
- 1748 0c0e 2816      		cp r2,r24
- 1749 0c10 3906      		cpc r3,r25
- 1750 0c12 4A06      		cpc r4,r26
- 1751 0c14 5B06      		cpc r5,r27
- 1752 0c16 48F4      		brsh .L168
+ 1731 0bec C301      		movw r24,r6
+ 1732 0bee AA27      		clr r26
+ 1733 0bf0 BB27      		clr r27
+ 1734 0bf2 2BC0      		rjmp .L186
+ 1735               	.L154:
+ 1736               	.LM231:
+ 1737 0bf4 C601      		movw r24,r12
+ 1738 0bf6 AA27      		clr r26
+ 1739 0bf8 BB27      		clr r27
+ 1740 0bfa 880D      		add r24,r8
+ 1741 0bfc 991D      		adc r25,r9
+ 1742 0bfe AA1D      		adc r26,r10
+ 1743 0c00 BB1D      		adc r27,r11
+ 1744 0c02 2816      		cp r2,r24
+ 1745 0c04 3906      		cpc r3,r25
+ 1746 0c06 4A06      		cpc r4,r26
+ 1747 0c08 5B06      		cpc r5,r27
+ 1748 0c0a 48F4      		brsh .L168
+ 1749               	.LM232:
+ 1750 0c0c 6101      		movw r12,r2
+ 1751 0c0e C818      		sub r12,r8
+ 1752 0c10 D908      		sbc r13,r9
  1753               	.LM233:
- 1754 0c18 6101      		movw r12,r2
- 1755 0c1a C818      		sub r12,r8
- 1756 0c1c D908      		sbc r13,r9
+ 1754 0c12 8D2D      		mov r24,r13
+ 1755 0c14 9927      		clr r25
+ 1756 0c16 8093 0000 		sts PacketBytes+1,r24
  1757               	.LM234:
- 1758 0c1e 8D2D      		mov r24,r13
- 1759 0c20 9927      		clr r25
- 1760 0c22 8093 0000 		sts PacketBytes+1,r24
+ 1758 0c1a C092 0000 		sts PacketBytes+2,r12
+ 1759               	.L168:
+ 1760               	.LBB16:
  1761               	.LM235:
- 1762 0c26 C092 0000 		sts PacketBytes+2,r12
- 1763               	.L168:
- 1764               	.LBB16:
- 1765               	.LM236:
- 1766 0c2a 8A01      		movw r16,r20
- 1767 0c2c 4C15      		cp r20,r12
- 1768 0c2e 5D05      		cpc r21,r13
- 1769 0c30 78F4      		brsh .L184
- 1770 0c32 80E0      		ldi r24,lo8(PacketBytes+10)
- 1771 0c34 E82E      		mov r14,r24
- 1772 0c36 80E0      		ldi r24,hi8(PacketBytes+10)
- 1773 0c38 F82E      		mov r15,r24
- 1774               	.L172:
- 1775               	.LM237:
- 1776 0c3a 80E0      		ldi r24,lo8(0)
- 1777 0c3c 0E94 0000 		call SPI_SPITransmit
- 1778 0c40 F701      		movw r30,r14
- 1779 0c42 8193      		st Z+,r24
- 1780 0c44 7F01      		movw r14,r30
- 1781               	.LM238:
- 1782 0c46 0F5F      		subi r16,lo8(-(1))
- 1783 0c48 1F4F      		sbci r17,hi8(-(1))
- 1784 0c4a 0C15      		cp r16,r12
- 1785 0c4c 1D05      		cpc r17,r13
- 1786 0c4e A8F3      		brlo .L172
- 1787               	.L184:
- 1788               	.LBE16:
- 1789               	.LM239:
- 1790 0c50 C601      		movw r24,r12
- 1791 0c52 AA27      		clr r26
- 1792 0c54 BB27      		clr r27
- 1793               	.L186:
- 1794 0c56 880E      		add r8,r24
- 1795 0c58 991E      		adc r9,r25
- 1796 0c5a AA1E      		adc r10,r26
- 1797 0c5c BB1E      		adc r11,r27
- 1798               	.LM240:
- 1799 0c5e 8114      		cp r8,__zero_reg__
- 1800 0c60 9104      		cpc r9,__zero_reg__
- 1801 0c62 E1F4      		brne .L173
- 1802 0c64 E12C      		mov r14,__zero_reg__
- 1803 0c66 F12C      		mov r15,__zero_reg__
- 1804 0c68 BFEF      		ldi r27,hlo8(16711680)
- 1805 0c6a 0B2F      		mov r16,r27
- 1806 0c6c 112D      		mov r17,__zero_reg__
- 1807 0c6e E820      		and r14,r8
- 1808 0c70 F920      		and r15,r9
- 1809 0c72 0A21      		and r16,r10
- 1810 0c74 1B21      		and r17,r11
- 1811 0c76 E114      		cp r14,__zero_reg__
- 1812 0c78 F104      		cpc r15,__zero_reg__
- 1813 0c7a 0105      		cpc r16,__zero_reg__
- 1814 0c7c 1105      		cpc r17,__zero_reg__
- 1815 0c7e 71F0      		breq .L173
- 1816               	.LM241:
- 1817 0c80 8DE4      		ldi r24,lo8(77)
- 1818 0c82 0E94 0000 		call USI_SPITransmit
- 1819               	.LM242:
- 1820 0c86 80E0      		ldi r24,lo8(0)
- 1821 0c88 0E94 0000 		call USI_SPITransmit
- 1822               	.LM243:
- 1823 0c8c C801      		movw r24,r16
- 1824 0c8e AA27      		clr r26
- 1825 0c90 BB27      		clr r27
- 1826 0c92 0E94 0000 		call USI_SPITransmit
+ 1762 0c1e 8A01      		movw r16,r20
+ 1763 0c20 4C15      		cp r20,r12
+ 1764 0c22 5D05      		cpc r21,r13
+ 1765 0c24 78F4      		brsh .L184
+ 1766 0c26 80E0      		ldi r24,lo8(PacketBytes+10)
+ 1767 0c28 E82E      		mov r14,r24
+ 1768 0c2a 80E0      		ldi r24,hi8(PacketBytes+10)
+ 1769 0c2c F82E      		mov r15,r24
+ 1770               	.L172:
+ 1771               	.LM236:
+ 1772 0c2e 80E0      		ldi r24,lo8(0)
+ 1773 0c30 0E94 0000 		call SPI_SPITransmit
+ 1774 0c34 F701      		movw r30,r14
+ 1775 0c36 8193      		st Z+,r24
+ 1776 0c38 7F01      		movw r14,r30
+ 1777               	.LM237:
+ 1778 0c3a 0F5F      		subi r16,lo8(-(1))
+ 1779 0c3c 1F4F      		sbci r17,hi8(-(1))
+ 1780 0c3e 0C15      		cp r16,r12
+ 1781 0c40 1D05      		cpc r17,r13
+ 1782 0c42 A8F3      		brlo .L172
+ 1783               	.L184:
+ 1784               	.LBE16:
+ 1785               	.LM238:
+ 1786 0c44 C601      		movw r24,r12
+ 1787 0c46 AA27      		clr r26
+ 1788 0c48 BB27      		clr r27
+ 1789               	.L186:
+ 1790 0c4a 880E      		add r8,r24
+ 1791 0c4c 991E      		adc r9,r25
+ 1792 0c4e AA1E      		adc r10,r26
+ 1793 0c50 BB1E      		adc r11,r27
+ 1794               	.LM239:
+ 1795 0c52 8114      		cp r8,__zero_reg__
+ 1796 0c54 9104      		cpc r9,__zero_reg__
+ 1797 0c56 E1F4      		brne .L173
+ 1798 0c58 E12C      		mov r14,__zero_reg__
+ 1799 0c5a F12C      		mov r15,__zero_reg__
+ 1800 0c5c BFEF      		ldi r27,hlo8(16711680)
+ 1801 0c5e 0B2F      		mov r16,r27
+ 1802 0c60 112D      		mov r17,__zero_reg__
+ 1803 0c62 E820      		and r14,r8
+ 1804 0c64 F920      		and r15,r9
+ 1805 0c66 0A21      		and r16,r10
+ 1806 0c68 1B21      		and r17,r11
+ 1807 0c6a E114      		cp r14,__zero_reg__
+ 1808 0c6c F104      		cpc r15,__zero_reg__
+ 1809 0c6e 0105      		cpc r16,__zero_reg__
+ 1810 0c70 1105      		cpc r17,__zero_reg__
+ 1811 0c72 71F0      		breq .L173
+ 1812               	.LM240:
+ 1813 0c74 8DE4      		ldi r24,lo8(77)
+ 1814 0c76 0E94 0000 		call USI_SPITransmit
+ 1815               	.LM241:
+ 1816 0c7a 80E0      		ldi r24,lo8(0)
+ 1817 0c7c 0E94 0000 		call USI_SPITransmit
+ 1818               	.LM242:
+ 1819 0c80 C801      		movw r24,r16
+ 1820 0c82 AA27      		clr r26
+ 1821 0c84 BB27      		clr r27
+ 1822 0c86 0E94 0000 		call USI_SPITransmit
+ 1823               	.LM243:
+ 1824 0c8a 80E0      		ldi r24,lo8(0)
+ 1825 0c8c 0E94 0000 		call USI_SPITransmit
+ 1826               	.L173:
  1827               	.LM244:
- 1828 0c96 80E0      		ldi r24,lo8(0)
- 1829 0c98 0E94 0000 		call USI_SPITransmit
- 1830               	.L173:
- 1831               	.LM245:
- 1832 0c9c 0E94 0000 		call ISPCC_ProgramChip
- 1833 0ca0 8214      		cp r8,r2
- 1834 0ca2 9304      		cpc r9,r3
- 1835 0ca4 A404      		cpc r10,r4
- 1836 0ca6 B504      		cpc r11,r5
- 1837 0ca8 08F4      		brsh .+2
- 1838 0caa 49CF      		rjmp .L174
- 1839               	.L178:
- 1840               	/* epilogue: frame size=3 */
- 1841 0cac 2396      		adiw r28,3
- 1842 0cae 0FB6      		in __tmp_reg__,__SREG__
- 1843 0cb0 F894      		cli
- 1844 0cb2 DEBF      		out __SP_H__,r29
- 1845 0cb4 0FBE      		out __SREG__,__tmp_reg__
- 1846 0cb6 CDBF      		out __SP_L__,r28
- 1847 0cb8 DF91      		pop r29
- 1848 0cba CF91      		pop r28
- 1849 0cbc 1F91      		pop r17
- 1850 0cbe 0F91      		pop r16
- 1851 0cc0 FF90      		pop r15
- 1852 0cc2 EF90      		pop r14
- 1853 0cc4 DF90      		pop r13
- 1854 0cc6 CF90      		pop r12
- 1855 0cc8 BF90      		pop r11
- 1856 0cca AF90      		pop r10
- 1857 0ccc 9F90      		pop r9
- 1858 0cce 8F90      		pop r8
- 1859 0cd0 7F90      		pop r7
- 1860 0cd2 6F90      		pop r6
- 1861 0cd4 5F90      		pop r5
- 1862 0cd6 4F90      		pop r4
- 1863 0cd8 3F90      		pop r3
- 1864 0cda 2F90      		pop r2
- 1865 0cdc 0895      		ret
- 1866               	/* epilogue end (size=25) */
- 1867               	/* function PM_CreateProgrammingPackets size 349 (298) */
- 1868               	.LFE16:
- 1870               		.section	.progmem.data,"a",@progbits
- 1873               	__c.0:
- 1874 0000 4441 5441 		.string	"DATA-"
+ 1828 0c90 0E94 0000 		call ISPCC_ProgramChip
+ 1829 0c94 8214      		cp r8,r2
+ 1830 0c96 9304      		cpc r9,r3
+ 1831 0c98 A404      		cpc r10,r4
+ 1832 0c9a B504      		cpc r11,r5
+ 1833 0c9c 08F4      		brsh .+2
+ 1834 0c9e 49CF      		rjmp .L174
+ 1835               	.L178:
+ 1836               	/* epilogue: frame size=3 */
+ 1837 0ca0 2396      		adiw r28,3
+ 1838 0ca2 0FB6      		in __tmp_reg__,__SREG__
+ 1839 0ca4 F894      		cli
+ 1840 0ca6 DEBF      		out __SP_H__,r29
+ 1841 0ca8 0FBE      		out __SREG__,__tmp_reg__
+ 1842 0caa CDBF      		out __SP_L__,r28
+ 1843 0cac DF91      		pop r29
+ 1844 0cae CF91      		pop r28
+ 1845 0cb0 1F91      		pop r17
+ 1846 0cb2 0F91      		pop r16
+ 1847 0cb4 FF90      		pop r15
+ 1848 0cb6 EF90      		pop r14
+ 1849 0cb8 DF90      		pop r13
+ 1850 0cba CF90      		pop r12
+ 1851 0cbc BF90      		pop r11
+ 1852 0cbe AF90      		pop r10
+ 1853 0cc0 9F90      		pop r9
+ 1854 0cc2 8F90      		pop r8
+ 1855 0cc4 7F90      		pop r7
+ 1856 0cc6 6F90      		pop r6
+ 1857 0cc8 5F90      		pop r5
+ 1858 0cca 4F90      		pop r4
+ 1859 0ccc 3F90      		pop r3
+ 1860 0cce 2F90      		pop r2
+ 1861 0cd0 0895      		ret
+ 1862               	/* epilogue end (size=25) */
+ 1863               	/* function PM_CreateProgrammingPackets size 349 (298) */
+ 1864               	.LFE16:
+ 1866               		.section	.progmem.data,"a",@progbits
+ 1869               	__c.0:
+ 1870 0000 4441 5441 		.string	"DATA-"
+ 1870      2D00 
+ 1873               	__c.1:
+ 1874 0006 4550 524D 		.string	"EPRM-"
  1874      2D00 
- 1877               	__c.1:
- 1878 0006 4550 524D 		.string	"EPRM-"
+ 1877               	__c.2:
+ 1878 000c 4655 5345 		.string	"FUSE-"
  1878      2D00 
- 1881               	__c.2:
- 1882 000c 4655 5345 		.string	"FUSE-"
+ 1881               	__c.3:
+ 1882 0012 4C4F 434B 		.string	"LOCK-"
  1882      2D00 
- 1885               	__c.3:
- 1886 0012 4C4F 434B 		.string	"LOCK-"
- 1886      2D00 
- 1887               		.text
- 1888               	.global	PM_ShowStoredItemSizes
- 1890               	PM_ShowStoredItemSizes:
- 1891               	.LFB17:
- 1892               	.LM246:
- 1893               	/* prologue: frame size=14 */
- 1894 0cde 1F93      		push r17
- 1895 0ce0 CF93      		push r28
- 1896 0ce2 DF93      		push r29
- 1897 0ce4 CDB7      		in r28,__SP_L__
- 1898 0ce6 DEB7      		in r29,__SP_H__
- 1899 0ce8 2E97      		sbiw r28,14
- 1900 0cea 0FB6      		in __tmp_reg__,__SREG__
- 1901 0cec F894      		cli
- 1902 0cee DEBF      		out __SP_H__,r29
- 1903 0cf0 0FBE      		out __SREG__,__tmp_reg__
- 1904 0cf2 CDBF      		out __SP_L__,r28
- 1905               	/* prologue end (size=11) */
- 1906               	.LM247:
- 1907 0cf4 10E0      		ldi r17,lo8(0)
+ 1883               		.text
+ 1884               	.global	PM_ShowStoredItemSizes
+ 1886               	PM_ShowStoredItemSizes:
+ 1887               	.LFB17:
+ 1888               	.LM245:
+ 1889               	/* prologue: frame size=14 */
+ 1890 0cd2 1F93      		push r17
+ 1891 0cd4 CF93      		push r28
+ 1892 0cd6 DF93      		push r29
+ 1893 0cd8 CDB7      		in r28,__SP_L__
+ 1894 0cda DEB7      		in r29,__SP_H__
+ 1895 0cdc 2E97      		sbiw r28,14
+ 1896 0cde 0FB6      		in __tmp_reg__,__SREG__
+ 1897 0ce0 F894      		cli
+ 1898 0ce2 DEBF      		out __SP_H__,r29
+ 1899 0ce4 0FBE      		out __SREG__,__tmp_reg__
+ 1900 0ce6 CDBF      		out __SP_L__,r28
+ 1901               	/* prologue end (size=11) */
+ 1902               	.LM246:
+ 1903 0ce8 10E0      		ldi r17,lo8(0)
+ 1904               	.LM247:
+ 1905 0cea 81E0      		ldi r24,lo8(1)
+ 1906 0cec 8EBB      		out 62-0x20,r24
+ 1907               	.L216:
  1908               	.LM248:
- 1909 0cf6 81E0      		ldi r24,lo8(1)
- 1910 0cf8 8EBB      		out 62-0x20,r24
- 1911               	.L216:
+ 1909 0cee 8EB3      		in r24,62-0x20
+ 1910 0cf0 8823      		tst r24
+ 1911 0cf2 E9F3      		breq .L216
  1912               	.LM249:
- 1913 0cfa 8EB3      		in r24,62-0x20
- 1914 0cfc 8823      		tst r24
- 1915 0cfe E9F3      		breq .L216
- 1916               	.LM250:
- 1917 0d00 F69B      		sbis 62-0x20,6
- 1918 0d02 06C0      		rjmp .L191
- 1919               	.LM251:
- 1920 0d04 1123      		tst r17
- 1921 0d06 11F4      		brne .L192
- 1922 0d08 13E0      		ldi r17,lo8(3)
- 1923 0d0a 0CC0      		rjmp .L194
- 1924               	.L192:
- 1925 0d0c 1150      		subi r17,lo8(-(-1))
- 1926 0d0e 0AC0      		rjmp .L194
- 1927               	.L191:
- 1928               	.LM252:
- 1929 0d10 F79B      		sbis 62-0x20,7
- 1930 0d12 06C0      		rjmp .L195
- 1931               	.LM253:
- 1932 0d14 1330      		cpi r17,lo8(3)
- 1933 0d16 11F4      		brne .L196
- 1934 0d18 10E0      		ldi r17,lo8(0)
- 1935 0d1a 04C0      		rjmp .L194
- 1936               	.L196:
- 1937 0d1c 1F5F      		subi r17,lo8(-(1))
- 1938 0d1e 02C0      		rjmp .L194
- 1939               	.L195:
+ 1913 0cf4 F69B      		sbis 62-0x20,6
+ 1914 0cf6 06C0      		rjmp .L191
+ 1915               	.LM250:
+ 1916 0cf8 1123      		tst r17
+ 1917 0cfa 11F4      		brne .L192
+ 1918 0cfc 13E0      		ldi r17,lo8(3)
+ 1919 0cfe 0CC0      		rjmp .L194
+ 1920               	.L192:
+ 1921 0d00 1150      		subi r17,lo8(-(-1))
+ 1922 0d02 0AC0      		rjmp .L194
+ 1923               	.L191:
+ 1924               	.LM251:
+ 1925 0d04 F79B      		sbis 62-0x20,7
+ 1926 0d06 06C0      		rjmp .L195
+ 1927               	.LM252:
+ 1928 0d08 1330      		cpi r17,lo8(3)
+ 1929 0d0a 11F4      		brne .L196
+ 1930 0d0c 10E0      		ldi r17,lo8(0)
+ 1931 0d0e 04C0      		rjmp .L194
+ 1932               	.L196:
+ 1933 0d10 1F5F      		subi r17,lo8(-(1))
+ 1934 0d12 02C0      		rjmp .L194
+ 1935               	.L195:
+ 1936               	.LM253:
+ 1937 0d14 F299      		sbic 62-0x20,2
+ 1938 0d16 53C0      		rjmp .L187
+ 1939               	.L194:
  1940               	.LM254:
- 1941 0d20 F299      		sbic 62-0x20,2
- 1942 0d22 53C0      		rjmp .L187
- 1943               	.L194:
- 1944               	.LM255:
- 1945 0d24 812F      		mov r24,r17
- 1946 0d26 9927      		clr r25
- 1947 0d28 8130      		cpi r24,1
- 1948 0d2a 9105      		cpc r25,__zero_reg__
- 1949 0d2c A1F0      		breq .L202
- 1950 0d2e 8230      		cpi r24,2
- 1951 0d30 9105      		cpc r25,__zero_reg__
- 1952 0d32 1CF4      		brge .L209
- 1953 0d34 892B      		or r24,r25
- 1954 0d36 39F0      		breq .L201
- 1955 0d38 41C0      		rjmp .L200
- 1956               	.L209:
- 1957 0d3a 8230      		cpi r24,2
- 1958 0d3c 9105      		cpc r25,__zero_reg__
- 1959 0d3e 01F1      		breq .L203
- 1960 0d40 0397      		sbiw r24,3
- 1961 0d42 39F1      		breq .L206
- 1962 0d44 3BC0      		rjmp .L200
- 1963               	.L201:
- 1964               	.LM256:
- 1965 0d46 60E0      		ldi r22,lo8(__c.0)
- 1966 0d48 70E0      		ldi r23,hi8(__c.0)
- 1967 0d4a CE01      		movw r24,r28
- 1968 0d4c 0196      		adiw r24,1
- 1969 0d4e 0E94 0000 		call strcpy_P
+ 1941 0d18 812F      		mov r24,r17
+ 1942 0d1a 9927      		clr r25
+ 1943 0d1c 8130      		cpi r24,1
+ 1944 0d1e 9105      		cpc r25,__zero_reg__
+ 1945 0d20 A1F0      		breq .L202
+ 1946 0d22 8230      		cpi r24,2
+ 1947 0d24 9105      		cpc r25,__zero_reg__
+ 1948 0d26 1CF4      		brge .L209
+ 1949 0d28 892B      		or r24,r25
+ 1950 0d2a 39F0      		breq .L201
+ 1951 0d2c 41C0      		rjmp .L200
+ 1952               	.L209:
+ 1953 0d2e 8230      		cpi r24,2
+ 1954 0d30 9105      		cpc r25,__zero_reg__
+ 1955 0d32 01F1      		breq .L203
+ 1956 0d34 0397      		sbiw r24,3
+ 1957 0d36 39F1      		breq .L206
+ 1958 0d38 3BC0      		rjmp .L200
+ 1959               	.L201:
+ 1960               	.LM255:
+ 1961 0d3a 60E0      		ldi r22,lo8(__c.0)
+ 1962 0d3c 70E0      		ldi r23,hi8(__c.0)
+ 1963 0d3e CE01      		movw r24,r28
+ 1964 0d40 0196      		adiw r24,1
+ 1965 0d42 0E94 0000 		call strcpy_P
+ 1966               	.LM256:
+ 1967 0d46 81E0      		ldi r24,lo8(1)
+ 1968 0d48 07C0      		rjmp .L213
+ 1969               	.L202:
  1970               	.LM257:
- 1971 0d52 81E0      		ldi r24,lo8(1)
- 1972 0d54 07C0      		rjmp .L213
- 1973               	.L202:
- 1974               	.LM258:
- 1975 0d56 60E0      		ldi r22,lo8(__c.1)
- 1976 0d58 70E0      		ldi r23,hi8(__c.1)
- 1977 0d5a CE01      		movw r24,r28
- 1978 0d5c 0196      		adiw r24,1
- 1979 0d5e 0E94 0000 		call strcpy_P
- 1980               	.LM259:
- 1981 0d62 80E0      		ldi r24,lo8(0)
- 1982               	.L213:
- 1983 0d64 0E94 0000 		call PM_GetStoredDataSize
- 1984 0d68 DC01      		movw r26,r24
- 1985 0d6a CB01      		movw r24,r22
- 1986 0d6c 2AE0      		ldi r18,lo8(10)
- 1987 0d6e 30E0      		ldi r19,hi8(10)
- 1988 0d70 AE01      		movw r20,r28
- 1989 0d72 4A5F      		subi r20,lo8(-(6))
- 1990 0d74 5F4F      		sbci r21,hi8(-(6))
- 1991 0d76 BC01      		movw r22,r24
- 1992 0d78 CD01      		movw r24,r26
- 1993 0d7a 0E94 0000 		call ultoa
- 1994               	.LM260:
- 1995 0d7e 1EC0      		rjmp .L200
- 1996               	.L203:
- 1997               	.LM261:
- 1998 0d80 60E0      		ldi r22,lo8(__c.2)
- 1999 0d82 70E0      		ldi r23,hi8(__c.2)
- 2000 0d84 CE01      		movw r24,r28
- 2001 0d86 0196      		adiw r24,1
- 2002 0d88 0E94 0000 		call strcpy_P
- 2003               	.LM262:
- 2004 0d8c 80E0      		ldi r24,lo8(Prog_TotalFuseBytes)
- 2005 0d8e 90E0      		ldi r25,hi8(Prog_TotalFuseBytes)
- 2006 0d90 08C0      		rjmp .L215
- 2007               	.L206:
- 2008               	.LM263:
- 2009 0d92 60E0      		ldi r22,lo8(__c.3)
- 2010 0d94 70E0      		ldi r23,hi8(__c.3)
- 2011 0d96 CE01      		movw r24,r28
- 2012 0d98 0196      		adiw r24,1
- 2013 0d9a 0E94 0000 		call strcpy_P
- 2014               	.LM264:
- 2015 0d9e 80E0      		ldi r24,lo8(Prog_TotalLockBytes)
- 2016 0da0 90E0      		ldi r25,hi8(Prog_TotalLockBytes)
- 2017               	.L215:
- 2018 0da2 0E94 0000 		call eeprom_read_byte_169
- 2019               	.LM265:
- 2020 0da6 8F3F      		cpi r24,lo8(-1)
- 2021 0da8 11F0      		breq .L207
- 2022 0daa 9927      		clr r25
- 2023 0dac 02C0      		rjmp .L208
- 2024               	.L207:
- 2025 0dae 80E0      		ldi r24,lo8(0)
- 2026 0db0 90E0      		ldi r25,hi8(0)
- 2027               	.L208:
- 2028 0db2 BE01      		movw r22,r28
- 2029 0db4 6A5F      		subi r22,lo8(-(6))
- 2030 0db6 7F4F      		sbci r23,hi8(-(6))
- 2031 0db8 0E94 0000 		call MAIN_IntToStr
- 2032               	.L200:
+ 1971 0d4a 60E0      		ldi r22,lo8(__c.1)
+ 1972 0d4c 70E0      		ldi r23,hi8(__c.1)
+ 1973 0d4e CE01      		movw r24,r28
+ 1974 0d50 0196      		adiw r24,1
+ 1975 0d52 0E94 0000 		call strcpy_P
+ 1976               	.LM258:
+ 1977 0d56 80E0      		ldi r24,lo8(0)
+ 1978               	.L213:
+ 1979 0d58 0E94 0000 		call PM_GetStoredDataSize
+ 1980 0d5c DC01      		movw r26,r24
+ 1981 0d5e CB01      		movw r24,r22
+ 1982 0d60 2AE0      		ldi r18,lo8(10)
+ 1983 0d62 30E0      		ldi r19,hi8(10)
+ 1984 0d64 AE01      		movw r20,r28
+ 1985 0d66 4A5F      		subi r20,lo8(-(6))
+ 1986 0d68 5F4F      		sbci r21,hi8(-(6))
+ 1987 0d6a BC01      		movw r22,r24
+ 1988 0d6c CD01      		movw r24,r26
+ 1989 0d6e 0E94 0000 		call ultoa
+ 1990               	.LM259:
+ 1991 0d72 1EC0      		rjmp .L200
+ 1992               	.L203:
+ 1993               	.LM260:
+ 1994 0d74 60E0      		ldi r22,lo8(__c.2)
+ 1995 0d76 70E0      		ldi r23,hi8(__c.2)
+ 1996 0d78 CE01      		movw r24,r28
+ 1997 0d7a 0196      		adiw r24,1
+ 1998 0d7c 0E94 0000 		call strcpy_P
+ 1999               	.LM261:
+ 2000 0d80 80E0      		ldi r24,lo8(Prog_TotalFuseBytes)
+ 2001 0d82 90E0      		ldi r25,hi8(Prog_TotalFuseBytes)
+ 2002 0d84 08C0      		rjmp .L215
+ 2003               	.L206:
+ 2004               	.LM262:
+ 2005 0d86 60E0      		ldi r22,lo8(__c.3)
+ 2006 0d88 70E0      		ldi r23,hi8(__c.3)
+ 2007 0d8a CE01      		movw r24,r28
+ 2008 0d8c 0196      		adiw r24,1
+ 2009 0d8e 0E94 0000 		call strcpy_P
+ 2010               	.LM263:
+ 2011 0d92 80E0      		ldi r24,lo8(Prog_TotalLockBytes)
+ 2012 0d94 90E0      		ldi r25,hi8(Prog_TotalLockBytes)
+ 2013               	.L215:
+ 2014 0d96 0E94 0000 		call eeprom_read_byte_169
+ 2015               	.LM264:
+ 2016 0d9a 8F3F      		cpi r24,lo8(-1)
+ 2017 0d9c 11F0      		breq .L207
+ 2018 0d9e 9927      		clr r25
+ 2019 0da0 02C0      		rjmp .L208
+ 2020               	.L207:
+ 2021 0da2 80E0      		ldi r24,lo8(0)
+ 2022 0da4 90E0      		ldi r25,hi8(0)
+ 2023               	.L208:
+ 2024 0da6 BE01      		movw r22,r28
+ 2025 0da8 6A5F      		subi r22,lo8(-(6))
+ 2026 0daa 7F4F      		sbci r23,hi8(-(6))
+ 2027 0dac 0E94 0000 		call MAIN_IntToStr
+ 2028               	.L200:
+ 2029               	.LM265:
+ 2030 0db0 CE01      		movw r24,r28
+ 2031 0db2 0196      		adiw r24,1
+ 2032 0db4 0E94 0000 		call LCD_puts
  2033               	.LM266:
- 2034 0dbc CE01      		movw r24,r28
- 2035 0dbe 0196      		adiw r24,1
- 2036 0dc0 0E94 0000 		call LCD_puts
- 2037               	.LM267:
- 2038 0dc4 0E94 0000 		call MAIN_WaitForJoyRelease
- 2039 0dc8 98CF      		rjmp .L216
- 2040               	.L187:
- 2041               	/* epilogue: frame size=14 */
- 2042 0dca 2E96      		adiw r28,14
- 2043 0dcc 0FB6      		in __tmp_reg__,__SREG__
- 2044 0dce F894      		cli
- 2045 0dd0 DEBF      		out __SP_H__,r29
- 2046 0dd2 0FBE      		out __SREG__,__tmp_reg__
- 2047 0dd4 CDBF      		out __SP_L__,r28
- 2048 0dd6 DF91      		pop r29
- 2049 0dd8 CF91      		pop r28
- 2050 0dda 1F91      		pop r17
- 2051 0ddc 0895      		ret
- 2052               	/* epilogue end (size=10) */
- 2053               	/* function PM_ShowStoredItemSizes size 129 (108) */
- 2054               	.LFE17:
- 2056               	.Letext0:
+ 2034 0db8 0E94 0000 		call MAIN_WaitForJoyRelease
+ 2035 0dbc 98CF      		rjmp .L216
+ 2036               	.L187:
+ 2037               	/* epilogue: frame size=14 */
+ 2038 0dbe 2E96      		adiw r28,14
+ 2039 0dc0 0FB6      		in __tmp_reg__,__SREG__
+ 2040 0dc2 F894      		cli
+ 2041 0dc4 DEBF      		out __SP_H__,r29
+ 2042 0dc6 0FBE      		out __SREG__,__tmp_reg__
+ 2043 0dc8 CDBF      		out __SP_L__,r28
+ 2044 0dca DF91      		pop r29
+ 2045 0dcc CF91      		pop r28
+ 2046 0dce 1F91      		pop r17
+ 2047 0dd0 0895      		ret
+ 2048               	/* epilogue end (size=10) */
+ 2049               	/* function PM_ShowStoredItemSizes size 129 (108) */
+ 2050               	.LFE17:
+ 2052               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 ProgramManager.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:23     .bss:00000000 GPageLength
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:29     .bss:00000002 CurrentMode
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:35     .bss:00000003 MemoryType
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:40     .text:00000000 PM_GetStoredDataSize
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:179    .text:000000f0 PM_SetupDFAddressCounters
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:258    .text:00000174 PM_StoreProgramByte
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:316    .text:000001ea PM_CheckEndOfProgramming
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:470    .text:00000304 PM_CheckEndOfFuseLockStore
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:524    .text:0000035c PM_InterpretAVRISPPacket
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:1271   .text:000008e4 PM_SendFuseLockBytes
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:1371   .text:00000984 PM_SendEraseCommand
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:1467   .text:00000a24 PM_CreateProgrammingPackets
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:1873   .progmem.data:00000000 __c.0
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:1877   .progmem.data:00000006 __c.1
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:1881   .progmem.data:0000000c __c.2
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:1885   .progmem.data:00000012 __c.3
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccAlaaaa.s:1890   .text:00000cde PM_ShowStoredItemSizes
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:23     .bss:00000000 GPageLength
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:29     .bss:00000002 CurrentMode
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:35     .bss:00000003 MemoryType
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:40     .text:00000000 PM_GetStoredDataSize
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:179    .text:000000f0 PM_SetupDFAddressCounters
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:258    .text:00000174 PM_StoreProgramByte
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:312    .text:000001de PM_CheckEndOfProgramming
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:466    .text:000002f8 PM_CheckEndOfFuseLockStore
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:520    .text:00000350 PM_InterpretAVRISPPacket
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:1267   .text:000008d8 PM_SendFuseLockBytes
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:1367   .text:00000978 PM_SendEraseCommand
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:1463   .text:00000a18 PM_CreateProgrammingPackets
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:1869   .progmem.data:00000000 __c.0
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:1873   .progmem.data:00000006 __c.1
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:1877   .progmem.data:0000000c __c.2
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:1881   .progmem.data:00000012 __c.3
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc0gaaaa.s:1886   .text:00000cd2 PM_ShowStoredItemSizes
 
 UNDEFINED SYMBOLS
 __do_copy_data
@@ -2052,7 +2048,6 @@ CurrAddress
 CurrPageAddress
 CurrBuffByte
 DF_CopyBufferToFlashPage
-DF_CopyFlashPageToBuffer
 DF_BufferWriteEnable
 SPI_SPITransmit
 __mulsi3

@@ -240,18 +240,30 @@ int main(void)
 	JoyStatus = 1;                               // Use an invalid joystick value to force the program to write the
 	                                             // name of the default command onto the LCD
 	
+	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_CLOCKSPEED_1MHZ); // Use slow clock speed in the main menu to save power
+	
 	while (1)
 	{
 		if (JoyStatus)                           // Joystick is in the non-center position
 		{
 			if (JoyStatus & JOY_UP)              // Previous function
-			  (CurrFunc == 0)? CurrFunc = (MAIN_TOTALMAINMENUITEMS - 1): CurrFunc--;
+			{
+				(CurrFunc == 0)? CurrFunc = (MAIN_TOTALMAINMENUITEMS - 1): CurrFunc--;
+			}
 			else if (JoyStatus & JOY_DOWN)      // Next function
-			  (CurrFunc == (MAIN_TOTALMAINMENUITEMS - 1))? CurrFunc = 0 : CurrFunc++;
+			{
+				(CurrFunc == (MAIN_TOTALMAINMENUITEMS - 1))? CurrFunc = 0 : CurrFunc++;
+			}
 			else if (JoyStatus & JOY_PRESS)     // Select current function
-			  ((FuncPtr)pgm_read_word(&MainFunctionPtrs[CurrFunc]))(); // Run associated function
+			{
+				OSCCAL_SETSYSCLOCKSPEED(OSCCAL_CLOCKSPEED_8MHZ);
+				((FuncPtr)pgm_read_word(&MainFunctionPtrs[CurrFunc]))(); // Run associated function
+				OSCCAL_SETSYSCLOCKSPEED(OSCCAL_CLOCKSPEED_1MHZ);
+			}
 			else if (JoyStatus & JOY_RIGHT)
-			  FUNCShowAbout();
+			{
+				FUNCShowAbout();
+			}
 		
 			// Show current setting function onto the LCD:
 			LCD_puts_f((uint8_t*)pgm_read_word(&MainFunctionNames[CurrFunc]));
