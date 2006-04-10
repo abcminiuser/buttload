@@ -158,12 +158,10 @@ const FuncPtr    MainFunctionPtrs[]      PROGMEM = {FUNCAVRISPMode, FUNCStorePro
 const uint8_t    SFunc_SETCONTRAST[]     PROGMEM = "SET CONTRAST";
 const uint8_t    SFunc_SETSPISPEED[]     PROGMEM = "SET SPI SPEED";
 const uint8_t    SFunc_CLEARMEM[]        PROGMEM = "CLEAR MEMORY";
-const uint8_t    SFunc_AUTOCALIB[]       PROGMEM = "AUTO CALIBRATE";
-const uint8_t    SFunc_MANCALIB[]        PROGMEM = "MANUAL CALIBRATION";
 const uint8_t    SFunc_GOBOOTLOADER[]    PROGMEM = "JUMP TO BOOTLOADER";
 
-const uint8_t*   SettingFunctionNames[]  PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_CLEARMEM, SFunc_AUTOCALIB, SFunc_MANCALIB, SFunc_GOBOOTLOADER};
-const FuncPtr    SettingFunctionPtrs[]   PROGMEM = {FUNCSetContrast  , FUNCSetISPSpeed  , FUNCClearMem  , FUNCAutoCalib  , FUNCManCalib, FUNCGoBootloader};
+const uint8_t*   SettingFunctionNames[]  PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
+const FuncPtr    SettingFunctionPtrs[]   PROGMEM = {FUNCSetContrast  , FUNCSetISPSpeed  , FUNCClearMem  , FUNCGoBootloader};
 
 const uint8_t    PRG_D[]                 PROGMEM = "DATA ONLY";
 const uint8_t    PRG_E[]                 PROGMEM = "EEPROM ONLY";
@@ -193,9 +191,8 @@ int main(void)
 {
 	uint8_t CurrFunc = 0;
 
-	// TODO: REENABLE JTAG
-	//MCUCR   = (1 << JTD);                      // Turn off JTAG via code
-	//MCUCR   = (1 << JTD);                      // Twice as specified in datasheet
+	MCUCR   = (1 << JTD);                        // Turn off JTAG via code
+	MCUCR   = (1 << JTD);                        // Twice as specified in datasheet
 	
 	ACSR    = (1 << ACD);                        // Disable the unused Analogue Comparitor to save power
 	PRR     = ((1 << PRADC) | (1 << PRSPI));     // Disable the ADC (unused) and SPI (for now) to save power
@@ -226,17 +223,12 @@ int main(void)
 
 	sei();
 	
-	LCD_puts_f(WaitText);
-
+	LCD_puts_f(WaitText); 
 	DF_EnableDataflash(FALSE);                   // Pull internal Dataflash /CS high to disable it and thus save power
-
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);      // Set status LEDs to orange (busy)
-
-	OSCCAL_Calibrate();                          // Calibrate the internal occilator correction value
 	USART_Init(USART_BAUDVALUE);                 // UART at 115200 baud (7.3MHz clock, double USART speed)
-	
-	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);	     // Set status LEDs to green (ready)
-	
+	OSCCAL_Calibrate();                          // Calibrate the internal RC occilator
+	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);	     // Set status LEDs to green (ready)	
 	JoyStatus = 1;                               // Use an invalid joystick value to force the program to write the
 	                                             // name of the default command onto the LCD
 	
@@ -247,23 +239,13 @@ int main(void)
 		if (JoyStatus)                           // Joystick is in the non-center position
 		{
 			if (JoyStatus & JOY_UP)              // Previous function
-			{
-				(CurrFunc == 0)? CurrFunc = (MAIN_TOTALMAINMENUITEMS - 1): CurrFunc--;
-			}
+			  (CurrFunc == 0)? CurrFunc = (MAIN_TOTALMAINMENUITEMS - 1): CurrFunc--;
 			else if (JoyStatus & JOY_DOWN)      // Next function
-			{
-				(CurrFunc == (MAIN_TOTALMAINMENUITEMS - 1))? CurrFunc = 0 : CurrFunc++;
-			}
+			  (CurrFunc == (MAIN_TOTALMAINMENUITEMS - 1))? CurrFunc = 0 : CurrFunc++;
 			else if (JoyStatus & JOY_PRESS)     // Select current function
-			{
-				OSCCAL_SETSYSCLOCKSPEED(OSCCAL_CLOCKSPEED_8MHZ);
-				((FuncPtr)pgm_read_word(&MainFunctionPtrs[CurrFunc]))(); // Run associated function
-				OSCCAL_SETSYSCLOCKSPEED(OSCCAL_CLOCKSPEED_1MHZ);
-			}
+			  ((FuncPtr)pgm_read_word(&MainFunctionPtrs[CurrFunc]))(); // Run associated function
 			else if (JoyStatus & JOY_RIGHT)
-			{
-				FUNCShowAbout();
-			}
+			  FUNCShowAbout();
 		
 			// Show current setting function onto the LCD:
 			LCD_puts_f((uint8_t*)pgm_read_word(&MainFunctionNames[CurrFunc]));
@@ -420,9 +402,9 @@ void FUNCChangeSettings(void)
 		if (JoyStatus)                         // Joystick is in the non-center position
 		{
 			if (JoyStatus & JOY_UP)            // Previous function
-			  (CurrSFunc == 0)? CurrSFunc = 5 : CurrSFunc--;
+			  (CurrSFunc == 0)? CurrSFunc = 3 : CurrSFunc--;
 			else if (JoyStatus & JOY_DOWN)     // Next function
-			  (CurrSFunc == 5)? CurrSFunc = 0 : CurrSFunc++;
+			  (CurrSFunc == 3)? CurrSFunc = 0 : CurrSFunc++;
 			else if (JoyStatus & JOY_PRESS)    // Select current function
 			  ((FuncPtr)pgm_read_word(&SettingFunctionPtrs[CurrSFunc]))(); // Run associated function
 			else if (JoyStatus & JOY_LEFT)
@@ -698,46 +680,6 @@ void FUNCAutoCalib(void)
 	OSCCAL_Calibrate();
 }
 
-void FUNCManCalib(void)
-{
-	uint8_t Buffer[9];
-
-	JoyStatus = 1;                           // Invalid value to force the LCD to update
-	
-	USART_ENABLE(USART_TX_ON, USART_RX_OFF);
-
-	while (1)
-	{
-		if (BuffElements)                    // Routine will also echo send chars (directly accesses the ringbuffer count var)
-		   USART_Tx(BUFF_GetBuffByte());
-	
-		if (JoyStatus)
-		{
-			if (JoyStatus & JOY_UP)
-			  OSCCAL++;
-			else if (JoyStatus & JOY_DOWN)
-			  OSCCAL--;
-			else if (JoyStatus & JOY_LEFT)
-			  break;
-					
-			// Copy the programmer name out of memory and transmit it via the USART:
-			strcpy_P(Buffer, ProgrammerName);
-			USART_TxString(Buffer);
-
-			Buffer[0] = 'C';
-			Buffer[1] = 'V';
-			Buffer[2] = ' ';
-
-			MAIN_IntToStr(OSCCAL, &Buffer[3]);
-			LCD_puts(Buffer);
-
-			MAIN_WaitForJoyRelease();
-		}
-	}
-	
-	USART_ENABLE(USART_TX_OFF, USART_RX_OFF);
-}
-
 void FUNCSetContrast(void)
 {
 	uint8_t Buffer[6];
@@ -822,9 +764,6 @@ void FUNCSleepMode(void)
 	  SLEEP();
 	   
 	LCDCRA |= (1 << LCDEN);
-
-	LCD_puts_f(WaitText);
-	OSCCAL_Calibrate();	
 	
 	MAIN_WaitForJoyRelease();
 }

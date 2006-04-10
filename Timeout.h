@@ -18,8 +18,8 @@
 // DEFINES AND MACROS:
 #define TIMEOUT_TICKSBEFORETIMEOUT 6   // Approx 1 timeout every 5 secs (which is computer timout period)
 
-#define TIMEOUT_TIMER_ON()         TCCR1B = ((1 << CS10) | (1 << CS11));
-#define TIMEOUT_TIMER_OFF()        TCCR1B = 0; Ticks = 0; TCNT1 = 0
+#define TIMEOUT_TIMER_ON()         MACROS{ TCCR1B = ((1 << CS10) | (1 << CS11)); }MACROE
+#define TIMEOUT_TIMER_OFF()        MACROS{ TCCR1B = 0; Ticks = 0; TCNT1 = 0;     }MACROE
 
 // EXTERNAL VARIABLES:
 extern volatile uint8_t   TimeOut;

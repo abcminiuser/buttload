@@ -2,9 +2,8 @@ Current Version: Public Release 1.4
 
 	FROM PUBLIC RELEASE 1.3:
 	=======================================
-	  * Dataflash access speed increased to 4MHz (up from ~150KHz)
-	  * OSCCAL routine modified for extreamly fast calibration
-	  * System clock is now prescaled down to 1MHz inside the main menu to save power
+	  * OSCCAL is now calibrated before any function involving the USART
+	  * Removed the now unnessesary manual and auto calibration settings menu items
 
 	FROM PUBLIC RELEASE 1.2:
 	=======================================
@@ -17,6 +16,8 @@ Current Version: Public Release 1.4
 	  * Changed dataflash erase (external) method to the faster block erase, slow erase now performed after computer reply to prevent a timeout
 	  * Fixed typo in CMD_READ_OSCCAL_ISP section of the ProgramManager.c packet interpretation routine
 	  * External dataflash total pages table corrected
+	  * Dataflash access speed increased to 4MHz (up from ~150KHz)
+	  * System clock is now prescaled down to 1MHz inside the main menu to save power
 	  * Removed unnessesary CopyFlashToBuffer command in ProgramManager.c
 	  * Added code to exit OSCCAL faster if a value within the tollerace cannot be found (closest value used)
 

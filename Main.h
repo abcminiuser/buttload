@@ -49,14 +49,17 @@ extern const uint8_t FAULTERR_ISPShort[];
 
 // DEFINES AND MACROS:
 #define VERSION_MAJOR            1
-#define VERSION_MINOR            4
+#define VERSION_MINOR            3
 
 #define MAGIC_NUM                0b01111010 // Magic number, used for first-run detection or upgrade incompatibility checks
 
-#define MAIN_SETSTATUSLED(mask)  PORTF = ((PORTF & ~MAIN_STATLED_ORANGE) | (mask))
+#define MAIN_SETSTATUSLED(mask)  MACROS{ PORTF = ((PORTF & ~MAIN_STATLED_ORANGE) | (mask)); }MACROE
 #define MAIN_STATLED_GREEN       (1 << 4)
 #define MAIN_STATLED_ORANGE      ((1 << 4) | (1 << 5))
 #define MAIN_STATLED_RED         (1 << 5)
+#define MAIN_RESETCS_ACTIVE      0
+#define MAIN_RESETCS_INACTIVE    1
+#define MAIN_RESETCS_EXTDFACTIVE 2
 
 #define MAIN_TOTALMAINMENUITEMS  7
 
@@ -76,11 +79,11 @@ extern const uint8_t FAULTERR_ISPShort[];
 #define TRUE                     1
 #define FALSE                    0
 
-#define MAIN_RESETCS_ACTIVE      0
-#define MAIN_RESETCS_INACTIVE    1
-#define MAIN_RESETCS_EXTDFACTIVE 2
+#define MACROS                   do
+#define MACROE                   while (0)
 
-#define SLEEP()                 asm volatile ("sleep"::)
+#define SLEEP()                  MACROS{ asm volatile ("sleep"::); }MACROE
+#define NOP()                    MACROS{ asm volatile ("nop"::);   }MACROE
 
 // PROTOTYPES:
 void MAIN_ResetCSLine(uint8_t ActiveInactive);
@@ -99,8 +102,6 @@ void FUNCProgramDataflash(void);
 void FUNCProgramAVR(void);
 void FUNCStoreProgram(void);
 void FUNCClearMem(void);
-void FUNCAutoCalib(void);
-void FUNCManCalib(void);
 void FUNCSetContrast(void);
 void FUNCSetISPSpeed(void);
 void FUNCSleepMode(void);

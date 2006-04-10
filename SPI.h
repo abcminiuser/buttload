@@ -15,7 +15,7 @@
 #include "eeprom169.h"
 
 // MACROS:
-#define SPI_SPIOFF()	     PRR |= (1 << PRSPI);
+#define SPI_SPIOFF()	     MACROS{ PRR |= (1 << PRSPI); }MACROE
 
 // PROTOTYPES:
 void    SPI_SPIInit(void);

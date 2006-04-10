@@ -16,9 +16,9 @@
 #include "Main.h"
 
 // DEFINES:
-#define pLCDREG ((unsigned char *)(0xEC))
+#define pLCDREG                   ((uint8_t*)&LCDDR0)
 
-#define LCD_CONTRAST_LEVEL(level) LCDCCR = (0x0F & level)
+#define LCD_CONTRAST_LEVEL(level) MACROS{ LCDCCR = (0x0F & level); }MACROE
 #define LCD_SCROLLCOUNT_DEFAULT   3
 #define LCD_DELAYCOUNT_DEFAULT    10
 #define LCD_TEXTBUFFER_SIZE       20

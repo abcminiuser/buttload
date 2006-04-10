@@ -25,7 +25,7 @@ typedef struct
 #include "DataflashCommandBytes.h"
 
 // DEFINES AND MACROS:
-#define DF_TOGGLEENABLE()        DF_EnableDataflash(FALSE); asm volatile ("nop"::); DF_EnableDataflash(TRUE)
+#define DF_TOGGLEENABLE()        MACROS{ DF_EnableDataflash(FALSE); DF_EnableDataflash(TRUE); }MACROE
 #define DF_BUSY()                !(DF_GetChipCharacteristics() & DF_BUSYMASK)
 
 #define DF_BUSYMASK              0x80

@@ -71,14 +71,14 @@
   82 0052 9091 0000 		lds r25,(DFPos)+1
   83 0056 A091 0000 		lds r26,(DFPos)+2
   84 005a B091 0000 		lds r27,(DFPos)+3
-  85               	.L19:
+  85               	.L22:
   86               	.LM7:
   87 005e 8E15      		cp r24,r14
   88 0060 9F05      		cpc r25,r15
   89 0062 A007      		cpc r26,r16
   90 0064 B107      		cpc r27,r17
   91 0066 08F0      		brlo .+2
-  92 0068 43C0      		rjmp .L17
+  92 0068 43C0      		rjmp .L20
   93               	.LM8:
   94 006a 80E0      		ldi r24,lo8(0)
   95 006c 0E94 0000 		call SPI_SPITransmit
@@ -88,17 +88,17 @@
   99 0076 D394      		inc r13
  100 0078 9081      		ld r25,Z
  101 007a 8917      		cp r24,r25
- 102 007c 21F5      		brne .L4
+ 102 007c 21F5      		brne .L5
  103               	.LM9:
  104 007e 84E0      		ldi r24,lo8(4)
  105 0080 D816      		cp r13,r24
- 106 0082 11F5      		brne .L11
+ 106 0082 11F5      		brne .L13
  107               	.LBB2:
  108               	.LM10:
  109 0084 FF24      		clr r15
  110 0086 00E0      		ldi r16,lo8(0)
  111 0088 10E0      		ldi r17,hi8(0)
- 112               	.L10:
+ 112               	.L11:
  113               	.LM11:
  114 008a 80E0      		ldi r24,lo8(0)
  115 008c 0E94 0000 		call SPI_SPITransmit
@@ -112,15 +112,15 @@
  123 009c 8083      		st Z,r24
  124               	.LM13:
  125 009e 8823      		tst r24
- 126 00a0 31F0      		breq .L7
+ 126 00a0 31F0      		breq .L8
  127               	.LM14:
  128 00a2 F394      		inc r15
  129 00a4 0F5F      		subi r16,lo8(-(1))
  130 00a6 1F4F      		sbci r17,hi8(-(1))
  131 00a8 83E1      		ldi r24,lo8(19)
  132 00aa 8F15      		cp r24,r15
- 133 00ac 70F7      		brsh .L10
- 134               	.L7:
+ 133 00ac 70F7      		brsh .L11
+ 134               	.L8:
  135               	.LM15:
  136 00ae 1D8A      		std Y+21,__zero_reg__
  137               	.LM16:
@@ -136,11 +136,11 @@
  147 00c2 81BB      		out 49-0x20,r24
  148               	.LM19:
  149 00c4 31C0      		rjmp .L1
- 150               	.L4:
+ 150               	.L5:
  151               	.LBE2:
  152               	.LM20:
  153 00c6 DD24      		clr r13
- 154               	.L11:
+ 154               	.L13:
  155               	.LM21:
  156 00c8 8091 0000 		lds r24,DFPos
  157 00cc 9091 0000 		lds r25,(DFPos)+1
@@ -153,8 +153,8 @@
  164 00e2 9093 0000 		sts (DFPos)+1,r25
  165 00e6 A093 0000 		sts (DFPos)+2,r26
  166 00ea B093 0000 		sts (DFPos)+3,r27
- 167 00ee B7CF      		rjmp .L19
- 168               	.L17:
+ 167 00ee B7CF      		rjmp .L22
+ 168               	.L20:
  169               	.LM22:
  170 00f0 60E0      		ldi r22,lo8(0)
  171 00f2 70E0      		ldi r23,hi8(0)
@@ -168,7 +168,7 @@
  179               	.LM24:
  180 010a 8091 0000 		lds r24,TagExists
  181 010e 8823      		tst r24
- 182 0110 49F4      		brne .L13
+ 182 0110 49F4      		brne .L15
  183               	.LM25:
  184 0112 81B3      		in r24,49-0x20
  185 0114 8F7C      		andi r24,lo8(-49)
@@ -179,7 +179,7 @@
  190 011c 90E0      		ldi r25,hi8(__c.0)
  191 011e 0E94 0000 		call MAIN_ShowError
  192 0122 02C0      		rjmp .L1
- 193               	.L13:
+ 193               	.L15:
  194               	.LM27:
  195 0124 0E94 0000 		call TM_FindNextTag
  196               	.L1:
@@ -226,30 +226,30 @@
  239               	.LM33:
  240 016a 8091 0000 		lds r24,TagExists
  241 016e 8823      		tst r24
- 242 0170 71F0      		breq .L31
- 243               	.L32:
+ 242 0170 71F0      		breq .L34
+ 243               	.L35:
  244               	.LM34:
  245 0172 8EB3      		in r24,62-0x20
  246 0174 8823      		tst r24
- 247 0176 E9F3      		breq .L32
+ 247 0176 E9F3      		breq .L35
  248               	.LM35:
  249 0178 F79B      		sbis 62-0x20,7
- 250 017a 03C0      		rjmp .L25
+ 250 017a 03C0      		rjmp .L28
  251               	.LM36:
  252 017c 0E94 0000 		call TM_FindNextTag
- 253 0180 02C0      		rjmp .L26
- 254               	.L25:
+ 253 0180 02C0      		rjmp .L29
+ 254               	.L28:
  255               	.LM37:
  256 0182 F299      		sbic 62-0x20,2
- 257 0184 03C0      		rjmp .L23
- 258               	.L26:
+ 257 0184 03C0      		rjmp .L26
+ 258               	.L29:
  259               	.LM38:
  260 0186 0E94 0000 		call MAIN_WaitForJoyRelease
- 261 018a F3CF      		rjmp .L32
- 262               	.L23:
+ 261 018a F3CF      		rjmp .L35
+ 262               	.L26:
  263               	.LM39:
  264 018c 80E0      		ldi r24,lo8(0)
- 265               	.L31:
+ 265               	.L34:
  266 018e 0E94 0000 		call DF_EnableDataflash
  267 0192 0895      		ret
  268               	/* epilogue: frame size=0 */
@@ -261,16 +261,16 @@
  275               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 TagManager.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Caaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Caaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Caaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Caaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Caaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Caaaa.s:23     .bss:00000000 TagExists
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Caaaa.s:28     .progmem.data:00000000 __c.0
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Caaaa.s:33     .text:00000000 TM_FindNextTag
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccsHaaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccsHaaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccsHaaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccsHaaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccsHaaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccsHaaaa.s:23     .bss:00000000 TagExists
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccsHaaaa.s:28     .progmem.data:00000000 __c.0
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccsHaaaa.s:33     .text:00000000 TM_FindNextTag
                             *COM*:00000004 DFPos
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Caaaa.s:220    .text:00000148 TM_ShowTags
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccsHaaaa.s:220    .text:00000148 TM_ShowTags
 
 UNDEFINED SYMBOLS
 __do_copy_data

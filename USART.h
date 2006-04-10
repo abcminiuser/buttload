@@ -40,7 +40,11 @@
 
 #define USART_BAUDVALUE       (((F_CPU * ((USART_DOUBLESPEED == TRUE)? 2 : 1)) / (USART_BAUDRATE * 16UL)) - 1)
 
-#define USART_ENABLE(Tx,Rx)   UCSRB = (((Rx<<RXEN) | (Tx<<TXEN)) | (UCSRB & (1 << RXCIE)));
+#define USART_ENABLE(Tx,Rx)   MACROS{                                                       \
+                              UCSRB = (((Rx<<RXEN) | (Tx<<TXEN)) | (UCSRB & (1 << RXCIE))); \
+                              if (Tx || Rx) { LCD_puts_f(WaitText); OSCCAL_Calibrate(); }   \
+							  else { OSCCAL_SETSYSCLOCKSPEED(OSCCAL_CLOCKSPEED_1MHZ); }     \
+							  }MACROE
 
 // PROTOTYPES:
 void USART_Init(unsigned int baudrate);

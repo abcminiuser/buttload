@@ -28,7 +28,7 @@
 #include "ProgramManager.h"
 
 // DEFINES AND MACROS:
-#define V2P_MAXBUFFSIZE           275 // Maximum message size length (275 is the same as the STK500)
+#define V2P_MAXBUFFSIZE             275 // Maximum message size length (275 is the same as the STK500)
 
 #define V2P_STATE_IDLE              0
 #define V2P_STATE_START             1

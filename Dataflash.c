@@ -36,7 +36,7 @@ uint8_t DF_CheckCorrectOnboardChip(void) // Ensures onboard Butterfly dataflash 
 {
 	DF_GetChipCharacteristics();
 
-	if (DataflashInfo.PageBits != 0x09)
+	if (DataflashInfo.TotalPages == 2048)
 	{
 		SPI_SPIOFF();
 		MAIN_ShowError(DataFlashError);

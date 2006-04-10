@@ -51,8 +51,6 @@
 
 #define ISPCC_USIMASK                     ((1<<USI_DATAIN_PIN) | (1<<USI_DATAOUT_PIN) | (1<<USI_CLOCK_PIN))
 
-#define NOP()                             asm volatile ("nop"::)
-
 // EXTERNAL VARIABLES:
 extern const uint8_t SyncErrorMessage[] PROGMEM;
 
