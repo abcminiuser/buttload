@@ -5,7 +5,7 @@
                   dean_camera@hotmail.com
 						
 
-  Requires: AVR-GCC 3.4.3 or above, AVRLibC version 1.4.0 or above
+  Requires: AVR-GCC 3.4.3 or above, AVRLibC version 1.4.1 or above
 */
 
 #include "ButtLoadTag.h"
@@ -100,11 +100,11 @@ BUTTLOADTAG(Author, "BY DEAN CAMERA");
 
 		FILE                                     |  AUTHOR
 		-----------------------------------------+---------------------------------------------
-		USART.c + Header file                    | By Atmel, ported to GCC by Martin Thomas
-		EEPROM169.c + Header file                | By Atmel, ported to GCC by Martin Thomas
-		DataflashCommandBytes.h                  | By Atmel, modified by Martin Thomas
+		USART.c + Header file                    | By Atmel, ported to GCC by Martin Thomas and
+		                                         | modified by Dean Camera
 		Dataflash.c + Header file                | By Dean Camera, re-coded from the generic dataflash
 		                                         | code by Atmel (ported to GCC by Martin Thomas)
+		DataflashCommandBytes.h                  | By Atmel, modified by Martin Thomas
 		USI.c + Header file                      | By Atmel, ported to GCC and modified by Dean Camera
 		OSCCal.c + Header file                   | By Colin Oflynn, modified by Dean Camera
 		LCD_Driver.c + Header file               | By Dean Camera
@@ -210,23 +210,23 @@ int main(void)
 
 	MAIN_SETSTATUSLED(MAIN_STATLED_RED);	     // Set status LEDs to red (busy)
 
-	if (eeprom_read_byte_169(&Sys_MagicNumber) != MAGIC_NUM) // Check if first ButtLoad run
+	if (eeprom_read_byte(&EEPROMVars.MagicNumber) != MAGIC_NUM) // Check if first ButtLoad run
 	{
-		for (uint16_t EAddr = 0; EAddr < Sys_MagicNumber; EAddr++) // Clear the EEPROM if first run
-		   eeprom_write_byte_169(&EAddr, 0xFF);
+		for (uint16_t EAddr = 0; EAddr < 512; EAddr++) // Clear the EEPROM if first run
+		   eeprom_write_byte((uint8_t*)EAddr, 0xFF);
 
-		eeprom_write_byte_169(&Sys_MagicNumber, MAGIC_NUM);
+		eeprom_write_byte(&EEPROMVars.MagicNumber, MAGIC_NUM);
 	}
 
 	LCD_Init();
-	LCD_CONTRAST_LEVEL(eeprom_read_byte_169(&Sys_LCDContrast));
+	LCD_CONTRAST_LEVEL(eeprom_read_byte(&EEPROMVars.LCDContrast));
 
 	sei();
 	
 	LCD_puts_f(WaitText); 
 	DF_EnableDataflash(FALSE);                   // Pull internal Dataflash /CS high to disable it and thus save power
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);      // Set status LEDs to orange (busy)
-	USART_Init(USART_BAUDVALUE);                 // UART at 115200 baud (7.3MHz clock, double USART speed)
+	USART_Init();                                // UART at 115200 baud (7.3MHz clock, double USART speed)
 	OSCCAL_Calibrate();                          // Calibrate the internal RC occilator
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);	     // Set status LEDs to green (ready)	
 	JoyStatus = 1;                               // Use an invalid joystick value to force the program to write the
@@ -291,7 +291,7 @@ void MAIN_ResetCSLine(uint8_t ActiveInactive)
 		case MAIN_RESETCS_ACTIVE:   // The target RESET line may be either active high or low.
 			DDRF |= (1 << 6);
 		
-			if (!(eeprom_read_byte_169(&Param_ResetPolarity))) // Translate to correct logic level for target device type
+			if (!(eeprom_read_byte(&EEPROMVars.ResetPolarity))) // Translate to correct logic level for target device type
 			  PORTF |=  (1 << 6);
 			else
 			  PORTF &= ~(1 << 6);
@@ -452,7 +452,7 @@ void FUNCAVRISPMode(void)
 
 void FUNCProgramDataflash(void)
 {
-	USI_SPIInitMaster(eeprom_read_byte_169(&Param_SCKDuration));
+	USI_SPIInitMaster(eeprom_read_byte(&EEPROMVars.SCKDuration));
 	UseExernalDF = TRUE;
 	DFSPIRoutinePointer = USI_SPITransmit;
 	
@@ -468,7 +468,7 @@ void FUNCProgramDataflash(void)
 void FUNCProgramAVR(void)
 {
 	uint8_t  DoneFailMessageBuff[19];
-	uint16_t EEPROMAddress;
+	uint8_t* EEPROMAddress;
 	uint8_t  Fault = ISPCC_NO_FAULT;
 	uint8_t  ProgMode = 0;
 
@@ -505,14 +505,12 @@ void FUNCProgramAVR(void)
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);                // Orange = busy
 	LCD_puts_f(WaitText);
 
-	USI_SPIInitMaster(eeprom_read_byte_169(&Param_SCKDuration));
+	USI_SPIInitMaster(eeprom_read_byte(&EEPROMVars.SCKDuration));
 	MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE); // Capture the RESET line of the slave AVR
-
-	EEPROMAddress = Prog_EnterProgMode;
 			
 	for (uint8_t PacketB = 0; PacketB <= 11; PacketB++) // Read the enter programming mode command bytes
 	{
-		PacketBytes[PacketB] = eeprom_read_byte_169(&EEPROMAddress);
+		PacketBytes[PacketB] = eeprom_read_byte(&EEPROMVars.EnterProgMode[PacketB]);
 		EEPROMAddress++;
 	}
 	
@@ -526,7 +524,7 @@ void FUNCProgramAVR(void)
 		{
 			MAIN_ShowProgType('C');
 			
-			if (!(eeprom_read_byte_169(&Prog_EraseCmdStored) == TRUE))
+			if (!(eeprom_read_byte(&EEPROMVars.EraseCmdStored) == TRUE))
 			{
 				Fault = ISPCC_FAULT_NOERASE;
 				MAIN_ShowError(PSTR("NO ERASE CMD"));
@@ -571,7 +569,7 @@ void FUNCProgramAVR(void)
 		{
 			MAIN_ShowProgType('F');
 			
-			if (!(eeprom_read_byte_169(&Prog_TotalFuseBytes)))
+			if (!(eeprom_read_byte(&EEPROMVars.TotalFuseBytes)))
 			{
 				Fault = ISPCC_FAULT_NODATATYPE;					
 				MAIN_ShowError(PSTR("NO FUSE BYTES"));
@@ -594,7 +592,7 @@ void FUNCProgramAVR(void)
 
 			MAIN_ShowProgType('L');
 		
-			if (!(eeprom_read_byte_169(&Prog_TotalLockBytes)))
+			if (!(eeprom_read_byte(&EEPROMVars.TotalLockBytes)))
 			{
 				Fault = ISPCC_FAULT_NODATATYPE;
 				MAIN_ShowError(PSTR("NO LOCK BYTES"));
@@ -667,8 +665,8 @@ void FUNCClearMem(void)
 
 	LCD_puts_f(WaitText);
 
-	for (uint16_t EAddr = 0; EAddr < Sys_MagicNumber; EAddr++)
-	  eeprom_write_byte_169(&EAddr, 0xFF);
+	for (uint16_t EAddr = 0; EAddr < 512; EAddr++)
+	  eeprom_write_byte((uint8_t*)EAddr, 0xFF);
 
 	LCD_puts_f(PSTR("MEM CLEARED"));
 	MAIN_Delay10MS(255);
@@ -683,7 +681,7 @@ void FUNCAutoCalib(void)
 void FUNCSetContrast(void)
 {
 	uint8_t Buffer[6];
-	uint8_t Contrast = (eeprom_read_byte_169(&Sys_LCDContrast) & 0x0F); // Ranges from 0-15 so mask retuns 15 on blank EEPROM (0xFF)
+	uint8_t Contrast = (eeprom_read_byte(&EEPROMVars.LCDContrast) & 0x0F); // Ranges from 0-15 so mask retuns 15 on blank EEPROM (0xFF)
 	
 	JoyStatus = 1;                          // Invalid value to force the LCD to update
 	
@@ -703,7 +701,7 @@ void FUNCSetContrast(void)
 			}
 			else if (JoyStatus & JOY_LEFT)
 			{
-				eeprom_write_byte_169(&Sys_LCDContrast, Contrast);
+				eeprom_write_byte(&EEPROMVars.LCDContrast, Contrast);
 				return;
 			}
 					
@@ -725,7 +723,7 @@ void FUNCSetISPSpeed(void)
 {
 	JoyStatus = 1;                         // Invalid value to force the LCD to update
 
-	uint8_t CurrSpeed = eeprom_read_byte_169(&Param_SCKDuration);
+	uint8_t CurrSpeed = eeprom_read_byte(&EEPROMVars.SCKDuration);
 
 	if (CurrSpeed > (USI_PRESET_SPEEDS - 1)) CurrSpeed = 0; // Protection against blank EEPROM
 
@@ -743,7 +741,7 @@ void FUNCSetISPSpeed(void)
 			}
 			else if (JoyStatus & JOY_LEFT)
 			{
-				eeprom_write_byte_169(&Param_SCKDuration, CurrSpeed);
+				eeprom_write_byte(&EEPROMVars.SCKDuration, CurrSpeed);
 				return;
 			}
 			

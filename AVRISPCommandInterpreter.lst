@@ -18,7 +18,7 @@
   24               		.text
   25               	.global	AICI_InterpretPacket
   27               	AICI_InterpretPacket:
-  28               	.LFB8:
+  28               	.LFB14:
   29               	.LM1:
   30               	/* prologue: frame size=0 */
   31 0000 DF92      		push r13
@@ -35,55 +35,55 @@
   42 0014 8631      		cpi r24,22
   43 0016 9105      		cpc r25,__zero_reg__
   44 0018 09F4      		brne .+2
-  45 001a FAC0      		rjmp .L43
+  45 001a FBC0      		rjmp .L44
   46               	.LM3:
   47 001c 8731      		cpi r24,23
   48 001e 9105      		cpc r25,__zero_reg__
-  49 0020 94F4      		brge .L58
+  49 0020 94F4      		brge .L59
   50 0022 8231      		cpi r24,18
   51 0024 9105      		cpc r25,__zero_reg__
   52 0026 09F4      		brne .+2
-  53 0028 5FC0      		rjmp .L9
+  53 0028 60C0      		rjmp .L10
   54 002a 8331      		cpi r24,19
   55 002c 9105      		cpc r25,__zero_reg__
-  56 002e 3CF4      		brge .L59
+  56 002e 3CF4      		brge .L60
   57 0030 8031      		cpi r24,16
   58 0032 9105      		cpc r25,__zero_reg__
   59 0034 F9F0      		breq .L3
   60 0036 4197      		sbiw r24,17
   61 0038 09F4      		brne .+2
-  62 003a 3CC0      		rjmp .L7
-  63 003c 3DC1      		rjmp .L57
-  64               	.L59:
+  62 003a 3DC0      		rjmp .L8
+  63 003c 3EC1      		rjmp .L58
+  64               	.L60:
   65 003e 4497      		sbiw r24,20
   66 0040 09F4      		brne .+2
-  67 0042 E6C0      		rjmp .L43
-  68 0044 2EC1      		rjmp .L56
-  69               	.L58:
+  67 0042 E7C0      		rjmp .L44
+  68 0044 2FC1      		rjmp .L57
+  69               	.L59:
   70 0046 8931      		cpi r24,25
   71 0048 9105      		cpc r25,__zero_reg__
   72 004a 09F4      		brne .+2
-  73 004c CBC0      		rjmp .L37
+  73 004c CCC0      		rjmp .L38
   74 004e 8A31      		cpi r24,26
   75 0050 9105      		cpc r25,__zero_reg__
-  76 0052 44F4      		brge .L60
+  76 0052 44F4      		brge .L61
   77 0054 8731      		cpi r24,23
   78 0056 9105      		cpc r25,__zero_reg__
   79 0058 09F4      		brne .+2
-  80 005a C4C0      		rjmp .L37
+  80 005a C5C0      		rjmp .L38
   81 005c 4897      		sbiw r24,24
   82 005e 09F4      		brne .+2
-  83 0060 A4C0      		rjmp .L30
-  84 0062 2AC1      		rjmp .L57
-  85               	.L60:
+  83 0060 A5C0      		rjmp .L31
+  84 0062 2BC1      		rjmp .L58
+  85               	.L61:
   86 0064 8D31      		cpi r24,29
   87 0066 9105      		cpc r25,__zero_reg__
   88 0068 0CF4      		brge .+2
-  89 006a 9FC0      		rjmp .L30
+  89 006a A0C0      		rjmp .L31
   90 006c 4D97      		sbiw r24,29
   91 006e 09F4      		brne .+2
-  92 0070 60C0      		rjmp .L19
-  93 0072 22C1      		rjmp .L57
+  92 0070 61C0      		rjmp .L20
+  93 0072 23C1      		rjmp .L58
   94               	.L3:
   95               	.LBB2:
   96               	.LM4:
@@ -91,376 +91,385 @@
   98 0076 90E0      		ldi r25,hi8(2)
   99 0078 9093 0000 		sts (MessageSize)+1,r25
  100 007c 8093 0000 		sts MessageSize,r24
- 101               	.LM5:
- 102 0080 80E0      		ldi r24,lo8(Param_SCKDuration)
- 103 0082 90E0      		ldi r25,hi8(Param_SCKDuration)
- 104 0084 0E94 0000 		call eeprom_read_byte_169
- 105 0088 0E94 0000 		call USI_SPIInitMaster
+ 101               	.LBB3:
+ 102               	.LM5:
+ 103 0080 A0E0      		ldi r26,lo8(EEPROMVars+1)
+ 104 0082 B0E0      		ldi r27,hi8(EEPROMVars+1)
+ 105               	.LBB4:
  106               	.LM6:
- 107 008c 80E0      		ldi r24,lo8(0)
- 108 008e 0E94 0000 		call MAIN_ResetCSLine
- 109               	.LM7:
- 110 0092 81B3      		in r24,49-0x20
- 111 0094 8063      		ori r24,lo8(48)
- 112 0096 81BB      		out 49-0x20,r24
- 113               	.LM8:
- 114 0098 0E94 0000 		call ISPCC_EnterChipProgrammingMode
- 115               	.LM9:
- 116 009c 8091 0000 		lds r24,InProgrammingMode
- 117 00a0 8823      		tst r24
- 118 00a2 19F0      		breq .L5
- 119               	.LM10:
- 120 00a4 80E0      		ldi r24,lo8(AVRISPModeMessage)
- 121 00a6 90E0      		ldi r25,hi8(AVRISPModeMessage)
- 122 00a8 02C0      		rjmp .L75
- 123               	.L5:
+ 107               	/* #APP */
+ 108 0084 0E94 0000 		call __eeprom_read_byte_1F2021
+ 109 0088 802D      		mov r24,__tmp_reg__
+ 110               	/* #NOAPP */
+ 111               	.LBE4:
+ 112               	.LBE3:
+ 113               	.LM7:
+ 114 008a 0E94 0000 		call USI_SPIInitMaster
+ 115               	.LM8:
+ 116 008e 80E0      		ldi r24,lo8(0)
+ 117 0090 0E94 0000 		call MAIN_ResetCSLine
+ 118               	.LM9:
+ 119 0094 81B3      		in r24,49-0x20
+ 120 0096 8063      		ori r24,lo8(48)
+ 121 0098 81BB      		out 49-0x20,r24
+ 122               	.LM10:
+ 123 009a 0E94 0000 		call ISPCC_EnterChipProgrammingMode
  124               	.LM11:
- 125 00aa 80E0      		ldi r24,lo8(SyncErrorMessage)
- 126 00ac 90E0      		ldi r25,hi8(SyncErrorMessage)
- 127               	.L75:
- 128 00ae 0E94 0000 		call LCD_puts_f
- 129               	.LM12:
- 130 00b2 0BC1      		rjmp .L2
- 131               	.L7:
- 132               	.LM13:
- 133 00b4 82E0      		ldi r24,lo8(2)
- 134 00b6 90E0      		ldi r25,hi8(2)
- 135 00b8 9093 0000 		sts (MessageSize)+1,r25
- 136 00bc 8093 0000 		sts MessageSize,r24
- 137               	.LM14:
- 138 00c0 8091 0000 		lds r24,PacketBytes+1
- 139 00c4 0E94 0000 		call MAIN_Delay1MS
- 140               	.LM15:
- 141 00c8 81B3      		in r24,49-0x20
- 142 00ca 8F7C      		andi r24,lo8(-49)
- 143 00cc 8061      		ori r24,lo8(16)
- 144 00ce 81BB      		out 49-0x20,r24
- 145               	.LM16:
- 146 00d0 1092 0000 		sts InProgrammingMode,__zero_reg__
- 147               	.LM17:
- 148 00d4 81E0      		ldi r24,lo8(1)
- 149 00d6 0E94 0000 		call MAIN_ResetCSLine
- 150               	.LM18:
- 151 00da 8091 0000 		lds r24,PacketBytes+2
- 152 00de 0E94 0000 		call MAIN_Delay1MS
- 153               	.LM19:
- 154 00e2 0E94 0000 		call USI_SPIOff
- 155 00e6 E5C0      		rjmp .L74
- 156               	.L9:
- 157               	.LM20:
- 158 00e8 82E0      		ldi r24,lo8(2)
- 159 00ea 90E0      		ldi r25,hi8(2)
- 160 00ec 9093 0000 		sts (MessageSize)+1,r25
- 161 00f0 8093 0000 		sts MessageSize,r24
- 162               	.LBB3:
- 163               	.LM21:
- 164 00f4 C3E0      		ldi r28,lo8(3)
- 165 00f6 00E0      		ldi r16,lo8(PacketBytes+3)
- 166 00f8 10E0      		ldi r17,hi8(PacketBytes+3)
- 167               	.L13:
- 168               	.LM22:
- 169 00fa F801      		movw r30,r16
- 170 00fc 8191      		ld r24,Z+
- 171 00fe 8F01      		movw r16,r30
- 172 0100 0E94 0000 		call USI_SPITransmit
- 173               	.LM23:
- 174 0104 C150      		subi r28,lo8(-(-1))
- 175 0106 C7FF      		sbrs r28,7
- 176 0108 F8CF      		rjmp .L13
- 177               	.LBE3:
- 178               	.LM24:
- 179 010a 8091 0000 		lds r24,PacketBytes+2
- 180 010e 8823      		tst r24
- 181 0110 59F0      		breq .L14
- 182               	.L15:
- 183               	.LM25:
- 184 0112 80E0      		ldi r24,lo8(-4096)
- 185 0114 90EF      		ldi r25,hi8(-4096)
- 186 0116 0E94 0000 		call USI_SPITransmitWord
- 187 011a 80E0      		ldi r24,lo8(0)
- 188 011c 90E0      		ldi r25,hi8(0)
- 189 011e 0E94 0000 		call USI_SPITransmitWord
- 190 0122 80FD      		sbrc r24,0
- 191 0124 F6CF      		rjmp .L15
- 192 0126 C5C0      		rjmp .L74
- 193               	.L14:
- 194               	.LM26:
- 195 0128 8091 0000 		lds r24,PacketBytes+1
- 196 012c 0E94 0000 		call MAIN_Delay1MS
- 197 0130 C0C0      		rjmp .L74
- 198               	.L19:
- 199               	.LM27:
- 200 0132 E090 0000 		lds r14,PacketBytes+2
- 201 0136 8E2D      		mov r24,r14
- 202 0138 9927      		clr r25
- 203 013a 0396      		adiw r24,3
- 204 013c 9093 0000 		sts (MessageSize)+1,r25
- 205 0140 8093 0000 		sts MessageSize,r24
- 206               	.LM28:
- 207 0144 0091 0000 		lds r16,PacketBytes+1
+ 125 009e 8091 0000 		lds r24,InProgrammingMode
+ 126 00a2 8823      		tst r24
+ 127 00a4 19F0      		breq .L6
+ 128               	.LM12:
+ 129 00a6 80E0      		ldi r24,lo8(AVRISPModeMessage)
+ 130 00a8 90E0      		ldi r25,hi8(AVRISPModeMessage)
+ 131 00aa 02C0      		rjmp .L76
+ 132               	.L6:
+ 133               	.LM13:
+ 134 00ac 80E0      		ldi r24,lo8(SyncErrorMessage)
+ 135 00ae 90E0      		ldi r25,hi8(SyncErrorMessage)
+ 136               	.L76:
+ 137 00b0 0E94 0000 		call LCD_puts_f
+ 138               	.LM14:
+ 139 00b4 0BC1      		rjmp .L2
+ 140               	.L8:
+ 141               	.LM15:
+ 142 00b6 82E0      		ldi r24,lo8(2)
+ 143 00b8 90E0      		ldi r25,hi8(2)
+ 144 00ba 9093 0000 		sts (MessageSize)+1,r25
+ 145 00be 8093 0000 		sts MessageSize,r24
+ 146               	.LM16:
+ 147 00c2 8091 0000 		lds r24,PacketBytes+1
+ 148 00c6 0E94 0000 		call MAIN_Delay1MS
+ 149               	.LM17:
+ 150 00ca 81B3      		in r24,49-0x20
+ 151 00cc 8F7C      		andi r24,lo8(-49)
+ 152 00ce 8061      		ori r24,lo8(16)
+ 153 00d0 81BB      		out 49-0x20,r24
+ 154               	.LM18:
+ 155 00d2 1092 0000 		sts InProgrammingMode,__zero_reg__
+ 156               	.LM19:
+ 157 00d6 81E0      		ldi r24,lo8(1)
+ 158 00d8 0E94 0000 		call MAIN_ResetCSLine
+ 159               	.LM20:
+ 160 00dc 8091 0000 		lds r24,PacketBytes+2
+ 161 00e0 0E94 0000 		call MAIN_Delay1MS
+ 162               	.LM21:
+ 163 00e4 0E94 0000 		call USI_SPIOff
+ 164 00e8 E5C0      		rjmp .L75
+ 165               	.L10:
+ 166               	.LM22:
+ 167 00ea 82E0      		ldi r24,lo8(2)
+ 168 00ec 90E0      		ldi r25,hi8(2)
+ 169 00ee 9093 0000 		sts (MessageSize)+1,r25
+ 170 00f2 8093 0000 		sts MessageSize,r24
+ 171               	.LBB5:
+ 172               	.LM23:
+ 173 00f6 C3E0      		ldi r28,lo8(3)
+ 174 00f8 00E0      		ldi r16,lo8(PacketBytes+3)
+ 175 00fa 10E0      		ldi r17,hi8(PacketBytes+3)
+ 176               	.L14:
+ 177               	.LM24:
+ 178 00fc F801      		movw r30,r16
+ 179 00fe 8191      		ld r24,Z+
+ 180 0100 8F01      		movw r16,r30
+ 181 0102 0E94 0000 		call USI_SPITransmit
+ 182               	.LM25:
+ 183 0106 C150      		subi r28,lo8(-(-1))
+ 184 0108 C7FF      		sbrs r28,7
+ 185 010a F8CF      		rjmp .L14
+ 186               	.LBE5:
+ 187               	.LM26:
+ 188 010c 8091 0000 		lds r24,PacketBytes+2
+ 189 0110 8823      		tst r24
+ 190 0112 59F0      		breq .L15
+ 191               	.L16:
+ 192               	.LM27:
+ 193 0114 80E0      		ldi r24,lo8(-4096)
+ 194 0116 90EF      		ldi r25,hi8(-4096)
+ 195 0118 0E94 0000 		call USI_SPITransmitWord
+ 196 011c 80E0      		ldi r24,lo8(0)
+ 197 011e 90E0      		ldi r25,hi8(0)
+ 198 0120 0E94 0000 		call USI_SPITransmitWord
+ 199 0124 80FD      		sbrc r24,0
+ 200 0126 F6CF      		rjmp .L16
+ 201 0128 C5C0      		rjmp .L75
+ 202               	.L15:
+ 203               	.LM28:
+ 204 012a 8091 0000 		lds r24,PacketBytes+1
+ 205 012e 0E94 0000 		call MAIN_Delay1MS
+ 206 0132 C0C0      		rjmp .L75
+ 207               	.L20:
  208               	.LM29:
- 209 0148 F090 0000 		lds r15,PacketBytes+3
- 210               	.LM30:
- 211 014c C1E0      		ldi r28,lo8(1)
- 212               	.LM31:
- 213 014e 12E0      		ldi r17,lo8(2)
- 214 0150 C017      		cp r28,r16
- 215 0152 A8F4      		brsh .L64
- 216               	.L23:
- 217               	.LM32:
- 218 0154 E12F      		mov r30,r17
- 219 0156 FF27      		clr r31
- 220 0158 E050      		subi r30,lo8(-(PacketBytes))
- 221 015a F040      		sbci r31,hi8(-(PacketBytes))
- 222 015c 8381      		ldd r24,Z+3
- 223 015e 0E94 0000 		call USI_SPITransmit
- 224               	.LM33:
- 225 0162 1E15      		cp r17,r14
- 226 0164 40F0      		brlo .L20
- 227 0166 CF15      		cp r28,r15
- 228 0168 30F4      		brsh .L20
- 229               	.LM34:
- 230 016a EC2F      		mov r30,r28
- 231 016c FF27      		clr r31
- 232 016e E050      		subi r30,lo8(-(PacketBytes))
- 233 0170 F040      		sbci r31,hi8(-(PacketBytes))
- 234 0172 8283      		std Z+2,r24
- 235 0174 CF5F      		subi r28,lo8(-(1))
- 236               	.L20:
- 237 0176 812F      		mov r24,r17
- 238 0178 1F5F      		subi r17,lo8(-(1))
- 239 017a 8017      		cp r24,r16
- 240 017c 58F3      		brlo .L23
- 241               	.L64:
- 242               	.LM35:
- 243 017e 8C2F      		mov r24,r28
- 244 0180 CF5F      		subi r28,lo8(-(1))
- 245 0182 8F15      		cp r24,r15
- 246 0184 50F4      		brsh .L66
- 247 0186 0C2F      		mov r16,r28
- 248 0188 1127      		clr r17
- 249 018a 0050      		subi r16,lo8(-(PacketBytes))
- 250 018c 1040      		sbci r17,hi8(-(PacketBytes))
- 251 018e 80E0      		ldi r24,lo8(0)
- 252 0190 0E94 0000 		call USI_SPITransmit
- 253 0194 F801      		movw r30,r16
- 254 0196 8283      		std Z+2,r24
- 255 0198 F2CF      		rjmp .L64
- 256               	.L66:
- 257               	.LM36:
- 258 019a 1092 0000 		sts PacketBytes+1,__zero_reg__
- 259               	.LM37:
- 260 019e EC2F      		mov r30,r28
- 261 01a0 FF27      		clr r31
- 262 01a2 E050      		subi r30,lo8(-(PacketBytes))
- 263 01a4 F040      		sbci r31,hi8(-(PacketBytes))
- 264 01a6 1382      		std Z+3,__zero_reg__
- 265               	.LM38:
- 266 01a8 90C0      		rjmp .L2
- 267               	.L30:
+ 209 0134 E090 0000 		lds r14,PacketBytes+2
+ 210 0138 8E2D      		mov r24,r14
+ 211 013a 9927      		clr r25
+ 212 013c 0396      		adiw r24,3
+ 213 013e 9093 0000 		sts (MessageSize)+1,r25
+ 214 0142 8093 0000 		sts MessageSize,r24
+ 215               	.LM30:
+ 216 0146 0091 0000 		lds r16,PacketBytes+1
+ 217               	.LM31:
+ 218 014a F090 0000 		lds r15,PacketBytes+3
+ 219               	.LM32:
+ 220 014e C1E0      		ldi r28,lo8(1)
+ 221               	.LM33:
+ 222 0150 12E0      		ldi r17,lo8(2)
+ 223 0152 C017      		cp r28,r16
+ 224 0154 A8F4      		brsh .L65
+ 225               	.L24:
+ 226               	.LM34:
+ 227 0156 E12F      		mov r30,r17
+ 228 0158 FF27      		clr r31
+ 229 015a E050      		subi r30,lo8(-(PacketBytes))
+ 230 015c F040      		sbci r31,hi8(-(PacketBytes))
+ 231 015e 8381      		ldd r24,Z+3
+ 232 0160 0E94 0000 		call USI_SPITransmit
+ 233               	.LM35:
+ 234 0164 1E15      		cp r17,r14
+ 235 0166 40F0      		brlo .L21
+ 236 0168 CF15      		cp r28,r15
+ 237 016a 30F4      		brsh .L21
+ 238               	.LM36:
+ 239 016c EC2F      		mov r30,r28
+ 240 016e FF27      		clr r31
+ 241 0170 E050      		subi r30,lo8(-(PacketBytes))
+ 242 0172 F040      		sbci r31,hi8(-(PacketBytes))
+ 243 0174 8283      		std Z+2,r24
+ 244 0176 CF5F      		subi r28,lo8(-(1))
+ 245               	.L21:
+ 246 0178 812F      		mov r24,r17
+ 247 017a 1F5F      		subi r17,lo8(-(1))
+ 248 017c 8017      		cp r24,r16
+ 249 017e 58F3      		brlo .L24
+ 250               	.L65:
+ 251               	.LM37:
+ 252 0180 8C2F      		mov r24,r28
+ 253 0182 CF5F      		subi r28,lo8(-(1))
+ 254 0184 8F15      		cp r24,r15
+ 255 0186 50F4      		brsh .L67
+ 256 0188 0C2F      		mov r16,r28
+ 257 018a 1127      		clr r17
+ 258 018c 0050      		subi r16,lo8(-(PacketBytes))
+ 259 018e 1040      		sbci r17,hi8(-(PacketBytes))
+ 260 0190 80E0      		ldi r24,lo8(0)
+ 261 0192 0E94 0000 		call USI_SPITransmit
+ 262 0196 F801      		movw r30,r16
+ 263 0198 8283      		std Z+2,r24
+ 264 019a F2CF      		rjmp .L65
+ 265               	.L67:
+ 266               	.LM38:
+ 267 019c 1092 0000 		sts PacketBytes+1,__zero_reg__
  268               	.LM39:
- 269 01aa 84E0      		ldi r24,lo8(4)
- 270 01ac 90E0      		ldi r25,hi8(4)
- 271 01ae 9093 0000 		sts (MessageSize)+1,r25
- 272 01b2 8093 0000 		sts MessageSize,r24
- 273               	.LBB4:
+ 269 01a0 EC2F      		mov r30,r28
+ 270 01a2 FF27      		clr r31
+ 271 01a4 E050      		subi r30,lo8(-(PacketBytes))
+ 272 01a6 F040      		sbci r31,hi8(-(PacketBytes))
+ 273 01a8 1382      		std Z+3,__zero_reg__
  274               	.LM40:
- 275 01b6 C1E0      		ldi r28,lo8(1)
- 276 01b8 00E0      		ldi r16,lo8(PacketBytes+2)
- 277 01ba 10E0      		ldi r17,hi8(PacketBytes+2)
- 278               	.L35:
- 279               	.LBB5:
- 280               	.LM41:
- 281 01bc F801      		movw r30,r16
- 282 01be 8191      		ld r24,Z+
- 283 01c0 8F01      		movw r16,r30
- 284 01c2 0E94 0000 		call USI_SPITransmit
- 285 01c6 982F      		mov r25,r24
- 286               	.LM42:
- 287 01c8 8091 0000 		lds r24,PacketBytes+1
- 288 01cc C817      		cp r28,r24
- 289 01ce 11F4      		brne .L33
- 290               	.LM43:
- 291 01d0 9093 0000 		sts PacketBytes+2,r25
- 292               	.L33:
- 293               	.LBE5:
- 294               	.LM44:
- 295 01d4 CF5F      		subi r28,lo8(-(1))
- 296 01d6 C530      		cpi r28,lo8(5)
- 297 01d8 88F3      		brlo .L35
- 298               	.LBE4:
+ 275 01aa 90C0      		rjmp .L2
+ 276               	.L31:
+ 277               	.LM41:
+ 278 01ac 84E0      		ldi r24,lo8(4)
+ 279 01ae 90E0      		ldi r25,hi8(4)
+ 280 01b0 9093 0000 		sts (MessageSize)+1,r25
+ 281 01b4 8093 0000 		sts MessageSize,r24
+ 282               	.LBB6:
+ 283               	.LM42:
+ 284 01b8 C1E0      		ldi r28,lo8(1)
+ 285 01ba 00E0      		ldi r16,lo8(PacketBytes+2)
+ 286 01bc 10E0      		ldi r17,hi8(PacketBytes+2)
+ 287               	.L36:
+ 288               	.LBB7:
+ 289               	.LM43:
+ 290 01be F801      		movw r30,r16
+ 291 01c0 8191      		ld r24,Z+
+ 292 01c2 8F01      		movw r16,r30
+ 293 01c4 0E94 0000 		call USI_SPITransmit
+ 294 01c8 982F      		mov r25,r24
+ 295               	.LM44:
+ 296 01ca 8091 0000 		lds r24,PacketBytes+1
+ 297 01ce C817      		cp r28,r24
+ 298 01d0 11F4      		brne .L34
  299               	.LM45:
- 300 01da 1092 0000 		sts PacketBytes+1,__zero_reg__
- 301               	.LM46:
- 302 01de 1092 0000 		sts PacketBytes+3,__zero_reg__
- 303               	.LM47:
- 304 01e2 73C0      		rjmp .L2
- 305               	.L37:
- 306               	.LM48:
- 307 01e4 83E0      		ldi r24,lo8(3)
- 308 01e6 90E0      		ldi r25,hi8(3)
- 309 01e8 9093 0000 		sts (MessageSize)+1,r25
- 310 01ec 8093 0000 		sts MessageSize,r24
- 311 01f0 00E0      		ldi r16,lo8(PacketBytes+1)
- 312 01f2 10E0      		ldi r17,hi8(PacketBytes+1)
- 313 01f4 C3E0      		ldi r28,lo8(3)
- 314               	.L41:
- 315               	.LBB6:
- 316               	.LM49:
- 317 01f6 F801      		movw r30,r16
- 318 01f8 8191      		ld r24,Z+
- 319 01fa 8F01      		movw r16,r30
- 320 01fc 0E94 0000 		call USI_SPITransmit
- 321               	.LM50:
- 322 0200 C150      		subi r28,lo8(-(-1))
- 323 0202 C7FF      		sbrs r28,7
- 324 0204 F8CF      		rjmp .L41
- 325               	.LBE6:
- 326               	.LM51:
- 327 0206 1092 0000 		sts PacketBytes+1,__zero_reg__
- 328               	.LM52:
- 329 020a 1092 0000 		sts PacketBytes+2,__zero_reg__
- 330               	.LM53:
- 331 020e 5DC0      		rjmp .L2
- 332               	.L43:
- 333               	.LM54:
- 334 0210 D090 0000 		lds r13,PacketBytes+3
- 335               	.LM55:
- 336 0214 8091 0000 		lds r24,PacketBytes+1
- 337 0218 9927      		clr r25
- 338 021a D82F      		mov r29,r24
- 339 021c CC27      		clr r28
- 340 021e 8091 0000 		lds r24,PacketBytes+2
- 341 0222 9927      		clr r25
- 342 0224 C82B      		or r28,r24
- 343 0226 D92B      		or r29,r25
- 344               	.LM56:
- 345 0228 2396      		adiw r28,3
- 346 022a D093 0000 		sts (MessageSize)+1,r29
- 347 022e C093 0000 		sts MessageSize,r28
- 348 0232 2397      		sbiw r28,3
- 349               	.LBB7:
- 350               	.LM57:
- 351 0234 00E0      		ldi r16,lo8(0)
- 352 0236 10E0      		ldi r17,hi8(0)
- 353 0238 0C17      		cp r16,r28
- 354 023a 1D07      		cpc r17,r29
- 355 023c 60F5      		brsh .L72
- 356 023e 80E0      		ldi r24,lo8(PacketBytes+2)
- 357 0240 E82E      		mov r14,r24
- 358 0242 80E0      		ldi r24,hi8(PacketBytes+2)
- 359 0244 F82E      		mov r15,r24
- 360               	.L54:
- 361               	.LM58:
- 362 0246 8091 0000 		lds r24,PacketBytes
- 363 024a 8431      		cpi r24,lo8(20)
- 364 024c 31F4      		brne .L47
- 365               	.LM59:
- 366 024e 8D2D      		mov r24,r13
- 367 0250 9927      		clr r25
- 368 0252 00FF      		sbrs r16,0
- 369 0254 03C0      		rjmp .L73
- 370 0256 8860      		ori r24,lo8(8)
- 371 0258 01C0      		rjmp .L73
- 372               	.L47:
- 373               	.LM60:
- 374 025a 8D2D      		mov r24,r13
- 375               	.L73:
- 376 025c 0E94 0000 		call USI_SPITransmit
- 377               	.LM61:
- 378 0260 8091 0000 		lds r24,CurrAddress
- 379 0264 9091 0000 		lds r25,(CurrAddress)+1
- 380 0268 0E94 0000 		call USI_SPITransmitWord
- 381               	.LM62:
- 382 026c 80E0      		ldi r24,lo8(0)
- 383 026e 0E94 0000 		call USI_SPITransmit
- 384 0272 F701      		movw r30,r14
- 385 0274 8083      		st Z,r24
+ 300 01d2 9093 0000 		sts PacketBytes+2,r25
+ 301               	.L34:
+ 302               	.LBE7:
+ 303               	.LM46:
+ 304 01d6 CF5F      		subi r28,lo8(-(1))
+ 305 01d8 C530      		cpi r28,lo8(5)
+ 306 01da 88F3      		brlo .L36
+ 307               	.LBE6:
+ 308               	.LM47:
+ 309 01dc 1092 0000 		sts PacketBytes+1,__zero_reg__
+ 310               	.LM48:
+ 311 01e0 1092 0000 		sts PacketBytes+3,__zero_reg__
+ 312               	.LM49:
+ 313 01e4 73C0      		rjmp .L2
+ 314               	.L38:
+ 315               	.LM50:
+ 316 01e6 83E0      		ldi r24,lo8(3)
+ 317 01e8 90E0      		ldi r25,hi8(3)
+ 318 01ea 9093 0000 		sts (MessageSize)+1,r25
+ 319 01ee 8093 0000 		sts MessageSize,r24
+ 320 01f2 00E0      		ldi r16,lo8(PacketBytes+1)
+ 321 01f4 10E0      		ldi r17,hi8(PacketBytes+1)
+ 322 01f6 C3E0      		ldi r28,lo8(3)
+ 323               	.L42:
+ 324               	.LBB8:
+ 325               	.LM51:
+ 326 01f8 F801      		movw r30,r16
+ 327 01fa 8191      		ld r24,Z+
+ 328 01fc 8F01      		movw r16,r30
+ 329 01fe 0E94 0000 		call USI_SPITransmit
+ 330               	.LM52:
+ 331 0202 C150      		subi r28,lo8(-(-1))
+ 332 0204 C7FF      		sbrs r28,7
+ 333 0206 F8CF      		rjmp .L42
+ 334               	.LBE8:
+ 335               	.LM53:
+ 336 0208 1092 0000 		sts PacketBytes+1,__zero_reg__
+ 337               	.LM54:
+ 338 020c 1092 0000 		sts PacketBytes+2,__zero_reg__
+ 339               	.LM55:
+ 340 0210 5DC0      		rjmp .L2
+ 341               	.L44:
+ 342               	.LM56:
+ 343 0212 D090 0000 		lds r13,PacketBytes+3
+ 344               	.LM57:
+ 345 0216 8091 0000 		lds r24,PacketBytes+1
+ 346 021a 9927      		clr r25
+ 347 021c D82F      		mov r29,r24
+ 348 021e CC27      		clr r28
+ 349 0220 8091 0000 		lds r24,PacketBytes+2
+ 350 0224 9927      		clr r25
+ 351 0226 C82B      		or r28,r24
+ 352 0228 D92B      		or r29,r25
+ 353               	.LM58:
+ 354 022a 2396      		adiw r28,3
+ 355 022c D093 0000 		sts (MessageSize)+1,r29
+ 356 0230 C093 0000 		sts MessageSize,r28
+ 357 0234 2397      		sbiw r28,3
+ 358               	.LBB9:
+ 359               	.LM59:
+ 360 0236 00E0      		ldi r16,lo8(0)
+ 361 0238 10E0      		ldi r17,hi8(0)
+ 362 023a 0C17      		cp r16,r28
+ 363 023c 1D07      		cpc r17,r29
+ 364 023e 60F5      		brsh .L73
+ 365 0240 80E0      		ldi r24,lo8(PacketBytes+2)
+ 366 0242 E82E      		mov r14,r24
+ 367 0244 80E0      		ldi r24,hi8(PacketBytes+2)
+ 368 0246 F82E      		mov r15,r24
+ 369               	.L55:
+ 370               	.LM60:
+ 371 0248 8091 0000 		lds r24,PacketBytes
+ 372 024c 8431      		cpi r24,lo8(20)
+ 373 024e 31F4      		brne .L48
+ 374               	.LM61:
+ 375 0250 8D2D      		mov r24,r13
+ 376 0252 9927      		clr r25
+ 377 0254 00FF      		sbrs r16,0
+ 378 0256 03C0      		rjmp .L74
+ 379 0258 8860      		ori r24,lo8(8)
+ 380 025a 01C0      		rjmp .L74
+ 381               	.L48:
+ 382               	.LM62:
+ 383 025c 8D2D      		mov r24,r13
+ 384               	.L74:
+ 385 025e 0E94 0000 		call USI_SPITransmit
  386               	.LM63:
- 387 0276 00FD      		sbrc r16,0
- 388 0278 04C0      		rjmp .L51
- 389 027a 8091 0000 		lds r24,PacketBytes
- 390 027e 8631      		cpi r24,lo8(22)
- 391 0280 11F4      		brne .L46
- 392               	.L51:
- 393               	.LM64:
- 394 0282 0E94 0000 		call V2P_IncrementCurrAddress
- 395               	.L46:
- 396               	.LM65:
- 397 0286 0F5F      		subi r16,lo8(-(1))
- 398 0288 1F4F      		sbci r17,hi8(-(1))
- 399 028a 0894      		sec
- 400 028c E11C      		adc r14,__zero_reg__
- 401 028e F11C      		adc r15,__zero_reg__
- 402 0290 0C17      		cp r16,r28
- 403 0292 1D07      		cpc r17,r29
- 404 0294 C0F2      		brlo .L54
- 405               	.L72:
- 406               	.LBE7:
- 407               	.LM66:
- 408 0296 1092 0000 		sts PacketBytes+1,__zero_reg__
- 409               	.LM67:
- 410 029a C050      		subi r28,lo8(-(PacketBytes))
- 411 029c D040      		sbci r29,hi8(-(PacketBytes))
- 412 029e 1A82      		std Y+2,__zero_reg__
- 413               	.LM68:
- 414 02a0 14C0      		rjmp .L2
- 415               	.L56:
- 416               	.LM69:
- 417 02a2 0E94 0000 		call ISPCC_ProgramChip
- 418               	.LM70:
- 419 02a6 82E0      		ldi r24,lo8(2)
- 420 02a8 90E0      		ldi r25,hi8(2)
- 421 02aa 9093 0000 		sts (MessageSize)+1,r25
- 422 02ae 8093 0000 		sts MessageSize,r24
- 423               	.L74:
- 424               	.LM71:
- 425 02b2 1092 0000 		sts PacketBytes+1,__zero_reg__
- 426               	.LM72:
- 427 02b6 09C0      		rjmp .L2
- 428               	.L57:
- 429               	.LM73:
- 430 02b8 81E0      		ldi r24,lo8(1)
- 431 02ba 90E0      		ldi r25,hi8(1)
- 432 02bc 9093 0000 		sts (MessageSize)+1,r25
- 433 02c0 8093 0000 		sts MessageSize,r24
- 434               	.LM74:
- 435 02c4 89EC      		ldi r24,lo8(-55)
- 436 02c6 8093 0000 		sts PacketBytes+1,r24
- 437               	.L2:
- 438               	.LBE2:
- 439               	.LM75:
- 440 02ca 0E94 0000 		call V2P_SendPacket
- 441               	/* epilogue: frame size=0 */
- 442 02ce DF91      		pop r29
- 443 02d0 CF91      		pop r28
- 444 02d2 1F91      		pop r17
- 445 02d4 0F91      		pop r16
- 446 02d6 FF90      		pop r15
- 447 02d8 EF90      		pop r14
- 448 02da DF90      		pop r13
- 449 02dc 0895      		ret
- 450               	/* epilogue end (size=8) */
- 451               	/* function AICI_InterpretPacket size 370 (355) */
- 452               	.LFE8:
- 454               	.Letext0:
+ 387 0262 8091 0000 		lds r24,CurrAddress
+ 388 0266 9091 0000 		lds r25,(CurrAddress)+1
+ 389 026a 0E94 0000 		call USI_SPITransmitWord
+ 390               	.LM64:
+ 391 026e 80E0      		ldi r24,lo8(0)
+ 392 0270 0E94 0000 		call USI_SPITransmit
+ 393 0274 F701      		movw r30,r14
+ 394 0276 8083      		st Z,r24
+ 395               	.LM65:
+ 396 0278 00FD      		sbrc r16,0
+ 397 027a 04C0      		rjmp .L52
+ 398 027c 8091 0000 		lds r24,PacketBytes
+ 399 0280 8631      		cpi r24,lo8(22)
+ 400 0282 11F4      		brne .L47
+ 401               	.L52:
+ 402               	.LM66:
+ 403 0284 0E94 0000 		call V2P_IncrementCurrAddress
+ 404               	.L47:
+ 405               	.LM67:
+ 406 0288 0F5F      		subi r16,lo8(-(1))
+ 407 028a 1F4F      		sbci r17,hi8(-(1))
+ 408 028c 0894      		sec
+ 409 028e E11C      		adc r14,__zero_reg__
+ 410 0290 F11C      		adc r15,__zero_reg__
+ 411 0292 0C17      		cp r16,r28
+ 412 0294 1D07      		cpc r17,r29
+ 413 0296 C0F2      		brlo .L55
+ 414               	.L73:
+ 415               	.LBE9:
+ 416               	.LM68:
+ 417 0298 1092 0000 		sts PacketBytes+1,__zero_reg__
+ 418               	.LM69:
+ 419 029c C050      		subi r28,lo8(-(PacketBytes))
+ 420 029e D040      		sbci r29,hi8(-(PacketBytes))
+ 421 02a0 1A82      		std Y+2,__zero_reg__
+ 422               	.LM70:
+ 423 02a2 14C0      		rjmp .L2
+ 424               	.L57:
+ 425               	.LM71:
+ 426 02a4 0E94 0000 		call ISPCC_ProgramChip
+ 427               	.LM72:
+ 428 02a8 82E0      		ldi r24,lo8(2)
+ 429 02aa 90E0      		ldi r25,hi8(2)
+ 430 02ac 9093 0000 		sts (MessageSize)+1,r25
+ 431 02b0 8093 0000 		sts MessageSize,r24
+ 432               	.L75:
+ 433               	.LM73:
+ 434 02b4 1092 0000 		sts PacketBytes+1,__zero_reg__
+ 435               	.LM74:
+ 436 02b8 09C0      		rjmp .L2
+ 437               	.L58:
+ 438               	.LM75:
+ 439 02ba 81E0      		ldi r24,lo8(1)
+ 440 02bc 90E0      		ldi r25,hi8(1)
+ 441 02be 9093 0000 		sts (MessageSize)+1,r25
+ 442 02c2 8093 0000 		sts MessageSize,r24
+ 443               	.LM76:
+ 444 02c6 89EC      		ldi r24,lo8(-55)
+ 445 02c8 8093 0000 		sts PacketBytes+1,r24
+ 446               	.L2:
+ 447               	.LBE2:
+ 448               	.LM77:
+ 449 02cc 0E94 0000 		call V2P_SendPacket
+ 450               	/* epilogue: frame size=0 */
+ 451 02d0 DF91      		pop r29
+ 452 02d2 CF91      		pop r28
+ 453 02d4 1F91      		pop r17
+ 454 02d6 0F91      		pop r16
+ 455 02d8 FF90      		pop r15
+ 456 02da EF90      		pop r14
+ 457 02dc DF90      		pop r13
+ 458 02de 0895      		ret
+ 459               	/* epilogue end (size=8) */
+ 460               	/* function AICI_InterpretPacket size 373 (358) */
+ 461               	.LFE14:
+ 463               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 AVRISPCommandInterpreter.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccItaaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccItaaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccItaaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccItaaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccItaaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccItaaaa.s:22     .progmem.data:00000000 AVRISPModeMessage
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccItaaaa.s:27     .text:00000000 AICI_InterpretPacket
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccgVaaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccgVaaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccgVaaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccgVaaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccgVaaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccgVaaaa.s:22     .progmem.data:00000000 AVRISPModeMessage
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccgVaaaa.s:27     .text:00000000 AICI_InterpretPacket
 
 UNDEFINED SYMBOLS
 __do_copy_data
 __do_clear_bss
 PacketBytes
 MessageSize
-Param_SCKDuration
-eeprom_read_byte_169
+EEPROMVars
+__eeprom_read_byte_1F2021
 USI_SPIInitMaster
 MAIN_ResetCSLine
 ISPCC_EnterChipProgrammingMode

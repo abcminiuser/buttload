@@ -64,7 +64,6 @@ SRC =   Main.c                       \
                                      \
 		OSCCal.c                     \
 		LCD_Driver.c                 \
-		EEPROM169.c                  \
 		USART.c                      \
 		SPI.c                        \
 		USI.c                        \

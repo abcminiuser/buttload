@@ -52,7 +52,7 @@
   66               		.text
   67               	.global	DF_EnableDataflash
   69               	DF_EnableDataflash:
-  70               	.LFB16:
+  70               	.LFB22:
   71               	.LM1:
   72               	/* prologue: frame size=0 */
   73               	/* prologue end (size=0) */
@@ -87,10 +87,10 @@
  102               	/* epilogue: noreturn */
  103               	/* epilogue end (size=0) */
  104               	/* function DF_EnableDataflash size 18 (18) */
- 105               	.LFE16:
+ 105               	.LFE22:
  107               	.global	DF_ReadBufferByte
  109               	DF_ReadBufferByte:
- 110               	.LFB14:
+ 110               	.LFB20:
  111               	.LM9:
  112               	/* prologue: frame size=0 */
  113 0024 0F93      		push r16
@@ -136,10 +136,10 @@
  153 007a 0895      		ret
  154               	/* epilogue end (size=3) */
  155               	/* function DF_ReadBufferByte size 44 (39) */
- 156               	.LFE14:
+ 156               	.LFE20:
  158               	.global	DF_ContinuousReadEnable
  160               	DF_ContinuousReadEnable:
- 161               	.LFB13:
+ 161               	.LFB19:
  162               	.LM17:
  163               	/* prologue: frame size=0 */
  164 007c EF92      		push r14
@@ -210,10 +210,10 @@
  229 00fe 0895      		ret
  230               	/* epilogue end (size=5) */
  231               	/* function DF_ContinuousReadEnable size 68 (59) */
- 232               	.LFE13:
+ 232               	.LFE19:
  234               	.global	DF_BufferWriteEnable
  236               	DF_BufferWriteEnable:
- 237               	.LFB12:
+ 237               	.LFB18:
  238               	.LM25:
  239               	/* prologue: frame size=0 */
  240 0100 0F93      		push r16
@@ -252,10 +252,10 @@
  273 0148 0895      		ret
  274               	/* epilogue end (size=3) */
  275               	/* function DF_BufferWriteEnable size 37 (32) */
- 276               	.LFE12:
+ 276               	.LFE18:
  278               	.global	DF_GetChipCharacteristics
  280               	DF_GetChipCharacteristics:
- 281               	.LFB9:
+ 281               	.LFB15:
  282               	.LM31:
  283               	/* prologue: frame size=0 */
  284               	/* prologue end (size=0) */
@@ -339,10 +339,10 @@
  362 01c6 0895      		ret
  363               	/* epilogue end (size=1) */
  364               	/* function DF_GetChipCharacteristics size 74 (73) */
- 365               	.LFE9:
+ 365               	.LFE15:
  367               	.global	DF_EraseBlock
  369               	DF_EraseBlock:
- 370               	.LFB15:
+ 370               	.LFB21:
  371               	.LM42:
  372               	/* prologue: frame size=0 */
  373 01c8 0F93      		push r16
@@ -386,10 +386,10 @@
  411 0218 0895      		ret
  412               	/* epilogue end (size=3) */
  413               	/* function DF_EraseBlock size 42 (37) */
- 414               	.LFE15:
+ 414               	.LFE21:
  416               	.global	DF_CopyFlashPageToBuffer
  418               	DF_CopyFlashPageToBuffer:
- 419               	.LFB11:
+ 419               	.LFB17:
  420               	.LM49:
  421               	/* prologue: frame size=0 */
  422 021a 0F93      		push r16
@@ -445,10 +445,10 @@
  472 0282 0895      		ret
  473               	/* epilogue end (size=3) */
  474               	/* function DF_CopyFlashPageToBuffer size 56 (51) */
- 475               	.LFE11:
+ 475               	.LFE17:
  477               	.global	DF_CopyBufferToFlashPage
  479               	DF_CopyBufferToFlashPage:
- 480               	.LFB10:
+ 480               	.LFB16:
  481               	.LM56:
  482               	/* prologue: frame size=0 */
  483 0284 0F93      		push r16
@@ -504,10 +504,10 @@
  533 02ec 0895      		ret
  534               	/* epilogue end (size=3) */
  535               	/* function DF_CopyBufferToFlashPage size 56 (51) */
- 536               	.LFE10:
+ 536               	.LFE16:
  538               	.global	DF_CheckCorrectOnboardChip
  540               	DF_CheckCorrectOnboardChip:
- 541               	.LFB8:
+ 541               	.LFB14:
  542               	.LM63:
  543               	/* prologue: frame size=0 */
  544               	/* prologue end (size=0) */
@@ -541,7 +541,7 @@
  572               	/* epilogue: noreturn */
  573               	/* epilogue end (size=0) */
  574               	/* function DF_CheckCorrectOnboardChip size 25 (25) */
- 575               	.LFE8:
+ 575               	.LFE14:
  577               		.comm DataflashInfo,5,1
  578               		.comm CurrPageAddress,2,1
  579               		.comm CurrBuffByte,2,1
@@ -549,27 +549,27 @@
  581               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 Dataflash.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckdaaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckdaaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckdaaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckdaaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckdaaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckdaaaa.s:22     .data:00000000 DFSPIRoutinePointer
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckdaaaa.s:28     .progmem.data:00000000 DataFlashError
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckdaaaa.s:33     .progmem.data:00000010 DF_Pages
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckdaaaa.s:45     .progmem.data:00000020 DF_PageSize
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckdaaaa.s:57     .progmem.data:00000030 DF_PageBits
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckdaaaa.s:69     .text:00000000 DF_EnableDataflash
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:22     .data:00000000 DFSPIRoutinePointer
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:28     .progmem.data:00000000 DataFlashError
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:33     .progmem.data:00000010 DF_Pages
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:45     .progmem.data:00000020 DF_PageSize
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:57     .progmem.data:00000030 DF_PageBits
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:69     .text:00000000 DF_EnableDataflash
                             *COM*:00000001 UseExernalDF
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckdaaaa.s:109    .text:00000024 DF_ReadBufferByte
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckdaaaa.s:160    .text:0000007c DF_ContinuousReadEnable
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckdaaaa.s:236    .text:00000100 DF_BufferWriteEnable
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckdaaaa.s:280    .text:0000014a DF_GetChipCharacteristics
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:109    .text:00000024 DF_ReadBufferByte
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:160    .text:0000007c DF_ContinuousReadEnable
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:236    .text:00000100 DF_BufferWriteEnable
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:280    .text:0000014a DF_GetChipCharacteristics
                             *COM*:00000005 DataflashInfo
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckdaaaa.s:369    .text:000001c8 DF_EraseBlock
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckdaaaa.s:418    .text:0000021a DF_CopyFlashPageToBuffer
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckdaaaa.s:479    .text:00000284 DF_CopyBufferToFlashPage
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckdaaaa.s:540    .text:000002ee DF_CheckCorrectOnboardChip
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:369    .text:000001c8 DF_EraseBlock
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:418    .text:0000021a DF_CopyFlashPageToBuffer
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:479    .text:00000284 DF_CopyBufferToFlashPage
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:540    .text:000002ee DF_CheckCorrectOnboardChip
                             *COM*:00000002 CurrPageAddress
                             *COM*:00000002 CurrBuffByte
 

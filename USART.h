@@ -47,7 +47,7 @@
 							  }MACROE
 
 // PROTOTYPES:
-void USART_Init(unsigned int baudrate);
+void USART_Init(void);
 void USART_TxString(char *data);
 void USART_Tx(char data);
 char USART_Rx(void);

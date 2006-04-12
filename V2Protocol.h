@@ -18,10 +18,9 @@
 #include <util/delay.h>
 
 #include "Main.h"
-#include "lcd_driver.h"
+#include "LCD_Driver.h"
 #include "Timeout.h"
 #include "USART.h"
-#include "eeprom169.h"
 #include "EEPROMVariables.h"
 #include "AVRISPCommandBytes.h"
 #include "AVRISPCommandInterpreter.h"

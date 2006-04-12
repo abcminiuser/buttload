@@ -8,84 +8,24 @@
    8               		.global __do_copy_data
    9               		.global __do_clear_bss
   17               	.Ltext0:
-  18               	.global	Sys_MagicNumber
-  19               		.data
-  22               	Sys_MagicNumber:
-  23 0000 FF01      		.word	511
-  24               	.global	Sys_LCDContrast
-  27               	Sys_LCDContrast:
-  28 0002 8400      		.word	132
-  29               	.global	Prog_EPageLength
-  32               	Prog_EPageLength:
-  33 0004 8300      		.word	131
-  34               	.global	Prog_PageLength
-  37               	Prog_PageLength:
-  38 0006 8100      		.word	129
-  39               	.global	Prog_LockBytes
-  42               	Prog_LockBytes:
-  43 0008 5900      		.word	89
-  44               	.global	Prog_FuseBytes
-  47               	Prog_FuseBytes:
-  48 000a 3100      		.word	49
-  49               	.global	Prog_TotalLockBytes
-  52               	Prog_TotalLockBytes:
-  53 000c 3000      		.word	48
-  54               	.global	Prog_TotalFuseBytes
-  57               	Prog_TotalFuseBytes:
-  58 000e 2F00      		.word	47
-  59               	.global	Prog_EnterProgMode
-  62               	Prog_EnterProgMode:
-  63 0010 2300      		.word	35
-  64               	.global	Prog_EEPROMSize
-  67               	Prog_EEPROMSize:
-  68 0012 1F00      		.word	31
-  69               	.global	Prog_DataSize
-  72               	Prog_DataSize:
-  73 0014 1B00      		.word	27
-  74               	.global	Prog_EraseChip
-  77               	Prog_EraseChip:
-  78 0016 1500      		.word	21
-  79               	.global	Prog_EraseCmdStored
-  82               	Prog_EraseCmdStored:
-  83 0018 1400      		.word	20
-  84               	.global	Prog_WriteEEPROM
-  87               	Prog_WriteEEPROM:
-  88 001a 0B00      		.word	11
-  89               	.global	Prog_WriteProgram
-  92               	Prog_WriteProgram:
-  93 001c 0200      		.word	2
-  94               	.global	Param_SCKDuration
-  97               	Param_SCKDuration:
-  98 001e 0100      		.word	1
-  99               	.global	Param_ResetPolarity
- 102               	Param_ResetPolarity:
- 103 0020 0000      		.word	0
- 104               		.text
- 105               	.Letext0:
+  18               	.global	EEPROMVars
+  19               		.section	.eeprom,"aw",@progbits
+  22               	EEPROMVars:
+  23 0000 0000 0000 		.skip 135,0
+  23      0000 0000 
+  23      0000 0000 
+  23      0000 0000 
+  23      0000 0000 
+  24               		.text
+  25               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 EEPROMVariables.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:22     .data:00000000 Sys_MagicNumber
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:27     .data:00000002 Sys_LCDContrast
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:32     .data:00000004 Prog_EPageLength
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:37     .data:00000006 Prog_PageLength
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:42     .data:00000008 Prog_LockBytes
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:47     .data:0000000a Prog_FuseBytes
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:52     .data:0000000c Prog_TotalLockBytes
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:57     .data:0000000e Prog_TotalFuseBytes
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:62     .data:00000010 Prog_EnterProgMode
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:67     .data:00000012 Prog_EEPROMSize
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:72     .data:00000014 Prog_DataSize
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:77     .data:00000016 Prog_EraseChip
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:82     .data:00000018 Prog_EraseCmdStored
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:87     .data:0000001a Prog_WriteEEPROM
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:92     .data:0000001c Prog_WriteProgram
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:97     .data:0000001e Param_SCKDuration
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoVaaaa.s:102    .data:00000020 Param_ResetPolarity
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwbbaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwbbaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwbbaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwbbaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwbbaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwbbaaa.s:22     .eeprom:00000000 EEPROMVars
 
 UNDEFINED SYMBOLS
 __do_copy_data

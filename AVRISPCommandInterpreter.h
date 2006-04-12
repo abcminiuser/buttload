@@ -15,7 +15,6 @@
 
 #include "Main.h"
 #include "lcd_driver.h"
-#include "EEPROM169.h"
 #include "SPI.h"
 #include "ISPChipComm.h"
 #include "V2Protocol.h"

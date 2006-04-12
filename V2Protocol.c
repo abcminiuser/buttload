@@ -244,12 +244,12 @@ void V2P_GetSetParamater(void)
 		case PARAM_SCK_DURATION:
 			if (PacketBytes[0] == CMD_GET_PARAMETER)
 			{
-				PacketBytes[2] = eeprom_read_byte_169(&Param_SCKDuration);
+				PacketBytes[2] = eeprom_read_byte(&EEPROMVars.SCKDuration);
 			}
 			else
 			{
 				MessageSize = 2;
-				eeprom_write_byte_169(&Param_SCKDuration, PacketBytes[2]);
+				eeprom_write_byte(&EEPROMVars.SCKDuration, PacketBytes[2]);
 				USI_SPISetSpeed(PacketBytes[2]); // Re-Initialise the USI system with the new frequency
 			}
 					
@@ -257,12 +257,12 @@ void V2P_GetSetParamater(void)
 		case PARAM_RESET_POLARITY:
 			if (PacketBytes[0] == CMD_GET_PARAMETER)
 			{
-				PacketBytes[2] = eeprom_read_byte_169(&Param_ResetPolarity);		
+				PacketBytes[2] = eeprom_read_byte(&EEPROMVars.ResetPolarity);		
 			}
 			else
 			{
 				MessageSize = 2;
-				eeprom_write_byte_169(&Param_ResetPolarity, PacketBytes[2]);
+				eeprom_write_byte(&EEPROMVars.ResetPolarity, PacketBytes[2]);
 				MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE); // Change takes effect immediatly
 			}
 			

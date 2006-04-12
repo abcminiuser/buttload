@@ -14,8 +14,7 @@
 #include <util/delay.h>
 
 #include "Main.h"
-#include "lcd_driver.h"
-#include "eeprom169.h"
+#include "LCD_Driver.h"
 #include "SPI.h"
 #include "USI.h"
 #include "AVRISPCommandBytes.h"

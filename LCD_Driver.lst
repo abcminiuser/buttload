@@ -68,7 +68,7 @@
   77               		.text
   78               	.global	LCD_Init
   80               	LCD_Init:
-  81               	.LFB8:
+  81               	.LFB14:
   82               	.LM1:
   83               	/* prologue: frame size=0 */
   84               	/* prologue end (size=0) */
@@ -92,10 +92,10 @@
  102 0022 0895      		ret
  103               	/* epilogue end (size=1) */
  104               	/* function LCD_Init size 18 (17) */
- 105               	.LFE8:
+ 105               	.LFE14:
  107               	.global	LCD_puts
  109               	LCD_puts:
- 110               	.LFB10:
+ 110               	.LFB16:
  111               	.LM7:
  112               	/* prologue: frame size=0 */
  113 0024 CF93      		push r28
@@ -189,10 +189,10 @@
  201 00a4 0895      		ret
  202               	/* epilogue end (size=3) */
  203               	/* function LCD_puts size 65 (60) */
- 204               	.LFE10:
+ 204               	.LFE16:
  206               	.global	LCD_puts_f
  208               	LCD_puts_f:
- 209               	.LFB9:
+ 209               	.LFB15:
  210               	.LM24:
  211               	/* prologue: frame size=20 */
  212 00a6 CF93      		push r28
@@ -227,10 +227,10 @@
  241 00dc 0895      		ret
  242               	/* epilogue end (size=9) */
  243               	/* function LCD_puts_f size 28 (9) */
- 244               	.LFE9:
+ 244               	.LFE15:
  246               	.global	LCD_WriteChar
  248               	LCD_WriteChar:
- 249               	.LFB11:
+ 249               	.LFB17:
  250               	.LM27:
  251               	/* prologue: frame size=0 */
  252               	/* prologue end (size=0) */
@@ -307,10 +307,10 @@
  323 0136 0895      		ret
  324               	/* epilogue end (size=1) */
  325               	/* function LCD_WriteChar size 49 (48) */
- 326               	.LFE11:
+ 326               	.LFE17:
  328               	.global	__vector_22
  330               	__vector_22:
- 331               	.LFB12:
+ 331               	.LFB18:
  332               	.LM41:
  333               	/* prologue: frame size=0 */
  334 0138 7894      		sei
@@ -448,7 +448,7 @@
  466 0218 1895      		reti
  467               	/* epilogue end (size=18) */
  468               	/* function __vector_22 size 113 (76) */
- 469               	.LFE12:
+ 469               	.LFE18:
  471               		.comm TextBuffer,27,1
  472               		.comm SegBuffer,20,1
  473               		.comm StrStart,1,1
@@ -460,14 +460,14 @@
  479               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 LCD_Driver.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccyabaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccyabaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccyabaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccyabaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccyabaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccyabaaa.s:22     .progmem.data:00000000 LCD_SegTable
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccyabaaa.s:80     .text:00000000 LCD_Init
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccyabaaa.s:109    .text:00000024 LCD_puts
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccUNaaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccUNaaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccUNaaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccUNaaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccUNaaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccUNaaaa.s:22     .progmem.data:00000000 LCD_SegTable
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccUNaaaa.s:80     .text:00000000 LCD_Init
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccUNaaaa.s:109    .text:00000024 LCD_puts
                             *COM*:0000001b TextBuffer
                             *COM*:00000001 ScrollMode
                             *COM*:00000001 ScrollCount
@@ -475,10 +475,10 @@ C:\DOCUME~1\Dean\LOCALS~1\Temp/ccyabaaa.s:109    .text:00000024 LCD_puts
                             *COM*:00000001 StrEnd
                             *COM*:00000001 DelayCount
                             *COM*:00000001 UpdateLCD
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccyabaaa.s:208    .text:000000a6 LCD_puts_f
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccyabaaa.s:248    .text:000000de LCD_WriteChar
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccUNaaaa.s:208    .text:000000a6 LCD_puts_f
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccUNaaaa.s:248    .text:000000de LCD_WriteChar
                             *COM*:00000014 SegBuffer
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccyabaaa.s:330    .text:00000138 __vector_22
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccUNaaaa.s:330    .text:00000138 __vector_22
 
 UNDEFINED SYMBOLS
 __do_copy_data

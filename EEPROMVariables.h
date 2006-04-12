@@ -5,26 +5,36 @@
                   dean_camera@hotmail.com
 */
 
+#ifndef EEVARS_H
+#define EEVARS_H
+
 // INCLUDES:
 #include <avr/io.h>
+#include <avr/eeprom.h>
 
-#include "EEPROM169.h"
+// TYPE DEFINITIONS:
+typedef struct
+{
+	uint8_t  ResetPolarity;
+	uint8_t  SCKDuration;
+	uint8_t  WriteProgram[9];
+	uint8_t  WriteEEPROM[9];
+	uint8_t  EraseCmdStored;
+	uint8_t  EraseChip[6];
+	uint8_t  DataSize[4];
+	uint8_t  EEPROMSize[4];
+	uint8_t  EnterProgMode[12];
+	uint8_t  TotalFuseBytes;
+	uint8_t  TotalLockBytes;
+	uint8_t  FuseBytes[40];
+	uint8_t  LockBytes[40];
+	uint16_t PageLength;
+	uint16_t EPageLength;
+	uint8_t  LCDContrast;
+	uint8_t  MagicNumber;	
+} EEPROMVarsType;
 
 // EXTERN VARIABLES:
-extern const uint16_t Param_ResetPolarity;
-extern const uint16_t Param_SCKDuration;
-extern const uint16_t Prog_WriteProgram;
-extern const uint16_t Prog_WriteEEPROM;
-extern const uint16_t Prog_EraseCmdStored;
-extern const uint16_t Prog_EraseChip;
-extern const uint16_t Prog_DataSize;
-extern const uint16_t Prog_EEPROMSize;
-extern const uint16_t Prog_EnterProgMode;
-extern const uint16_t Prog_TotalFuseBytes;
-extern const uint16_t Prog_TotalLockBytes;
-extern const uint16_t Prog_FuseBytes;
-extern const uint16_t Prog_LockBytes;
-extern const uint16_t Prog_PageLength;
-extern const uint16_t Prog_EPageLength;
-extern const uint16_t Sys_LCDContrast;
-extern const uint16_t Sys_MagicNumber;
+extern EEPROMVarsType EEPROMVars EEMEM;
+
+#endif

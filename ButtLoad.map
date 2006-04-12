@@ -10,6 +10,18 @@ C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(strcpy_P.o)
                               Main.o (strcpy_P)
 C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ultoa.o)
                               ProgramManager.o (ultoa)
+C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_rb.1F2021.o)
+                              Main.o (__eeprom_read_byte_1F2021)
+C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_rblk.1F2021.o)
+                              ProgramManager.o (__eeprom_read_block_1F2021)
+C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_rw.1F2021.o)
+                              ProgramManager.o (__eeprom_read_word_1F2021)
+C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_wb.1F2021.o)
+                              Main.o (__eeprom_write_byte_1F2021)
+C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_ww.1F2021.o)
+                              ProgramManager.o (__eeprom_write_word_1F2021)
+C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_wblk.1F2021.o)
+                              ProgramManager.o (__eeprom_write_block_1F2021)
 C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(strrev.o)
                               C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ultoa.o) (strrev)
 C:/WinAVR/lib/gcc/avr/3.4.5/avr5\libgcc.a(_udivmodsi4.o)
@@ -53,7 +65,6 @@ LOAD C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5/crtm169.o
 LOAD Main.o
 LOAD OSCCal.o
 LOAD LCD_Driver.o
-LOAD EEPROM169.o
 LOAD USART.o
 LOAD SPI.o
 LOAD USI.o
@@ -164,7 +175,7 @@ LOAD C:/WinAVR/lib/gcc/avr/3.4.5/avr5\libgcc.a
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000     0x36a6
+.text           0x00000000     0x3348
  *(.vectors)
  .vectors       0x00000000       0x5c C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5/crtm169.o
                 0x00000000                __vectors
@@ -272,125 +283,134 @@ LOAD C:/WinAVR/lib/gcc/avr/3.4.5/avr5\libgcc.a
                 0x00000430                __vector_16
                 0x00000430                __vector_18
                 0x00000430                __vector_20
- .text          0x00000434      0x966 Main.o
-                0x00000ba4                FUNCSetContrast
-                0x00000ca6                FUNCSleepMode
-                0x00000816                FUNCProgramAVR
+ .text          0x00000434      0x902 Main.o
+                0x00000b28                FUNCSetContrast
+                0x00000c42                FUNCSleepMode
+                0x000007fc                FUNCProgramAVR
                 0x00000458                MAIN_WaitForJoyRelease
-                0x000006c6                MAIN_ShowError
-                0x00000aec                FUNCClearMem
-                0x00000712                __vector_3
-                0x00000652                MAIN_IntToStr
-                0x0000074a                FUNCChangeSettings
-                0x000007ce                FUNCProgramDataflash
-                0x00000aa0                FUNCStoreProgram
-                0x000005f8                MAIN_Delay1MS
-                0x00000c3c                FUNCSetISPSpeed
-                0x000007b4                FUNCAVRISPMode
-                0x00000740                __vector_default
-                0x00000cce                FUNCStorageInfo
+                0x000006aa                MAIN_ShowError
+                0x00000ab2                FUNCClearMem
+                0x000006f6                __vector_3
+                0x00000636                MAIN_IntToStr
+                0x0000072e                FUNCChangeSettings
+                0x000007b2                FUNCProgramDataflash
+                0x00000a66                FUNCStoreProgram
+                0x000005da                MAIN_Delay1MS
+                0x00000bce                FUNCSetISPSpeed
+                0x00000798                FUNCAVRISPMode
+                0x00000724                __vector_default
+                0x00000c6a                FUNCStorageInfo
                 0x000004bc                main
-                0x0000061c                MAIN_ResetCSLine
-                0x00000682                MAIN_ShowProgType
+                0x000005fe                MAIN_ResetCSLine
+                0x00000666                MAIN_ShowProgType
                 0x00000434                MAIN_Delay10MS
-                0x00000d7e                FUNCGoBootloader
-                0x00000b96                FUNCAutoCalib
+                0x00000d1a                FUNCGoBootloader
+                0x00000b1a                FUNCAutoCalib
                 0x0000046c                FUNCShowAbout
- .text          0x00000d9a      0x104 OSCCal.o
-                0x00000e5c                __vector_5
-                0x00000d9a                OSCCAL_Calibrate
- .text          0x00000e9e      0x21a LCD_Driver.o
-                0x00000fd6                __vector_22
-                0x00000f44                LCD_puts_f
-                0x00000f7c                LCD_WriteChar
-                0x00000ec2                LCD_puts
-                0x00000e9e                LCD_Init
- .text          0x000010b8       0x46 EEPROM169.o
-                0x000010ce                eeprom_write_byte_169
-                0x000010b8                eeprom_read_byte_169
- .text          0x000010fe       0xb8 USART.o
-                0x00001124                USART_Tx
-                0x0000116a                __vector_13
-                0x000010fe                USART_Init
-                0x00001134                USART_TxString
-                0x00001152                USART_Rx
- .text          0x000011b6       0x3e SPI.o
-                0x000011ca                SPI_SPITransmit
-                0x000011b6                SPI_SPIInit
-                0x000011d8                SPI_SPITransmitWord
- .text          0x000011f4      0x10a USI.o
-                0x00001280                USI_SPIOff
-                0x000012ba                USI_SPITransmitWord
-                0x0000122a                USI_SPISetSpeed
-                0x000011f4                __vector_17
-                0x000012d6                USI_SPIToggleClock
-                0x00001260                USI_SPIInitMaster
-                0x00001294                USI_SPITransmit
- .text          0x000012fe      0x31e Dataflash.o
-                0x000015ec                DF_CheckCorrectOnboardChip
-                0x0000137a                DF_ContinuousReadEnable
-                0x00001518                DF_CopyFlashPageToBuffer
-                0x00001448                DF_GetChipCharacteristics
-                0x000012fe                DF_EnableDataflash
-                0x000014c6                DF_EraseBlock
-                0x00001322                DF_ReadBufferByte
-                0x000013fe                DF_BufferWriteEnable
-                0x00001582                DF_CopyBufferToFlashPage
- .text          0x0000161c       0xb0 RingBuff.o
-                0x0000161c                BUFF_InitialiseBuffer
-                0x00001636                BUFF_StoreBuffByte
-                0x00001688                BUFF_GetBuffByte
- .text          0x000016cc       0x56 Timeout.o
-                0x00001702                TIMEOUT_SetupTimeoutTimer
-                0x000016cc                __vector_9
- .text          0x00001722      0x3da ProgDataflash.o
-                0x00001722                PD_SetupDFAddressCounters
-                0x0000177c                PD_StoreDataflashByte
-                0x000017dc                PD_InterpretAVRISPPacket
- .text          0x00001afc      0x53c V2Protocol.o
-                0x00001b3e                V2P_SendPacket
-                0x00001d6c                V2P_RunStateMachine
-                0x00001afc                V2P_GetChecksum
-                0x00001d1a                V2P_CheckForExtendedAddress
-                0x00001cf2                V2P_IncrementCurrAddress
-                0x00001bbe                V2P_GetSetParamater
- .text          0x00002038      0x320 ISPChipComm.o
-                0x000020f4                ISPCC_PollForProgComplete
-                0x00002038                ISPCC_EnterChipProgrammingMode
-                0x00002188                ISPCC_ProgramChip
- .text          0x00002358      0x2de AVRISPCommandInterpreter.o
-                0x00002358                AICI_InterpretPacket
- .text          0x00002636      0xdd2 ProgramManager.o
-                0x00002726                PM_SetupDFAddressCounters
-                0x00002f0e                PM_SendFuseLockBytes
-                0x00002636                PM_GetStoredDataSize
-                0x0000304e                PM_CreateProgrammingPackets
-                0x00002814                PM_CheckEndOfProgramming
-                0x00002986                PM_InterpretAVRISPPacket
-                0x00002fae                PM_SendEraseCommand
-                0x000027aa                PM_StoreProgramByte
-                0x0000292e                PM_CheckEndOfFuseLockStore
-                0x00003308                PM_ShowStoredItemSizes
- .text          0x00003408      0x194 TagManager.o
-                0x00003550                TM_ShowTags
-                0x00003408                TM_FindNextTag
- .text          0x0000359c        0x4 JoystickInterrupt.o
-                0x0000359c                __vector_2
- .text          0x000035a0        0xc USIInterrupt.o
-                0x000035a0                __vector_10
- .text          0x000035ac        0xe C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(strcpy_P.o)
-                0x000035ac                strcpy_P
- .text          0x000035ba       0x4a C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ultoa.o)
-                0x000035ba                ultoa
- .text          0x00003604       0x20 C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(strrev.o)
-                0x00003604                strrev
-                0x00003624                . = ALIGN (0x2)
+ .text          0x00000d36      0x104 OSCCal.o
+                0x00000df8                __vector_5
+                0x00000d36                OSCCAL_Calibrate
+ .text          0x00000e3a      0x21a LCD_Driver.o
+                0x00000f72                __vector_22
+                0x00000ee0                LCD_puts_f
+                0x00000f18                LCD_WriteChar
+                0x00000e5e                LCD_puts
+                0x00000e3a                LCD_Init
+ .text          0x00001054       0xb4 USART.o
+                0x00001076                USART_Tx
+                0x000010bc                __vector_13
+                0x00001054                USART_Init
+                0x00001086                USART_TxString
+                0x000010a4                USART_Rx
+ .text          0x00001108       0x3e SPI.o
+                0x0000111c                SPI_SPITransmit
+                0x00001108                SPI_SPIInit
+                0x0000112a                SPI_SPITransmitWord
+ .text          0x00001146      0x10a USI.o
+                0x000011d2                USI_SPIOff
+                0x0000120c                USI_SPITransmitWord
+                0x0000117c                USI_SPISetSpeed
+                0x00001146                __vector_17
+                0x00001228                USI_SPIToggleClock
+                0x000011b2                USI_SPIInitMaster
+                0x000011e6                USI_SPITransmit
+ .text          0x00001250      0x31e Dataflash.o
+                0x0000153e                DF_CheckCorrectOnboardChip
+                0x000012cc                DF_ContinuousReadEnable
+                0x0000146a                DF_CopyFlashPageToBuffer
+                0x0000139a                DF_GetChipCharacteristics
+                0x00001250                DF_EnableDataflash
+                0x00001418                DF_EraseBlock
+                0x00001274                DF_ReadBufferByte
+                0x00001350                DF_BufferWriteEnable
+                0x000014d4                DF_CopyBufferToFlashPage
+ .text          0x0000156e       0xb0 RingBuff.o
+                0x0000156e                BUFF_InitialiseBuffer
+                0x00001588                BUFF_StoreBuffByte
+                0x000015da                BUFF_GetBuffByte
+ .text          0x0000161e       0x56 Timeout.o
+                0x00001654                TIMEOUT_SetupTimeoutTimer
+                0x0000161e                __vector_9
+ .text          0x00001674      0x3da ProgDataflash.o
+                0x00001674                PD_SetupDFAddressCounters
+                0x000016ce                PD_StoreDataflashByte
+                0x0000172e                PD_InterpretAVRISPPacket
+ .text          0x00001a4e      0x538 V2Protocol.o
+                0x00001a90                V2P_SendPacket
+                0x00001cba                V2P_RunStateMachine
+                0x00001a4e                V2P_GetChecksum
+                0x00001c68                V2P_CheckForExtendedAddress
+                0x00001c40                V2P_IncrementCurrAddress
+                0x00001b10                V2P_GetSetParamater
+ .text          0x00001f86      0x320 ISPChipComm.o
+                0x00002042                ISPCC_PollForProgComplete
+                0x00001f86                ISPCC_EnterChipProgrammingMode
+                0x000020d6                ISPCC_ProgramChip
+ .text          0x000022a6      0x2e0 AVRISPCommandInterpreter.o
+                0x000022a6                AICI_InterpretPacket
+ .text          0x00002586      0xad4 ProgramManager.o
+                0x000025f4                PM_SetupDFAddressCounters
+                0x00002c54                PM_SendFuseLockBytes
+                0x00002586                PM_GetStoredDataSize
+                0x00002d14                PM_CreateProgrammingPackets
+                0x000026e2                PM_CheckEndOfProgramming
+                0x000027ba                PM_InterpretAVRISPPacket
+                0x00002cb6                PM_SendEraseCommand
+                0x00002678                PM_StoreProgramByte
+                0x00002794                PM_CheckEndOfFuseLockStore
+                0x00002f58                PM_ShowStoredItemSizes
+ .text          0x0000305a      0x194 TagManager.o
+                0x000031a2                TM_ShowTags
+                0x0000305a                TM_FindNextTag
+ .text          0x000031ee        0x4 JoystickInterrupt.o
+                0x000031ee                __vector_2
+ .text          0x000031f2        0xc USIInterrupt.o
+                0x000031f2                __vector_10
+ .text          0x000031fe        0xe C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(strcpy_P.o)
+                0x000031fe                strcpy_P
+ .text          0x0000320c       0x4a C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ultoa.o)
+                0x0000320c                ultoa
+ .text          0x00003256       0x20 C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(strrev.o)
+                0x00003256                strrev
+                0x00003276                . = ALIGN (0x2)
  *(.text.*)
- .text.libgcc   0x00003624       0x3e C:/WinAVR/lib/gcc/avr/3.4.5/avr5\libgcc.a(_mulsi3.o)
-                0x00003624                __mulsi3
- .text.libgcc   0x00003662       0x44 C:/WinAVR/lib/gcc/avr/3.4.5/avr5\libgcc.a(_udivmodsi4.o)
-                0x00003662                __udivmodsi4
-                0x000036a6                . = ALIGN (0x2)
+ .text.libgcc   0x00003276       0x3e C:/WinAVR/lib/gcc/avr/3.4.5/avr5\libgcc.a(_mulsi3.o)
+                0x00003276                __mulsi3
+ .text.eeprom   0x000032b4       0x10 C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_rb.1F2021.o)
+                0x000032b4                __eeprom_read_byte_1F2021
+ .text.eeprom   0x000032c4        0xa C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_rblk.1F2021.o)
+                0x000032c4                __eeprom_read_block_1F2021
+ .text.eeprom   0x000032ce        0xa C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_rw.1F2021.o)
+                0x000032ce                __eeprom_read_word_1F2021
+ .text.eeprom   0x000032d8       0x18 C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_wb.1F2021.o)
+                0x000032d8                __eeprom_write_byte_1F2021
+ .text.eeprom   0x000032f0        0xa C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_ww.1F2021.o)
+                0x000032f0                __eeprom_write_word_1F2021
+ .text.eeprom   0x000032fa        0xa C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_wblk.1F2021.o)
+                0x000032fa                __eeprom_write_block_1F2021
+ .text.libgcc   0x00003304       0x44 C:/WinAVR/lib/gcc/avr/3.4.5/avr5\libgcc.a(_udivmodsi4.o)
+                0x00003304                __udivmodsi4
+                0x00003348                . = ALIGN (0x2)
  *(.fini9)
  *(.fini8)
  *(.fini7)
@@ -401,97 +421,81 @@ LOAD C:/WinAVR/lib/gcc/avr/3.4.5/avr5\libgcc.a
  *(.fini2)
  *(.fini1)
  *(.fini0)
-                0x000036a6                _etext = .
+                0x00003348                _etext = .
 
-.data           0x00800100       0x26 load address 0x000036a6
+.data           0x00800100        0x4 load address 0x00003348
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00800100        0x2 Dataflash.o
                 0x00800100                DFSPIRoutinePointer
- .data          0x00800102       0x22 EEPROMVariables.o
-                0x0080010e                Prog_TotalLockBytes
-                0x00800108                Prog_PageLength
-                0x00800106                Prog_EPageLength
-                0x00800120                Param_SCKDuration
-                0x00800118                Prog_EraseChip
-                0x00800104                Sys_LCDContrast
-                0x0080011c                Prog_WriteEEPROM
-                0x00800112                Prog_EnterProgMode
-                0x0080011e                Prog_WriteProgram
-                0x0080010a                Prog_LockBytes
-                0x0080010c                Prog_FuseBytes
-                0x00800114                Prog_EEPROMSize
-                0x0080011a                Prog_EraseCmdStored
-                0x00800102                Sys_MagicNumber
-                0x00800110                Prog_TotalFuseBytes
-                0x00800116                Prog_DataSize
-                0x00800122                Param_ResetPolarity
- .data          0x00800124        0x2 V2Protocol.o
-                0x00800124                InterpretPacketRoutine
+ .data          0x00800102        0x2 V2Protocol.o
+                0x00800102                InterpretPacketRoutine
  *(.gnu.linkonce.d*)
-                0x00800126                . = ALIGN (0x2)
-                0x00800126                _edata = .
-                0x00800126                PROVIDE (__data_end, .)
+                0x00800104                . = ALIGN (0x2)
+                0x00800104                _edata = .
+                0x00800104                PROVIDE (__data_end, .)
 
-.bss            0x00800126      0x1b0
-                0x00800126                PROVIDE (__bss_start, .)
+.bss            0x00800104      0x1b0
+                0x00800104                PROVIDE (__bss_start, .)
  *(.bss)
- .bss           0x00800126        0x2 OSCCal.o
- .bss           0x00800128        0x2 Timeout.o
-                0x00800129                Ticks
-                0x00800128                TimeOut
- .bss           0x0080012a      0x11d V2Protocol.o
-                0x0080012b                CurrAddress
-                0x00800132                SequenceNum
-                0x00800130                MessageSize
-                0x0080012a                Param_ControllerInit
-                0x0080012f                InProgrammingMode
-                0x00800134                PacketBytes
- .bss           0x00800247        0x4 ProgramManager.o
-                0x0080024a                MemoryType
-                0x00800247                GPageLength
-                0x00800249                CurrentMode
- .bss           0x0080024b        0x1 TagManager.o
-                0x0080024b                TagExists
+ .bss           0x00800104        0x2 OSCCal.o
+ .bss           0x00800106        0x2 Timeout.o
+                0x00800107                Ticks
+                0x00800106                TimeOut
+ .bss           0x00800108      0x11d V2Protocol.o
+                0x00800109                CurrAddress
+                0x00800110                SequenceNum
+                0x0080010e                MessageSize
+                0x00800108                Param_ControllerInit
+                0x0080010d                InProgrammingMode
+                0x00800112                PacketBytes
+ .bss           0x00800225        0x4 ProgramManager.o
+                0x00800228                MemoryType
+                0x00800225                GPageLength
+                0x00800227                CurrentMode
+ .bss           0x00800229        0x1 TagManager.o
+                0x00800229                TagExists
  *(COMMON)
- COMMON         0x0080024c       0x35 LCD_Driver.o
-                0x0080024c                StrEnd
-                0x0080024d                ScrollCount
-                0x0080024e                StrStart
-                0x0080024f                TextBuffer
-                0x0080026a                UpdateLCD
-                0x0080026b                SegBuffer
-                0x0080027f                ScrollMode
-                0x00800280                DelayCount
- COMMON         0x00800281        0x2 USI.o
-                0x00800281                TransferComplete
-                0x00800282                storedUSIDR
- COMMON         0x00800283        0xa Dataflash.o
-                0x00800283                UseExernalDF
-                0x00800284                CurrBuffByte
-                0x00800286                DataflashInfo
-                0x0080028b                CurrPageAddress
- COMMON         0x0080028d       0x45 RingBuff.o
-                0x0080028d                RingBuffer
-                0x008002cd                StoreLoc
-                0x008002cf                RetrieveLoc
-                0x008002d1                BuffElements
- COMMON         0x008002d2        0x4 TagManager.o
-                0x008002d2                DFPos
-                0x008002d6                PROVIDE (__bss_end, .)
-                0x000036a6                __data_load_start = LOADADDR (.data)
-                0x000036cc                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x0080022a       0x35 LCD_Driver.o
+                0x0080022a                StrEnd
+                0x0080022b                ScrollCount
+                0x0080022c                StrStart
+                0x0080022d                TextBuffer
+                0x00800248                UpdateLCD
+                0x00800249                SegBuffer
+                0x0080025d                ScrollMode
+                0x0080025e                DelayCount
+ COMMON         0x0080025f        0x2 USI.o
+                0x0080025f                TransferComplete
+                0x00800260                storedUSIDR
+ COMMON         0x00800261        0xa Dataflash.o
+                0x00800261                UseExernalDF
+                0x00800262                CurrBuffByte
+                0x00800264                DataflashInfo
+                0x00800269                CurrPageAddress
+ COMMON         0x0080026b       0x45 RingBuff.o
+                0x0080026b                RingBuffer
+                0x008002ab                StoreLoc
+                0x008002ad                RetrieveLoc
+                0x008002af                BuffElements
+ COMMON         0x008002b0        0x4 TagManager.o
+                0x008002b0                DFPos
+                0x008002b4                PROVIDE (__bss_end, .)
+                0x00003348                __data_load_start = LOADADDR (.data)
+                0x0000334c                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x008002d6        0x0
-                0x008002d6                PROVIDE (__noinit_start, .)
+.noinit         0x008002b4        0x0
+                0x008002b4                PROVIDE (__noinit_start, .)
  *(.noinit*)
-                0x008002d6                PROVIDE (__noinit_end, .)
-                0x008002d6                _end = .
-                0x008002d6                PROVIDE (__heap_start, .)
+                0x008002b4                PROVIDE (__noinit_end, .)
+                0x008002b4                _end = .
+                0x008002b4                PROVIDE (__heap_start, .)
 
-.eeprom         0x00810000        0x0
+.eeprom         0x00810000       0x87
  *(.eeprom*)
-                0x00810000                __eeprom_end = .
+ .eeprom        0x00810000       0x87 EEPROMVariables.o
+                0x00810000                EEPROMVars
+                0x00810087                __eeprom_end = .
 
 .stab           0x00000000       0x84
  *(.stab)
@@ -530,7 +534,7 @@ LOAD C:/WinAVR/lib/gcc/avr/3.4.5/avr5\libgcc.a
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000      0x140
+.debug_aranges  0x00000000      0x12c
  *(.debug_aranges)
  .debug_aranges
                 0x00000000       0x14 Main.o
@@ -539,34 +543,32 @@ LOAD C:/WinAVR/lib/gcc/avr/3.4.5/avr5\libgcc.a
  .debug_aranges
                 0x00000028       0x14 LCD_Driver.o
  .debug_aranges
-                0x0000003c       0x14 EEPROM169.o
+                0x0000003c       0x14 USART.o
  .debug_aranges
-                0x00000050       0x14 USART.o
+                0x00000050       0x14 SPI.o
  .debug_aranges
-                0x00000064       0x14 SPI.o
+                0x00000064       0x14 USI.o
  .debug_aranges
-                0x00000078       0x14 USI.o
+                0x00000078       0x14 Dataflash.o
  .debug_aranges
-                0x0000008c       0x14 Dataflash.o
+                0x0000008c       0x14 RingBuff.o
  .debug_aranges
-                0x000000a0       0x14 RingBuff.o
+                0x000000a0       0x14 Timeout.o
  .debug_aranges
-                0x000000b4       0x14 Timeout.o
+                0x000000b4       0x14 ProgDataflash.o
  .debug_aranges
-                0x000000c8       0x14 ProgDataflash.o
+                0x000000c8       0x14 V2Protocol.o
  .debug_aranges
-                0x000000dc       0x14 V2Protocol.o
+                0x000000dc       0x14 ISPChipComm.o
  .debug_aranges
-                0x000000f0       0x14 ISPChipComm.o
+                0x000000f0       0x14 AVRISPCommandInterpreter.o
  .debug_aranges
-                0x00000104       0x14 AVRISPCommandInterpreter.o
+                0x00000104       0x14 ProgramManager.o
  .debug_aranges
-                0x00000118       0x14 ProgramManager.o
- .debug_aranges
-                0x0000012c       0x14 TagManager.o
+                0x00000118       0x14 TagManager.o
 
 .debug_pubnames
-                0x00000000      0xf6b
+                0x00000000      0xdcd
  *(.debug_pubnames)
  .debug_pubnames
                 0x00000000      0x460 Main.o
@@ -575,133 +577,126 @@ LOAD C:/WinAVR/lib/gcc/avr/3.4.5/avr5\libgcc.a
  .debug_pubnames
                 0x00000496       0xdf LCD_Driver.o
  .debug_pubnames
-                0x00000575       0x45 EEPROM169.o
+                0x00000575       0x5e USART.o
  .debug_pubnames
-                0x000005ba       0x5e USART.o
+                0x000005d3       0x4e SPI.o
  .debug_pubnames
-                0x00000618       0x4e SPI.o
+                0x00000621       0xd3 USI.o
  .debug_pubnames
-                0x00000666       0xd3 USI.o
+                0x000006f4      0x19d Dataflash.o
  .debug_pubnames
-                0x00000739      0x19d Dataflash.o
+                0x00000891       0x95 RingBuff.o
  .debug_pubnames
-                0x000008d6       0x95 RingBuff.o
+                0x00000926       0x55 Timeout.o
  .debug_pubnames
-                0x0000096b       0x55 Timeout.o
+                0x0000097b       0x21 EEPROMVariables.o
  .debug_pubnames
-                0x000009c0      0x17a EEPROMVariables.o
+                0x0000099c       0x7d ProgDataflash.o
  .debug_pubnames
-                0x00000b3a       0x7d ProgDataflash.o
+                0x00000a19      0x153 V2Protocol.o
  .debug_pubnames
-                0x00000bb7      0x153 V2Protocol.o
+                0x00000b6c       0x7e ISPChipComm.o
  .debug_pubnames
-                0x00000d0a       0x7e ISPChipComm.o
+                0x00000bea       0x41 AVRISPCommandInterpreter.o
  .debug_pubnames
-                0x00000d88       0x41 AVRISPCommandInterpreter.o
+                0x00000c2b      0x155 ProgramManager.o
  .debug_pubnames
-                0x00000dc9      0x155 ProgramManager.o
- .debug_pubnames
-                0x00000f1e       0x4d TagManager.o
+                0x00000d80       0x4d TagManager.o
 
-.debug_info     0x00000000     0x3470
+.debug_info     0x00000000     0x3ff2
  *(.debug_info)
- .debug_info    0x00000000      0xe04 Main.o
- .debug_info    0x00000e04      0x1c2 OSCCal.o
- .debug_info    0x00000fc6      0x34f LCD_Driver.o
- .debug_info    0x00001315       0xe2 EEPROM169.o
- .debug_info    0x000013f7      0x1a0 USART.o
- .debug_info    0x00001597      0x12c SPI.o
- .debug_info    0x000016c3      0x25b USI.o
- .debug_info    0x0000191e      0x43b Dataflash.o
- .debug_info    0x00001d59      0x197 RingBuff.o
- .debug_info    0x00001ef0      0x103 Timeout.o
- .debug_info    0x00001ff3      0x17a EEPROMVariables.o
- .debug_info    0x0000216d      0x2ee ProgDataflash.o
- .debug_info    0x0000245b      0x379 V2Protocol.o
- .debug_info    0x000027d4      0x279 ISPChipComm.o
- .debug_info    0x00002a4d      0x262 AVRISPCommandInterpreter.o
- .debug_info    0x00002caf      0x62a ProgramManager.o
- .debug_info    0x000032d9      0x197 TagManager.o
+ .debug_info    0x00000000     0x116d Main.o
+ .debug_info    0x0000116d      0x1c2 OSCCal.o
+ .debug_info    0x0000132f      0x34f LCD_Driver.o
+ .debug_info    0x0000167e      0x189 USART.o
+ .debug_info    0x00001807      0x12c SPI.o
+ .debug_info    0x00001933      0x25b USI.o
+ .debug_info    0x00001b8e      0x43b Dataflash.o
+ .debug_info    0x00001fc9      0x197 RingBuff.o
+ .debug_info    0x00002160      0x103 Timeout.o
+ .debug_info    0x00002263      0x1dd EEPROMVariables.o
+ .debug_info    0x00002440      0x2ee ProgDataflash.o
+ .debug_info    0x0000272e      0x581 V2Protocol.o
+ .debug_info    0x00002caf      0x279 ISPChipComm.o
+ .debug_info    0x00002f28      0x408 AVRISPCommandInterpreter.o
+ .debug_info    0x00003330      0xb2b ProgramManager.o
+ .debug_info    0x00003e5b      0x197 TagManager.o
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev   0x00000000      0xe37
+.debug_abbrev   0x00000000     0x1010
  *(.debug_abbrev)
- .debug_abbrev  0x00000000      0x1b6 Main.o
- .debug_abbrev  0x000001b6       0xe1 OSCCal.o
- .debug_abbrev  0x00000297       0xd5 LCD_Driver.o
- .debug_abbrev  0x0000036c       0x93 EEPROM169.o
- .debug_abbrev  0x000003ff       0xaa USART.o
- .debug_abbrev  0x000004a9       0x8b SPI.o
- .debug_abbrev  0x00000534       0xfb USI.o
- .debug_abbrev  0x0000062f      0x11e Dataflash.o
- .debug_abbrev  0x0000074d       0xcd RingBuff.o
- .debug_abbrev  0x0000081a       0x64 Timeout.o
- .debug_abbrev  0x0000087e       0x4f EEPROMVariables.o
- .debug_abbrev  0x000008cd       0xf4 ProgDataflash.o
- .debug_abbrev  0x000009c1      0x101 V2Protocol.o
- .debug_abbrev  0x00000ac2       0xc4 ISPChipComm.o
- .debug_abbrev  0x00000b86       0xc7 AVRISPCommandInterpreter.o
- .debug_abbrev  0x00000c4d      0x130 ProgramManager.o
- .debug_abbrev  0x00000d7d       0xba TagManager.o
+ .debug_abbrev  0x00000000      0x20a Main.o
+ .debug_abbrev  0x0000020a       0xe1 OSCCal.o
+ .debug_abbrev  0x000002eb       0xd5 LCD_Driver.o
+ .debug_abbrev  0x000003c0       0xaa USART.o
+ .debug_abbrev  0x0000046a       0x8b SPI.o
+ .debug_abbrev  0x000004f5       0xfb USI.o
+ .debug_abbrev  0x000005f0      0x11e Dataflash.o
+ .debug_abbrev  0x0000070e       0xcd RingBuff.o
+ .debug_abbrev  0x000007db       0x64 Timeout.o
+ .debug_abbrev  0x0000083f       0x76 EEPROMVariables.o
+ .debug_abbrev  0x000008b5       0xf4 ProgDataflash.o
+ .debug_abbrev  0x000009a9      0x190 V2Protocol.o
+ .debug_abbrev  0x00000b39       0xc4 ISPChipComm.o
+ .debug_abbrev  0x00000bfd      0x12b AVRISPCommandInterpreter.o
+ .debug_abbrev  0x00000d28      0x22e ProgramManager.o
+ .debug_abbrev  0x00000f56       0xba TagManager.o
 
-.debug_line     0x00000000     0x3059
+.debug_line     0x00000000     0x32a6
  *(.debug_line)
- .debug_line    0x00000000      0x8c8 Main.o
- .debug_line    0x000008c8      0x1fc OSCCal.o
- .debug_line    0x00000ac4      0x27d LCD_Driver.o
- .debug_line    0x00000d41       0xdd EEPROM169.o
- .debug_line    0x00000e1e      0x18b USART.o
- .debug_line    0x00000fa9      0x152 SPI.o
- .debug_line    0x000010fb      0x21b USI.o
- .debug_line    0x00001316      0x2bc Dataflash.o
- .debug_line    0x000015d2      0x193 RingBuff.o
- .debug_line    0x00001765      0x13e Timeout.o
- .debug_line    0x000018a3       0x81 EEPROMVariables.o
- .debug_line    0x00001924      0x349 ProgDataflash.o
- .debug_line    0x00001c6d      0x42c V2Protocol.o
- .debug_line    0x00002099      0x33b ISPChipComm.o
- .debug_line    0x000023d4      0x313 AVRISPCommandInterpreter.o
- .debug_line    0x000026e7      0x778 ProgramManager.o
- .debug_line    0x00002e5f      0x1fa TagManager.o
+ .debug_line    0x00000000      0x9e5 Main.o
+ .debug_line    0x000009e5      0x211 OSCCal.o
+ .debug_line    0x00000bf6      0x292 LCD_Driver.o
+ .debug_line    0x00000e88      0x1a0 USART.o
+ .debug_line    0x00001028      0x167 SPI.o
+ .debug_line    0x0000118f      0x230 USI.o
+ .debug_line    0x000013bf      0x2d1 Dataflash.o
+ .debug_line    0x00001690      0x1a8 RingBuff.o
+ .debug_line    0x00001838      0x153 Timeout.o
+ .debug_line    0x0000198b       0xcd EEPROMVariables.o
+ .debug_line    0x00001a58      0x35e ProgDataflash.o
+ .debug_line    0x00001db6      0x45b V2Protocol.o
+ .debug_line    0x00002211      0x350 ISPChipComm.o
+ .debug_line    0x00002561      0x336 AVRISPCommandInterpreter.o
+ .debug_line    0x00002897      0x800 ProgramManager.o
+ .debug_line    0x00003097      0x20f TagManager.o
 
 .debug_frame
  *(.debug_frame)
 
-.debug_str      0x00000000     0x1105
+.debug_str      0x00000000     0x10fa
  *(.debug_str)
- .debug_str     0x00000000      0x65b Main.o
-                                0x6e5 (size before relaxing)
- .debug_str     0x0000065b       0x57 OSCCal.o
+ .debug_str     0x00000000      0x6b5 Main.o
+                                0x76e (size before relaxing)
+ .debug_str     0x000006b5       0x57 OSCCal.o
                                 0x19e (size before relaxing)
- .debug_str     0x000006b2       0xfe LCD_Driver.o
+ .debug_str     0x0000070c       0xfe LCD_Driver.o
                                 0x22f (size before relaxing)
- .debug_str     0x000007b0       0x3c EEPROM169.o
-                                0x113 (size before relaxing)
- .debug_str     0x000007ec       0x6c USART.o
-                                0x179 (size before relaxing)
- .debug_str     0x00000858       0x36 SPI.o
+ .debug_str     0x0000080a       0x63 USART.o
+                                0x170 (size before relaxing)
+ .debug_str     0x0000086d       0x36 SPI.o
                                 0x148 (size before relaxing)
- .debug_str     0x0000088e       0xaf USI.o
+ .debug_str     0x000008a3       0xaf USI.o
                                 0x1ce (size before relaxing)
- .debug_str     0x0000093d      0x170 Dataflash.o
+ .debug_str     0x00000952      0x170 Dataflash.o
                                 0x2e5 (size before relaxing)
- .debug_str     0x00000aad       0x88 RingBuff.o
+ .debug_str     0x00000ac2       0x88 RingBuff.o
                                 0x1ab (size before relaxing)
- .debug_str     0x00000b35       0x35 Timeout.o
+ .debug_str     0x00000b4a       0x35 Timeout.o
                                 0x14a (size before relaxing)
- .debug_str     0x00000b6a       0xa1 EEPROMVariables.o
-                                0x205 (size before relaxing)
- .debug_str     0x00000c0b       0xbf ProgDataflash.o
+ .debug_str     0x00000b7f       0x12 EEPROMVariables.o
+                                0x1d2 (size before relaxing)
+ .debug_str     0x00000b91       0xbf ProgDataflash.o
                                 0x26f (size before relaxing)
- .debug_str     0x00000cca      0x115 V2Protocol.o
-                                0x2dc (size before relaxing)
- .debug_str     0x00000ddf       0xb8 ISPChipComm.o
+ .debug_str     0x00000c50      0x115 V2Protocol.o
+                                0x3d4 (size before relaxing)
+ .debug_str     0x00000d65       0xb8 ISPChipComm.o
                                 0x236 (size before relaxing)
- .debug_str     0x00000e97       0x79 AVRISPCommandInterpreter.o
-                                0x21f (size before relaxing)
- .debug_str     0x00000f10      0x19b ProgramManager.o
-                                0x44e (size before relaxing)
- .debug_str     0x000010ab       0x5a TagManager.o
+ .debug_str     0x00000e1d       0x79 AVRISPCommandInterpreter.o
+                                0x313 (size before relaxing)
+ .debug_str     0x00000e96      0x20a ProgramManager.o
+                                0x4e9 (size before relaxing)
+ .debug_str     0x000010a0       0x5a TagManager.o
                                 0x185 (size before relaxing)
 
 .debug_loc
@@ -784,6 +779,11 @@ DataFlashProgMode                                 ProgDataflash.o
 DataflashInfo                                     ProgDataflash.o
                                                   Dataflash.o
 DelayCount                                        LCD_Driver.o
+EEPROMVars                                        EEPROMVariables.o
+                                                  ProgramManager.o
+                                                  AVRISPCommandInterpreter.o
+                                                  V2Protocol.o
+                                                  Main.o
 FUNCAVRISPMode                                    Main.o
 FUNCAutoCalib                                     Main.o
 FUNCChangeSettings                                Main.o
@@ -898,44 +898,7 @@ PacketBytes                                       V2Protocol.o
                                                   ProgDataflash.o
                                                   Main.o
 Param_ControllerInit                              V2Protocol.o
-Param_ResetPolarity                               EEPROMVariables.o
-                                                  V2Protocol.o
-                                                  Main.o
-Param_SCKDuration                                 EEPROMVariables.o
-                                                  AVRISPCommandInterpreter.o
-                                                  V2Protocol.o
-                                                  Main.o
 ProgOptions                                       Main.o
-Prog_DataSize                                     EEPROMVariables.o
-                                                  ProgramManager.o
-Prog_EEPROMSize                                   EEPROMVariables.o
-                                                  ProgramManager.o
-Prog_EPageLength                                  EEPROMVariables.o
-                                                  ProgramManager.o
-Prog_EnterProgMode                                EEPROMVariables.o
-                                                  ProgramManager.o
-                                                  Main.o
-Prog_EraseChip                                    EEPROMVariables.o
-                                                  ProgramManager.o
-Prog_EraseCmdStored                               EEPROMVariables.o
-                                                  ProgramManager.o
-                                                  Main.o
-Prog_FuseBytes                                    EEPROMVariables.o
-                                                  ProgramManager.o
-Prog_LockBytes                                    EEPROMVariables.o
-                                                  ProgramManager.o
-Prog_PageLength                                   EEPROMVariables.o
-                                                  ProgramManager.o
-Prog_TotalFuseBytes                               EEPROMVariables.o
-                                                  ProgramManager.o
-                                                  Main.o
-Prog_TotalLockBytes                               EEPROMVariables.o
-                                                  ProgramManager.o
-                                                  Main.o
-Prog_WriteEEPROM                                  EEPROMVariables.o
-                                                  ProgramManager.o
-Prog_WriteProgram                                 EEPROMVariables.o
-                                                  ProgramManager.o
 ProgrammerName                                    Main.o
 RetrieveLoc                                       RingBuff.o
 RingBuffer                                        RingBuff.o
@@ -966,10 +929,6 @@ StrEnd                                            LCD_Driver.o
 StrStart                                          LCD_Driver.o
 SyncErrorMessage                                  ISPChipComm.o
                                                   AVRISPCommandInterpreter.o
-                                                  Main.o
-Sys_LCDContrast                                   EEPROMVariables.o
-                                                  Main.o
-Sys_MagicNumber                                   EEPROMVariables.o
                                                   Main.o
 TIMEOUT_SetupTimeoutTimer                         Timeout.o
                                                   V2Protocol.o
@@ -1060,7 +1019,6 @@ __do_clear_bss                                    C:/WinAVR/lib/gcc/avr/3.4.5/av
                                                   USI.o
                                                   SPI.o
                                                   USART.o
-                                                  EEPROM169.o
                                                   LCD_Driver.o
                                                   OSCCal.o
                                                   Main.o
@@ -1078,10 +1036,30 @@ __do_copy_data                                    C:/WinAVR/lib/gcc/avr/3.4.5/av
                                                   USI.o
                                                   SPI.o
                                                   USART.o
-                                                  EEPROM169.o
                                                   LCD_Driver.o
                                                   OSCCal.o
                                                   Main.o
+__eeprom_read_block_1F2021                        C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_rblk.1F2021.o)
+                                                  ProgramManager.o
+__eeprom_read_byte_1F2021                         C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_rb.1F2021.o)
+                                                  C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_rw.1F2021.o)
+                                                  C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_rblk.1F2021.o)
+                                                  ProgramManager.o
+                                                  AVRISPCommandInterpreter.o
+                                                  V2Protocol.o
+                                                  Main.o
+__eeprom_read_word_1F2021                         C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_rw.1F2021.o)
+                                                  ProgramManager.o
+__eeprom_write_block_1F2021                       C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_wblk.1F2021.o)
+                                                  ProgramManager.o
+__eeprom_write_byte_1F2021                        C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_wb.1F2021.o)
+                                                  C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_wblk.1F2021.o)
+                                                  C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_ww.1F2021.o)
+                                                  ProgramManager.o
+                                                  V2Protocol.o
+                                                  Main.o
+__eeprom_write_word_1F2021                        C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5\libc.a(ee_ww.1F2021.o)
+                                                  ProgramManager.o
 __heap_end                                        C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5/crtm169.o
 __init                                            C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5/crtm169.o
 __mulsi3                                          C:/WinAVR/lib/gcc/avr/3.4.5/avr5\libgcc.a(_mulsi3.o)
@@ -1124,15 +1102,6 @@ __vector_9                                        Timeout.o
 __vector_default                                  Main.o
                                                   C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5/crtm169.o
 __vectors                                         C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5/crtm169.o
-eeprom_read_byte_169                              EEPROM169.o
-                                                  ProgramManager.o
-                                                  AVRISPCommandInterpreter.o
-                                                  V2Protocol.o
-                                                  Main.o
-eeprom_write_byte_169                             EEPROM169.o
-                                                  ProgramManager.o
-                                                  V2Protocol.o
-                                                  Main.o
 main                                              Main.o
                                                   C:/WinAVR/bin/../lib/gcc/avr/3.4.5/../../../../avr/lib/avr5/crtm169.o
 storedUSIDR                                       USI.o

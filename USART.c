@@ -38,11 +38,11 @@
 *   Purpose :       Initialize the USART
 *
 *****************************************************************************/
-void USART_Init(unsigned int baudrate)
+void USART_Init(void)
 {
     // Set baud rate
-    UBRRH = (unsigned char)(baudrate>>8);
-    UBRRL = (unsigned char)(baudrate);
+    UBRRH = (uint8_t)(USART_BAUDRATE >> 8);
+    UBRRL = (uint8_t)(USART_BAUDRATE);
 
     // Double speed
 	UCSRA = (USART_DOUBLESPEED << U2X);
@@ -70,7 +70,7 @@ void USART_Init(unsigned int baudrate)
 *****************************************************************************/
 void USART_Tx(char data)
 {
-    while (!(UCSRA & (1<<UDRE)));
+    while (!(UCSRA & (1 << UDRE)));
     UDR = data;
 }
 
@@ -88,7 +88,7 @@ void USART_Tx(char data)
 void USART_TxString(char *data)
 {
 	while (*data != '\0')
-		USART_Tx(*data++);
+	  USART_Tx(*data++);
 }
 
 /*****************************************************************************

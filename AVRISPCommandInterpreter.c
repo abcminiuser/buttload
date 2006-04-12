@@ -18,7 +18,7 @@ void AICI_InterpretPacket(void)
 		case CMD_ENTER_PROGMODE_ISP:
 			MessageSize = 2;
 			
-			USI_SPIInitMaster(eeprom_read_byte_169(&Param_SCKDuration));
+			USI_SPIInitMaster(eeprom_read_byte(&EEPROMVars.SCKDuration));
 
 			MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE);  // Pull the slave AVR's RESET line to active
 			MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE); // Orange = Busy

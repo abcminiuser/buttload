@@ -62,7 +62,7 @@ void OSCCAL_Calibrate(void)
         
 		if (ActualCount > OSCCAL_UPPERCOUNTBOUND)       // Clock is running too fast
 			OSCCAL--;
-		else if (ActualCount < OSCCAL_LOWERCOUNTBOUND ) // Clock is running too slow
+		else if (ActualCount < OSCCAL_LOWERCOUNTBOUND) // Clock is running too slow
 			OSCCAL++;
 		else		                                     // Clock is just right
 			break;

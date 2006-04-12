@@ -20,16 +20,8 @@ uint32_t PM_GetStoredDataSize(uint8_t Type)
 	   the program, so I've put it into a seperate function to save on flash.            */
 
 	uint32_t ProgDataSize = 0;
-	uint16_t EEPROMAddress;
 
-	EEPROMAddress = ((Type == TYPE_FLASH)? Prog_DataSize : Prog_EEPROMSize);
-	ProgDataSize  = ((uint32_t)eeprom_read_byte_169(&EEPROMAddress) << 24);
-	EEPROMAddress++;
-	ProgDataSize |= ((uint32_t)eeprom_read_byte_169(&EEPROMAddress) << 16);
-	EEPROMAddress++;
-	ProgDataSize |= ((uint32_t)eeprom_read_byte_169(&EEPROMAddress) << 8);
-	EEPROMAddress++;
-	ProgDataSize |= eeprom_read_byte_169(&EEPROMAddress);
+	eeprom_read_block((void*)&ProgDataSize, (const void*)((Type == TYPE_FLASH)? &EEPROMVars.DataSize : &EEPROMVars.EEPROMSize), 4);
 
 	if (ProgDataSize == 0xFFFFFFFF)                                      // Blank EEPROM, return a size  of 0 bytes
 	   ProgDataSize = 0x00;
@@ -76,20 +68,15 @@ void PM_StoreProgramByte(uint8_t Data)
 
 void PM_InterpretAVRISPPacket(void)
 {
-	uint16_t EEPROMAddress;
+	uint8_t* EEPROMAddress;
 
 	switch (PacketBytes[0])
 	{
 		case CMD_ENTER_PROGMODE_ISP:
 			MessageSize = 2;
-			
-			EEPROMAddress = Prog_EnterProgMode;
-			
+						
 			for (uint8_t PacketB = 0; PacketB <= 11; PacketB++)          // Save the enter programming mode command bytes
-			{
-				eeprom_write_byte_169(&EEPROMAddress, PacketBytes[PacketB]);
-				EEPROMAddress++;
-			}
+			  eeprom_write_byte(&EEPROMVars.EnterProgMode[PacketB], PacketBytes[PacketB]);
 			
 			InProgrammingMode = TRUE;                                    // Set the flag, prevent the user from exiting the V2P state machine			
 			CurrentMode = PM_NO_SETUP;                                   // Clear the current mode variable
@@ -123,26 +110,16 @@ void PM_InterpretAVRISPPacket(void)
 		case CMD_CHIP_ERASE_ISP:
 			MessageSize = 2;
 
-			EEPROMAddress = Prog_EraseChip;                              // Program erase chip command start address
-			
 			for (uint8_t PacketB = 1; PacketB <= 6; PacketB++)          // Save the erase chip command bytes to EEPROM
-			{
-				eeprom_write_byte_169(&EEPROMAddress, PacketBytes[PacketB]);
-				EEPROMAddress++;
-			}
+			  eeprom_write_byte(&EEPROMVars.EraseChip[PacketB], PacketBytes[PacketB]);
 
-			EEPROMAddress = Prog_DataSize;
-										
 			for (uint8_t Byte = 0; Byte < 8; Byte++)                    // Clear the program and EEPROM size counters
 			{
-				if (Byte == 4)
-				   EEPROMAddress = Prog_EEPROMSize;
-
-				eeprom_write_byte_169(&EEPROMAddress, 0x00);
-				EEPROMAddress++;						
+				eeprom_write_byte(&EEPROMVars.DataSize[Byte], 0x00);
+				eeprom_write_byte(&EEPROMVars.EEPROMSize[Byte], 0x00);
 			}
 						
-			eeprom_write_byte_169(&Prog_EraseCmdStored, TRUE);
+			eeprom_write_byte(&EEPROMVars.EraseCmdStored, TRUE);
 			
 			PacketBytes[1] = STATUS_CMD_OK;
 			
@@ -168,18 +145,14 @@ void PM_InterpretAVRISPPacket(void)
 				CurrentMode  = PM_LOCKFUSEBITS_READ;
 			}
 			
-			EEPROMAddress = ((PacketBytes[0] == CMD_READ_FUSE_ISP)? Prog_TotalFuseBytes : Prog_TotalLockBytes);
-
-			if (CurrBuffByte > eeprom_read_byte_169(&EEPROMAddress))    // Trying to read more fuse/lock bytes than are stored in memory
+			if (CurrBuffByte > eeprom_read_byte((uint8_t*)((PacketBytes[0] == CMD_READ_FUSE_ISP)? &EEPROMVars.TotalFuseBytes : &EEPROMVars.TotalLockBytes)))    // Trying to read more fuse/lock bytes than are stored in memory
 			{
 				PacketBytes[2] = 0xFF;                                  // Return 0xFF for the fuse/lock byte
 			}
 			else
 			{
-				EEPROMAddress  = ((PacketBytes[0] == CMD_READ_FUSE_ISP)? Prog_FuseBytes : Prog_LockBytes) // Starting location
-									+ (CurrBuffByte << 2) + (PacketBytes[1] - 1); // The start position of the actual fuse/lock byte to read (4 bytes each)
-
-				PacketBytes[2] = eeprom_read_byte_169(&EEPROMAddress); // Return the fuse/lock byte
+				PacketBytes[2] = eeprom_read_byte((uint8_t*)((PacketBytes[0] == CMD_READ_FUSE_ISP)? &EEPROMVars.FuseBytes : &EEPROMVars.LockBytes) // Starting location
+									                         + (CurrBuffByte << 2) + (PacketBytes[1] - 1));                                        // The start position of the actual fuse/lock byte to read (4 bytes each));
 			}
 
 			PacketBytes[1] = STATUS_CMD_OK;                            // Data byte is encased in CMD_OKs
@@ -200,12 +173,12 @@ void PM_InterpretAVRISPPacket(void)
 
 			if (PacketBytes[0] == CMD_PROGRAM_FUSE_ISP)
 			{
-				EEPROMAddress = Prog_FuseBytes + (CurrBuffByte << 2);
+				EEPROMAddress = (uint8_t*)(&EEPROMVars.FuseBytes + (CurrBuffByte << 2));
 				MemoryType    = TYPE_FUSE;
 			}
 			else
 			{
-				EEPROMAddress = Prog_LockBytes + (CurrBuffByte << 2);
+				EEPROMAddress = (uint8_t*)(&EEPROMVars.LockBytes + (CurrBuffByte << 2));
 				MemoryType    = TYPE_LOCK;
 			}				
 			
@@ -213,7 +186,7 @@ void PM_InterpretAVRISPPacket(void)
 			{
 				for (uint8_t FLByte = 1; FLByte <= 4; FLByte++)
 				{
-					eeprom_write_byte_169(&EEPROMAddress, PacketBytes[FLByte]);
+					eeprom_write_byte(EEPROMAddress, PacketBytes[FLByte]);
 					EEPROMAddress++;
 				}
 
@@ -232,12 +205,12 @@ void PM_InterpretAVRISPPacket(void)
 			{
 				if (PacketBytes[0] == CMD_PROGRAM_FLASH_ISP)           // Flash programming mode
 				{
-					EEPROMAddress = Prog_WriteProgram;                 // Set the eeprom address to the Program command bytes location
+					EEPROMAddress = (uint8_t*)&EEPROMVars.WriteProgram; // Set the eeprom address to the Program command bytes location
 					PM_SetupDFAddressCounters(TYPE_FLASH);
 				}
-				else                                                  // EEPROM programming mode
+				else                                                   // EEPROM programming mode
 				{
-					EEPROMAddress = Prog_WriteEEPROM;                  // Set the eeprom address to the EEPROM command bytes location
+					EEPROMAddress = (uint8_t*)&EEPROMVars.WriteEEPROM;  // Set the eeprom address to the EEPROM command bytes location
 					PM_SetupDFAddressCounters(TYPE_EEPROM);
 				}
 				
@@ -246,7 +219,7 @@ void PM_InterpretAVRISPPacket(void)
 				
 				for (uint8_t B = 1; B <= 9; B++)                       // Save the command bytes
 				{
-					eeprom_write_byte_169(&EEPROMAddress, PacketBytes[B]);
+					eeprom_write_byte(EEPROMAddress, PacketBytes[B]);
 					EEPROMAddress++;				
 				}
 			}
@@ -259,11 +232,7 @@ void PM_InterpretAVRISPPacket(void)
 
 			if (!(GPageLength & PM_PAGELENGTH_FOUNDBIT) && (PacketBytes[3] & ISPCC_PROG_MODE_PAGEDONE) && GPageLength)
 			{
-				EEPROMAddress = ((MemoryType == TYPE_FLASH)? Prog_PageLength : Prog_EPageLength);
-	
-				eeprom_write_byte_169(&EEPROMAddress, (uint8_t)(GPageLength >> 8));
-				EEPROMAddress++;
-				eeprom_write_byte_169(&EEPROMAddress, (uint8_t)GPageLength);		
+				eeprom_write_word(((MemoryType == TYPE_FLASH)? &EEPROMVars.PageLength : &EEPROMVars.EPageLength), GPageLength);
 		
 				GPageLength |= PM_PAGELENGTH_FOUNDBIT;                 // Bit 15 is used to indicate if the length has been found
 			}
@@ -313,63 +282,49 @@ void PM_InterpretAVRISPPacket(void)
 
 void PM_CheckEndOfProgramming(void)
 {
-   uint16_t EEPROMAddress;
+	uint8_t* EEPROMAddress;
 
-   if (CurrentMode == PM_DATAFLASH_WRITE)
-   {
-      if (CurrBuffByte)                               // Data in the dataflash buffer, pending to be written
-         DF_CopyBufferToFlashPage(CurrPageAddress);   // Save the buffer
+	if (CurrentMode == PM_DATAFLASH_WRITE)
+	{
+		if (CurrBuffByte)                               // Data in the dataflash buffer, pending to be written
+		  DF_CopyBufferToFlashPage(CurrPageAddress);   // Save the buffer
 
-      uint32_t DataSize = ((uint32_t)CurrPageAddress * DF_INTERNALDF_BUFFBYTES) + CurrBuffByte;
+		uint32_t DataSize = ((uint32_t)CurrPageAddress * DF_INTERNALDF_BUFFBYTES) + CurrBuffByte;
 
-      if (MemoryType == TYPE_FLASH)
-      {
-         EEPROMAddress = Prog_DataSize;       
-      }
-      else
-      {
-         EEPROMAddress = Prog_EEPROMSize;
-         DataSize -= PM_EEPROM_OFFSET;                // Remove DataFlash starting offset
-      }
+		if (MemoryType == TYPE_FLASH)
+		{
+			EEPROMAddress = (uint8_t*)&EEPROMVars.DataSize;       
+		}
+		else
+		{
+			EEPROMAddress = (uint8_t*)&EEPROMVars.EEPROMSize;
+			DataSize -= PM_EEPROM_OFFSET;                // Remove DataFlash starting offset
+		}
 
-      eeprom_write_byte_169(&EEPROMAddress, (DataSize >> 24));
-      EEPROMAddress++;
-      eeprom_write_byte_169(&EEPROMAddress, (DataSize >> 16));             
-      EEPROMAddress++;
-      eeprom_write_byte_169(&EEPROMAddress, (DataSize >> 8));
-      EEPROMAddress++;
-      eeprom_write_byte_169(&EEPROMAddress, DataSize);
-   }
+		eeprom_write_block((const void*)&DataSize, (void*)EEPROMAddress, 4);
+	}
 }
 
 void PM_CheckEndOfFuseLockStore(void)
 {
-	uint16_t EEPROMAddress;
-
 	if (CurrentMode == PM_LOCKFUSEBITS_WRITE)
-	{
-		EEPROMAddress = ((MemoryType == TYPE_FUSE)? Prog_TotalFuseBytes : Prog_TotalLockBytes);
-		
-		eeprom_write_byte_169(&EEPROMAddress, CurrBuffByte); // CurrBuffByte stores the total number of fuse/lock bytes written in this case
-	}
+	  eeprom_write_byte(((MemoryType == TYPE_FUSE)? &EEPROMVars.TotalFuseBytes : &EEPROMVars.TotalLockBytes), CurrBuffByte); // CurrBuffByte stores the total number of fuse/lock bytes written in this case
 }
 
 void PM_SendFuseLockBytes(uint8_t Type)
 {
-	uint16_t EEPROMAddress;
+	uint8_t* EEPROMAddress;
 	uint8_t  TotalBytes;
 	
-	EEPROMAddress = ((Type == TYPE_FUSE)? Prog_TotalFuseBytes : Prog_TotalLockBytes);
+	TotalBytes = eeprom_read_byte((Type == TYPE_FUSE)? &EEPROMVars.TotalFuseBytes : &EEPROMVars.TotalLockBytes);
 
-	TotalBytes = eeprom_read_byte_169(&EEPROMAddress); // Get the total number of stored fuse/lock bytes
-			
-	EEPROMAddress = ((Type == TYPE_FUSE)? Prog_FuseBytes : Prog_LockBytes); // Set the EEPROM pointer to the fuse/lock bytes start (each fuse or lock byte takes four bytes in EEPROM)
+	EEPROMAddress = (uint8_t*)((Type == TYPE_FUSE)? &EEPROMVars.FuseBytes : &EEPROMVars.LockBytes); // Set the EEPROM pointer to the fuse/lock bytes start (each fuse or lock byte takes four bytes in EEPROM)
 
 	while (TotalBytes--)                              // Write each of the fuse/lock bytes stored in memory to the slave AVR
 	{
 		for (uint8_t CommandByte = 0; CommandByte < 4; CommandByte++)      // Write each individual command byte
 		{
-			USI_SPITransmit(eeprom_read_byte_169(&EEPROMAddress));
+			USI_SPITransmit(eeprom_read_byte(EEPROMAddress));
 			EEPROMAddress++;
 		}
 		
@@ -380,28 +335,19 @@ void PM_SendFuseLockBytes(uint8_t Type)
 }
 
 void PM_SendEraseCommand(void)
-{
-	uint16_t EEPROMAddress;
-
-	EEPROMAddress = Prog_EraseChip + 2;               // Start of the erase commands
+{			
+	for (uint8_t B = 2; B < 6 ; B++)                  // Read out the erase chip command bytes
+	  USI_SPITransmit(eeprom_read_byte(&EEPROMVars.EraseChip[B])); // Send the erase chip commands
 			
-	for (uint8_t B = 0; B < 4 ; B++)                  // Read out the erase chip command bytes
-	{
-		USI_SPITransmit(eeprom_read_byte_169(&EEPROMAddress)); // Send the erase chip commands
-		EEPROMAddress++;
-	}
-			
-	EEPROMAddress = Prog_EraseChip + 1;               // Poll mode flag address
-	if (eeprom_read_byte_169(&EEPROMAddress))         // Value of 1 indicates a busy flag test
+	if (eeprom_read_byte(&EEPROMVars.EraseChip[1]))   // Value of 1 indicates a busy flag test
 	{
 		do
 			USI_SPITransmitWord(0xF000);
 		while (USI_SPITransmitWord(0x0000) & 0x01);
 	}
 	else                                              // Cleared flag means use a predefined delay
-	{
-		EEPROMAddress = Prog_EraseChip;               // Delay value address			
-		MAIN_Delay1MS(eeprom_read_byte_169(&EEPROMAddress)); // Wait the erase delay
+	{		
+		MAIN_Delay1MS(eeprom_read_byte((uint8_t*)&EEPROMVars.EraseChip)); // Wait the erase delay
 	}
 }
 
@@ -410,33 +356,29 @@ void PM_CreateProgrammingPackets(uint8_t Type)
 	uint32_t BytesRead       = 0;
 	uint32_t BytesToRead     = PM_GetStoredDataSize(Type);      // Get the byte size of the stored program
 	uint16_t BytesPerProgram;
-	uint16_t EEPROMAddress;
 	uint16_t PageLength;
+	uint8_t* EEPROMAddress;
 	uint8_t  ContinuedPage   = FALSE;
 
-	EEPROMAddress = ((Type == TYPE_FLASH)? Prog_PageLength : Prog_EPageLength);
-	PageLength    = ((uint16_t)eeprom_read_byte_169(&EEPROMAddress) << 8);
-	EEPROMAddress++;
-	PageLength   |= (eeprom_read_byte_169(&EEPROMAddress));
-	
+	PageLength  = eeprom_read_word((uint16_t*)(Type == TYPE_FLASH)? &EEPROMVars.PageLength : &EEPROMVars.EPageLength);
 	CurrAddress = 0;
 
 	if (Type == TYPE_FLASH)
 	{
-		EEPROMAddress = Prog_WriteProgram;             // Set the EEPROM pointer to the write flash command bytes location
+		EEPROMAddress = (uint8_t*)&EEPROMVars.WriteProgram;       // Set the EEPROM pointer to the write flash command bytes location
 		DF_ContinuousReadEnable(0, 0);
 		PacketBytes[0] = CMD_PROGRAM_FLASH_ISP;
 	}
 	else
 	{
-		EEPROMAddress = Prog_WriteEEPROM;              // Set the EEPROM pointer to the write EEPROM command bytes location
+		EEPROMAddress = (uint8_t*)&EEPROMVars.WriteEEPROM;        // Set the EEPROM pointer to the write EEPROM command bytes location
 		DF_ContinuousReadEnable(PM_EEPROM_OFFSET / DF_INTERNALDF_BUFFBYTES, PM_EEPROM_OFFSET % DF_INTERNALDF_BUFFBYTES); // Start read from the EEPROM offset location
 		PacketBytes[0] = CMD_PROGRAM_EEPROM_ISP;
 	}
 
 	for (uint8_t B = 1; B <= 9 ; B++)                 // Load in the write data command bytes
 	{
-		PacketBytes[B] = eeprom_read_byte_169(&EEPROMAddress); // Synthesise a write packet header
+		PacketBytes[B] = eeprom_read_byte(EEPROMAddress); // Synthesise a write packet header
 		EEPROMAddress++;                               // Increment the EEPROM location counter
 	}
 	
@@ -540,12 +482,12 @@ void PM_ShowStoredItemSizes(void)
 					break;
 				case 2:
 					strcpy_P(Buffer, PSTR("FUSE-"));
-					TempB = eeprom_read_byte_169(&Prog_TotalFuseBytes);
+					TempB = eeprom_read_byte(&EEPROMVars.TotalFuseBytes);
 					MAIN_IntToStr(((TempB == 0xFF)? 0x00 : TempB), &Buffer[5]);
 					break;
 				case 3:
 					strcpy_P(Buffer, PSTR("LOCK-"));
-					TempB = eeprom_read_byte_169(&Prog_TotalLockBytes);
+					TempB = eeprom_read_byte(&EEPROMVars.TotalLockBytes);
 					MAIN_IntToStr(((TempB == 0xFF)? 0x00 : TempB), &Buffer[5]);		
 			}
 	
