@@ -518,7 +518,7 @@
  549 02f6 9091 0000 		lds r25,(DataflashInfo+3)+1
  550 02fa 8050      		subi r24,lo8(2048)
  551 02fc 9840      		sbci r25,hi8(2048)
- 552 02fe 61F4      		brne .L39
+ 552 02fe 61F0      		breq .L39
  553               	.LM66:
  554 0300 8091 6400 		lds r24,100
  555 0304 8460      		ori r24,lo8(4)
@@ -549,27 +549,27 @@
  581               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 Dataflash.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:22     .data:00000000 DFSPIRoutinePointer
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:28     .progmem.data:00000000 DataFlashError
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:33     .progmem.data:00000010 DF_Pages
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:45     .progmem.data:00000020 DF_PageSize
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:57     .progmem.data:00000030 DF_PageBits
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:69     .text:00000000 DF_EnableDataflash
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Iaaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Iaaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Iaaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Iaaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Iaaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Iaaaa.s:22     .data:00000000 DFSPIRoutinePointer
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Iaaaa.s:28     .progmem.data:00000000 DataFlashError
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Iaaaa.s:33     .progmem.data:00000010 DF_Pages
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Iaaaa.s:45     .progmem.data:00000020 DF_PageSize
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Iaaaa.s:57     .progmem.data:00000030 DF_PageBits
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Iaaaa.s:69     .text:00000000 DF_EnableDataflash
                             *COM*:00000001 UseExernalDF
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:109    .text:00000024 DF_ReadBufferByte
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:160    .text:0000007c DF_ContinuousReadEnable
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:236    .text:00000100 DF_BufferWriteEnable
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:280    .text:0000014a DF_GetChipCharacteristics
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Iaaaa.s:109    .text:00000024 DF_ReadBufferByte
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Iaaaa.s:160    .text:0000007c DF_ContinuousReadEnable
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Iaaaa.s:236    .text:00000100 DF_BufferWriteEnable
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Iaaaa.s:280    .text:0000014a DF_GetChipCharacteristics
                             *COM*:00000005 DataflashInfo
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:369    .text:000001c8 DF_EraseBlock
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:418    .text:0000021a DF_CopyFlashPageToBuffer
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:479    .text:00000284 DF_CopyBufferToFlashPage
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc63aaaa.s:540    .text:000002ee DF_CheckCorrectOnboardChip
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Iaaaa.s:369    .text:000001c8 DF_EraseBlock
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Iaaaa.s:418    .text:0000021a DF_CopyFlashPageToBuffer
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Iaaaa.s:479    .text:00000284 DF_CopyBufferToFlashPage
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8Iaaaa.s:540    .text:000002ee DF_CheckCorrectOnboardChip
                             *COM*:00000002 CurrPageAddress
                             *COM*:00000002 CurrBuffByte
 

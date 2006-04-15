@@ -12,13 +12,16 @@
    mode with an overflow interrupt (clock source is the external 32768Hz crystal on the Butterfly.
    Code will calibrate to 7372800Hz for correct serial transmission at 115200 baud.                 */
 
-volatile static uint16_t ActualCount;
+static volatile uint16_t ActualCount;
 
 void OSCCAL_Calibrate(void)
 {
 	uint8_t SREG_Backup;
 	uint8_t LoopCount = (0x7F / 2); // Maximum range is 128, and starts from the middle, so 64 is the max number of iterations required
-	uint8_t PrevOSCALValues[2] = {};
+	uint8_t PrevOSCALValues[2];
+   
+	// Reset ActualCount
+	ActualCount = 0;
    
 	// Make sure all clock division is turned off (8Mhz RC clock)
 	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_CLOCKSPEED_8MHZ);
@@ -45,6 +48,9 @@ void OSCCAL_Calibrate(void)
 	TCCR1B = (1 << CS10);
 	TCCR2A = (1 << CS20);
 	 	 
+	// Previous OSCCAL value of 0
+	PrevOSCALValues[0] = 0;
+
 	// Wait until timer 2's external 32.768KHz crystal is stable
 	while (ASSR & ((1 << TCN2UB) | (1 << TCR2UB) | (1 << OCR2UB)));
     
@@ -54,8 +60,8 @@ void OSCCAL_Calibrate(void)
     
 	while (LoopCount--)
 	{
-		// Let it take a few readings (16ms, approx 2 readings)
-		_delay_ms(16);
+		// Let it take a few readings (14ms, approx 2 readings)
+		_delay_ms(14);
 
 		PrevOSCALValues[1] = PrevOSCALValues[0];
 		PrevOSCALValues[0] = OSCCAL;
@@ -69,7 +75,7 @@ void OSCCAL_Calibrate(void)
 		
 		// If the routine cannot find a value withing the count tollerance,
 		// it will cause the OSCCAL to hover around the closest two values.
-		// If the current value is the same as the two previous, exit the
+		// If the current value is the same as the 2*n previous, exit the
 		// routine as the best value has been found.
 		if (OSCCAL == PrevOSCALValues[1])
 		  break;

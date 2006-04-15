@@ -15,10 +15,10 @@
   23               	/* prologue: frame size=0 */
   24               	/* prologue end (size=0) */
   25               	.LM2:
-  26 0000 82EC      		ldi r24,lo8(-62)
-  27 0002 8093 C500 		sts 197,r24
-  28               	.LM3:
-  29 0006 1092 C400 		sts 196,__zero_reg__
+  26 0000 1092 C500 		sts 197,__zero_reg__
+  27               	.LM3:
+  28 0004 87E0      		ldi r24,lo8(7)
+  29 0006 8093 C400 		sts 196,r24
   30               	.LM4:
   31 000a 82E0      		ldi r24,lo8(2)
   32 000c 8093 C000 		sts 192,r24
@@ -107,66 +107,18 @@
  121               	/* epilogue end (size=1) */
  122               	/* function USART_Rx size 12 (11) */
  123               	.LFE17:
- 125               	.global	__vector_13
- 127               	__vector_13:
- 128               	.LFB18:
- 129               	.LM19:
- 130               	/* prologue: frame size=0 */
- 131 0068 1F92      		push __zero_reg__
- 132 006a 0F92      		push __tmp_reg__
- 133 006c 0FB6      		in __tmp_reg__,__SREG__
- 134 006e 0F92      		push __tmp_reg__
- 135 0070 1124      		clr __zero_reg__
- 136 0072 2F93      		push r18
- 137 0074 3F93      		push r19
- 138 0076 4F93      		push r20
- 139 0078 5F93      		push r21
- 140 007a 6F93      		push r22
- 141 007c 7F93      		push r23
- 142 007e 8F93      		push r24
- 143 0080 9F93      		push r25
- 144 0082 AF93      		push r26
- 145 0084 BF93      		push r27
- 146 0086 EF93      		push r30
- 147 0088 FF93      		push r31
- 148               	/* prologue end (size=17) */
- 149               	.LM20:
- 150 008a 8091 C600 		lds r24,198
- 151 008e 0E94 0000 		call BUFF_StoreBuffByte
- 152               	/* epilogue: frame size=0 */
- 153 0092 FF91      		pop r31
- 154 0094 EF91      		pop r30
- 155 0096 BF91      		pop r27
- 156 0098 AF91      		pop r26
- 157 009a 9F91      		pop r25
- 158 009c 8F91      		pop r24
- 159 009e 7F91      		pop r23
- 160 00a0 6F91      		pop r22
- 161 00a2 5F91      		pop r21
- 162 00a4 4F91      		pop r20
- 163 00a6 3F91      		pop r19
- 164 00a8 2F91      		pop r18
- 165 00aa 0F90      		pop __tmp_reg__
- 166 00ac 0FBE      		out __SREG__,__tmp_reg__
- 167 00ae 0F90      		pop __tmp_reg__
- 168 00b0 1F90      		pop __zero_reg__
- 169 00b2 1895      		reti
- 170               	/* epilogue end (size=17) */
- 171               	/* function __vector_13 size 38 (4) */
- 172               	.LFE18:
- 174               	.Letext0:
+ 125               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 USART.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccc9aaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccc9aaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccc9aaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccc9aaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccc9aaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccc9aaaa.s:20     .text:00000000 USART_Init
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccc9aaaa.s:49     .text:00000022 USART_Tx
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccc9aaaa.s:70     .text:00000032 USART_TxString
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccc9aaaa.s:100    .text:00000050 USART_Rx
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccc9aaaa.s:127    .text:00000068 __vector_13
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYxaaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYxaaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYxaaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYxaaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYxaaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYxaaaa.s:20     .text:00000000 USART_Init
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYxaaaa.s:49     .text:00000022 USART_Tx
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYxaaaa.s:70     .text:00000032 USART_TxString
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYxaaaa.s:100    .text:00000050 USART_Rx
 
 UNDEFINED SYMBOLS
 __do_copy_data
@@ -175,4 +127,3 @@ BUFF_InitialiseBuffer
 BuffElements
 TimeOut
 BUFF_GetBuffByte
-BUFF_StoreBuffByte

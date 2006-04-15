@@ -19,173 +19,176 @@
   27               	.LM2:
   28 0004 4FE3      		ldi r20,lo8(63)
   29               	.LM3:
-  30 0006 20E0      		ldi r18,lo8(0)
-  31 0008 30E0      		ldi r19,hi8(0)
+  30 0006 1092 0000 		sts (ActualCount)+1,__zero_reg__
+  31 000a 1092 0000 		sts ActualCount,__zero_reg__
   32               	.LM4:
-  33 000a 80E8      		ldi r24,lo8(-128)
-  34 000c 8093 6100 		sts 97,r24
-  35 0010 1092 6100 		sts 97,__zero_reg__
+  33 000e 80E8      		ldi r24,lo8(-128)
+  34 0010 8093 6100 		sts 97,r24
+  35 0014 1092 6100 		sts 97,__zero_reg__
   36               	.LM5:
-  37 0014 4093 6600 		sts 102,r20
+  37 0018 4093 6600 		sts 102,r20
   38               	.LM6:
-  39 0018 5FB7      		in r21,95-0x20
+  39 001c 5FB7      		in r21,95-0x20
   40               	.LM7:
-  41 001a 1092 6F00 		sts 111,__zero_reg__
+  41 001e 1092 6F00 		sts 111,__zero_reg__
   42               	.LM8:
-  43 001e 88E0      		ldi r24,lo8(8)
-  44 0020 8093 B600 		sts 182,r24
+  43 0022 88E0      		ldi r24,lo8(8)
+  44 0024 8093 B600 		sts 182,r24
   45               	.LM9:
-  46 0024 81E0      		ldi r24,lo8(1)
-  47 0026 8093 7000 		sts 112,r24
+  46 0028 81E0      		ldi r24,lo8(1)
+  47 002a 8093 7000 		sts 112,r24
   48               	.LM10:
   49               	/* #APP */
-  50 002a 7894      		sei
+  50 002e 7894      		sei
   51               	.LM11:
   52               	/* #NOAPP */
-  53 002c 8093 8100 		sts 129,r24
+  53 0030 8093 8100 		sts 129,r24
   54               	.LM12:
-  55 0030 8093 B000 		sts 176,r24
-  56               	.L3:
-  57               	.LM13:
-  58 0034 8091 B600 		lds r24,182
-  59 0038 9927      		clr r25
-  60 003a 8770      		andi r24,lo8(7)
-  61 003c 9070      		andi r25,hi8(7)
-  62 003e 0097      		sbiw r24,0
-  63 0040 C9F7      		brne .L3
-  64               	.LM14:
-  65 0042 9093 8500 		sts (132)+1,r25
-  66 0046 8093 8400 		sts 132,r24
+  55 0034 8093 B000 		sts 176,r24
+  56               	.LM13:
+  57 0038 20E0      		ldi r18,lo8(0)
+  58 003a 30E0      		ldi r19,hi8(0)
+  59               	.L3:
+  60               	.LM14:
+  61 003c 8091 B600 		lds r24,182
+  62 0040 9927      		clr r25
+  63 0042 8770      		andi r24,lo8(7)
+  64 0044 9070      		andi r25,hi8(7)
+  65 0046 0097      		sbiw r24,0
+  66 0048 C9F7      		brne .L3
   67               	.LM15:
-  68 004a 1092 B200 		sts 178,__zero_reg__
-  69               	.LM16:
-  70 004e 4EE3      		ldi r20,lo8(62)
-  71 0050 A3E3      		ldi r26,lo8(29491)
-  72 0052 B3E7      		ldi r27,hi8(29491)
-  73 0054 C0E0      		ldi r28,hlo8(29491)
-  74 0056 D0E0      		ldi r29,hhi8(29491)
-  75               	.L21:
-  76               	.LBB2:
-  77               	.LBB3:
-  78               	.LBB4:
-  79               	.LBB5:
-  80               	.LM17:
-  81 0058 CD01      		movw r24,r26
-  82               	/* #APP */
-  83 005a 0197      		1: sbiw r24,1
-  84 005c F1F7      		brne 1b
-  85               	/* #NOAPP */
-  86               	.LBE5:
-  87               	.LBE4:
-  88               	.LBE3:
-  89               	.LBE2:
-  90               	.LM18:
-  91 005e 322F      		mov r19,r18
-  92               	.LM19:
-  93 0060 8091 6600 		lds r24,102
-  94 0064 282F      		mov r18,r24
+  68 004a 9093 8500 		sts (132)+1,r25
+  69 004e 8093 8400 		sts 132,r24
+  70               	.LM16:
+  71 0052 1092 B200 		sts 178,__zero_reg__
+  72               	.LM17:
+  73 0056 4EE3      		ldi r20,lo8(62)
+  74 0058 ACEC      		ldi r26,lo8(25804)
+  75 005a B4E6      		ldi r27,hi8(25804)
+  76 005c C0E0      		ldi r28,hlo8(25804)
+  77 005e D0E0      		ldi r29,hhi8(25804)
+  78               	.L21:
+  79               	.LBB2:
+  80               	.LBB3:
+  81               	.LBB4:
+  82               	.LBB5:
+  83               	.LM18:
+  84 0060 CD01      		movw r24,r26
+  85               	/* #APP */
+  86 0062 0197      		1: sbiw r24,1
+  87 0064 F1F7      		brne 1b
+  88               	/* #NOAPP */
+  89               	.LBE5:
+  90               	.LBE4:
+  91               	.LBE3:
+  92               	.LBE2:
+  93               	.LM19:
+  94 0066 322F      		mov r19,r18
   95               	.LM20:
-  96 0066 8091 0000 		lds r24,ActualCount
-  97 006a 9091 0000 		lds r25,(ActualCount)+1
-  98 006e 8650      		subi r24,lo8(-7930)
-  99 0070 914E      		sbci r25,hi8(-7930)
- 100 0072 20F0      		brlo .L16
- 101               	.LM21:
- 102 0074 8091 6600 		lds r24,102
- 103 0078 8150      		subi r24,lo8(-(-1))
- 104 007a 0AC0      		rjmp .L23
- 105               	.L16:
- 106               	.LM22:
- 107 007c 8091 0000 		lds r24,ActualCount
- 108 0080 9091 0000 		lds r25,(ActualCount)+1
- 109 0084 8B5F      		subi r24,lo8(-7941)
- 110 0086 904E      		sbci r25,hi8(-7941)
- 111 0088 58F4      		brsh .L7
- 112               	.LM23:
- 113 008a 8091 6600 		lds r24,102
- 114 008e 8F5F      		subi r24,lo8(-(1))
- 115               	.L23:
- 116 0090 8093 6600 		sts 102,r24
- 117               	.LM24:
- 118 0094 8091 6600 		lds r24,102
- 119 0098 8317      		cp r24,r19
- 120 009a 11F0      		breq .L7
- 121               	.LM25:
- 122 009c 4150      		subi r20,1
- 123 009e E0F6      		brcc .L21
- 124               	.L7:
- 125               	.LM26:
- 126 00a0 1092 6F00 		sts 111,__zero_reg__
- 127               	.LM27:
- 128 00a4 1092 7000 		sts 112,__zero_reg__
- 129               	.LM28:
- 130 00a8 1092 8100 		sts 129,__zero_reg__
- 131               	.LM29:
- 132 00ac 1092 B000 		sts 176,__zero_reg__
- 133               	.LM30:
- 134 00b0 8091 B600 		lds r24,182
- 135 00b4 877F      		andi r24,lo8(-9)
- 136 00b6 8093 B600 		sts 182,r24
- 137               	.LM31:
- 138 00ba 5FBF      		out 95-0x20,r21
- 139               	/* epilogue: frame size=0 */
- 140 00bc DF91      		pop r29
- 141 00be CF91      		pop r28
- 142 00c0 0895      		ret
- 143               	/* epilogue end (size=3) */
- 144               	/* function OSCCAL_Calibrate size 103 (98) */
- 145               	.LFE14:
- 147               	.global	__vector_5
- 149               	__vector_5:
- 150               	.LFB15:
- 151               	.LM32:
- 152               	/* prologue: frame size=0 */
- 153 00c2 1F92      		push __zero_reg__
- 154 00c4 0F92      		push __tmp_reg__
- 155 00c6 0FB6      		in __tmp_reg__,__SREG__
- 156 00c8 0F92      		push __tmp_reg__
- 157 00ca 1124      		clr __zero_reg__
- 158 00cc 8F93      		push r24
- 159 00ce 9F93      		push r25
- 160               	/* prologue end (size=7) */
- 161               	.LM33:
- 162 00d0 1092 8100 		sts 129,__zero_reg__
- 163               	.LM34:
- 164 00d4 8091 8400 		lds r24,132
- 165 00d8 9091 8500 		lds r25,(132)+1
- 166 00dc 9093 0000 		sts (ActualCount)+1,r25
- 167 00e0 8093 0000 		sts ActualCount,r24
- 168               	.LM35:
- 169 00e4 1092 8500 		sts (132)+1,__zero_reg__
- 170 00e8 1092 8400 		sts 132,__zero_reg__
+  96 0068 8091 6600 		lds r24,102
+  97 006c 282F      		mov r18,r24
+  98               	.LM21:
+  99 006e 8091 0000 		lds r24,ActualCount
+ 100 0072 9091 0000 		lds r25,(ActualCount)+1
+ 101 0076 8150      		subi r24,lo8(-7935)
+ 102 0078 914E      		sbci r25,hi8(-7935)
+ 103 007a 20F0      		brlo .L16
+ 104               	.LM22:
+ 105 007c 8091 6600 		lds r24,102
+ 106 0080 8150      		subi r24,lo8(-(-1))
+ 107 0082 0AC0      		rjmp .L23
+ 108               	.L16:
+ 109               	.LM23:
+ 110 0084 8091 0000 		lds r24,ActualCount
+ 111 0088 9091 0000 		lds r25,(ActualCount)+1
+ 112 008c 865F      		subi r24,lo8(-7946)
+ 113 008e 904E      		sbci r25,hi8(-7946)
+ 114 0090 58F4      		brsh .L7
+ 115               	.LM24:
+ 116 0092 8091 6600 		lds r24,102
+ 117 0096 8F5F      		subi r24,lo8(-(1))
+ 118               	.L23:
+ 119 0098 8093 6600 		sts 102,r24
+ 120               	.LM25:
+ 121 009c 8091 6600 		lds r24,102
+ 122 00a0 8317      		cp r24,r19
+ 123 00a2 11F0      		breq .L7
+ 124               	.LM26:
+ 125 00a4 4150      		subi r20,1
+ 126 00a6 E0F6      		brcc .L21
+ 127               	.L7:
+ 128               	.LM27:
+ 129 00a8 1092 6F00 		sts 111,__zero_reg__
+ 130               	.LM28:
+ 131 00ac 1092 7000 		sts 112,__zero_reg__
+ 132               	.LM29:
+ 133 00b0 1092 8100 		sts 129,__zero_reg__
+ 134               	.LM30:
+ 135 00b4 1092 B000 		sts 176,__zero_reg__
+ 136               	.LM31:
+ 137 00b8 8091 B600 		lds r24,182
+ 138 00bc 877F      		andi r24,lo8(-9)
+ 139 00be 8093 B600 		sts 182,r24
+ 140               	.LM32:
+ 141 00c2 5FBF      		out 95-0x20,r21
+ 142               	/* epilogue: frame size=0 */
+ 143 00c4 DF91      		pop r29
+ 144 00c6 CF91      		pop r28
+ 145 00c8 0895      		ret
+ 146               	/* epilogue end (size=3) */
+ 147               	/* function OSCCAL_Calibrate size 107 (102) */
+ 148               	.LFE14:
+ 150               	.global	__vector_5
+ 152               	__vector_5:
+ 153               	.LFB15:
+ 154               	.LM33:
+ 155               	/* prologue: frame size=0 */
+ 156 00ca 1F92      		push __zero_reg__
+ 157 00cc 0F92      		push __tmp_reg__
+ 158 00ce 0FB6      		in __tmp_reg__,__SREG__
+ 159 00d0 0F92      		push __tmp_reg__
+ 160 00d2 1124      		clr __zero_reg__
+ 161 00d4 8F93      		push r24
+ 162 00d6 9F93      		push r25
+ 163               	/* prologue end (size=7) */
+ 164               	.LM34:
+ 165 00d8 1092 8100 		sts 129,__zero_reg__
+ 166               	.LM35:
+ 167 00dc 8091 8400 		lds r24,132
+ 168 00e0 9091 8500 		lds r25,(132)+1
+ 169 00e4 9093 0000 		sts (ActualCount)+1,r25
+ 170 00e8 8093 0000 		sts ActualCount,r24
  171               	.LM36:
- 172 00ec 1092 B200 		sts 178,__zero_reg__
- 173               	.LM37:
- 174 00f0 81E0      		ldi r24,lo8(1)
- 175 00f2 8093 8100 		sts 129,r24
- 176               	/* epilogue: frame size=0 */
- 177 00f6 9F91      		pop r25
- 178 00f8 8F91      		pop r24
- 179 00fa 0F90      		pop __tmp_reg__
- 180 00fc 0FBE      		out __SREG__,__tmp_reg__
- 181 00fe 0F90      		pop __tmp_reg__
- 182 0100 1F90      		pop __zero_reg__
- 183 0102 1895      		reti
- 184               	/* epilogue end (size=7) */
- 185               	/* function __vector_5 size 33 (19) */
- 186               	.LFE15:
- 188               		.lcomm ActualCount,2
- 189               	.Letext0:
+ 172 00ec 1092 8500 		sts (132)+1,__zero_reg__
+ 173 00f0 1092 8400 		sts 132,__zero_reg__
+ 174               	.LM37:
+ 175 00f4 1092 B200 		sts 178,__zero_reg__
+ 176               	.LM38:
+ 177 00f8 81E0      		ldi r24,lo8(1)
+ 178 00fa 8093 8100 		sts 129,r24
+ 179               	/* epilogue: frame size=0 */
+ 180 00fe 9F91      		pop r25
+ 181 0100 8F91      		pop r24
+ 182 0102 0F90      		pop __tmp_reg__
+ 183 0104 0FBE      		out __SREG__,__tmp_reg__
+ 184 0106 0F90      		pop __tmp_reg__
+ 185 0108 1F90      		pop __zero_reg__
+ 186 010a 1895      		reti
+ 187               	/* epilogue end (size=7) */
+ 188               	/* function __vector_5 size 33 (19) */
+ 189               	.LFE15:
+ 191               		.lcomm ActualCount,2
+ 192               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 OSCCal.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccA7aaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccA7aaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccA7aaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccA7aaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccA7aaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccA7aaaa.s:20     .text:00000000 OSCCAL_Calibrate
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc84aaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc84aaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc84aaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc84aaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc84aaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc84aaaa.s:20     .text:00000000 OSCCAL_Calibrate
                              .bss:00000000 ActualCount
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccA7aaaa.s:149    .text:000000c2 __vector_5
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc84aaaa.s:152    .text:000000ca __vector_5
 
 UNDEFINED SYMBOLS
 __do_copy_data

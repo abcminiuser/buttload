@@ -147,7 +147,7 @@ const uint8_t*   AboutTextPtrs[]         PROGMEM = {ProgrammerName, VersionInfo,
 const uint8_t    Func_ISPPRGM[]          PROGMEM = "AVRISP MODE";
 const uint8_t    Func_STOREPRGM[]        PROGMEM = "STORE PRGM";
 const uint8_t    Func_PRGMAVR[]          PROGMEM = "PROGRAM AVR";
-const uint8_t    Func_PRGMDATAFLASH[]    PROGMEM = "DATAFLASH PRGM MODE";
+const uint8_t    Func_PRGMDATAFLASH[]    PROGMEM = "DATAFLASH PRGM";
 const uint8_t    Func_PRGMSTOREINFO[]    PROGMEM = "DATASTORE INFO";
 const uint8_t    Func_SETTINGS[]         PROGMEM = "SETTINGS";
 const uint8_t    Func_SLEEP[]            PROGMEM = "SLEEP MODE";
@@ -210,20 +210,22 @@ int main(void)
 
 	MAIN_SETSTATUSLED(MAIN_STATLED_RED);	     // Set status LEDs to red (busy)
 
+	LCD_Init();
+	LCD_CONTRAST_LEVEL(0x0F);
+	LCD_puts_f(WaitText); 
+
+	sei();
+
 	if (eeprom_read_byte(&EEPROMVars.MagicNumber) != MAGIC_NUM) // Check if first ButtLoad run
 	{
+
 		for (uint16_t EAddr = 0; EAddr < 512; EAddr++) // Clear the EEPROM if first run
 		   eeprom_write_byte((uint8_t*)EAddr, 0xFF);
 
 		eeprom_write_byte(&EEPROMVars.MagicNumber, MAGIC_NUM);
 	}
-
-	LCD_Init();
-	LCD_CONTRAST_LEVEL(eeprom_read_byte(&EEPROMVars.LCDContrast));
-
-	sei();
 	
-	LCD_puts_f(WaitText); 
+	LCD_CONTRAST_LEVEL(eeprom_read_byte(&EEPROMVars.LCDContrast));
 	DF_EnableDataflash(FALSE);                   // Pull internal Dataflash /CS high to disable it and thus save power
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);      // Set status LEDs to orange (busy)
 	USART_Init();                                // UART at 115200 baud (7.3MHz clock, double USART speed)
@@ -444,6 +446,8 @@ void FUNCShowAbout(void)
 
 void FUNCAVRISPMode(void)
 {
+	USART_ENABLE(USART_TX_ON, USART_RX_ON);
+
 	LCD_puts_f(AVRISPModeMessage);
 	
 	InterpretPacketRoutine = (FuncPtr)AICI_InterpretPacket;
@@ -456,6 +460,8 @@ void FUNCProgramDataflash(void)
 	UseExernalDF = TRUE;
 	DFSPIRoutinePointer = USI_SPITransmit;
 	
+	USART_ENABLE(USART_TX_ON, USART_RX_ON);
+
 	LCD_puts_f(DataFlashProgMode);
 
 	InterpretPacketRoutine = PD_InterpretAVRISPPacket;
@@ -635,6 +641,8 @@ void FUNCStoreProgram(void)
 	if (!(DF_CheckCorrectOnboardChip()))
 	  return;
 			
+	USART_ENABLE(USART_TX_ON, USART_RX_ON);
+
 	LCD_puts_f(PSTR("*STORAGE MODE*"));
 
 	InterpretPacketRoutine = (FuncPtr)PM_InterpretAVRISPPacket;
@@ -670,12 +678,6 @@ void FUNCClearMem(void)
 
 	LCD_puts_f(PSTR("MEM CLEARED"));
 	MAIN_Delay10MS(255);
-}
-
-void FUNCAutoCalib(void)
-{
-	LCD_puts_f(WaitText);
-	OSCCAL_Calibrate();
 }
 
 void FUNCSetContrast(void)

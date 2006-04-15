@@ -29,7 +29,6 @@ void V2P_RunStateMachine(void)
 	uint8_t  V2PState            = V2P_STATE_IDLE;
 	uint16_t CurrentMessageByte  = 0;
 
-	USART_ENABLE(USART_TX_ON, USART_RX_ON);
 	BUFF_InitialiseBuffer();
 
 	TIMEOUT_SetupTimeoutTimer();

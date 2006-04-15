@@ -41,8 +41,8 @@
 void USART_Init(void)
 {
     // Set baud rate
-    UBRRH = (uint8_t)(USART_BAUDRATE >> 8);
-    UBRRL = (uint8_t)(USART_BAUDRATE);
+    UBRRH = (uint8_t)(USART_BAUDVALUE >> 8);
+    UBRRL = (uint8_t)(USART_BAUDVALUE);
 
     // Double speed
 	UCSRA = (USART_DOUBLESPEED << U2X);
@@ -106,21 +106,4 @@ char USART_Rx(void)
 {
     while (!(BuffElements) && !(TimeOut)) {};
     return BUFF_GetBuffByte();
-}
-
-/*****************************************************************************
-*
-*   Function name : Usart_Rx Interrupt
-*
-*   Returns :       N/A
-*
-*   Parameters :    None
-*
-*   Purpose :       Receives one byte from the USART and stores it into the buffer
-*
-*****************************************************************************/
-
-ISR(USART0_RX_vect, ISR_BLOCK)
-{
-	BUFF_StoreBuffByte(UDR);
 }
