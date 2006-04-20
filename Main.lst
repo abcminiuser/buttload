@@ -2126,90 +2126,100 @@
  2176               	/* epilogue end (size=0) */
  2177               	/* function FUNCGoBootloader size 14 (14) */
  2178               	.LFE35:
- 2180               	.Letext0:
+ 2180               	.global	EEPROMVars
+ 2181               		.section	.eeprom,"aw",@progbits
+ 2184               	EEPROMVars:
+ 2185 0000 0000 0000 		.skip 135,0
+ 2185      0000 0000 
+ 2185      0000 0000 
+ 2185      0000 0000 
+ 2185      0000 0000 
+ 2186               		.text
+ 2187               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 Main.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:22     .progmem.data:00000000 SIFOOptionPtrs
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:33     .progmem.data:00000013 SIFO_Size
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:28     .progmem.data:00000004 SIFO_Tags
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:38     .progmem.data:00000021 USIPSNamePtrs
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:61     .progmem.data:00000047 USI_Speed0
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:56     .progmem.data:0000003d USI_Speed1
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:51     .progmem.data:00000033 USI_Speed2
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:46     .progmem.data:00000029 USI_Speed3
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:66     .progmem.data:00000051 ProgOptions
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:107    .progmem.data:000000ba PRG_D
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:102    .progmem.data:000000ae PRG_E
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:97     .progmem.data:0000009e PRG_DE
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:92     .progmem.data:0000008e PRG_F
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:87     .progmem.data:0000007e PRG_L
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:82     .progmem.data:0000006a PRG_FL
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:77     .progmem.data:0000005f PRG_C
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:112    .progmem.data:000000c4 SettingFunctionPtrs
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:1752   .text:00000734 FUNCSetContrast
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:1879   .text:000007da FUNCSetISPSpeed
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:1672   .text:000006cc FUNCClearMem
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:2150   .text:00000926 FUNCGoBootloader
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:120    .progmem.data:000000cc SettingFunctionNames
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:143    .progmem.data:00000102 SFunc_SETCONTRAST
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:138    .progmem.data:000000f4 SFunc_SETSPISPEED
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:133    .progmem.data:000000e7 SFunc_CLEARMEM
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:128    .progmem.data:000000d4 SFunc_GOBOOTLOADER
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:148    .progmem.data:0000010f MainFunctionPtrs
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:1057   .text:0000036a FUNCAVRISPMode
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:1600   .text:00000668 FUNCStoreProgram
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:1182   .text:000003fe FUNCProgramAVR
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:1090   .text:0000039c FUNCProgramDataflash
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:2028   .text:00000876 FUNCStorageInfo
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:964    .text:00000300 FUNCChangeSettings
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:1985   .text:0000084e FUNCSleepMode
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:159    .progmem.data:0000011d MainFunctionNames
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:200    .progmem.data:00000174 Func_ISPPRGM
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:195    .progmem.data:00000169 Func_STOREPRGM
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:190    .progmem.data:0000015d Func_PRGMAVR
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:185    .progmem.data:0000014e Func_PRGMDATAFLASH
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:180    .progmem.data:0000013f Func_PRGMSTOREINFO
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:175    .progmem.data:00000136 Func_SETTINGS
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:170    .progmem.data:0000012b Func_SLEEP
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:205    .progmem.data:00000180 AboutTextPtrs
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:232    .progmem.data:000001ab ProgrammerName
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:223    .progmem.data:000001a6 VersionInfo
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:218    .progmem.data:00000197 AuthorName
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:213    .progmem.data:00000188 CopyRight
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:237    .progmem.data:000001b4 WaitText
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:242    .progmem.data:000001bb BUTTTAG_Author
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:251    .progmem.data:000001ce BUTTTAG_Name
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:260    .text:00000000 MAIN_Delay10MS
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:304    .text:00000024 MAIN_WaitForJoyRelease
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:329    .text:00000038 FUNCShowAbout
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:401    .text:00000088 main
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:635    .text:000001ac MAIN_Delay1MS
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:679    .text:000001d0 MAIN_ResetCSLine
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:741    .text:00000208 MAIN_IntToStr
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:794    .progmem.data:000001e2 __c.14
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:799    .text:00000238 MAIN_ShowProgType
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:847    .text:0000027c MAIN_ShowError
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:901    .text:000002c8 __vector_3
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:938    .progmem.data:000001e8 __c.13
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:943    .text:000002f6 __vector_default
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:1153   .progmem.data:000001ef __c.6
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:1157   .progmem.data:000001fc __c.7
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:1161   .progmem.data:00000204 __c.8
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:1165   .progmem.data:0000020e __c.9
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:1169   .progmem.data:0000021c __c.10
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:1173   .progmem.data:0000022a __c.11
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:1177   .progmem.data:0000023b __c.12
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:1595   .progmem.data:00000242 __c.5
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:1659   .progmem.data:00000251 __c.2
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:1663   .progmem.data:00000259 __c.3
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:1667   .progmem.data:0000025f __c.4
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:2023   .progmem.data:0000026b __c.1
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO8aaaa.s:2145   .progmem.data:0000027a __c.0
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:22     .progmem.data:00000000 SIFOOptionPtrs
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:33     .progmem.data:00000013 SIFO_Size
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:28     .progmem.data:00000004 SIFO_Tags
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:38     .progmem.data:00000021 USIPSNamePtrs
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:61     .progmem.data:00000047 USI_Speed0
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:56     .progmem.data:0000003d USI_Speed1
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:51     .progmem.data:00000033 USI_Speed2
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:46     .progmem.data:00000029 USI_Speed3
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:66     .progmem.data:00000051 ProgOptions
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:107    .progmem.data:000000ba PRG_D
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:102    .progmem.data:000000ae PRG_E
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:97     .progmem.data:0000009e PRG_DE
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:92     .progmem.data:0000008e PRG_F
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:87     .progmem.data:0000007e PRG_L
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:82     .progmem.data:0000006a PRG_FL
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:77     .progmem.data:0000005f PRG_C
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:112    .progmem.data:000000c4 SettingFunctionPtrs
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1752   .text:00000734 FUNCSetContrast
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1879   .text:000007da FUNCSetISPSpeed
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1672   .text:000006cc FUNCClearMem
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:2150   .text:00000926 FUNCGoBootloader
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:120    .progmem.data:000000cc SettingFunctionNames
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:143    .progmem.data:00000102 SFunc_SETCONTRAST
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:138    .progmem.data:000000f4 SFunc_SETSPISPEED
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:133    .progmem.data:000000e7 SFunc_CLEARMEM
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:128    .progmem.data:000000d4 SFunc_GOBOOTLOADER
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:148    .progmem.data:0000010f MainFunctionPtrs
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1057   .text:0000036a FUNCAVRISPMode
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1600   .text:00000668 FUNCStoreProgram
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1182   .text:000003fe FUNCProgramAVR
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1090   .text:0000039c FUNCProgramDataflash
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:2028   .text:00000876 FUNCStorageInfo
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:964    .text:00000300 FUNCChangeSettings
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1985   .text:0000084e FUNCSleepMode
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:159    .progmem.data:0000011d MainFunctionNames
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:200    .progmem.data:00000174 Func_ISPPRGM
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:195    .progmem.data:00000169 Func_STOREPRGM
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:190    .progmem.data:0000015d Func_PRGMAVR
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:185    .progmem.data:0000014e Func_PRGMDATAFLASH
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:180    .progmem.data:0000013f Func_PRGMSTOREINFO
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:175    .progmem.data:00000136 Func_SETTINGS
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:170    .progmem.data:0000012b Func_SLEEP
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:205    .progmem.data:00000180 AboutTextPtrs
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:232    .progmem.data:000001ab ProgrammerName
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:223    .progmem.data:000001a6 VersionInfo
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:218    .progmem.data:00000197 AuthorName
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:213    .progmem.data:00000188 CopyRight
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:237    .progmem.data:000001b4 WaitText
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:242    .progmem.data:000001bb BUTTTAG_Author
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:251    .progmem.data:000001ce BUTTTAG_Name
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:260    .text:00000000 MAIN_Delay10MS
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:304    .text:00000024 MAIN_WaitForJoyRelease
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:329    .text:00000038 FUNCShowAbout
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:401    .text:00000088 main
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:2184   .eeprom:00000000 EEPROMVars
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:635    .text:000001ac MAIN_Delay1MS
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:679    .text:000001d0 MAIN_ResetCSLine
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:741    .text:00000208 MAIN_IntToStr
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:794    .progmem.data:000001e2 __c.14
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:799    .text:00000238 MAIN_ShowProgType
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:847    .text:0000027c MAIN_ShowError
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:901    .text:000002c8 __vector_3
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:938    .progmem.data:000001e8 __c.13
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:943    .text:000002f6 __vector_default
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1153   .progmem.data:000001ef __c.6
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1157   .progmem.data:000001fc __c.7
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1161   .progmem.data:00000204 __c.8
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1165   .progmem.data:0000020e __c.9
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1169   .progmem.data:0000021c __c.10
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1173   .progmem.data:0000022a __c.11
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1177   .progmem.data:0000023b __c.12
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1595   .progmem.data:00000242 __c.5
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1659   .progmem.data:00000251 __c.2
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1663   .progmem.data:00000259 __c.3
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1667   .progmem.data:0000025f __c.4
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:2023   .progmem.data:0000026b __c.1
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:2145   .progmem.data:0000027a __c.0
 
 UNDEFINED SYMBOLS
 __do_copy_data
@@ -2217,7 +2227,6 @@ __do_clear_bss
 LCD_puts_f
 __stack
 LCD_Init
-EEPROMVars
 __eeprom_read_byte_1F2021
 __eeprom_write_byte_1F2021
 DF_EnableDataflash

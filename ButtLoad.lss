@@ -19,15 +19,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   7 .debug_aranges 0000012c  00000000  00000000  000035a8  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_pubnames 00000da4  00000000  00000000  000036d4  2**0
+  8 .debug_pubnames 00000d92  00000000  00000000  000036d4  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_info   00003fb3  00000000  00000000  00004478  2**0
+  9 .debug_info   00003ddb  00000000  00000000  00004466  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_abbrev 00000fea  00000000  00000000  0000842b  2**0
+ 10 .debug_abbrev 00000f74  00000000  00000000  00008241  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_line   00003298  00000000  00000000  00009415  2**0
+ 11 .debug_line   000031cb  00000000  00000000  000091b5  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_str    000010cd  00000000  00000000  0000c6ad  2**0
+ 12 .debug_str    000010bb  00000000  00000000  0000c380  2**0
                   CONTENTS, READONLY, DEBUGGING
 Disassembly of section .text:
 
@@ -376,9 +376,9 @@ void MAIN_Delay1MS(uint8_t loops)
 
 void MAIN_ResetCSLine(uint8_t ActiveInactive)
 {
-  /* ActiveInactive controls the /Reset line to an AVR device or external dataflash
-     /CS line. If the reset polarity parameter is a 0 then interfacing with AT89
-	 devices which has an active high reset. Pins are tristated when inactive.      */
+	/* ActiveInactive controls the /Reset line to an AVR device or external dataflash
+	/CS line. If the reset polarity parameter is a 0 then interfacing with AT89
+	devices which has an active high reset. Pins are tristated when inactive.         */
 	
 	switch (ActiveInactive)
 	{
@@ -1043,7 +1043,7 @@ void FUNCProgramDataflash(void)
      804:	93 e0       	ldi	r25, 0x03	; 3
      806:	0e 94 91 07 	call	0xf22 <LCD_puts_f>
 
-	InterpretPacketRoutine = PD_InterpretAVRISPPacket;
+	InterpretPacketRoutine = (FuncPtr)PD_InterpretAVRISPPacket;
      80a:	84 eb       	ldi	r24, 0xB4	; 180
      80c:	9b e0       	ldi	r25, 0x0B	; 11
      80e:	90 93 03 01 	sts	0x0103, r25

@@ -9,8 +9,11 @@
 */
 
 #include "ButtLoadTag.h"
-BUTTLOADTAG(Name,   "BUTTLOAD AVRISP");
-BUTTLOADTAG(Author, "BY DEAN CAMERA");
+
+#ifdef BUTTLOADTAG // Can be used in program to prevent errors if ButtLoadTag not included
+	BUTTLOADTAG(Name,   "BUTTLOAD AVRISP");
+	BUTTLOADTAG(Author, "BY DEAN CAMERA");
+#endif
 
 /*
     LICENCE:
@@ -115,7 +118,7 @@ BUTTLOADTAG(Author, "BY DEAN CAMERA");
 		ISPChipComm.c + Header file              | By Dean Camera
 		AVRISPCommandInterpreter.c + Header file | By Dean Camera
 		ProgramManager.c + Header file           | By Dean Camera
-		EEPROMVariables.c + Header file          | By Dean Camera		
+		EEPROMVariables.h                        | By Dean Camera		
 		JoystickInterrupt.S                      | By Dean Camera
 		USIInterrupt.S                           | By Dean Camera
 		RingBuff.c + Header file                 | By Dean Camera
@@ -184,6 +187,9 @@ const uint8_t    SIFO_Size[]             PROGMEM = "STORAGE SIZES";
 const uint8_t    SIFO_Tags[]             PROGMEM = "VIEW DATA TAGS";
 
 const uint8_t*   SIFOOptionPtrs[]        PROGMEM = {SIFO_Size, SIFO_Tags};
+
+// GLOBAL EEPROM VARIABLE STRUCT:
+EEPROMVarsType EEPROMVars EEMEM;
 
 // ======================================================================================
 
@@ -284,9 +290,9 @@ void MAIN_Delay1MS(uint8_t loops)
 
 void MAIN_ResetCSLine(uint8_t ActiveInactive)
 {
-  /* ActiveInactive controls the /Reset line to an AVR device or external dataflash
-     /CS line. If the reset polarity parameter is a 0 then interfacing with AT89
-	 devices which has an active high reset. Pins are tristated when inactive.      */
+	/* ActiveInactive controls the /Reset line to an AVR device or external dataflash
+	/CS line. If the reset polarity parameter is a 0 then interfacing with AT89
+	devices which has an active high reset. Pins are tristated when inactive.         */
 	
 	switch (ActiveInactive)
 	{
@@ -464,7 +470,7 @@ void FUNCProgramDataflash(void)
 
 	LCD_puts_f(DataFlashProgMode);
 
-	InterpretPacketRoutine = PD_InterpretAVRISPPacket;
+	InterpretPacketRoutine = (FuncPtr)PD_InterpretAVRISPPacket;
 	V2P_RunStateMachine();
 	   
 	DF_EnableDataflash(FALSE);

@@ -9,7 +9,6 @@
 #define EEVARS_H
 
 // INCLUDES:
-#include <avr/io.h>
 #include <avr/eeprom.h>
 
 // TYPE DEFINITIONS:
@@ -33,8 +32,5 @@ typedef struct
 	uint8_t  LCDContrast;
 	uint8_t  MagicNumber;	
 } EEPROMVarsType;
-
-// EXTERN VARIABLES:
-extern EEPROMVarsType EEPROMVars EEMEM;
 
 #endif

@@ -10,7 +10,7 @@
 
 ; This interrupt handler is my ASM version of the Atmel C handler,
 ; rewritten for speed. It clocks the USI shift register on each
-; compare match of the Timer0 timer.
+; compare match interrupt of the Timer0 timer.
 
 ; To make the routine as fast as possible, the USICR register value
 ; (including the new USITC flag) is written directly to the register

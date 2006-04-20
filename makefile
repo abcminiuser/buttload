@@ -71,7 +71,6 @@ SRC =   Main.c                       \
                                      \
 		RingBuff.c                   \
         Timeout.c                    \
-		EEPROMVariables.c            \
 		                             \
 		ProgDataflash.c              \
 		V2Protocol.c                 \

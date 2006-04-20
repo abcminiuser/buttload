@@ -31,9 +31,8 @@
  *  SPI module, which means that the byte must be read before the next transfer
  *  completes and overwrites the current value.
  */
-uint8_t storedUSIDR;
+volatile uint8_t storedUSIDR;
 volatile uint8_t TransferComplete;
-
 
                                                           // SPI Clock Duration Value    , Compare Value
 const uint8_t USIPSValues[USI_PRESET_SPEEDS][2] PROGMEM = {{USI_SPI_SPEED_28800Hz       , 128          },  // Actual speed = 57,153Hz

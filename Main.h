@@ -37,7 +37,7 @@ typedef void (*FuncPtr)(void);
 
 // LIB C VERSION CHECK:
 #if (!defined(__AVR_LIBC_VERSION__) || (__AVR_LIBC_VERSION__ < 10401UL)) // In future requirements may be increased with changes
- #error AVRLibC Version 1.4.1 or higher is required to compile this project.
+	#error AVRLibC Version 1.4.1 or higher is required to compile this project.
 #endif
 
 // EXTERNAL VARIABLES:
@@ -45,6 +45,8 @@ extern const uint8_t WaitText[];
 extern const uint8_t ProgrammerName[];
 extern const uint8_t VersionInfo[];
 extern const uint8_t FAULTERR_ISPShort[];
+
+extern EEPROMVarsType EEPROMVars EEMEM;
 #define JoyStatus GPIOR0 // Pseudo-variable; "JoyStatus" becomes an alias for the General Purpose IO Storage Register 0
 
 // DEFINES AND MACROS:
