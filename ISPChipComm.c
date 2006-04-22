@@ -152,7 +152,7 @@ void ISPCC_ProgramChip(void)
 	}
 }
 
-void ISPCC_PollForProgComplete(uint8_t PollData, uint16_t PollAddr)
+void ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr)
 {
 	uint8_t PollType;
 	uint8_t ProgCommand;

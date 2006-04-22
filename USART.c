@@ -68,7 +68,7 @@ void USART_Init(void)
 *   Purpose :       Send one byte through the USART
 *
 *****************************************************************************/
-void USART_Tx(char data)
+void USART_Tx(const char data)
 {
     while (!(UCSRA & (1 << UDRE)));
     UDR = data;
@@ -85,7 +85,7 @@ void USART_Tx(char data)
 *   Purpose :       Send one byte through the USART
 *
 *****************************************************************************/
-void USART_TxString(char *data)
+void USART_TxString(const char *data)
 {
 	while (*data != '\0')
 	  USART_Tx(*data++);

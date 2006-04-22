@@ -25,9 +25,9 @@
 #define LCD_SEGBUFFER_SIZE        20
 
 // PROTOTYPES:
-void LCD_puts(uint8_t *Data);
+void LCD_puts(const uint8_t *Data);
 void LCD_puts_f(const uint8_t *FlashData);
 void LCD_Init(void);
-void LCD_WriteChar(uint8_t Byte, uint8_t Digit);
+void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit);
 
 #endif

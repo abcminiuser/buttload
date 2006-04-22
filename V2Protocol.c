@@ -8,7 +8,6 @@
 #include "V2Protocol.h"
 
 // PROGMEM CONSTANTS:
-const uint8_t VersionData[]        PROGMEM   = {HW_VERSION, SW_VERSION_MAJOR, SW_VERSION_MINOR};
 const uint8_t SignonResponse[11]   PROGMEM   = {CMD_SIGN_ON, STATUS_CMD_OK, 8, 'A', 'V', 'R', 'I', 'S', 'P', '_', '2'};
 
 // GLOBAL VARIABLES:
@@ -30,8 +29,6 @@ void V2P_RunStateMachine(void)
 	uint16_t CurrentMessageByte  = 0;
 
 	BUFF_InitialiseBuffer();
-
-	TIMEOUT_SetupTimeoutTimer();
 
 	InProgrammingMode = FALSE;
 	CurrAddress       = 0;
@@ -223,9 +220,15 @@ void V2P_GetSetParamater(void)
 
 			break;
 		case PARAM_HARDWARE_VERSION:
+			PacketBytes[2] = V2P_HW_VERSION;
+
+			break;
 		case PARAM_SW_MAJOR:
+			PacketBytes[2] = V2P_SW_VERSION_MAJOR;
+
+			break;
 		case PARAM_SW_MINOR:
-			PacketBytes[2] = pgm_read_byte(&VersionData[Param_Name - PARAM_HARDWARE_VERSION]);
+			PacketBytes[2] = ((eeprom_read_byte(&EEPROMVars.FirmVerMinor) == 0xFF)? V2P_SW_VERSION_MINOR_DEFAULT : eeprom_read_byte(&EEPROMVars.FirmVerMinor));
 
 			break;
 		case PARAM_CONTROLLER_INIT:

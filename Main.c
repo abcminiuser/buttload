@@ -160,11 +160,12 @@ const FuncPtr    MainFunctionPtrs[]      PROGMEM = {FUNCAVRISPMode, FUNCStorePro
 
 const uint8_t    SFunc_SETCONTRAST[]     PROGMEM = "SET CONTRAST";
 const uint8_t    SFunc_SETSPISPEED[]     PROGMEM = "SET SPI SPEED";
+const uint8_t    SFunc_SETFIRMMINOR[]    PROGMEM = "SET FIRM VERSION";
 const uint8_t    SFunc_CLEARMEM[]        PROGMEM = "CLEAR MEMORY";
 const uint8_t    SFunc_GOBOOTLOADER[]    PROGMEM = "JUMP TO BOOTLOADER";
 
-const uint8_t*   SettingFunctionNames[]  PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
-const FuncPtr    SettingFunctionPtrs[]   PROGMEM = {FUNCSetContrast  , FUNCSetISPSpeed  , FUNCClearMem  , FUNCGoBootloader};
+const uint8_t*   SettingFunctionNames[]  PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_SETFIRMMINOR , SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
+const FuncPtr    SettingFunctionPtrs[]   PROGMEM = {FUNCSetContrast  , FUNCSetISPSpeed  , FUNCSetFirmMinorVer, FUNCClearMem  , FUNCGoBootloader};
 
 const uint8_t    PRG_D[]                 PROGMEM = "DATA ONLY";
 const uint8_t    PRG_E[]                 PROGMEM = "EEPROM ONLY";
@@ -288,7 +289,7 @@ void MAIN_Delay1MS(uint8_t loops)
 	  _delay_ms(1);
 }
 
-void MAIN_ResetCSLine(uint8_t ActiveInactive)
+void MAIN_ResetCSLine(const uint8_t ActiveInactive)
 {
 	/* ActiveInactive controls the /Reset line to an AVR device or external dataflash
 	/CS line. If the reset polarity parameter is a 0 then interfacing with AT89
@@ -356,7 +357,7 @@ void MAIN_IntToStr(uint16_t IntV, uint8_t* Buff)
 	*(Buff)   = '\0';
 }
 
-void MAIN_ShowProgType(uint8_t Letter)
+void MAIN_ShowProgType(const uint8_t Letter)
 {
 	uint8_t ProgTypeBuffer[7];
 
@@ -480,7 +481,6 @@ void FUNCProgramDataflash(void)
 void FUNCProgramAVR(void)
 {
 	uint8_t  DoneFailMessageBuff[19];
-	uint8_t* EEPROMAddress;
 	uint8_t  Fault = ISPCC_NO_FAULT;
 	uint8_t  ProgMode = 0;
 
@@ -521,10 +521,7 @@ void FUNCProgramAVR(void)
 	MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE); // Capture the RESET line of the slave AVR
 			
 	for (uint8_t PacketB = 0; PacketB <= 11; PacketB++) // Read the enter programming mode command bytes
-	{
-		PacketBytes[PacketB] = eeprom_read_byte(&EEPROMVars.EnterProgMode[PacketB]);
-		EEPROMAddress++;
-	}
+	  PacketBytes[PacketB] = eeprom_read_byte(&EEPROMVars.EnterProgMode[PacketB]);
 	
 	ISPCC_EnterChipProgrammingMode();    // Try to sync with the slave AVR
 
@@ -729,11 +726,11 @@ void FUNCSetContrast(void)
 
 void FUNCSetISPSpeed(void)
 {
-	JoyStatus = 1;                         // Invalid value to force the LCD to update
-
 	uint8_t CurrSpeed = eeprom_read_byte(&EEPROMVars.SCKDuration);
 
 	if (CurrSpeed > (USI_PRESET_SPEEDS - 1)) CurrSpeed = 0; // Protection against blank EEPROM
+
+	JoyStatus = 1;                         // Invalid value to force the LCD to update
 
 	while (1)
 	{
@@ -761,12 +758,50 @@ void FUNCSetISPSpeed(void)
 	}
 }
 
+void FUNCSetFirmMinorVer(void)
+{
+	uint8_t VerBuffer[5];
+	uint8_t VerMinor = eeprom_read_byte(&EEPROMVars.FirmVerMinor);
+
+	if (VerMinor > 0x09)
+	  VerMinor = V2P_SW_VERSION_MINOR_DEFAULT;
+	
+	strcpy_P(VerBuffer, PSTR("V2- "));
+
+	JoyStatus = 1;                        // Invalid value to force the LCD to update
+
+	while (1)
+	{
+		if (JoyStatus)
+		{
+			if (JoyStatus & JOY_UP)
+			{
+				(VerMinor == 9)? VerMinor = 0 : VerMinor++;
+			}
+			if (JoyStatus & JOY_DOWN)
+			{
+				(VerMinor == 0)? VerMinor = 9 : VerMinor--;
+			}
+			else if (JoyStatus & JOY_LEFT)
+			{
+				eeprom_write_byte(&EEPROMVars.FirmVerMinor, VerMinor);
+				return;
+			}
+			
+			VerBuffer[3] = ('0' + VerMinor);
+			LCD_puts(VerBuffer);
+
+			MAIN_WaitForJoyRelease();
+		}
+	}	
+}
+
 void FUNCSleepMode(void)
 {
-	SMCR    = ((1 << SM1) | (1 << SE));   // Power down sleep mode
+	SMCR    = ((1 << SM1) | (1 << SE));    // Power down sleep mode
 	LCDCRA &= ~(1 << LCDEN); 
 	
-	while (!(JoyStatus & JOY_UP))        // Joystick interrupt wakes the micro
+	while (!(JoyStatus & JOY_UP))         // Joystick interrupt wakes the micro
 	  SLEEP();
 	   
 	LCDCRA |= (1 << LCDEN);
@@ -780,7 +815,7 @@ void FUNCStorageInfo(void)
 
 	MAIN_WaitForJoyRelease();
 
-	JoyStatus = 1;                         // Invalid value to force the LCD to update
+	JoyStatus = 1;                        // Invalid value to force the LCD to update
 
 	while (1)
 	{
@@ -816,7 +851,7 @@ void FUNCStorageInfo(void)
 						MAIN_ShowError(PSTR("NO STORED PRGM"));
 					}	
 				}
-				else                  // View stored data sizes
+				else                      // View stored data sizes
 				{
 					PM_ShowStoredItemSizes();
 				}
@@ -831,15 +866,15 @@ void FUNCStorageInfo(void)
 
 void FUNCGoBootloader(void)
 {
-	uint8_t MD = (MCUCR & ~(1 << JTD)); // Forces compiler to use IN, AND plus two OUTs rather than two lots of IN/AND/OUTs
-	MCUCR = MD;  // Turn on JTAG via code
-	MCUCR = MD;  // Twice as specified in datasheet        
+	uint8_t MD = (MCUCR & ~(1 << JTD));   // Forces compiler to use IN, AND plus two OUTs rather than two lots of IN/AND/OUTs
+	MCUCR = MD;                           // Turn on JTAG via code
+	MCUCR = MD;                           // Set bit twice as specified in datasheet        
 	
 	LCD_puts_f(PSTR("*JTAG ON*"));
 	
 	MAIN_WaitForJoyRelease();
 	
-	WDTCR = ((1<<WDCE) | (1<<WDE)); // Enable Watchdog Timer to give reset after minimum timeout
-	while (1) {};                  // Eternal loop - when watchdog resets the AVR it will enter the bootloader
-	                                // assuming the BOOTRST fuse is programmed
+	WDTCR = ((1<<WDCE) | (1<<WDE));       // Enable Watchdog Timer to give reset after minimum timeout
+	while (1) {};                        // Eternal loop - when watchdog resets the AVR it will enter the bootloader
+	                                      // assuming the BOOTRST fuse is programmed
 }

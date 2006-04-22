@@ -5,7 +5,7 @@
                   dean_camera@hotmail.com
 */
 
-/* Must be included after avr/interrupt.h. This file redefines the new
+/* Must be included after avr/interrupt.h. This file re-defines the new
    ISR macro to extend it to allow custom attributes. When the old ISR
    macros SIGNAL and INTERRUPT were depricated, no suitable replacement
    was specifed for interruptable ISR routine (and no macro at all exists
@@ -14,7 +14,12 @@
 
    As a bonus, the default vector (called when an interrupt fires which does
    not have an associated ISR routine) is aliased here to a more descriptive
-   name - use the new name as you would a standard signal name.              */
+   name - use the new name as you would a standard signal name.
+   
+   The avaliable attributes are:
+		1) ISR_BLOCK   - ISR, interrupts disable until ISR completes.
+		1) ISR_NOBLOCK - ISR, interrupts enabled until ISR completes.
+		2) ISR_NAKED   - ISR, no prologue or epilogue.                     */
 
 #ifndef ISRMACRO_H
 #define ISRMACRO_H
@@ -27,14 +32,14 @@
 // The default vector is given a more descriptive alias here:
 #define BADISR_vect __vector_default
 
-// The three types of ISRs are specified here:
+// The three attributes are defined here:
 #define ISR_NOBLOCK __attribute__((interrupt))
 #define ISR_BLOCK   __attribute__((signal))
-#define ISR_NAKED   __attribute__((naked))
+#define ISR_NAKED   __attribute__((signal, naked))
 
 // Define the new ISR macro:
 #define ISR(vector, attributes)  \
- void vector (void) attributes; \
- void vector (void)
+void vector (void) attributes; \
+void vector (void)
 
 #endif

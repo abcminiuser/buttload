@@ -41,11 +41,11 @@
 #define USI_STOPUSITIMER()      MACROS{ TCCR0A = 0; }MACROE
 
 /* Prototypes */
-void    USI_SPIInitMaster( char Freq );
-void    USI_SPIOff( void );
-uint8_t USI_SPITransmit( unsigned char val );
-uint8_t USI_SPITransmitWord( unsigned int val );
+void    USI_SPIInitMaster(const uint8_t Freq);
+void    USI_SPIOff(void);
+uint8_t USI_SPITransmit(const uint8_t val);
+uint8_t USI_SPITransmitWord(const uint16_t val);
 void    USI_SPIToggleClock(void);
-void    USI_SPISetSpeed(uint8_t Freq);
+void    USI_SPISetSpeed(const uint8_t Freq);
 
 #endif

@@ -30,6 +30,7 @@ typedef struct
 	uint16_t PageLength;
 	uint16_t EPageLength;
 	uint8_t  LCDContrast;
+	uint8_t  FirmVerMinor;
 	uint8_t  MagicNumber;	
 } EEPROMVarsType;
 

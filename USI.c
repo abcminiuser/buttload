@@ -71,7 +71,7 @@ ISR(USI_OVERFLOW_vect, ISR_BLOCK)
  *  Note that the stored USIDR value is cleared.
  *
  */
-void USI_SPIInitMaster(char Freq)
+void USI_SPIInitMaster(const uint8_t Freq)
 {
 	// Configure port directions.
  	USI_DIR_REG |= (1<<USI_DATAOUT_PIN) | (1<<USI_CLOCK_PIN);  // Outputs.
@@ -91,7 +91,7 @@ void USI_SPIInitMaster(char Freq)
 	storedUSIDR = 0;
 }
 
-void USI_SPIOff( void )
+void USI_SPIOff(void)
 {
 	USI_DIR_REG &= ~((1<<USI_DATAOUT_PIN) | (1<<USI_CLOCK_PIN));                        // Inputs.
 	USI_OUT_REG &= ~((1<<USI_DATAIN_PIN)  | (1<<USI_DATAOUT_PIN) | (1<<USI_CLOCK_PIN)); // Pull-ups.
@@ -111,7 +111,7 @@ void USI_SPIOff( void )
  *
  *  \returns  0 if a write collision occurred, 1 otherwise.
  */
-uint8_t USI_SPITransmit( unsigned char val )
+uint8_t USI_SPITransmit(uint8_t val)
 {
 	// Reinit flags.
 	TransferComplete = 0;
@@ -130,7 +130,7 @@ uint8_t USI_SPITransmit( unsigned char val )
 	return storedUSIDR;
 }
 
-uint8_t USI_SPITransmitWord( unsigned int val )
+uint8_t USI_SPITransmitWord(const uint16_t val )
 {
 	USI_SPITransmit((uint8_t)(val >> 8));
 	return USI_SPITransmit((uint8_t)val);
@@ -145,7 +145,7 @@ void USI_SPIToggleClock(void)
 	MAIN_Delay1MS(1);	
 }
 
-void USI_SPISetSpeed(uint8_t Freq)
+void USI_SPISetSpeed(const uint8_t Freq)
 {
 	for (uint8_t MatchIndex = 0; MatchIndex < USI_PRESET_SPEEDS; MatchIndex++)
 	{

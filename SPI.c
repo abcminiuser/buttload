@@ -18,14 +18,14 @@ void SPI_SPIInit(void)
 	SPCR = ((1 << SPE) | (1 << MSTR) | (1 << CPHA) | (1 << CPOL));
 }
 
-uint8_t SPI_SPITransmit(uint8_t Data)
+uint8_t SPI_SPITransmit(const uint8_t Data)
 {
 	SPDR = Data;                       // Loading a byte into the register starts the transmission
 	while (!(SPSR & (1 << SPIF)));    // Wait until transmission completed
 	return SPDR;
 }
 
-uint8_t SPI_SPITransmitWord(uint16_t Data)
+uint8_t SPI_SPITransmitWord(const uint16_t Data)
 {
 	SPI_SPITransmit((uint8_t)(Data >> 8));
 	return SPI_SPITransmit((uint8_t)Data);

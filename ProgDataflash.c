@@ -177,7 +177,7 @@ void PD_SetupDFAddressCounters(void)
 	CurrBuffByte = (uint16_t)StartAddress;              // The buffer byte is the remainder
 }
 
-void PD_StoreDataflashByte(uint8_t Data)
+void PD_StoreDataflashByte(const uint8_t Data)
 {
 	if (CurrBuffByte == DataflashInfo.PageSize)
 	{

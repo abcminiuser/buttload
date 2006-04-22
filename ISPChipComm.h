@@ -56,6 +56,6 @@ extern const uint8_t SyncErrorMessage[] PROGMEM;
 // PROTOTYPES:
 void   ISPCC_EnterChipProgrammingMode(void);
 void   ISPCC_ProgramChip(void);
-void   ISPCC_PollForProgComplete(uint8_t PollData, uint16_t PollAddr);
+void   ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr);
 
 #endif

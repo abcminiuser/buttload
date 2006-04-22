@@ -71,7 +71,7 @@ uint8_t DF_GetChipCharacteristics(void)
 	return StatusBits;
 }
 
-void DF_CopyBufferToFlashPage(uint16_t PageAddress)
+void DF_CopyBufferToFlashPage(const uint16_t PageAddress)
 {
 	DF_TOGGLEENABLE();
 
@@ -83,7 +83,7 @@ void DF_CopyBufferToFlashPage(uint16_t PageAddress)
 	while (DF_BUSY());	
 }
 
-void DF_CopyFlashPageToBuffer(uint16_t PageAddress)
+void DF_CopyFlashPageToBuffer(const uint16_t PageAddress)
 {
 	DF_TOGGLEENABLE();
 
@@ -95,7 +95,7 @@ void DF_CopyFlashPageToBuffer(uint16_t PageAddress)
 	while (DF_BUSY());	
 }
 
-void DF_BufferWriteEnable(uint16_t BuffAddress)
+void DF_BufferWriteEnable(const uint16_t BuffAddress)
 {
 	DF_TOGGLEENABLE();
 
@@ -105,7 +105,7 @@ void DF_BufferWriteEnable(uint16_t BuffAddress)
 	DF_SENDSPIBYTE((uint8_t)(BuffAddress));       // Send the buffer low address	
 }
 
-void DF_ContinuousReadEnable(uint16_t PageAddress, uint16_t BuffAddress)
+void DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddress)
 {
 	DF_TOGGLEENABLE();
 	
@@ -118,7 +118,7 @@ void DF_ContinuousReadEnable(uint16_t PageAddress, uint16_t BuffAddress)
 	   DF_SENDSPIBYTE(0x00);                         
 }
 
-uint8_t DF_ReadBufferByte(uint16_t BuffAddress)
+uint8_t DF_ReadBufferByte(const uint16_t BuffAddress)
 {
 	DF_TOGGLEENABLE();
 	
@@ -130,7 +130,7 @@ uint8_t DF_ReadBufferByte(uint16_t BuffAddress)
 	return DF_SENDSPIBYTE(0x00);                         
 }
 
-void DF_EraseBlock(uint16_t BlockToErase)
+void DF_EraseBlock(const uint16_t BlockToErase)
 {
 	DF_TOGGLEENABLE();
 
@@ -142,7 +142,7 @@ void DF_EraseBlock(uint16_t BlockToErase)
 	while (DF_BUSY());
 }
 
-void DF_EnableDataflash(uint8_t Enabled)
+void DF_EnableDataflash(const uint8_t Enabled)
 {
 	if (Enabled == TRUE)
 	{

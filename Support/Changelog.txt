@@ -7,6 +7,9 @@ Current Version: Public Release 1.4
 	  * EEPROM handling changed over to the (now M169 compatible) AVRLibC routines
 	  * USART Rx interrupt moved to RingBuff.c and changed to the contents of the ringbuffer store routine for size/speed
 	  * Fixed a few more dataflash glitches
+	  * Moved the timeout setup function code to the TIMEOUT_TIMER_ON() macro
+	  * Timeout system now uses Timer2, freeing up Timer1 for sound generation duties
+	  * Function parameters changed to const (where possible) for robustness
 
 	FROM PUBLIC RELEASE 1.2:
 	=======================================

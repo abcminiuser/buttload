@@ -173,403 +173,404 @@
  192 00b8 0995      		icall
  193               	.LM21:
  194 00ba 8BB5      		in r24,75-0x20
- 195 00bc 02C0      		rjmp 2f
- 196 00be 000F      	1:	lsl r16
- 197 00c0 111F      		rol r17
- 198 00c2 8A95      	2:	dec r24
- 199 00c4 E2F7      		brpl 1b
- 200 00c6 8F2D      		mov r24,r15
- 201 00c8 9927      		clr r25
- 202 00ca E091 0000 		lds r30,DFSPIRoutinePointer
- 203 00ce F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 204 00d2 800F      		add r24,r16
- 205 00d4 0995      		icall
- 206               	.LM22:
- 207 00d6 E091 0000 		lds r30,DFSPIRoutinePointer
- 208 00da F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 209 00de 8E2D      		mov r24,r14
- 210 00e0 0995      		icall
- 211 00e2 03E0      		ldi r16,lo8(3)
- 212               	.L16:
- 213               	.LBB2:
- 214               	.LM23:
- 215 00e4 E091 0000 		lds r30,DFSPIRoutinePointer
- 216 00e8 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 217 00ec 80E0      		ldi r24,lo8(0)
- 218 00ee 0995      		icall
- 219               	.LM24:
- 220 00f0 0150      		subi r16,lo8(-(-1))
- 221 00f2 07FF      		sbrs r16,7
- 222 00f4 F7CF      		rjmp .L16
- 223               	.LBE2:
- 224               	/* epilogue: frame size=0 */
- 225 00f6 1F91      		pop r17
- 226 00f8 0F91      		pop r16
- 227 00fa FF90      		pop r15
- 228 00fc EF90      		pop r14
- 229 00fe 0895      		ret
- 230               	/* epilogue end (size=5) */
- 231               	/* function DF_ContinuousReadEnable size 68 (59) */
- 232               	.LFE19:
- 234               	.global	DF_BufferWriteEnable
- 236               	DF_BufferWriteEnable:
- 237               	.LFB18:
- 238               	.LM25:
- 239               	/* prologue: frame size=0 */
- 240 0100 0F93      		push r16
- 241 0102 1F93      		push r17
- 242               	/* prologue end (size=2) */
- 243 0104 8C01      		movw r16,r24
- 244               	.LM26:
- 245 0106 80E0      		ldi r24,lo8(0)
- 246 0108 0E94 0000 		call DF_EnableDataflash
- 247 010c 81E0      		ldi r24,lo8(1)
- 248 010e 0E94 0000 		call DF_EnableDataflash
- 249               	.LM27:
- 250 0112 E091 0000 		lds r30,DFSPIRoutinePointer
- 251 0116 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 252 011a 84E8      		ldi r24,lo8(-124)
- 253 011c 0995      		icall
- 254               	.LM28:
- 255 011e E091 0000 		lds r30,DFSPIRoutinePointer
- 256 0122 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 257 0126 80E0      		ldi r24,lo8(0)
- 258 0128 0995      		icall
- 259               	.LM29:
- 260 012a 812F      		mov r24,r17
- 261 012c 9927      		clr r25
- 262 012e E091 0000 		lds r30,DFSPIRoutinePointer
- 263 0132 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 264 0136 0995      		icall
- 265               	.LM30:
- 266 0138 E091 0000 		lds r30,DFSPIRoutinePointer
- 267 013c F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 268 0140 802F      		mov r24,r16
- 269 0142 0995      		icall
- 270               	/* epilogue: frame size=0 */
- 271 0144 1F91      		pop r17
- 272 0146 0F91      		pop r16
- 273 0148 0895      		ret
- 274               	/* epilogue end (size=3) */
- 275               	/* function DF_BufferWriteEnable size 37 (32) */
- 276               	.LFE18:
- 278               	.global	DF_GetChipCharacteristics
- 280               	DF_GetChipCharacteristics:
- 281               	.LFB15:
- 282               	.LM31:
- 283               	/* prologue: frame size=0 */
- 284               	/* prologue end (size=0) */
- 285               	.LM32:
- 286 014a 80E0      		ldi r24,lo8(0)
- 287 014c 0E94 0000 		call DF_EnableDataflash
- 288 0150 81E0      		ldi r24,lo8(1)
- 289 0152 0E94 0000 		call DF_EnableDataflash
- 290               	.LM33:
- 291 0156 E091 0000 		lds r30,DFSPIRoutinePointer
- 292 015a F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 293 015e 87E5      		ldi r24,lo8(87)
- 294 0160 0995      		icall
- 295               	.LM34:
- 296 0162 E091 0000 		lds r30,DFSPIRoutinePointer
- 297 0166 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 298 016a 80E0      		ldi r24,lo8(0)
- 299 016c 0995      		icall
- 300               	.LM35:
- 301 016e 682F      		mov r22,r24
- 302 0170 7727      		clr r23
- 303 0172 CB01      		movw r24,r22
- 304 0174 8873      		andi r24,lo8(56)
- 305 0176 9070      		andi r25,hi8(56)
- 306 0178 33E0      		ldi r19,3
- 307 017a 9595      	1:	asr r25
- 308 017c 8795      		ror r24
- 309 017e 3A95      		dec r19
- 310 0180 E1F7      		brne 1b
- 311               	.LBB3:
- 312               	.LM36:
- 313 0182 9927      		clr r25
- 314 0184 FC01      		movw r30,r24
- 315 0186 E050      		subi r30,lo8(-(DF_PageBits))
- 316 0188 F040      		sbci r31,hi8(-(DF_PageBits))
- 317               	/* #APP */
- 318 018a 4491      		lpm r20, Z
- 319               		
- 320               	/* #NOAPP */
- 321               	.LBE3:
- 322 018c 4093 0000 		sts DataflashInfo,r20
- 323               	.LBB4:
- 324               	.LM37:
- 325 0190 9C01      		movw r18,r24
- 326 0192 280F      		add r18,r24
- 327 0194 391F      		adc r19,r25
- 328 0196 F901      		movw r30,r18
- 329 0198 E050      		subi r30,lo8(-(DF_PageSize))
- 330 019a F040      		sbci r31,hi8(-(DF_PageSize))
- 331               	/* #APP */
- 332 019c 8591      		lpm r24, Z+
- 333 019e 9491      		lpm r25, Z
- 334               		
- 335               	/* #NOAPP */
- 336               	.LBE4:
- 337 01a0 9093 0000 		sts (DataflashInfo+1)+1,r25
- 338 01a4 8093 0000 		sts DataflashInfo+1,r24
- 339               	.LBB5:
- 340               	.LM38:
- 341 01a8 F901      		movw r30,r18
- 342 01aa E050      		subi r30,lo8(-(DF_Pages))
- 343 01ac F040      		sbci r31,hi8(-(DF_Pages))
- 344               	/* #APP */
- 345 01ae 8591      		lpm r24, Z+
- 346 01b0 9491      		lpm r25, Z
- 347               		
- 348               	/* #NOAPP */
- 349               	.LBE5:
- 350 01b2 9093 0000 		sts (DataflashInfo+3)+1,r25
- 351 01b6 8093 0000 		sts DataflashInfo+3,r24
- 352               	.LM39:
- 353 01ba 80E1      		ldi r24,lo8(16)
- 354 01bc 841B      		sub r24,r20
- 355 01be 8ABD      		out 74-0x20,r24
- 356               	.LM40:
- 357 01c0 4850      		subi r20,lo8(-(-8))
- 358 01c2 4BBD      		out 75-0x20,r20
- 359               	.LM41:
- 360 01c4 CB01      		movw r24,r22
- 361               	/* epilogue: frame size=0 */
- 362 01c6 0895      		ret
- 363               	/* epilogue end (size=1) */
- 364               	/* function DF_GetChipCharacteristics size 74 (73) */
- 365               	.LFE15:
- 367               	.global	DF_EraseBlock
- 369               	DF_EraseBlock:
- 370               	.LFB21:
- 371               	.LM42:
- 372               	/* prologue: frame size=0 */
- 373 01c8 0F93      		push r16
- 374 01ca 1F93      		push r17
- 375               	/* prologue end (size=2) */
- 376 01cc 8C01      		movw r16,r24
- 377               	.LM43:
- 378 01ce 80E0      		ldi r24,lo8(0)
- 379 01d0 0E94 0000 		call DF_EnableDataflash
- 380 01d4 81E0      		ldi r24,lo8(1)
- 381 01d6 0E94 0000 		call DF_EnableDataflash
- 382               	.LM44:
- 383 01da E091 0000 		lds r30,DFSPIRoutinePointer
- 384 01de F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 385 01e2 80E5      		ldi r24,lo8(80)
- 386 01e4 0995      		icall
- 387               	.LM45:
- 388 01e6 812F      		mov r24,r17
- 389 01e8 9927      		clr r25
- 390 01ea E091 0000 		lds r30,DFSPIRoutinePointer
- 391 01ee F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 392 01f2 0995      		icall
- 393               	.LM46:
- 394 01f4 E091 0000 		lds r30,DFSPIRoutinePointer
- 395 01f8 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 396 01fc 802F      		mov r24,r16
- 397 01fe 0995      		icall
- 398               	.LM47:
- 399 0200 E091 0000 		lds r30,DFSPIRoutinePointer
- 400 0204 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 401 0208 80E0      		ldi r24,lo8(0)
- 402 020a 0995      		icall
- 403               	.L25:
- 404               	.LM48:
- 405 020c 0E94 0000 		call DF_GetChipCharacteristics
- 406 0210 8823      		tst r24
- 407 0212 E4F7      		brge .L25
- 408               	/* epilogue: frame size=0 */
- 409 0214 1F91      		pop r17
- 410 0216 0F91      		pop r16
- 411 0218 0895      		ret
- 412               	/* epilogue end (size=3) */
- 413               	/* function DF_EraseBlock size 42 (37) */
- 414               	.LFE21:
- 416               	.global	DF_CopyFlashPageToBuffer
- 418               	DF_CopyFlashPageToBuffer:
- 419               	.LFB17:
- 420               	.LM49:
- 421               	/* prologue: frame size=0 */
- 422 021a 0F93      		push r16
- 423 021c 1F93      		push r17
- 424               	/* prologue end (size=2) */
- 425 021e 8C01      		movw r16,r24
- 426               	.LM50:
- 427 0220 80E0      		ldi r24,lo8(0)
- 428 0222 0E94 0000 		call DF_EnableDataflash
- 429 0226 81E0      		ldi r24,lo8(1)
- 430 0228 0E94 0000 		call DF_EnableDataflash
- 431               	.LM51:
- 432 022c E091 0000 		lds r30,DFSPIRoutinePointer
- 433 0230 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 434 0234 83E5      		ldi r24,lo8(83)
- 435 0236 0995      		icall
- 436               	.LM52:
- 437 0238 8AB5      		in r24,74-0x20
- 438 023a 9801      		movw r18,r16
- 439 023c 02C0      		rjmp 2f
- 440 023e 3695      	1:	lsr r19
- 441 0240 2795      		ror r18
- 442 0242 8A95      	2:	dec r24
- 443 0244 E2F7      		brpl 1b
- 444 0246 C901      		movw r24,r18
- 445 0248 E091 0000 		lds r30,DFSPIRoutinePointer
- 446 024c F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 447 0250 0995      		icall
- 448               	.LM53:
- 449 0252 8BB5      		in r24,75-0x20
- 450 0254 02C0      		rjmp 2f
- 451 0256 000F      	1:	lsl r16
- 452 0258 111F      		rol r17
- 453 025a 8A95      	2:	dec r24
- 454 025c E2F7      		brpl 1b
- 455 025e E091 0000 		lds r30,DFSPIRoutinePointer
- 456 0262 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 457 0266 802F      		mov r24,r16
- 458 0268 0995      		icall
- 459               	.LM54:
- 460 026a E091 0000 		lds r30,DFSPIRoutinePointer
- 461 026e F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 462 0272 80E0      		ldi r24,lo8(0)
- 463 0274 0995      		icall
- 464               	.L30:
- 465               	.LM55:
- 466 0276 0E94 0000 		call DF_GetChipCharacteristics
- 467 027a 8823      		tst r24
- 468 027c E4F7      		brge .L30
- 469               	/* epilogue: frame size=0 */
- 470 027e 1F91      		pop r17
- 471 0280 0F91      		pop r16
- 472 0282 0895      		ret
- 473               	/* epilogue end (size=3) */
- 474               	/* function DF_CopyFlashPageToBuffer size 56 (51) */
- 475               	.LFE17:
- 477               	.global	DF_CopyBufferToFlashPage
- 479               	DF_CopyBufferToFlashPage:
- 480               	.LFB16:
- 481               	.LM56:
- 482               	/* prologue: frame size=0 */
- 483 0284 0F93      		push r16
- 484 0286 1F93      		push r17
- 485               	/* prologue end (size=2) */
- 486 0288 8C01      		movw r16,r24
- 487               	.LM57:
- 488 028a 80E0      		ldi r24,lo8(0)
- 489 028c 0E94 0000 		call DF_EnableDataflash
- 490 0290 81E0      		ldi r24,lo8(1)
- 491 0292 0E94 0000 		call DF_EnableDataflash
- 492               	.LM58:
- 493 0296 E091 0000 		lds r30,DFSPIRoutinePointer
- 494 029a F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 495 029e 83E8      		ldi r24,lo8(-125)
- 496 02a0 0995      		icall
- 497               	.LM59:
- 498 02a2 8AB5      		in r24,74-0x20
- 499 02a4 9801      		movw r18,r16
- 500 02a6 02C0      		rjmp 2f
- 501 02a8 3695      	1:	lsr r19
- 502 02aa 2795      		ror r18
- 503 02ac 8A95      	2:	dec r24
- 504 02ae E2F7      		brpl 1b
- 505 02b0 C901      		movw r24,r18
- 506 02b2 E091 0000 		lds r30,DFSPIRoutinePointer
- 507 02b6 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 508 02ba 0995      		icall
- 509               	.LM60:
- 510 02bc 8BB5      		in r24,75-0x20
- 511 02be 02C0      		rjmp 2f
- 512 02c0 000F      	1:	lsl r16
- 513 02c2 111F      		rol r17
- 514 02c4 8A95      	2:	dec r24
- 515 02c6 E2F7      		brpl 1b
- 516 02c8 E091 0000 		lds r30,DFSPIRoutinePointer
- 517 02cc F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 518 02d0 802F      		mov r24,r16
- 519 02d2 0995      		icall
- 520               	.LM61:
- 521 02d4 E091 0000 		lds r30,DFSPIRoutinePointer
- 522 02d8 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
- 523 02dc 80E0      		ldi r24,lo8(0)
- 524 02de 0995      		icall
- 525               	.L35:
- 526               	.LM62:
- 527 02e0 0E94 0000 		call DF_GetChipCharacteristics
- 528 02e4 8823      		tst r24
- 529 02e6 E4F7      		brge .L35
- 530               	/* epilogue: frame size=0 */
- 531 02e8 1F91      		pop r17
- 532 02ea 0F91      		pop r16
- 533 02ec 0895      		ret
- 534               	/* epilogue end (size=3) */
- 535               	/* function DF_CopyBufferToFlashPage size 56 (51) */
- 536               	.LFE16:
- 538               	.global	DF_CheckCorrectOnboardChip
- 540               	DF_CheckCorrectOnboardChip:
- 541               	.LFB14:
- 542               	.LM63:
- 543               	/* prologue: frame size=0 */
- 544               	/* prologue end (size=0) */
- 545               	.LM64:
- 546 02ee 0E94 0000 		call DF_GetChipCharacteristics
- 547               	.LM65:
- 548 02f2 8091 0000 		lds r24,DataflashInfo+3
- 549 02f6 9091 0000 		lds r25,(DataflashInfo+3)+1
- 550 02fa 8050      		subi r24,lo8(2048)
- 551 02fc 9840      		sbci r25,hi8(2048)
- 552 02fe 61F0      		breq .L39
- 553               	.LM66:
- 554 0300 8091 6400 		lds r24,100
- 555 0304 8460      		ori r24,lo8(4)
- 556 0306 8093 6400 		sts 100,r24
- 557               	.LM67:
- 558 030a 80E0      		ldi r24,lo8(DataFlashError)
- 559 030c 90E0      		ldi r25,hi8(DataFlashError)
- 560 030e 0E94 0000 		call MAIN_ShowError
- 561               	.LM68:
- 562 0312 80E0      		ldi r24,lo8(0)
- 563 0314 90E0      		ldi r25,hi8(0)
- 564 0316 0895      		ret
- 565               	.L39:
- 566               	.LM69:
- 567 0318 81E0      		ldi r24,lo8(1)
- 568 031a 90E0      		ldi r25,hi8(1)
- 569               	.LM70:
- 570 031c 0895      		ret
- 571               	/* epilogue: frame size=0 */
- 572               	/* epilogue: noreturn */
- 573               	/* epilogue end (size=0) */
- 574               	/* function DF_CheckCorrectOnboardChip size 25 (25) */
- 575               	.LFE14:
- 577               		.comm DataflashInfo,5,1
- 578               		.comm CurrPageAddress,2,1
- 579               		.comm CurrBuffByte,2,1
- 580               		.comm UseExernalDF,1,1
- 581               	.Letext0:
+ 195 00bc 9801      		movw r18,r16
+ 196 00be 02C0      		rjmp 2f
+ 197 00c0 220F      	1:	lsl r18
+ 198 00c2 331F      		rol r19
+ 199 00c4 8A95      	2:	dec r24
+ 200 00c6 E2F7      		brpl 1b
+ 201 00c8 8F2D      		mov r24,r15
+ 202 00ca 9927      		clr r25
+ 203 00cc E091 0000 		lds r30,DFSPIRoutinePointer
+ 204 00d0 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 205 00d4 820F      		add r24,r18
+ 206 00d6 0995      		icall
+ 207               	.LM22:
+ 208 00d8 E091 0000 		lds r30,DFSPIRoutinePointer
+ 209 00dc F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 210 00e0 8E2D      		mov r24,r14
+ 211 00e2 0995      		icall
+ 212 00e4 03E0      		ldi r16,lo8(3)
+ 213               	.L16:
+ 214               	.LBB2:
+ 215               	.LM23:
+ 216 00e6 E091 0000 		lds r30,DFSPIRoutinePointer
+ 217 00ea F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 218 00ee 80E0      		ldi r24,lo8(0)
+ 219 00f0 0995      		icall
+ 220               	.LM24:
+ 221 00f2 0150      		subi r16,lo8(-(-1))
+ 222 00f4 07FF      		sbrs r16,7
+ 223 00f6 F7CF      		rjmp .L16
+ 224               	.LBE2:
+ 225               	/* epilogue: frame size=0 */
+ 226 00f8 1F91      		pop r17
+ 227 00fa 0F91      		pop r16
+ 228 00fc FF90      		pop r15
+ 229 00fe EF90      		pop r14
+ 230 0100 0895      		ret
+ 231               	/* epilogue end (size=5) */
+ 232               	/* function DF_ContinuousReadEnable size 69 (60) */
+ 233               	.LFE19:
+ 235               	.global	DF_BufferWriteEnable
+ 237               	DF_BufferWriteEnable:
+ 238               	.LFB18:
+ 239               	.LM25:
+ 240               	/* prologue: frame size=0 */
+ 241 0102 0F93      		push r16
+ 242 0104 1F93      		push r17
+ 243               	/* prologue end (size=2) */
+ 244 0106 8C01      		movw r16,r24
+ 245               	.LM26:
+ 246 0108 80E0      		ldi r24,lo8(0)
+ 247 010a 0E94 0000 		call DF_EnableDataflash
+ 248 010e 81E0      		ldi r24,lo8(1)
+ 249 0110 0E94 0000 		call DF_EnableDataflash
+ 250               	.LM27:
+ 251 0114 E091 0000 		lds r30,DFSPIRoutinePointer
+ 252 0118 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 253 011c 84E8      		ldi r24,lo8(-124)
+ 254 011e 0995      		icall
+ 255               	.LM28:
+ 256 0120 E091 0000 		lds r30,DFSPIRoutinePointer
+ 257 0124 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 258 0128 80E0      		ldi r24,lo8(0)
+ 259 012a 0995      		icall
+ 260               	.LM29:
+ 261 012c 812F      		mov r24,r17
+ 262 012e 9927      		clr r25
+ 263 0130 E091 0000 		lds r30,DFSPIRoutinePointer
+ 264 0134 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 265 0138 0995      		icall
+ 266               	.LM30:
+ 267 013a E091 0000 		lds r30,DFSPIRoutinePointer
+ 268 013e F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 269 0142 802F      		mov r24,r16
+ 270 0144 0995      		icall
+ 271               	/* epilogue: frame size=0 */
+ 272 0146 1F91      		pop r17
+ 273 0148 0F91      		pop r16
+ 274 014a 0895      		ret
+ 275               	/* epilogue end (size=3) */
+ 276               	/* function DF_BufferWriteEnable size 37 (32) */
+ 277               	.LFE18:
+ 279               	.global	DF_GetChipCharacteristics
+ 281               	DF_GetChipCharacteristics:
+ 282               	.LFB15:
+ 283               	.LM31:
+ 284               	/* prologue: frame size=0 */
+ 285               	/* prologue end (size=0) */
+ 286               	.LM32:
+ 287 014c 80E0      		ldi r24,lo8(0)
+ 288 014e 0E94 0000 		call DF_EnableDataflash
+ 289 0152 81E0      		ldi r24,lo8(1)
+ 290 0154 0E94 0000 		call DF_EnableDataflash
+ 291               	.LM33:
+ 292 0158 E091 0000 		lds r30,DFSPIRoutinePointer
+ 293 015c F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 294 0160 87E5      		ldi r24,lo8(87)
+ 295 0162 0995      		icall
+ 296               	.LM34:
+ 297 0164 E091 0000 		lds r30,DFSPIRoutinePointer
+ 298 0168 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 299 016c 80E0      		ldi r24,lo8(0)
+ 300 016e 0995      		icall
+ 301               	.LM35:
+ 302 0170 682F      		mov r22,r24
+ 303 0172 7727      		clr r23
+ 304 0174 CB01      		movw r24,r22
+ 305 0176 8873      		andi r24,lo8(56)
+ 306 0178 9070      		andi r25,hi8(56)
+ 307 017a 33E0      		ldi r19,3
+ 308 017c 9595      	1:	asr r25
+ 309 017e 8795      		ror r24
+ 310 0180 3A95      		dec r19
+ 311 0182 E1F7      		brne 1b
+ 312               	.LBB3:
+ 313               	.LM36:
+ 314 0184 9927      		clr r25
+ 315 0186 FC01      		movw r30,r24
+ 316 0188 E050      		subi r30,lo8(-(DF_PageBits))
+ 317 018a F040      		sbci r31,hi8(-(DF_PageBits))
+ 318               	/* #APP */
+ 319 018c 4491      		lpm r20, Z
+ 320               		
+ 321               	/* #NOAPP */
+ 322               	.LBE3:
+ 323 018e 4093 0000 		sts DataflashInfo,r20
+ 324               	.LBB4:
+ 325               	.LM37:
+ 326 0192 9C01      		movw r18,r24
+ 327 0194 280F      		add r18,r24
+ 328 0196 391F      		adc r19,r25
+ 329 0198 F901      		movw r30,r18
+ 330 019a E050      		subi r30,lo8(-(DF_PageSize))
+ 331 019c F040      		sbci r31,hi8(-(DF_PageSize))
+ 332               	/* #APP */
+ 333 019e 8591      		lpm r24, Z+
+ 334 01a0 9491      		lpm r25, Z
+ 335               		
+ 336               	/* #NOAPP */
+ 337               	.LBE4:
+ 338 01a2 9093 0000 		sts (DataflashInfo+1)+1,r25
+ 339 01a6 8093 0000 		sts DataflashInfo+1,r24
+ 340               	.LBB5:
+ 341               	.LM38:
+ 342 01aa F901      		movw r30,r18
+ 343 01ac E050      		subi r30,lo8(-(DF_Pages))
+ 344 01ae F040      		sbci r31,hi8(-(DF_Pages))
+ 345               	/* #APP */
+ 346 01b0 8591      		lpm r24, Z+
+ 347 01b2 9491      		lpm r25, Z
+ 348               		
+ 349               	/* #NOAPP */
+ 350               	.LBE5:
+ 351 01b4 9093 0000 		sts (DataflashInfo+3)+1,r25
+ 352 01b8 8093 0000 		sts DataflashInfo+3,r24
+ 353               	.LM39:
+ 354 01bc 80E1      		ldi r24,lo8(16)
+ 355 01be 841B      		sub r24,r20
+ 356 01c0 8ABD      		out 74-0x20,r24
+ 357               	.LM40:
+ 358 01c2 4850      		subi r20,lo8(-(-8))
+ 359 01c4 4BBD      		out 75-0x20,r20
+ 360               	.LM41:
+ 361 01c6 CB01      		movw r24,r22
+ 362               	/* epilogue: frame size=0 */
+ 363 01c8 0895      		ret
+ 364               	/* epilogue end (size=1) */
+ 365               	/* function DF_GetChipCharacteristics size 74 (73) */
+ 366               	.LFE15:
+ 368               	.global	DF_EraseBlock
+ 370               	DF_EraseBlock:
+ 371               	.LFB21:
+ 372               	.LM42:
+ 373               	/* prologue: frame size=0 */
+ 374 01ca 0F93      		push r16
+ 375 01cc 1F93      		push r17
+ 376               	/* prologue end (size=2) */
+ 377 01ce 8C01      		movw r16,r24
+ 378               	.LM43:
+ 379 01d0 80E0      		ldi r24,lo8(0)
+ 380 01d2 0E94 0000 		call DF_EnableDataflash
+ 381 01d6 81E0      		ldi r24,lo8(1)
+ 382 01d8 0E94 0000 		call DF_EnableDataflash
+ 383               	.LM44:
+ 384 01dc E091 0000 		lds r30,DFSPIRoutinePointer
+ 385 01e0 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 386 01e4 80E5      		ldi r24,lo8(80)
+ 387 01e6 0995      		icall
+ 388               	.LM45:
+ 389 01e8 812F      		mov r24,r17
+ 390 01ea 9927      		clr r25
+ 391 01ec E091 0000 		lds r30,DFSPIRoutinePointer
+ 392 01f0 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 393 01f4 0995      		icall
+ 394               	.LM46:
+ 395 01f6 E091 0000 		lds r30,DFSPIRoutinePointer
+ 396 01fa F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 397 01fe 802F      		mov r24,r16
+ 398 0200 0995      		icall
+ 399               	.LM47:
+ 400 0202 E091 0000 		lds r30,DFSPIRoutinePointer
+ 401 0206 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 402 020a 80E0      		ldi r24,lo8(0)
+ 403 020c 0995      		icall
+ 404               	.L25:
+ 405               	.LM48:
+ 406 020e 0E94 0000 		call DF_GetChipCharacteristics
+ 407 0212 8823      		tst r24
+ 408 0214 E4F7      		brge .L25
+ 409               	/* epilogue: frame size=0 */
+ 410 0216 1F91      		pop r17
+ 411 0218 0F91      		pop r16
+ 412 021a 0895      		ret
+ 413               	/* epilogue end (size=3) */
+ 414               	/* function DF_EraseBlock size 42 (37) */
+ 415               	.LFE21:
+ 417               	.global	DF_CopyFlashPageToBuffer
+ 419               	DF_CopyFlashPageToBuffer:
+ 420               	.LFB17:
+ 421               	.LM49:
+ 422               	/* prologue: frame size=0 */
+ 423 021c 0F93      		push r16
+ 424 021e 1F93      		push r17
+ 425               	/* prologue end (size=2) */
+ 426 0220 8C01      		movw r16,r24
+ 427               	.LM50:
+ 428 0222 80E0      		ldi r24,lo8(0)
+ 429 0224 0E94 0000 		call DF_EnableDataflash
+ 430 0228 81E0      		ldi r24,lo8(1)
+ 431 022a 0E94 0000 		call DF_EnableDataflash
+ 432               	.LM51:
+ 433 022e E091 0000 		lds r30,DFSPIRoutinePointer
+ 434 0232 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 435 0236 83E5      		ldi r24,lo8(83)
+ 436 0238 0995      		icall
+ 437               	.LM52:
+ 438 023a 8AB5      		in r24,74-0x20
+ 439 023c 9801      		movw r18,r16
+ 440 023e 02C0      		rjmp 2f
+ 441 0240 3695      	1:	lsr r19
+ 442 0242 2795      		ror r18
+ 443 0244 8A95      	2:	dec r24
+ 444 0246 E2F7      		brpl 1b
+ 445 0248 C901      		movw r24,r18
+ 446 024a E091 0000 		lds r30,DFSPIRoutinePointer
+ 447 024e F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 448 0252 0995      		icall
+ 449               	.LM53:
+ 450 0254 8BB5      		in r24,75-0x20
+ 451 0256 02C0      		rjmp 2f
+ 452 0258 000F      	1:	lsl r16
+ 453 025a 111F      		rol r17
+ 454 025c 8A95      	2:	dec r24
+ 455 025e E2F7      		brpl 1b
+ 456 0260 C801      		movw r24,r16
+ 457 0262 E091 0000 		lds r30,DFSPIRoutinePointer
+ 458 0266 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 459 026a 0995      		icall
+ 460               	.LM54:
+ 461 026c E091 0000 		lds r30,DFSPIRoutinePointer
+ 462 0270 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 463 0274 80E0      		ldi r24,lo8(0)
+ 464 0276 0995      		icall
+ 465               	.L30:
+ 466               	.LM55:
+ 467 0278 0E94 0000 		call DF_GetChipCharacteristics
+ 468 027c 8823      		tst r24
+ 469 027e E4F7      		brge .L30
+ 470               	/* epilogue: frame size=0 */
+ 471 0280 1F91      		pop r17
+ 472 0282 0F91      		pop r16
+ 473 0284 0895      		ret
+ 474               	/* epilogue end (size=3) */
+ 475               	/* function DF_CopyFlashPageToBuffer size 56 (51) */
+ 476               	.LFE17:
+ 478               	.global	DF_CopyBufferToFlashPage
+ 480               	DF_CopyBufferToFlashPage:
+ 481               	.LFB16:
+ 482               	.LM56:
+ 483               	/* prologue: frame size=0 */
+ 484 0286 0F93      		push r16
+ 485 0288 1F93      		push r17
+ 486               	/* prologue end (size=2) */
+ 487 028a 8C01      		movw r16,r24
+ 488               	.LM57:
+ 489 028c 80E0      		ldi r24,lo8(0)
+ 490 028e 0E94 0000 		call DF_EnableDataflash
+ 491 0292 81E0      		ldi r24,lo8(1)
+ 492 0294 0E94 0000 		call DF_EnableDataflash
+ 493               	.LM58:
+ 494 0298 E091 0000 		lds r30,DFSPIRoutinePointer
+ 495 029c F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 496 02a0 83E8      		ldi r24,lo8(-125)
+ 497 02a2 0995      		icall
+ 498               	.LM59:
+ 499 02a4 8AB5      		in r24,74-0x20
+ 500 02a6 9801      		movw r18,r16
+ 501 02a8 02C0      		rjmp 2f
+ 502 02aa 3695      	1:	lsr r19
+ 503 02ac 2795      		ror r18
+ 504 02ae 8A95      	2:	dec r24
+ 505 02b0 E2F7      		brpl 1b
+ 506 02b2 C901      		movw r24,r18
+ 507 02b4 E091 0000 		lds r30,DFSPIRoutinePointer
+ 508 02b8 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 509 02bc 0995      		icall
+ 510               	.LM60:
+ 511 02be 8BB5      		in r24,75-0x20
+ 512 02c0 02C0      		rjmp 2f
+ 513 02c2 000F      	1:	lsl r16
+ 514 02c4 111F      		rol r17
+ 515 02c6 8A95      	2:	dec r24
+ 516 02c8 E2F7      		brpl 1b
+ 517 02ca C801      		movw r24,r16
+ 518 02cc E091 0000 		lds r30,DFSPIRoutinePointer
+ 519 02d0 F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 520 02d4 0995      		icall
+ 521               	.LM61:
+ 522 02d6 E091 0000 		lds r30,DFSPIRoutinePointer
+ 523 02da F091 0000 		lds r31,(DFSPIRoutinePointer)+1
+ 524 02de 80E0      		ldi r24,lo8(0)
+ 525 02e0 0995      		icall
+ 526               	.L35:
+ 527               	.LM62:
+ 528 02e2 0E94 0000 		call DF_GetChipCharacteristics
+ 529 02e6 8823      		tst r24
+ 530 02e8 E4F7      		brge .L35
+ 531               	/* epilogue: frame size=0 */
+ 532 02ea 1F91      		pop r17
+ 533 02ec 0F91      		pop r16
+ 534 02ee 0895      		ret
+ 535               	/* epilogue end (size=3) */
+ 536               	/* function DF_CopyBufferToFlashPage size 56 (51) */
+ 537               	.LFE16:
+ 539               	.global	DF_CheckCorrectOnboardChip
+ 541               	DF_CheckCorrectOnboardChip:
+ 542               	.LFB14:
+ 543               	.LM63:
+ 544               	/* prologue: frame size=0 */
+ 545               	/* prologue end (size=0) */
+ 546               	.LM64:
+ 547 02f0 0E94 0000 		call DF_GetChipCharacteristics
+ 548               	.LM65:
+ 549 02f4 8091 0000 		lds r24,DataflashInfo+3
+ 550 02f8 9091 0000 		lds r25,(DataflashInfo+3)+1
+ 551 02fc 8050      		subi r24,lo8(2048)
+ 552 02fe 9840      		sbci r25,hi8(2048)
+ 553 0300 61F0      		breq .L39
+ 554               	.LM66:
+ 555 0302 8091 6400 		lds r24,100
+ 556 0306 8460      		ori r24,lo8(4)
+ 557 0308 8093 6400 		sts 100,r24
+ 558               	.LM67:
+ 559 030c 80E0      		ldi r24,lo8(DataFlashError)
+ 560 030e 90E0      		ldi r25,hi8(DataFlashError)
+ 561 0310 0E94 0000 		call MAIN_ShowError
+ 562               	.LM68:
+ 563 0314 80E0      		ldi r24,lo8(0)
+ 564 0316 90E0      		ldi r25,hi8(0)
+ 565 0318 0895      		ret
+ 566               	.L39:
+ 567               	.LM69:
+ 568 031a 81E0      		ldi r24,lo8(1)
+ 569 031c 90E0      		ldi r25,hi8(1)
+ 570               	.LM70:
+ 571 031e 0895      		ret
+ 572               	/* epilogue: frame size=0 */
+ 573               	/* epilogue: noreturn */
+ 574               	/* epilogue end (size=0) */
+ 575               	/* function DF_CheckCorrectOnboardChip size 25 (25) */
+ 576               	.LFE14:
+ 578               		.comm DataflashInfo,5,1
+ 579               		.comm CurrPageAddress,2,1
+ 580               		.comm CurrBuffByte,2,1
+ 581               		.comm UseExernalDF,1,1
+ 582               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 Dataflash.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccWIaaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccWIaaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccWIaaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccWIaaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccWIaaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccWIaaaa.s:22     .data:00000000 DFSPIRoutinePointer
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccWIaaaa.s:28     .progmem.data:00000000 DataFlashError
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccWIaaaa.s:33     .progmem.data:00000010 DF_Pages
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccWIaaaa.s:45     .progmem.data:00000020 DF_PageSize
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccWIaaaa.s:57     .progmem.data:00000030 DF_PageBits
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccWIaaaa.s:69     .text:00000000 DF_EnableDataflash
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccQ9aaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccQ9aaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccQ9aaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccQ9aaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccQ9aaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccQ9aaaa.s:22     .data:00000000 DFSPIRoutinePointer
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccQ9aaaa.s:28     .progmem.data:00000000 DataFlashError
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccQ9aaaa.s:33     .progmem.data:00000010 DF_Pages
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccQ9aaaa.s:45     .progmem.data:00000020 DF_PageSize
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccQ9aaaa.s:57     .progmem.data:00000030 DF_PageBits
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccQ9aaaa.s:69     .text:00000000 DF_EnableDataflash
                             *COM*:00000001 UseExernalDF
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccWIaaaa.s:109    .text:00000024 DF_ReadBufferByte
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccWIaaaa.s:160    .text:0000007c DF_ContinuousReadEnable
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccWIaaaa.s:236    .text:00000100 DF_BufferWriteEnable
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccWIaaaa.s:280    .text:0000014a DF_GetChipCharacteristics
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccQ9aaaa.s:109    .text:00000024 DF_ReadBufferByte
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccQ9aaaa.s:160    .text:0000007c DF_ContinuousReadEnable
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccQ9aaaa.s:237    .text:00000102 DF_BufferWriteEnable
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccQ9aaaa.s:281    .text:0000014c DF_GetChipCharacteristics
                             *COM*:00000005 DataflashInfo
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccWIaaaa.s:369    .text:000001c8 DF_EraseBlock
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccWIaaaa.s:418    .text:0000021a DF_CopyFlashPageToBuffer
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccWIaaaa.s:479    .text:00000284 DF_CopyBufferToFlashPage
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccWIaaaa.s:540    .text:000002ee DF_CheckCorrectOnboardChip
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccQ9aaaa.s:370    .text:000001ca DF_EraseBlock
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccQ9aaaa.s:419    .text:0000021c DF_CopyFlashPageToBuffer
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccQ9aaaa.s:480    .text:00000286 DF_CopyBufferToFlashPage
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccQ9aaaa.s:541    .text:000002f0 DF_CheckCorrectOnboardChip
                             *COM*:00000002 CurrPageAddress
                             *COM*:00000002 CurrBuffByte
 

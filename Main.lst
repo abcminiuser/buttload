@@ -104,2122 +104,2263 @@
  112               	SettingFunctionPtrs:
  113 00c4 0000      		.word	pm(FUNCSetContrast)
  114 00c6 0000      		.word	pm(FUNCSetISPSpeed)
- 115 00c8 0000      		.word	pm(FUNCClearMem)
- 116 00ca 0000      		.word	pm(FUNCGoBootloader)
- 117               	.global	SettingFunctionNames
- 120               	SettingFunctionNames:
- 121 00cc 0000      		.word	SFunc_SETCONTRAST
- 122 00ce 0000      		.word	SFunc_SETSPISPEED
- 123 00d0 0000      		.word	SFunc_CLEARMEM
- 124 00d2 0000      		.word	SFunc_GOBOOTLOADER
- 125               	.global	SFunc_GOBOOTLOADER
- 128               	SFunc_GOBOOTLOADER:
- 129 00d4 4A55 4D50 		.string	"JUMP TO BOOTLOADER"
- 129      2054 4F20 
- 129      424F 4F54 
- 129      4C4F 4144 
- 129      4552 00
- 130               	.global	SFunc_CLEARMEM
- 133               	SFunc_CLEARMEM:
- 134 00e7 434C 4541 		.string	"CLEAR MEMORY"
- 134      5220 4D45 
- 134      4D4F 5259 
- 134      00
- 135               	.global	SFunc_SETSPISPEED
- 138               	SFunc_SETSPISPEED:
- 139 00f4 5345 5420 		.string	"SET SPI SPEED"
- 139      5350 4920 
- 139      5350 4545 
- 139      4400 
- 140               	.global	SFunc_SETCONTRAST
- 143               	SFunc_SETCONTRAST:
- 144 0102 5345 5420 		.string	"SET CONTRAST"
- 144      434F 4E54 
- 144      5241 5354 
- 144      00
- 145               	.global	MainFunctionPtrs
- 148               	MainFunctionPtrs:
- 149 010f 0000      		.word	pm(FUNCAVRISPMode)
- 150 0111 0000      		.word	pm(FUNCStoreProgram)
- 151 0113 0000      		.word	pm(FUNCProgramAVR)
- 152 0115 0000      		.word	pm(FUNCProgramDataflash)
- 153 0117 0000      		.word	pm(FUNCStorageInfo)
- 154 0119 0000      		.word	pm(FUNCChangeSettings)
- 155 011b 0000      		.word	pm(FUNCSleepMode)
- 156               	.global	MainFunctionNames
- 159               	MainFunctionNames:
- 160 011d 0000      		.word	Func_ISPPRGM
- 161 011f 0000      		.word	Func_STOREPRGM
- 162 0121 0000      		.word	Func_PRGMAVR
- 163 0123 0000      		.word	Func_PRGMDATAFLASH
- 164 0125 0000      		.word	Func_PRGMSTOREINFO
- 165 0127 0000      		.word	Func_SETTINGS
- 166 0129 0000      		.word	Func_SLEEP
- 167               	.global	Func_SLEEP
- 170               	Func_SLEEP:
- 171 012b 534C 4545 		.string	"SLEEP MODE"
- 171      5020 4D4F 
- 171      4445 00
- 172               	.global	Func_SETTINGS
- 175               	Func_SETTINGS:
- 176 0136 5345 5454 		.string	"SETTINGS"
- 176      494E 4753 
- 176      00
- 177               	.global	Func_PRGMSTOREINFO
- 180               	Func_PRGMSTOREINFO:
- 181 013f 4441 5441 		.string	"DATASTORE INFO"
- 181      5354 4F52 
- 181      4520 494E 
- 181      464F 00
- 182               	.global	Func_PRGMDATAFLASH
- 185               	Func_PRGMDATAFLASH:
- 186 014e 4441 5441 		.string	"DATAFLASH PRGM"
- 186      464C 4153 
- 186      4820 5052 
- 186      474D 00
- 187               	.global	Func_PRGMAVR
- 190               	Func_PRGMAVR:
- 191 015d 5052 4F47 		.string	"PROGRAM AVR"
- 191      5241 4D20 
- 191      4156 5200 
- 192               	.global	Func_STOREPRGM
- 195               	Func_STOREPRGM:
- 196 0169 5354 4F52 		.string	"STORE PRGM"
- 196      4520 5052 
- 196      474D 00
- 197               	.global	Func_ISPPRGM
- 200               	Func_ISPPRGM:
- 201 0174 4156 5249 		.string	"AVRISP MODE"
- 201      5350 204D 
- 201      4F44 4500 
- 202               	.global	AboutTextPtrs
- 205               	AboutTextPtrs:
- 206 0180 0000      		.word	ProgrammerName
- 207 0182 0000      		.word	VersionInfo
- 208 0184 0000      		.word	AuthorName
- 209 0186 0000      		.word	CopyRight
- 210               	.global	CopyRight
- 213               	CopyRight:
- 214 0188 3C43 3E20 		.string	"<C> 2006 - GPL"
- 214      3230 3036 
- 214      202D 2047 
- 214      504C 00
- 215               	.global	AuthorName
- 218               	AuthorName:
- 219 0197 4259 2044 		.string	"BY DEAN CAMERA"
- 219      4541 4E20 
- 219      4341 4D45 
- 219      5241 00
- 220               	.global	VersionInfo
- 223               	VersionInfo:
- 224 01a6 56        		.byte	86
- 225 01a7 31        		.byte	49
- 226 01a8 2D        		.byte	45
- 227 01a9 33        		.byte	51
- 228 01aa 00        		.byte	0
- 229               	.global	ProgrammerName
- 232               	ProgrammerName:
- 233 01ab 4255 5454 		.string	"BUTTLOAD"
- 233      4C4F 4144 
- 233      00
- 234               	.global	WaitText
- 237               	WaitText:
- 238 01b4 2A57 4149 		.string	"*WAIT*"
- 238      542A 00
- 239               	.global	BUTTTAG_Author
- 242               	BUTTTAG_Author:
- 243 01bb 40        		.byte	64
- 244 01bc 28        		.byte	40
- 245 01bd 23        		.byte	35
- 246 01be 29        		.byte	41
- 247 01bf 4259 2044 		.string	"BY DEAN CAMERA"
- 247      4541 4E20 
- 247      4341 4D45 
- 247      5241 00
- 248               	.global	BUTTTAG_Name
- 251               	BUTTTAG_Name:
- 252 01ce 40        		.byte	64
- 253 01cf 28        		.byte	40
- 254 01d0 23        		.byte	35
- 255 01d1 29        		.byte	41
- 256 01d2 4255 5454 		.string	"BUTTLOAD AVRISP"
- 256      4C4F 4144 
- 256      2041 5652 
- 256      4953 5000 
- 257               		.text
- 258               	.global	MAIN_Delay10MS
- 260               	MAIN_Delay10MS:
- 261               	.LFB15:
- 262               	.LM1:
- 263               	/* prologue: frame size=0 */
- 264 0000 CF93      		push r28
- 265 0002 DF93      		push r29
- 266               	/* prologue end (size=2) */
- 267               	.LM2:
- 268 0004 282F      		mov r18,r24
- 269 0006 2150      		subi r18,lo8(-(-1))
- 270 0008 2F3F      		cpi r18,lo8(-1)
- 271 000a 49F0      		breq .L14
- 272 000c A0E0      		ldi r26,lo8(18432)
- 273 000e B8E4      		ldi r27,hi8(18432)
- 274 0010 C0E0      		ldi r28,hlo8(18432)
- 275 0012 D0E0      		ldi r29,hhi8(18432)
- 276               	.L12:
- 277               	.LBB2:
- 278               	.LBB3:
- 279               	.LBB4:
- 280               	.LBB5:
- 281               	.LM3:
- 282 0014 CD01      		movw r24,r26
- 283               	/* #APP */
- 284 0016 0197      		1: sbiw r24,1
- 285 0018 F1F7      		brne 1b
- 286               	/* #NOAPP */
- 287               	.LBE5:
- 288               	.LBE4:
- 289               	.LBE3:
- 290               	.LBE2:
- 291 001a 2150      		subi r18,1
- 292 001c D8F7      		brcc .L12
- 293               	.L14:
- 294               	/* epilogue: frame size=0 */
- 295 001e DF91      		pop r29
- 296 0020 CF91      		pop r28
- 297 0022 0895      		ret
- 298               	/* epilogue end (size=3) */
- 299               	/* function MAIN_Delay10MS size 21 (16) */
- 300               	.LFE15:
- 302               	.global	MAIN_WaitForJoyRelease
- 304               	MAIN_WaitForJoyRelease:
- 305               	.LFB18:
- 306               	.LM4:
- 307               	/* prologue: frame size=0 */
- 308               	/* prologue end (size=0) */
- 309               	.L25:
- 310               	.LM5:
- 311 0024 8EB3      		in r24,62-0x20
- 312 0026 8823      		tst r24
- 313 0028 E9F7      		brne .L25
- 314               	.LM6:
- 315 002a 81E0      		ldi r24,lo8(1)
- 316 002c 0E94 0000 		call MAIN_Delay10MS
- 317               	.LM7:
- 318 0030 8EB3      		in r24,62-0x20
- 319 0032 8823      		tst r24
- 320 0034 B9F7      		brne .L25
- 321               	/* epilogue: frame size=0 */
- 322 0036 0895      		ret
- 323               	/* epilogue end (size=1) */
- 324               	/* function MAIN_WaitForJoyRelease size 10 (9) */
- 325               	.LFE18:
- 327               	.global	FUNCShowAbout
- 329               	FUNCShowAbout:
- 330               	.LFB25:
- 331               	.LM8:
- 332               	/* prologue: frame size=0 */
- 333 0038 CF93      		push r28
- 334               	/* prologue end (size=1) */
- 335               	.LM9:
- 336 003a C0E0      		ldi r28,lo8(0)
- 337               	.LM10:
- 338 003c 81E0      		ldi r24,lo8(1)
- 339 003e 8EBB      		out 62-0x20,r24
- 340               	.L42:
- 341               	.LM11:
- 342 0040 8EB3      		in r24,62-0x20
- 343 0042 8823      		tst r24
- 344 0044 E9F3      		breq .L42
- 345               	.LM12:
- 346 0046 F69B      		sbis 62-0x20,6
- 347 0048 06C0      		rjmp .L30
- 348               	.LM13:
- 349 004a CC23      		tst r28
- 350 004c 11F4      		brne .L31
- 351 004e C3E0      		ldi r28,lo8(3)
- 352 0050 0CC0      		rjmp .L33
- 353               	.L31:
- 354 0052 C150      		subi r28,lo8(-(-1))
- 355 0054 0AC0      		rjmp .L33
- 356               	.L30:
- 357               	.LM14:
- 358 0056 F79B      		sbis 62-0x20,7
- 359 0058 06C0      		rjmp .L34
- 360               	.LM15:
- 361 005a C330      		cpi r28,lo8(3)
- 362 005c 11F4      		brne .L35
- 363 005e C0E0      		ldi r28,lo8(0)
- 364 0060 04C0      		rjmp .L33
- 365               	.L35:
- 366 0062 CF5F      		subi r28,lo8(-(1))
- 367 0064 02C0      		rjmp .L33
- 368               	.L34:
- 369               	.LM16:
- 370 0066 F299      		sbic 62-0x20,2
- 371 0068 0DC0      		rjmp .L26
- 372               	.L33:
- 373               	.LBB6:
- 374               	.LM17:
- 375 006a EC2F      		mov r30,r28
- 376 006c FF27      		clr r31
- 377 006e EE0F      		add r30,r30
- 378 0070 FF1F      		adc r31,r31
- 379 0072 E050      		subi r30,lo8(-(AboutTextPtrs))
- 380 0074 F040      		sbci r31,hi8(-(AboutTextPtrs))
- 381               	.LBE6:
- 382               	/* #APP */
- 383 0076 8591      		lpm r24, Z+
- 384 0078 9491      		lpm r25, Z
- 385               		
- 386               	/* #NOAPP */
- 387 007a 0E94 0000 		call LCD_puts_f
- 388               	.LM18:
- 389 007e 0E94 0000 		call MAIN_WaitForJoyRelease
- 390 0082 DECF      		rjmp .L42
- 391               	.L26:
- 392               	/* epilogue: frame size=0 */
- 393 0084 CF91      		pop r28
- 394 0086 0895      		ret
- 395               	/* epilogue end (size=2) */
- 396               	/* function FUNCShowAbout size 44 (41) */
- 397               	.LFE25:
- 399               	.global	main
- 401               	main:
- 402               	.LFB14:
- 403               	.LM19:
- 404               	/* prologue: frame size=0 */
- 405 0088 C0E0      		ldi r28,lo8(__stack - 0)
- 406 008a D0E0      		ldi r29,hi8(__stack - 0)
- 407 008c DEBF      		out __SP_H__,r29
- 408 008e CDBF      		out __SP_L__,r28
- 409               	/* prologue end (size=4) */
- 410               	.LM20:
- 411 0090 C0E0      		ldi r28,lo8(0)
- 412               	.LM21:
- 413 0092 80E8      		ldi r24,lo8(-128)
- 414 0094 85BF      		out 85-0x20,r24
- 415               	.LM22:
- 416 0096 85BF      		out 85-0x20,r24
- 417               	.LM23:
- 418 0098 80BF      		out 80-0x20,r24
- 419               	.LM24:
- 420 009a 85E0      		ldi r24,lo8(5)
- 421 009c 8093 6400 		sts 100,r24
- 422               	.LM25:
- 423 00a0 80E3      		ldi r24,lo8(48)
- 424 00a2 80BB      		out 48-0x20,r24
- 425               	.LM26:
- 426 00a4 87E2      		ldi r24,lo8(39)
- 427 00a6 84B9      		out 36-0x20,r24
- 428               	.LM27:
- 429 00a8 8FED      		ldi r24,lo8(-33)
- 430 00aa 85B9      		out 37-0x20,r24
- 431               	.LM28:
- 432 00ac 8CE0      		ldi r24,lo8(12)
- 433 00ae 8EB9      		out 46-0x20,r24
- 434               	.LM29:
- 435 00b0 8093 6B00 		sts 107,r24
- 436               	.LM30:
- 437 00b4 80ED      		ldi r24,lo8(-48)
- 438 00b6 8093 6C00 		sts 108,r24
- 439               	.LM31:
- 440 00ba 80EC      		ldi r24,lo8(-64)
- 441 00bc 8DBB      		out 61-0x20,r24
- 442               	.LM32:
- 443 00be 8CBB      		out 60-0x20,r24
- 444               	.LM33:
- 445 00c0 81B3      		in r24,49-0x20
- 446 00c2 8F7C      		andi r24,lo8(-49)
- 447 00c4 8062      		ori r24,lo8(32)
- 448 00c6 81BB      		out 49-0x20,r24
- 449               	.LM34:
- 450 00c8 0E94 0000 		call LCD_Init
- 451               	.LM35:
- 452 00cc 8FE0      		ldi r24,lo8(15)
- 453 00ce 8093 E700 		sts 231,r24
- 454               	.LM36:
- 455 00d2 80E0      		ldi r24,lo8(WaitText)
- 456 00d4 90E0      		ldi r25,hi8(WaitText)
- 457 00d6 0E94 0000 		call LCD_puts_f
- 458               	.LM37:
- 459               	/* #APP */
- 460 00da 7894      		sei
- 461               	/* #NOAPP */
- 462               	.LBB7:
- 463               	.LM38:
- 464 00dc 20E0      		ldi r18,lo8(EEPROMVars+134)
- 465 00de 30E0      		ldi r19,hi8(EEPROMVars+134)
- 466               	.LBB8:
- 467               	.LM39:
- 468 00e0 D901      		movw r26,r18
- 469               	/* #APP */
- 470 00e2 0E94 0000 		call __eeprom_read_byte_1F2021
- 471 00e6 802D      		mov r24,__tmp_reg__
- 472               	/* #NOAPP */
- 473               	.LBE8:
- 474               	.LBE7:
- 475               	.LM40:
- 476 00e8 8A37      		cpi r24,lo8(122)
- 477 00ea 89F0      		breq .L46
- 478               	.LBB9:
- 479               	.LM41:
- 480 00ec 80E0      		ldi r24,lo8(0)
- 481 00ee 90E0      		ldi r25,hi8(0)
- 482 00f0 4FEF      		ldi r20,lo8(-1)
- 483               	.L52:
- 484               	.LBB10:
- 485               	.LBB11:
- 486               	.LM42:
- 487 00f2 DC01      		movw r26,r24
- 488               	/* #APP */
- 489 00f4 042E      		mov __tmp_reg__,r20
- 490 00f6 0E94 0000 		call __eeprom_write_byte_1F2021
- 491               	/* #NOAPP */
- 492               	.LBE11:
- 493               	.LBE10:
- 494               	.LM43:
- 495 00fa 0196      		adiw r24,1
- 496 00fc 52E0      		ldi r21,hi8(512)
- 497 00fe 8030      		cpi r24,lo8(512)
- 498 0100 9507      		cpc r25,r21
- 499 0102 B8F3      		brlo .L52
- 500               	.LBE9:
- 501               	.LBB12:
- 502               	.LM44:
- 503 0104 8AE7      		ldi r24,lo8(122)
- 504               	.LBB13:
- 505               	.LM45:
- 506 0106 D901      		movw r26,r18
- 507               	/* #APP */
- 508 0108 082E      		mov __tmp_reg__,r24
- 509 010a 0E94 0000 		call __eeprom_write_byte_1F2021
- 510               	/* #NOAPP */
- 511               	.L46:
- 512               	.LBE13:
- 513               	.LBE12:
- 514               	.LBB14:
- 515               	.LM46:
- 516 010e A0E0      		ldi r26,lo8(EEPROMVars+133)
- 517 0110 B0E0      		ldi r27,hi8(EEPROMVars+133)
- 518               	.LBB15:
- 519               	.LM47:
- 520               	/* #APP */
- 521 0112 0E94 0000 		call __eeprom_read_byte_1F2021
- 522 0116 802D      		mov r24,__tmp_reg__
- 523               	/* #NOAPP */
- 524               	.LBE15:
- 525               	.LBE14:
- 526               	.LM48:
- 527 0118 8F70      		andi r24,lo8(15)
- 528 011a 8093 E700 		sts 231,r24
- 529               	.LM49:
- 530 011e 80E0      		ldi r24,lo8(0)
- 531 0120 0E94 0000 		call DF_EnableDataflash
- 532               	.LM50:
- 533 0124 81B3      		in r24,49-0x20
- 534 0126 8063      		ori r24,lo8(48)
- 535 0128 81BB      		out 49-0x20,r24
- 536               	.LM51:
- 537 012a 0E94 0000 		call USART_Init
- 538               	.LM52:
- 539 012e 0E94 0000 		call OSCCAL_Calibrate
- 540               	.LM53:
- 541 0132 81B3      		in r24,49-0x20
- 542 0134 8F7C      		andi r24,lo8(-49)
- 543 0136 8061      		ori r24,lo8(16)
- 544 0138 81BB      		out 49-0x20,r24
- 545               	.LM54:
- 546 013a 81E0      		ldi r24,lo8(1)
- 547 013c 8EBB      		out 62-0x20,r24
- 548               	.LM55:
- 549 013e 80E8      		ldi r24,lo8(-128)
- 550 0140 8093 6100 		sts 97,r24
- 551 0144 83E0      		ldi r24,lo8(3)
- 552 0146 8093 6100 		sts 97,r24
- 553               	.L78:
- 554               	.LM56:
- 555 014a 8EB3      		in r24,62-0x20
- 556 014c 8823      		tst r24
- 557 014e E9F3      		breq .L78
- 558               	.LM57:
- 559 0150 F69B      		sbis 62-0x20,6
- 560 0152 06C0      		rjmp .L62
- 561               	.LM58:
- 562 0154 CC23      		tst r28
- 563 0156 11F4      		brne .L63
- 564 0158 C6E0      		ldi r28,lo8(6)
- 565 015a 1BC0      		rjmp .L65
- 566               	.L63:
- 567 015c C150      		subi r28,lo8(-(-1))
- 568 015e 19C0      		rjmp .L65
- 569               	.L62:
- 570               	.LM59:
- 571 0160 F79B      		sbis 62-0x20,7
- 572 0162 06C0      		rjmp .L66
- 573               	.LM60:
- 574 0164 C630      		cpi r28,lo8(6)
- 575 0166 11F4      		brne .L67
- 576 0168 C0E0      		ldi r28,lo8(0)
- 577 016a 13C0      		rjmp .L65
- 578               	.L67:
- 579 016c CF5F      		subi r28,lo8(-(1))
- 580 016e 11C0      		rjmp .L65
- 581               	.L66:
- 582               	.LM61:
- 583 0170 F49B      		sbis 62-0x20,4
- 584 0172 0BC0      		rjmp .L70
- 585               	.LBB16:
- 586               	.LM62:
- 587 0174 EC2F      		mov r30,r28
- 588 0176 FF27      		clr r31
- 589 0178 EE0F      		add r30,r30
- 590 017a FF1F      		adc r31,r31
- 591 017c E050      		subi r30,lo8(-(MainFunctionPtrs))
- 592 017e F040      		sbci r31,hi8(-(MainFunctionPtrs))
- 593               	/* #APP */
- 594 0180 8591      		lpm r24, Z+
- 595 0182 9491      		lpm r25, Z
- 596               		
- 597               	/* #NOAPP */
- 598               	.LBE16:
- 599 0184 FC01      		movw r30,r24
- 600 0186 0995      		icall
- 601 0188 04C0      		rjmp .L65
- 602               	.L70:
- 603               	.LM63:
- 604 018a F39B      		sbis 62-0x20,3
- 605 018c 02C0      		rjmp .L65
- 606               	.LM64:
- 607 018e 0E94 0000 		call FUNCShowAbout
- 608               	.L65:
- 609               	.LBB17:
- 610               	.LM65:
- 611 0192 EC2F      		mov r30,r28
- 612 0194 FF27      		clr r31
- 613 0196 EE0F      		add r30,r30
- 614 0198 FF1F      		adc r31,r31
- 615 019a E050      		subi r30,lo8(-(MainFunctionNames))
- 616 019c F040      		sbci r31,hi8(-(MainFunctionNames))
- 617               	.LBE17:
- 618               	/* #APP */
- 619 019e 8591      		lpm r24, Z+
- 620 01a0 9491      		lpm r25, Z
- 621               		
- 622               	/* #NOAPP */
- 623 01a2 0E94 0000 		call LCD_puts_f
- 624               	.LM66:
- 625 01a6 0E94 0000 		call MAIN_WaitForJoyRelease
- 626 01aa CFCF      		rjmp .L78
- 627               	/* epilogue: frame size=0 */
- 628               	/* epilogue: noreturn */
- 629               	/* epilogue end (size=0) */
- 630               	/* function main size 159 (155) */
- 631               	.LFE14:
- 633               	.global	MAIN_Delay1MS
- 635               	MAIN_Delay1MS:
- 636               	.LFB16:
- 637               	.LM67:
- 638               	/* prologue: frame size=0 */
- 639 01ac CF93      		push r28
- 640 01ae DF93      		push r29
- 641               	/* prologue end (size=2) */
- 642               	.LM68:
- 643 01b0 282F      		mov r18,r24
- 644 01b2 2150      		subi r18,lo8(-(-1))
- 645 01b4 2F3F      		cpi r18,lo8(-1)
- 646 01b6 49F0      		breq .L92
- 647 01b8 A3E3      		ldi r26,lo8(1843)
- 648 01ba B7E0      		ldi r27,hi8(1843)
- 649 01bc C0E0      		ldi r28,hlo8(1843)
- 650 01be D0E0      		ldi r29,hhi8(1843)
- 651               	.L90:
- 652               	.LBB18:
- 653               	.LBB19:
- 654               	.LBB20:
- 655               	.LBB21:
- 656               	.LM69:
- 657 01c0 CD01      		movw r24,r26
- 658               	/* #APP */
- 659 01c2 0197      		1: sbiw r24,1
- 660 01c4 F1F7      		brne 1b
- 661               	/* #NOAPP */
- 662               	.LBE21:
- 663               	.LBE20:
- 664               	.LBE19:
- 665               	.LBE18:
- 666 01c6 2150      		subi r18,1
- 667 01c8 D8F7      		brcc .L90
- 668               	.L92:
- 669               	/* epilogue: frame size=0 */
- 670 01ca DF91      		pop r29
- 671 01cc CF91      		pop r28
- 672 01ce 0895      		ret
- 673               	/* epilogue end (size=3) */
- 674               	/* function MAIN_Delay1MS size 21 (16) */
- 675               	.LFE16:
- 677               	.global	MAIN_ResetCSLine
- 679               	MAIN_ResetCSLine:
- 680               	.LFB17:
- 681               	.LM70:
- 682               	/* prologue: frame size=0 */
- 683               	/* prologue end (size=0) */
- 684               	.LM71:
- 685 01d0 9927      		clr r25
- 686 01d2 8130      		cpi r24,1
- 687 01d4 9105      		cpc r25,__zero_reg__
- 688 01d6 B1F0      		breq .L100
- 689               	.LM72:
- 690 01d8 8230      		cpi r24,2
- 691 01da 9105      		cpc r25,__zero_reg__
- 692 01dc 1CF4      		brge .L101
- 693 01de 892B      		or r24,r25
- 694 01e0 21F0      		breq .L95
- 695 01e2 0895      		ret
- 696               	.L101:
- 697 01e4 0297      		sbiw r24,2
- 698 01e6 59F0      		breq .L99
- 699 01e8 0895      		ret
- 700               	.L95:
- 701               	.LM73:
- 702 01ea 869A      		sbi 48-0x20,6
- 703               	.LBB22:
- 704               	.LM74:
- 705 01ec A0E0      		ldi r26,lo8(EEPROMVars)
- 706 01ee B0E0      		ldi r27,hi8(EEPROMVars)
- 707               	.LBB23:
- 708               	.LM75:
- 709               	/* #APP */
- 710 01f0 0E94 0000 		call __eeprom_read_byte_1F2021
- 711 01f4 802D      		mov r24,__tmp_reg__
- 712               	/* #NOAPP */
- 713               	.LBE23:
- 714               	.LBE22:
- 715               	.LM76:
- 716 01f6 8823      		tst r24
- 717 01f8 19F4      		brne .L102
- 718               	.LM77:
- 719 01fa 8E9A      		sbi 49-0x20,6
- 720 01fc 0895      		ret
- 721               	.L99:
- 722               	.LM78:
- 723 01fe 869A      		sbi 48-0x20,6
- 724               	.L102:
- 725               	.LM79:
- 726 0200 8E98      		cbi 49-0x20,6
- 727               	.LM80:
- 728 0202 0895      		ret
- 729               	.L100:
- 730               	.LM81:
- 731 0204 8698      		cbi 48-0x20,6
- 732 0206 FCCF      		rjmp .L102
- 733               	/* epilogue: frame size=0 */
- 734               	/* epilogue: noreturn */
- 735               	/* epilogue end (size=0) */
- 736               	/* function MAIN_ResetCSLine size 30 (30) */
- 737               	.LFE17:
- 739               	.global	MAIN_IntToStr
- 741               	MAIN_IntToStr:
- 742               	.LFB19:
- 743               	.LM82:
- 744               	/* prologue: frame size=0 */
- 745               	/* prologue end (size=0) */
- 746 0208 FB01      		movw r30,r22
- 747               	.LM83:
- 748 020a 20E0      		ldi r18,lo8(0)
- 749               	.L114:
- 750               	.LM84:
- 751 020c 8436      		cpi r24,100
- 752 020e 9105      		cpc r25,__zero_reg__
- 753 0210 20F0      		brlo .L111
- 754               	.LM85:
- 755 0212 2F5F      		subi r18,lo8(-(1))
- 756               	.LM86:
- 757 0214 8456      		subi r24,lo8(-(-100))
- 758 0216 9040      		sbci r25,hi8(-(-100))
- 759 0218 F9CF      		rjmp .L114
- 760               	.L111:
- 761               	.LM87:
- 762 021a 205D      		subi r18,lo8(-(48))
- 763 021c 2193      		st Z+,r18
- 764               	.LM88:
- 765 021e 20E0      		ldi r18,lo8(0)
- 766               	.L115:
- 767               	.LM89:
- 768 0220 8A30      		cpi r24,10
- 769 0222 9105      		cpc r25,__zero_reg__
- 770 0224 18F0      		brlo .L113
- 771               	.LM90:
- 772 0226 2F5F      		subi r18,lo8(-(1))
- 773               	.LM91:
- 774 0228 0A97      		sbiw r24,10
- 775 022a FACF      		rjmp .L115
- 776               	.L113:
- 777               	.LM92:
- 778 022c 205D      		subi r18,lo8(-(48))
- 779 022e 2193      		st Z+,r18
- 780               	.LM93:
- 781 0230 805D      		subi r24,lo8(-(48))
- 782 0232 8193      		st Z+,r24
- 783               	.LM94:
- 784 0234 1082      		st Z,__zero_reg__
- 785               	/* epilogue: frame size=0 */
- 786 0236 0895      		ret
- 787               	/* epilogue end (size=1) */
- 788               	/* function MAIN_IntToStr size 24 (23) */
- 789               	.LFE19:
- 791               		.section	.progmem.data
- 794               	__c.14:
- 795 01e2 5052 473E 		.string	"PRG> "
- 795      2000 
- 796               		.text
- 797               	.global	MAIN_ShowProgType
- 799               	MAIN_ShowProgType:
- 800               	.LFB20:
- 801               	.LM95:
- 802               	/* prologue: frame size=7 */
- 803 0238 1F93      		push r17
- 804 023a CF93      		push r28
- 805 023c DF93      		push r29
- 806 023e CDB7      		in r28,__SP_L__
- 807 0240 DEB7      		in r29,__SP_H__
- 808 0242 2797      		sbiw r28,7
- 809 0244 0FB6      		in __tmp_reg__,__SREG__
- 810 0246 F894      		cli
- 811 0248 DEBF      		out __SP_H__,r29
- 812 024a 0FBE      		out __SREG__,__tmp_reg__
- 813 024c CDBF      		out __SP_L__,r28
- 814               	/* prologue end (size=11) */
- 815 024e 182F      		mov r17,r24
- 816               	.LM96:
- 817 0250 60E0      		ldi r22,lo8(__c.14)
- 818 0252 70E0      		ldi r23,hi8(__c.14)
- 819 0254 CE01      		movw r24,r28
- 820 0256 0196      		adiw r24,1
- 821 0258 0E94 0000 		call strcpy_P
- 822               	.LM97:
- 823 025c 1E83      		std Y+6,r17
- 824               	.LM98:
- 825 025e 1F82      		std Y+7,__zero_reg__
- 826               	.LM99:
- 827 0260 CE01      		movw r24,r28
- 828 0262 0196      		adiw r24,1
- 829 0264 0E94 0000 		call LCD_puts
- 830               	/* epilogue: frame size=7 */
- 831 0268 2796      		adiw r28,7
- 832 026a 0FB6      		in __tmp_reg__,__SREG__
- 833 026c F894      		cli
- 834 026e DEBF      		out __SP_H__,r29
- 835 0270 0FBE      		out __SREG__,__tmp_reg__
- 836 0272 CDBF      		out __SP_L__,r28
- 837 0274 DF91      		pop r29
- 838 0276 CF91      		pop r28
- 839 0278 1F91      		pop r17
- 840 027a 0895      		ret
- 841               	/* epilogue end (size=10) */
- 842               	/* function MAIN_ShowProgType size 34 (13) */
- 843               	.LFE20:
- 845               	.global	MAIN_ShowError
- 847               	MAIN_ShowError:
- 848               	.LFB21:
- 849               	.LM100:
- 850               	/* prologue: frame size=20 */
- 851 027c CF93      		push r28
- 852 027e DF93      		push r29
- 853 0280 CDB7      		in r28,__SP_L__
- 854 0282 DEB7      		in r29,__SP_H__
- 855 0284 6497      		sbiw r28,20
- 856 0286 0FB6      		in __tmp_reg__,__SREG__
- 857 0288 F894      		cli
- 858 028a DEBF      		out __SP_H__,r29
- 859 028c 0FBE      		out __SREG__,__tmp_reg__
- 860 028e CDBF      		out __SP_L__,r28
- 861               	/* prologue end (size=10) */
- 862               	.LM101:
- 863 0290 25E4      		ldi r18,lo8(69)
- 864 0292 2983      		std Y+1,r18
- 865               	.LM102:
- 866 0294 2EE3      		ldi r18,lo8(62)
- 867 0296 2A83      		std Y+2,r18
- 868               	.LM103:
- 869 0298 BC01      		movw r22,r24
- 870 029a CE01      		movw r24,r28
- 871 029c 0396      		adiw r24,3
- 872 029e 0E94 0000 		call strcpy_P
- 873               	.LM104:
- 874 02a2 CE01      		movw r24,r28
- 875 02a4 0196      		adiw r24,1
- 876 02a6 0E94 0000 		call LCD_puts
- 877               	.LM105:
- 878 02aa 0E94 0000 		call MAIN_WaitForJoyRelease
- 879               	.L118:
- 880               	.LM106:
- 881 02ae F49B      		sbis 62-0x20,4
- 882 02b0 FECF      		rjmp .L118
- 883               	.LM107:
- 884 02b2 0E94 0000 		call MAIN_WaitForJoyRelease
- 885               	/* epilogue: frame size=20 */
- 886 02b6 6496      		adiw r28,20
- 887 02b8 0FB6      		in __tmp_reg__,__SREG__
- 888 02ba F894      		cli
- 889 02bc DEBF      		out __SP_H__,r29
- 890 02be 0FBE      		out __SREG__,__tmp_reg__
- 891 02c0 CDBF      		out __SP_L__,r28
- 892 02c2 DF91      		pop r29
- 893 02c4 CF91      		pop r28
- 894 02c6 0895      		ret
- 895               	/* epilogue end (size=9) */
- 896               	/* function MAIN_ShowError size 38 (19) */
- 897               	.LFE21:
- 899               	.global	__vector_3
- 901               	__vector_3:
- 902               	.LFB22:
- 903               	.LM108:
- 904               	/* prologue: frame size=0 */
- 905 02c8 7894      		sei
- 906 02ca 1F92      		push __zero_reg__
- 907 02cc 0F92      		push __tmp_reg__
- 908 02ce 0FB6      		in __tmp_reg__,__SREG__
- 909 02d0 0F92      		push __tmp_reg__
- 910 02d2 1124      		clr __zero_reg__
- 911 02d4 8F93      		push r24
- 912 02d6 9F93      		push r25
- 913               	/* prologue end (size=8) */
- 914               	.LM109:
- 915 02d8 93B1      		in r25,35-0x20
- 916 02da 9095      		com r25
- 917 02dc 907D      		andi r25,lo8(-48)
- 918 02de 8CB1      		in r24,44-0x20
- 919 02e0 8095      		com r24
- 920 02e2 8C70      		andi r24,lo8(12)
- 921 02e4 982B      		or r25,r24
- 922 02e6 9EBB      		out 62-0x20,r25
- 923               	/* epilogue: frame size=0 */
- 924 02e8 9F91      		pop r25
- 925 02ea 8F91      		pop r24
- 926 02ec 0F90      		pop __tmp_reg__
- 927 02ee 0FBE      		out __SREG__,__tmp_reg__
- 928 02f0 0F90      		pop __tmp_reg__
- 929 02f2 1F90      		pop __zero_reg__
- 930 02f4 1895      		reti
- 931               	/* epilogue end (size=7) */
- 932               	/* function __vector_3 size 23 (8) */
- 933               	.LFE22:
- 935               		.section	.progmem.data
- 938               	__c.13:
- 939 01e8 4241 4449 		.string	"BADISR"
- 939      5352 00
- 940               		.text
- 941               	.global	__vector_default
- 943               	__vector_default:
- 944               	.LFB23:
- 945               	.LM110:
- 946               	/* prologue: frame size=0 */
- 947               	/* prologue: naked */
- 948               	/* prologue end (size=0) */
- 949               	.LM111:
- 950 02f6 80E0      		ldi r24,lo8(__c.13)
- 951 02f8 90E0      		ldi r25,hi8(__c.13)
- 952 02fa 0E94 0000 		call MAIN_ShowError
- 953               	.L123:
- 954               	.LM112:
- 955 02fe FFCF      		rjmp .L123
- 956               	/* epilogue: frame size=0 */
- 957               	/* epilogue: naked */
- 958               	/* epilogue end (size=0) */
- 959               	/* function __vector_default size 5 (5) */
- 960               	.LFE23:
- 962               	.global	FUNCChangeSettings
- 964               	FUNCChangeSettings:
- 965               	.LFB24:
- 966               	.LM113:
- 967               	/* prologue: frame size=0 */
- 968 0300 CF93      		push r28
- 969               	/* prologue end (size=1) */
- 970               	.LM114:
- 971 0302 C0E0      		ldi r28,lo8(0)
- 972               	.LM115:
- 973 0304 81E0      		ldi r24,lo8(1)
- 974 0306 8EBB      		out 62-0x20,r24
- 975               	.L143:
- 976               	.LM116:
- 977 0308 8EB3      		in r24,62-0x20
- 978 030a 8823      		tst r24
- 979 030c E9F3      		breq .L143
- 980               	.LM117:
- 981 030e F69B      		sbis 62-0x20,6
- 982 0310 06C0      		rjmp .L129
- 983               	.LM118:
- 984 0312 CC23      		tst r28
- 985 0314 11F4      		brne .L130
- 986 0316 C3E0      		ldi r28,lo8(3)
- 987 0318 19C0      		rjmp .L132
- 988               	.L130:
- 989 031a C150      		subi r28,lo8(-(-1))
- 990 031c 17C0      		rjmp .L132
- 991               	.L129:
- 992               	.LM119:
- 993 031e F79B      		sbis 62-0x20,7
- 994 0320 06C0      		rjmp .L133
- 995               	.LM120:
- 996 0322 C330      		cpi r28,lo8(3)
- 997 0324 11F4      		brne .L134
- 998 0326 C0E0      		ldi r28,lo8(0)
- 999 0328 11C0      		rjmp .L132
- 1000               	.L134:
- 1001 032a CF5F      		subi r28,lo8(-(1))
- 1002 032c 0FC0      		rjmp .L132
- 1003               	.L133:
- 1004               	.LM121:
- 1005 032e F49B      		sbis 62-0x20,4
- 1006 0330 0BC0      		rjmp .L137
- 1007               	.LBB24:
- 1008               	.LM122:
- 1009 0332 EC2F      		mov r30,r28
- 1010 0334 FF27      		clr r31
- 1011 0336 EE0F      		add r30,r30
- 1012 0338 FF1F      		adc r31,r31
- 1013 033a E050      		subi r30,lo8(-(SettingFunctionPtrs))
- 1014 033c F040      		sbci r31,hi8(-(SettingFunctionPtrs))
- 1015               	/* #APP */
- 1016 033e 8591      		lpm r24, Z+
- 1017 0340 9491      		lpm r25, Z
- 1018               		
- 1019               	/* #NOAPP */
- 1020               	.LBE24:
- 1021 0342 FC01      		movw r30,r24
- 1022 0344 0995      		icall
- 1023 0346 02C0      		rjmp .L132
- 1024               	.L137:
- 1025               	.LM123:
- 1026 0348 F299      		sbic 62-0x20,2
- 1027 034a 0DC0      		rjmp .L125
- 1028               	.L132:
- 1029               	.LBB25:
- 1030               	.LM124:
- 1031 034c EC2F      		mov r30,r28
- 1032 034e FF27      		clr r31
- 1033 0350 EE0F      		add r30,r30
- 1034 0352 FF1F      		adc r31,r31
- 1035 0354 E050      		subi r30,lo8(-(SettingFunctionNames))
- 1036 0356 F040      		sbci r31,hi8(-(SettingFunctionNames))
- 1037               	.LBE25:
- 1038               	/* #APP */
- 1039 0358 8591      		lpm r24, Z+
- 1040 035a 9491      		lpm r25, Z
- 1041               		
- 1042               	/* #NOAPP */
- 1043 035c 0E94 0000 		call LCD_puts_f
- 1044               	.LM125:
- 1045 0360 0E94 0000 		call MAIN_WaitForJoyRelease
- 1046 0364 D1CF      		rjmp .L143
- 1047               	.L125:
- 1048               	/* epilogue: frame size=0 */
- 1049 0366 CF91      		pop r28
- 1050 0368 0895      		ret
- 1051               	/* epilogue end (size=2) */
- 1052               	/* function FUNCChangeSettings size 61 (58) */
- 1053               	.LFE24:
- 1055               	.global	FUNCAVRISPMode
- 1057               	FUNCAVRISPMode:
- 1058               	.LFB26:
- 1059               	.LM126:
- 1060               	/* prologue: frame size=0 */
- 1061               	/* prologue end (size=0) */
- 1062               	.LM127:
- 1063 036a 80E0      		ldi r24,lo8(WaitText)
- 1064 036c 90E0      		ldi r25,hi8(WaitText)
- 1065 036e 0E94 0000 		call LCD_puts_f
- 1066 0372 0E94 0000 		call OSCCAL_Calibrate
- 1067 0376 8091 C100 		lds r24,193
- 1068 037a 8078      		andi r24,lo8(-128)
- 1069 037c 8861      		ori r24,lo8(24)
- 1070 037e 8093 C100 		sts 193,r24
- 1071               	.LM128:
- 1072 0382 80E0      		ldi r24,lo8(AVRISPModeMessage)
- 1073 0384 90E0      		ldi r25,hi8(AVRISPModeMessage)
- 1074 0386 0E94 0000 		call LCD_puts_f
- 1075               	.LM129:
- 1076 038a 80E0      		ldi r24,lo8(pm(AICI_InterpretPacket))
- 1077 038c 90E0      		ldi r25,hi8(pm(AICI_InterpretPacket))
- 1078 038e 9093 0000 		sts (InterpretPacketRoutine)+1,r25
- 1079 0392 8093 0000 		sts InterpretPacketRoutine,r24
- 1080               	.LM130:
- 1081 0396 0E94 0000 		call V2P_RunStateMachine
- 1082               	/* epilogue: frame size=0 */
- 1083 039a 0895      		ret
- 1084               	/* epilogue end (size=1) */
- 1085               	/* function FUNCAVRISPMode size 25 (24) */
- 1086               	.LFE26:
- 1088               	.global	FUNCProgramDataflash
- 1090               	FUNCProgramDataflash:
- 1091               	.LFB27:
- 1092               	.LM131:
- 1093               	/* prologue: frame size=0 */
- 1094               	/* prologue end (size=0) */
- 1095               	.LBB26:
- 1096               	.LM132:
- 1097 039c A0E0      		ldi r26,lo8(EEPROMVars+1)
- 1098 039e B0E0      		ldi r27,hi8(EEPROMVars+1)
- 1099               	.LBB27:
- 1100               	.LM133:
- 1101               	/* #APP */
- 1102 03a0 0E94 0000 		call __eeprom_read_byte_1F2021
- 1103 03a4 802D      		mov r24,__tmp_reg__
- 1104               	/* #NOAPP */
- 1105               	.LBE27:
- 1106               	.LBE26:
- 1107               	.LM134:
- 1108 03a6 0E94 0000 		call USI_SPIInitMaster
- 1109               	.LM135:
- 1110 03aa 81E0      		ldi r24,lo8(1)
- 1111 03ac 8093 0000 		sts UseExernalDF,r24
- 1112               	.LM136:
- 1113 03b0 80E0      		ldi r24,lo8(pm(USI_SPITransmit))
- 1114 03b2 90E0      		ldi r25,hi8(pm(USI_SPITransmit))
- 1115 03b4 9093 0000 		sts (DFSPIRoutinePointer)+1,r25
- 1116 03b8 8093 0000 		sts DFSPIRoutinePointer,r24
- 1117               	.LM137:
- 1118 03bc 80E0      		ldi r24,lo8(WaitText)
- 1119 03be 90E0      		ldi r25,hi8(WaitText)
- 1120 03c0 0E94 0000 		call LCD_puts_f
- 1121 03c4 0E94 0000 		call OSCCAL_Calibrate
- 1122 03c8 8091 C100 		lds r24,193
- 1123 03cc 8078      		andi r24,lo8(-128)
- 1124 03ce 8861      		ori r24,lo8(24)
- 1125 03d0 8093 C100 		sts 193,r24
- 1126               	.LM138:
- 1127 03d4 80E0      		ldi r24,lo8(DataFlashProgMode)
- 1128 03d6 90E0      		ldi r25,hi8(DataFlashProgMode)
- 1129 03d8 0E94 0000 		call LCD_puts_f
- 1130               	.LM139:
- 1131 03dc 80E0      		ldi r24,lo8(pm(PD_InterpretAVRISPPacket))
- 1132 03de 90E0      		ldi r25,hi8(pm(PD_InterpretAVRISPPacket))
- 1133 03e0 9093 0000 		sts (InterpretPacketRoutine)+1,r25
- 1134 03e4 8093 0000 		sts InterpretPacketRoutine,r24
- 1135               	.LM140:
- 1136 03e8 0E94 0000 		call V2P_RunStateMachine
- 1137               	.LM141:
- 1138 03ec 80E0      		ldi r24,lo8(0)
- 1139 03ee 0E94 0000 		call DF_EnableDataflash
- 1140               	.LM142:
- 1141 03f2 8091 6400 		lds r24,100
- 1142 03f6 8460      		ori r24,lo8(4)
- 1143 03f8 8093 6400 		sts 100,r24
- 1144               	/* epilogue: frame size=0 */
- 1145 03fc 0895      		ret
- 1146               	/* epilogue end (size=1) */
- 1147               	/* function FUNCProgramDataflash size 50 (49) */
- 1148               	.LFE27:
- 1150               		.section	.progmem.data
- 1153               	__c.6:
- 1154 01ef 4E4F 2045 		.string	"NO ERASE CMD"
- 1154      5241 5345 
- 1154      2043 4D44 
- 1154      00
- 1157               	__c.7:
- 1158 01fc 4E4F 2044 		.string	"NO DATA"
- 1158      4154 4100 
- 1161               	__c.8:
- 1162 0204 4E4F 2045 		.string	"NO EEPROM"
- 1162      4550 524F 
- 1162      4D00 
- 1165               	__c.9:
- 1166 020e 4E4F 2046 		.string	"NO FUSE BYTES"
- 1166      5553 4520 
- 1166      4259 5445 
- 1166      5300 
- 1169               	__c.10:
- 1170 021c 4E4F 204C 		.string	"NO LOCK BYTES"
- 1170      4F43 4B20 
- 1170      4259 5445 
- 1170      5300 
- 1173               	__c.11:
- 1174 022a 5052 4F47 		.string	"PROGRAMMING DONE"
- 1174      5241 4D4D 
- 1174      494E 4720 
- 1174      444F 4E45 
- 1174      00
- 1177               	__c.12:
- 1178 023b 4641 494C 		.string	"FAILED"
- 1178      4544 00
- 1179               		.text
- 1180               	.global	FUNCProgramAVR
- 1182               	FUNCProgramAVR:
- 1183               	.LFB28:
- 1184               	.LM143:
- 1185               	/* prologue: frame size=19 */
- 1186 03fe 0F93      		push r16
- 1187 0400 1F93      		push r17
- 1188 0402 CF93      		push r28
- 1189 0404 DF93      		push r29
- 1190 0406 CDB7      		in r28,__SP_L__
- 1191 0408 DEB7      		in r29,__SP_H__
- 1192 040a 6397      		sbiw r28,19
- 1193 040c 0FB6      		in __tmp_reg__,__SREG__
- 1194 040e F894      		cli
- 1195 0410 DEBF      		out __SP_H__,r29
- 1196 0412 0FBE      		out __SREG__,__tmp_reg__
- 1197 0414 CDBF      		out __SP_L__,r28
- 1198               	/* prologue end (size=12) */
- 1199               	.LM144:
- 1200 0416 00E0      		ldi r16,lo8(0)
- 1201               	.LM145:
- 1202 0418 102F      		mov r17,r16
- 1203               	.LM146:
- 1204 041a 0E94 0000 		call SPI_SPIInit
- 1205               	.LM147:
- 1206 041e 0093 0000 		sts UseExernalDF,r16
- 1207               	.LM148:
- 1208 0422 80E0      		ldi r24,lo8(pm(SPI_SPITransmit))
- 1209 0424 90E0      		ldi r25,hi8(pm(SPI_SPITransmit))
- 1210 0426 9093 0000 		sts (DFSPIRoutinePointer)+1,r25
- 1211 042a 8093 0000 		sts DFSPIRoutinePointer,r24
- 1212               	.LM149:
- 1213 042e 0E94 0000 		call DF_CheckCorrectOnboardChip
- 1214 0432 8823      		tst r24
- 1215 0434 09F4      		brne .+2
- 1216 0436 0DC1      		rjmp .L156
- 1217               	.LM150:
- 1218 0438 0E94 0000 		call MAIN_WaitForJoyRelease
- 1219               	.LM151:
- 1220 043c 81E0      		ldi r24,lo8(1)
- 1221 043e 8EBB      		out 62-0x20,r24
- 1222               	.L211:
- 1223               	.LM152:
- 1224 0440 8EB3      		in r24,62-0x20
- 1225 0442 8823      		tst r24
- 1226 0444 E9F3      		breq .L211
- 1227               	.LM153:
- 1228 0446 F299      		sbic 62-0x20,2
- 1229 0448 04C1      		rjmp .L156
- 1230               	.LM154:
- 1231 044a F499      		sbic 62-0x20,4
- 1232 044c 1CC0      		rjmp .L159
- 1233               	.LM155:
- 1234 044e F69B      		sbis 62-0x20,6
- 1235 0450 06C0      		rjmp .L165
- 1236               	.LM156:
- 1237 0452 1123      		tst r17
- 1238 0454 11F4      		brne .L166
- 1239 0456 16E0      		ldi r17,lo8(6)
- 1240 0458 09C0      		rjmp .L162
- 1241               	.L166:
- 1242 045a 1150      		subi r17,lo8(-(-1))
- 1243 045c 07C0      		rjmp .L162
- 1244               	.L165:
- 1245               	.LM157:
- 1246 045e F79B      		sbis 62-0x20,7
- 1247 0460 05C0      		rjmp .L162
- 1248               	.LM158:
- 1249 0462 1630      		cpi r17,lo8(6)
- 1250 0464 11F4      		brne .L170
- 1251 0466 10E0      		ldi r17,lo8(0)
- 1252 0468 01C0      		rjmp .L162
- 1253               	.L170:
- 1254 046a 1F5F      		subi r17,lo8(-(1))
- 1255               	.L162:
- 1256               	.LBB28:
- 1257               	.LM159:
- 1258 046c E12F      		mov r30,r17
- 1259 046e FF27      		clr r31
- 1260 0470 EE0F      		add r30,r30
- 1261 0472 FF1F      		adc r31,r31
- 1262 0474 E050      		subi r30,lo8(-(ProgOptions))
- 1263 0476 F040      		sbci r31,hi8(-(ProgOptions))
- 1264               	.LBE28:
- 1265               	/* #APP */
- 1266 0478 8591      		lpm r24, Z+
- 1267 047a 9491      		lpm r25, Z
- 1268               		
- 1269               	/* #NOAPP */
- 1270 047c 0E94 0000 		call LCD_puts_f
- 1271               	.LM160:
- 1272 0480 0E94 0000 		call MAIN_WaitForJoyRelease
- 1273 0484 DDCF      		rjmp .L211
- 1274               	.L159:
- 1275               	.LM161:
- 1276 0486 81B3      		in r24,49-0x20
- 1277 0488 8063      		ori r24,lo8(48)
- 1278 048a 81BB      		out 49-0x20,r24
- 1279               	.LM162:
- 1280 048c 80E0      		ldi r24,lo8(WaitText)
- 1281 048e 90E0      		ldi r25,hi8(WaitText)
- 1282 0490 0E94 0000 		call LCD_puts_f
- 1283               	.LBB29:
- 1284               	.LM163:
- 1285 0494 A0E0      		ldi r26,lo8(EEPROMVars+1)
- 1286 0496 B0E0      		ldi r27,hi8(EEPROMVars+1)
- 1287               	.LBB30:
- 1288               	.LM164:
- 1289               	/* #APP */
- 1290 0498 0E94 0000 		call __eeprom_read_byte_1F2021
- 1291 049c 802D      		mov r24,__tmp_reg__
- 1292               	/* #NOAPP */
- 1293               	.LBE30:
- 1294               	.LBE29:
- 1295               	.LM165:
- 1296 049e 0E94 0000 		call USI_SPIInitMaster
- 1297               	.LM166:
- 1298 04a2 80E0      		ldi r24,lo8(0)
- 1299 04a4 0E94 0000 		call MAIN_ResetCSLine
- 1300 04a8 E0E0      		ldi r30,lo8(PacketBytes)
- 1301 04aa F0E0      		ldi r31,hi8(PacketBytes)
- 1302 04ac 20E0      		ldi r18,lo8(0)
- 1303 04ae 30E0      		ldi r19,hi8(0)
- 1304 04b0 9BE0      		ldi r25,lo8(11)
- 1305               	.L178:
- 1306               	.LBB31:
- 1307               	.LBB32:
- 1308               	.LM167:
- 1309 04b2 D901      		movw r26,r18
- 1310 04b4 A050      		subi r26,lo8(-(EEPROMVars+35))
- 1311 04b6 B040      		sbci r27,hi8(-(EEPROMVars+35))
- 1312               	.LBB33:
- 1313               	.LM168:
- 1314               	/* #APP */
- 1315 04b8 0E94 0000 		call __eeprom_read_byte_1F2021
- 1316 04bc 802D      		mov r24,__tmp_reg__
- 1317               	/* #NOAPP */
- 1318               	.LBE33:
- 1319               	.LBE32:
- 1320               	.LM169:
- 1321 04be 8193      		st Z+,r24
- 1322               	.LM170:
- 1323 04c0 9150      		subi r25,lo8(-(-1))
- 1324 04c2 2F5F      		subi r18,lo8(-(1))
- 1325 04c4 3F4F      		sbci r19,hi8(-(1))
- 1326 04c6 97FF      		sbrs r25,7
- 1327 04c8 F4CF      		rjmp .L178
- 1328               	.LBE31:
- 1329               	.LM171:
- 1330 04ca 0E94 0000 		call ISPCC_EnterChipProgrammingMode
- 1331               	.LM172:
- 1332 04ce 1092 0000 		sts CurrAddress,__zero_reg__
- 1333 04d2 1092 0000 		sts (CurrAddress)+1,__zero_reg__
- 1334 04d6 1092 0000 		sts (CurrAddress)+2,__zero_reg__
- 1335 04da 1092 0000 		sts (CurrAddress)+3,__zero_reg__
- 1336               	.LM173:
- 1337 04de 8091 0000 		lds r24,PacketBytes+1
- 1338 04e2 8823      		tst r24
- 1339 04e4 09F0      		breq .+2
- 1340 04e6 A0C0      		rjmp .L179
- 1341               	.LM174:
- 1342 04e8 1630      		cpi r17,lo8(6)
- 1343 04ea 21F0      		breq .L181
- 1344 04ec 1123      		tst r17
- 1345 04ee 11F0      		breq .L181
- 1346 04f0 1230      		cpi r17,lo8(2)
- 1347 04f2 91F4      		brne .L180
- 1348               	.L181:
- 1349               	.LM175:
- 1350 04f4 83E4      		ldi r24,lo8(67)
- 1351 04f6 0E94 0000 		call MAIN_ShowProgType
- 1352               	.LBB34:
- 1353               	.LM176:
- 1354 04fa A0E0      		ldi r26,lo8(EEPROMVars+20)
- 1355 04fc B0E0      		ldi r27,hi8(EEPROMVars+20)
- 1356               	.LBB35:
- 1357               	.LM177:
- 1358               	/* #APP */
- 1359 04fe 0E94 0000 		call __eeprom_read_byte_1F2021
- 1360 0502 802D      		mov r24,__tmp_reg__
- 1361               	/* #NOAPP */
- 1362               	.LBE35:
- 1363               	.LBE34:
- 1364               	.LM178:
- 1365 0504 8130      		cpi r24,lo8(1)
- 1366 0506 31F0      		breq .L182
- 1367               	.LM179:
- 1368 0508 02E0      		ldi r16,lo8(2)
- 1369               	.LM180:
- 1370 050a 80E0      		ldi r24,lo8(__c.6)
- 1371 050c 90E0      		ldi r25,hi8(__c.6)
- 1372 050e 0E94 0000 		call MAIN_ShowError
- 1373 0512 02C0      		rjmp .L180
- 1374               	.L182:
- 1375               	.LM181:
- 1376 0514 0E94 0000 		call PM_SendEraseCommand
- 1377               	.L180:
- 1378               	.LM182:
- 1379 0518 1123      		tst r17
- 1380 051a 11F0      		breq .L186
- 1381 051c 1230      		cpi r17,lo8(2)
- 1382 051e B9F4      		brne .L185
- 1383               	.L186:
- 1384 0520 0023      		tst r16
- 1385 0522 A9F4      		brne .L185
- 1386               	.LM183:
- 1387 0524 84E4      		ldi r24,lo8(68)
- 1388 0526 0E94 0000 		call MAIN_ShowProgType
- 1389               	.LM184:
- 1390 052a 81E0      		ldi r24,lo8(1)
- 1391 052c 0E94 0000 		call PM_GetStoredDataSize
- 1392 0530 DC01      		movw r26,r24
- 1393 0532 CB01      		movw r24,r22
- 1394 0534 0097      		sbiw r24,0
- 1395 0536 A105      		cpc r26,__zero_reg__
- 1396 0538 B105      		cpc r27,__zero_reg__
- 1397 053a 31F4      		brne .L187
- 1398               	.LM185:
- 1399 053c 03E0      		ldi r16,lo8(3)
- 1400               	.LM186:
- 1401 053e 80E0      		ldi r24,lo8(__c.7)
- 1402 0540 90E0      		ldi r25,hi8(__c.7)
- 1403 0542 0E94 0000 		call MAIN_ShowError
- 1404 0546 03C0      		rjmp .L185
- 1405               	.L187:
- 1406               	.LM187:
- 1407 0548 81E0      		ldi r24,lo8(1)
- 1408 054a 0E94 0000 		call PM_CreateProgrammingPackets
- 1409               	.L185:
- 1410               	.LM188:
- 1411 054e 812F      		mov r24,r17
- 1412 0550 8150      		subi r24,lo8(-(-1))
- 1413 0552 8230      		cpi r24,lo8(2)
- 1414 0554 A8F4      		brsh .L189
- 1415               	.LM189:
- 1416 0556 85E4      		ldi r24,lo8(69)
- 1417 0558 0E94 0000 		call MAIN_ShowProgType
- 1418               	.LM190:
- 1419 055c 80E0      		ldi r24,lo8(0)
- 1420 055e 0E94 0000 		call PM_GetStoredDataSize
- 1421 0562 DC01      		movw r26,r24
- 1422 0564 CB01      		movw r24,r22
- 1423 0566 0097      		sbiw r24,0
- 1424 0568 A105      		cpc r26,__zero_reg__
- 1425 056a B105      		cpc r27,__zero_reg__
- 1426 056c 31F4      		brne .L190
- 1427               	.LM191:
- 1428 056e 03E0      		ldi r16,lo8(3)
- 1429               	.LM192:
- 1430 0570 80E0      		ldi r24,lo8(__c.8)
- 1431 0572 90E0      		ldi r25,hi8(__c.8)
- 1432 0574 0E94 0000 		call MAIN_ShowError
- 1433 0578 03C0      		rjmp .L189
- 1434               	.L190:
- 1435               	.LM193:
- 1436 057a 80E0      		ldi r24,lo8(0)
- 1437 057c 0E94 0000 		call PM_CreateProgrammingPackets
- 1438               	.L189:
- 1439               	.LM194:
- 1440 0580 1330      		cpi r17,lo8(3)
- 1441 0582 11F0      		breq .L193
- 1442 0584 1530      		cpi r17,lo8(5)
- 1443 0586 99F4      		brne .L192
- 1444               	.L193:
- 1445               	.LM195:
- 1446 0588 86E4      		ldi r24,lo8(70)
- 1447 058a 0E94 0000 		call MAIN_ShowProgType
- 1448               	.LBB36:
- 1449               	.LM196:
- 1450 058e A0E0      		ldi r26,lo8(EEPROMVars+47)
- 1451 0590 B0E0      		ldi r27,hi8(EEPROMVars+47)
- 1452               	.LBB37:
- 1453               	.LM197:
- 1454               	/* #APP */
- 1455 0592 0E94 0000 		call __eeprom_read_byte_1F2021
- 1456 0596 802D      		mov r24,__tmp_reg__
- 1457               	/* #NOAPP */
- 1458               	.LBE37:
- 1459               	.LBE36:
- 1460               	.LM198:
- 1461 0598 8823      		tst r24
- 1462 059a 31F4      		brne .L194
- 1463               	.LM199:
- 1464 059c 03E0      		ldi r16,lo8(3)
- 1465               	.LM200:
- 1466 059e 80E0      		ldi r24,lo8(__c.9)
- 1467 05a0 90E0      		ldi r25,hi8(__c.9)
- 1468 05a2 0E94 0000 		call MAIN_ShowError
- 1469 05a6 03C0      		rjmp .L192
- 1470               	.L194:
- 1471               	.LM201:
- 1472 05a8 82E0      		ldi r24,lo8(2)
- 1473 05aa 0E94 0000 		call PM_SendFuseLockBytes
- 1474               	.L192:
- 1475               	.LM202:
- 1476 05ae 812F      		mov r24,r17
- 1477 05b0 8450      		subi r24,lo8(-(-4))
- 1478 05b2 8230      		cpi r24,lo8(2)
- 1479 05b4 00F5      		brsh .L197
- 1480               	.LM203:
- 1481 05b6 1530      		cpi r17,lo8(5)
- 1482 05b8 59F4      		brne .L198
- 1483               	.LM204:
- 1484 05ba 81E0      		ldi r24,lo8(1)
- 1485 05bc 0E94 0000 		call MAIN_ResetCSLine
- 1486               	.LM205:
- 1487 05c0 81E0      		ldi r24,lo8(1)
- 1488 05c2 0E94 0000 		call MAIN_Delay10MS
- 1489               	.LM206:
- 1490 05c6 80E0      		ldi r24,lo8(0)
- 1491 05c8 0E94 0000 		call MAIN_ResetCSLine
- 1492               	.LM207:
- 1493 05cc 0E94 0000 		call ISPCC_EnterChipProgrammingMode
- 1494               	.L198:
- 1495               	.LM208:
- 1496 05d0 8CE4      		ldi r24,lo8(76)
- 1497 05d2 0E94 0000 		call MAIN_ShowProgType
- 1498               	.LBB38:
- 1499               	.LM209:
- 1500 05d6 A0E0      		ldi r26,lo8(EEPROMVars+48)
- 1501 05d8 B0E0      		ldi r27,hi8(EEPROMVars+48)
- 1502               	.LBB39:
- 1503               	.LM210:
- 1504               	/* #APP */
- 1505 05da 0E94 0000 		call __eeprom_read_byte_1F2021
- 1506 05de 802D      		mov r24,__tmp_reg__
- 1507               	/* #NOAPP */
- 1508               	.LBE39:
- 1509               	.LBE38:
- 1510               	.LM211:
- 1511 05e0 8823      		tst r24
- 1512 05e2 31F4      		brne .L199
- 1513               	.LM212:
- 1514 05e4 03E0      		ldi r16,lo8(3)
- 1515               	.LM213:
- 1516 05e6 80E0      		ldi r24,lo8(__c.10)
- 1517 05e8 90E0      		ldi r25,hi8(__c.10)
- 1518 05ea 0E94 0000 		call MAIN_ShowError
- 1519 05ee 03C0      		rjmp .L197
- 1520               	.L199:
- 1521               	.LM214:
- 1522 05f0 83E0      		ldi r24,lo8(3)
- 1523 05f2 0E94 0000 		call PM_SendFuseLockBytes
- 1524               	.L197:
- 1525               	.LM215:
- 1526 05f6 60E0      		ldi r22,lo8(__c.11)
- 1527 05f8 70E0      		ldi r23,hi8(__c.11)
- 1528 05fa CE01      		movw r24,r28
- 1529 05fc 0196      		adiw r24,1
- 1530 05fe 0E94 0000 		call strcpy_P
- 1531               	.LM216:
- 1532 0602 0023      		tst r16
- 1533 0604 31F0      		breq .L202
- 1534               	.LM217:
- 1535 0606 60E0      		ldi r22,lo8(__c.12)
- 1536 0608 70E0      		ldi r23,hi8(__c.12)
- 1537 060a CE01      		movw r24,r28
- 1538 060c 0D96      		adiw r24,13
- 1539 060e 0E94 0000 		call strcpy_P
- 1540               	.L202:
- 1541               	.LM218:
- 1542 0612 CE01      		movw r24,r28
- 1543 0614 0196      		adiw r24,1
- 1544 0616 0E94 0000 		call LCD_puts
- 1545               	.LM219:
- 1546 061a 8FEF      		ldi r24,lo8(-1)
- 1547 061c 0E94 0000 		call MAIN_Delay10MS
- 1548               	.LM220:
- 1549 0620 84E6      		ldi r24,lo8(100)
- 1550 0622 0E94 0000 		call MAIN_Delay10MS
- 1551 0626 04C0      		rjmp .L203
- 1552               	.L179:
- 1553               	.LM221:
- 1554 0628 80E0      		ldi r24,lo8(SyncErrorMessage)
- 1555 062a 90E0      		ldi r25,hi8(SyncErrorMessage)
- 1556 062c 0E94 0000 		call MAIN_ShowError
- 1557               	.L203:
- 1558               	.LM222:
- 1559 0630 81E0      		ldi r24,lo8(1)
- 1560 0632 0E94 0000 		call MAIN_ResetCSLine
- 1561               	.LM223:
- 1562 0636 0E94 0000 		call USI_SPIOff
- 1563               	.LM224:
- 1564 063a 80E0      		ldi r24,lo8(0)
- 1565 063c 0E94 0000 		call DF_EnableDataflash
- 1566               	.LM225:
- 1567 0640 8091 6400 		lds r24,100
- 1568 0644 8460      		ori r24,lo8(4)
- 1569 0646 8093 6400 		sts 100,r24
- 1570               	.LM226:
- 1571 064a 81B3      		in r24,49-0x20
- 1572 064c 8F7C      		andi r24,lo8(-49)
- 1573 064e 8061      		ori r24,lo8(16)
- 1574 0650 81BB      		out 49-0x20,r24
- 1575               	.L156:
- 1576               	/* epilogue: frame size=19 */
- 1577 0652 6396      		adiw r28,19
- 1578 0654 0FB6      		in __tmp_reg__,__SREG__
- 1579 0656 F894      		cli
- 1580 0658 DEBF      		out __SP_H__,r29
- 1581 065a 0FBE      		out __SREG__,__tmp_reg__
- 1582 065c CDBF      		out __SP_L__,r28
- 1583 065e DF91      		pop r29
- 1584 0660 CF91      		pop r28
- 1585 0662 1F91      		pop r17
- 1586 0664 0F91      		pop r16
- 1587 0666 0895      		ret
- 1588               	/* epilogue end (size=11) */
- 1589               	/* function FUNCProgramAVR size 318 (295) */
- 1590               	.LFE28:
- 1592               		.section	.progmem.data
- 1595               	__c.5:
- 1596 0242 2A53 544F 		.string	"*STORAGE MODE*"
- 1596      5241 4745 
- 1596      204D 4F44 
- 1596      452A 00
- 1597               		.text
- 1598               	.global	FUNCStoreProgram
- 1600               	FUNCStoreProgram:
- 1601               	.LFB29:
- 1602               	.LM227:
- 1603               	/* prologue: frame size=0 */
- 1604               	/* prologue end (size=0) */
- 1605               	.LM228:
- 1606 0668 80E0      		ldi r24,lo8(pm(SPI_SPITransmit))
- 1607 066a 90E0      		ldi r25,hi8(pm(SPI_SPITransmit))
- 1608 066c 9093 0000 		sts (DFSPIRoutinePointer)+1,r25
- 1609 0670 8093 0000 		sts DFSPIRoutinePointer,r24
- 1610               	.LM229:
- 1611 0674 0E94 0000 		call SPI_SPIInit
- 1612               	.LM230:
- 1613 0678 1092 0000 		sts UseExernalDF,__zero_reg__
- 1614               	.LM231:
- 1615 067c 81E0      		ldi r24,lo8(1)
- 1616 067e 0E94 0000 		call DF_EnableDataflash
- 1617               	.LM232:
- 1618 0682 0E94 0000 		call DF_CheckCorrectOnboardChip
- 1619 0686 8823      		tst r24
- 1620 0688 01F1      		breq .L212
- 1621               	.LM233:
- 1622 068a 80E0      		ldi r24,lo8(WaitText)
- 1623 068c 90E0      		ldi r25,hi8(WaitText)
- 1624 068e 0E94 0000 		call LCD_puts_f
- 1625 0692 0E94 0000 		call OSCCAL_Calibrate
- 1626 0696 8091 C100 		lds r24,193
- 1627 069a 8078      		andi r24,lo8(-128)
- 1628 069c 8861      		ori r24,lo8(24)
- 1629 069e 8093 C100 		sts 193,r24
- 1630               	.LM234:
- 1631 06a2 80E0      		ldi r24,lo8(__c.5)
- 1632 06a4 90E0      		ldi r25,hi8(__c.5)
- 1633 06a6 0E94 0000 		call LCD_puts_f
- 1634               	.LM235:
- 1635 06aa 80E0      		ldi r24,lo8(pm(PM_InterpretAVRISPPacket))
- 1636 06ac 90E0      		ldi r25,hi8(pm(PM_InterpretAVRISPPacket))
- 1637 06ae 9093 0000 		sts (InterpretPacketRoutine)+1,r25
- 1638 06b2 8093 0000 		sts InterpretPacketRoutine,r24
- 1639               	.LM236:
- 1640 06b6 0E94 0000 		call V2P_RunStateMachine
- 1641               	.LM237:
- 1642 06ba 80E0      		ldi r24,lo8(0)
- 1643 06bc 0E94 0000 		call DF_EnableDataflash
- 1644               	.LM238:
- 1645 06c0 8091 6400 		lds r24,100
- 1646 06c4 8460      		ori r24,lo8(4)
- 1647 06c6 8093 6400 		sts 100,r24
- 1648               	.L212:
- 1649 06ca 0895      		ret
- 1650               	/* epilogue: frame size=0 */
- 1651               	/* epilogue: noreturn */
- 1652               	/* epilogue end (size=0) */
- 1653               	/* function FUNCStoreProgram size 50 (50) */
- 1654               	.LFE29:
- 1656               		.section	.progmem.data
- 1659               	__c.2:
- 1660 0251 434F 4E46 		.string	"CONFIRM"
- 1660      4952 4D00 
- 1663               	__c.3:
- 1664 0259 3C4E 2059 		.string	"<N Y>"
- 1664      3E00 
- 1667               	__c.4:
- 1668 025f 4D45 4D20 		.string	"MEM CLEARED"
- 1668      434C 4541 
- 1668      5245 4400 
- 1669               		.text
- 1670               	.global	FUNCClearMem
- 1672               	FUNCClearMem:
- 1673               	.LFB30:
- 1674               	.LM239:
- 1675               	/* prologue: frame size=0 */
- 1676 06cc CF93      		push r28
- 1677 06ce DF93      		push r29
- 1678               	/* prologue end (size=2) */
- 1679               	.LM240:
- 1680 06d0 80E0      		ldi r24,lo8(__c.2)
- 1681 06d2 90E0      		ldi r25,hi8(__c.2)
- 1682 06d4 0E94 0000 		call LCD_puts_f
- 1683               	.LM241:
- 1684 06d8 84EB      		ldi r24,lo8(-76)
- 1685 06da 0E94 0000 		call MAIN_Delay10MS
- 1686               	.LM242:
- 1687 06de 80E0      		ldi r24,lo8(__c.3)
- 1688 06e0 90E0      		ldi r25,hi8(__c.3)
- 1689 06e2 0E94 0000 		call LCD_puts_f
- 1690               	.L236:
- 1691               	.LM243:
- 1692 06e6 8EB3      		in r24,62-0x20
- 1693 06e8 8823      		tst r24
- 1694 06ea E9F3      		breq .L236
- 1695               	.LM244:
- 1696 06ec 8EB3      		in r24,62-0x20
- 1697 06ee 9927      		clr r25
- 1698 06f0 EC01      		movw r28,r24
- 1699 06f2 C470      		andi r28,lo8(4)
- 1700 06f4 D070      		andi r29,hi8(4)
- 1701 06f6 82FD      		sbrc r24,2
- 1702 06f8 1AC0      		rjmp .L219
- 1703               	.LM245:
- 1704 06fa F39B      		sbis 62-0x20,3
- 1705 06fc F4CF      		rjmp .L236
- 1706               	.LM246:
- 1707 06fe 0E94 0000 		call MAIN_WaitForJoyRelease
- 1708               	.LM247:
- 1709 0702 80E0      		ldi r24,lo8(WaitText)
- 1710 0704 90E0      		ldi r25,hi8(WaitText)
- 1711 0706 0E94 0000 		call LCD_puts_f
- 1712               	.LBB40:
- 1713               	.LM248:
- 1714 070a CE01      		movw r24,r28
- 1715 070c 2FEF      		ldi r18,lo8(-1)
- 1716               	.L230:
- 1717               	.LBB41:
- 1718               	.LBB42:
- 1719               	.LM249:
- 1720 070e DC01      		movw r26,r24
- 1721               	/* #APP */
- 1722 0710 022E      		mov __tmp_reg__,r18
- 1723 0712 0E94 0000 		call __eeprom_write_byte_1F2021
- 1724               	/* #NOAPP */
- 1725               	.LBE42:
- 1726               	.LBE41:
- 1727               	.LM250:
- 1728 0716 0196      		adiw r24,1
- 1729 0718 32E0      		ldi r19,hi8(512)
- 1730 071a 8030      		cpi r24,lo8(512)
- 1731 071c 9307      		cpc r25,r19
- 1732 071e B8F3      		brlo .L230
- 1733               	.LBE40:
- 1734               	.LM251:
- 1735 0720 80E0      		ldi r24,lo8(__c.4)
- 1736 0722 90E0      		ldi r25,hi8(__c.4)
- 1737 0724 0E94 0000 		call LCD_puts_f
- 1738               	.LM252:
- 1739 0728 8FEF      		ldi r24,lo8(-1)
- 1740 072a 0E94 0000 		call MAIN_Delay10MS
- 1741               	.L219:
- 1742               	/* epilogue: frame size=0 */
- 1743 072e DF91      		pop r29
- 1744 0730 CF91      		pop r28
- 1745 0732 0895      		ret
- 1746               	/* epilogue end (size=3) */
- 1747               	/* function FUNCClearMem size 53 (48) */
- 1748               	.LFE30:
- 1750               	.global	FUNCSetContrast
- 1752               	FUNCSetContrast:
- 1753               	.LFB31:
- 1754               	.LM253:
- 1755               	/* prologue: frame size=6 */
- 1756 0734 EF92      		push r14
- 1757 0736 FF92      		push r15
- 1758 0738 1F93      		push r17
- 1759 073a CF93      		push r28
- 1760 073c DF93      		push r29
- 1761 073e CDB7      		in r28,__SP_L__
- 1762 0740 DEB7      		in r29,__SP_H__
- 1763 0742 2697      		sbiw r28,6
- 1764 0744 0FB6      		in __tmp_reg__,__SREG__
- 1765 0746 F894      		cli
- 1766 0748 DEBF      		out __SP_H__,r29
- 1767 074a 0FBE      		out __SREG__,__tmp_reg__
- 1768 074c CDBF      		out __SP_L__,r28
- 1769               	/* prologue end (size=13) */
- 1770               	.LBB43:
- 1771               	.LM254:
- 1772 074e 80E0      		ldi r24,lo8(EEPROMVars+133)
- 1773 0750 E82E      		mov r14,r24
- 1774 0752 80E0      		ldi r24,hi8(EEPROMVars+133)
- 1775 0754 F82E      		mov r15,r24
- 1776               	.LBB44:
- 1777               	.LM255:
- 1778 0756 D701      		movw r26,r14
- 1779               	/* #APP */
- 1780 0758 0E94 0000 		call __eeprom_read_byte_1F2021
- 1781 075c 802D      		mov r24,__tmp_reg__
- 1782               	/* #NOAPP */
- 1783               	.LBE44:
- 1784               	.LBE43:
- 1785               	.LM256:
- 1786 075e 182F      		mov r17,r24
- 1787 0760 1F70      		andi r17,lo8(15)
- 1788               	.LM257:
- 1789 0762 81E0      		ldi r24,lo8(1)
- 1790 0764 8EBB      		out 62-0x20,r24
- 1791               	.L254:
- 1792               	.LM258:
- 1793 0766 8EB3      		in r24,62-0x20
- 1794 0768 8823      		tst r24
- 1795 076a E9F3      		breq .L254
- 1796               	.LM259:
- 1797 076c F69B      		sbis 62-0x20,6
- 1798 076e 04C0      		rjmp .L242
- 1799               	.LM260:
- 1800 0770 1F30      		cpi r17,lo8(15)
- 1801 0772 78F4      		brsh .L244
- 1802               	.LM261:
- 1803 0774 1F5F      		subi r17,lo8(-(1))
- 1804 0776 0DC0      		rjmp .L244
- 1805               	.L242:
- 1806               	.LM262:
- 1807 0778 F79B      		sbis 62-0x20,7
- 1808 077a 04C0      		rjmp .L245
- 1809               	.LM263:
- 1810 077c 1230      		cpi r17,lo8(2)
- 1811 077e 48F0      		brlo .L244
- 1812               	.LM264:
- 1813 0780 1150      		subi r17,lo8(-(-1))
- 1814 0782 07C0      		rjmp .L244
- 1815               	.L245:
- 1816               	.LM265:
- 1817 0784 F29B      		sbis 62-0x20,2
- 1818 0786 05C0      		rjmp .L244
- 1819               	.LBB45:
- 1820               	.LBB46:
- 1821               	.LM266:
- 1822 0788 D701      		movw r26,r14
- 1823               	/* #APP */
- 1824 078a 012E      		mov __tmp_reg__,r17
- 1825 078c 0E94 0000 		call __eeprom_write_byte_1F2021
- 1826               	/* #NOAPP */
- 1827               	.LBE46:
- 1828               	.LBE45:
- 1829               	.LM267:
- 1830 0790 18C0      		rjmp .L237
- 1831               	.L244:
- 1832               	.LM268:
- 1833 0792 83E4      		ldi r24,lo8(67)
- 1834 0794 8983      		std Y+1,r24
- 1835               	.LM269:
- 1836 0796 84E5      		ldi r24,lo8(84)
- 1837 0798 8A83      		std Y+2,r24
- 1838               	.LM270:
- 1839 079a 80E2      		ldi r24,lo8(32)
- 1840 079c 8B83      		std Y+3,r24
- 1841               	.LM271:
- 1842 079e BE01      		movw r22,r28
- 1843 07a0 6C5F      		subi r22,lo8(-(4))
- 1844 07a2 7F4F      		sbci r23,hi8(-(4))
- 1845 07a4 812F      		mov r24,r17
- 1846 07a6 9927      		clr r25
- 1847 07a8 0E94 0000 		call MAIN_IntToStr
- 1848               	.LM272:
- 1849 07ac CE01      		movw r24,r28
- 1850 07ae 0196      		adiw r24,1
- 1851 07b0 0E94 0000 		call LCD_puts
- 1852               	.LM273:
- 1853 07b4 812F      		mov r24,r17
- 1854 07b6 8F70      		andi r24,lo8(15)
- 1855 07b8 8093 E700 		sts 231,r24
- 1856               	.LM274:
- 1857 07bc 0E94 0000 		call MAIN_WaitForJoyRelease
- 1858 07c0 D2CF      		rjmp .L254
- 1859               	.L237:
- 1860               	/* epilogue: frame size=6 */
- 1861 07c2 2696      		adiw r28,6
- 1862 07c4 0FB6      		in __tmp_reg__,__SREG__
- 1863 07c6 F894      		cli
- 1864 07c8 DEBF      		out __SP_H__,r29
- 1865 07ca 0FBE      		out __SREG__,__tmp_reg__
- 1866 07cc CDBF      		out __SP_L__,r28
- 1867 07ce DF91      		pop r29
- 1868 07d0 CF91      		pop r28
- 1869 07d2 1F91      		pop r17
- 1870 07d4 FF90      		pop r15
- 1871 07d6 EF90      		pop r14
- 1872 07d8 0895      		ret
- 1873               	/* epilogue end (size=12) */
- 1874               	/* function FUNCSetContrast size 85 (60) */
- 1875               	.LFE31:
- 1877               	.global	FUNCSetISPSpeed
- 1879               	FUNCSetISPSpeed:
- 1880               	.LFB32:
- 1881               	.LM275:
- 1882               	/* prologue: frame size=0 */
- 1883 07da 0F93      		push r16
- 1884 07dc 1F93      		push r17
- 1885 07de CF93      		push r28
- 1886               	/* prologue end (size=3) */
- 1887               	.LM276:
- 1888 07e0 81E0      		ldi r24,lo8(1)
- 1889 07e2 8EBB      		out 62-0x20,r24
- 1890               	.LBB47:
- 1891               	.LM277:
- 1892 07e4 00E0      		ldi r16,lo8(EEPROMVars+1)
- 1893 07e6 10E0      		ldi r17,hi8(EEPROMVars+1)
- 1894               	.LBB48:
- 1895               	.LM278:
- 1896 07e8 D801      		movw r26,r16
- 1897               	/* #APP */
- 1898 07ea 0E94 0000 		call __eeprom_read_byte_1F2021
- 1899 07ee 802D      		mov r24,__tmp_reg__
- 1900               	/* #NOAPP */
- 1901               	.LBE48:
- 1902               	.LBE47:
- 1903               	.LM279:
- 1904 07f0 C82F      		mov r28,r24
- 1905               	.LM280:
- 1906 07f2 8430      		cpi r24,lo8(4)
- 1907 07f4 08F0      		brlo .L274
- 1908               	.LM281:
- 1909 07f6 C0E0      		ldi r28,lo8(0)
- 1910               	.L274:
- 1911               	.LM282:
- 1912 07f8 8EB3      		in r24,62-0x20
- 1913 07fa 8823      		tst r24
- 1914 07fc E9F3      		breq .L274
- 1915               	.LM283:
- 1916 07fe F69B      		sbis 62-0x20,6
- 1917 0800 06C0      		rjmp .L261
- 1918               	.LM284:
- 1919 0802 CC23      		tst r28
- 1920 0804 11F4      		brne .L262
- 1921 0806 C3E0      		ldi r28,lo8(3)
- 1922 0808 11C0      		rjmp .L264
- 1923               	.L262:
- 1924 080a C150      		subi r28,lo8(-(-1))
- 1925 080c 0FC0      		rjmp .L264
- 1926               	.L261:
- 1927               	.LM285:
- 1928 080e F79B      		sbis 62-0x20,7
- 1929 0810 06C0      		rjmp .L265
- 1930               	.LM286:
- 1931 0812 C330      		cpi r28,lo8(3)
- 1932 0814 11F4      		brne .L266
- 1933 0816 C0E0      		ldi r28,lo8(0)
- 1934 0818 09C0      		rjmp .L264
- 1935               	.L266:
- 1936 081a CF5F      		subi r28,lo8(-(1))
- 1937 081c 07C0      		rjmp .L264
- 1938               	.L265:
- 1939               	.LM287:
- 1940 081e F29B      		sbis 62-0x20,2
- 1941 0820 05C0      		rjmp .L264
- 1942               	.LBB49:
- 1943               	.LBB50:
- 1944               	.LM288:
- 1945 0822 D801      		movw r26,r16
- 1946               	/* #APP */
- 1947 0824 0C2E      		mov __tmp_reg__,r28
- 1948 0826 0E94 0000 		call __eeprom_write_byte_1F2021
- 1949               	/* #NOAPP */
- 1950               	.LBE50:
- 1951               	.LBE49:
- 1952               	.LM289:
- 1953 082a 0DC0      		rjmp .L255
- 1954               	.L264:
- 1955               	.LBB51:
- 1956               	.LM290:
- 1957 082c EC2F      		mov r30,r28
- 1958 082e FF27      		clr r31
- 1959 0830 EE0F      		add r30,r30
- 1960 0832 FF1F      		adc r31,r31
- 1961 0834 E050      		subi r30,lo8(-(USIPSNamePtrs))
- 1962 0836 F040      		sbci r31,hi8(-(USIPSNamePtrs))
- 1963               	.LBE51:
- 1964               	/* #APP */
- 1965 0838 8591      		lpm r24, Z+
- 1966 083a 9491      		lpm r25, Z
- 1967               		
- 1968               	/* #NOAPP */
- 1969 083c 0E94 0000 		call LCD_puts_f
- 1970               	.LM291:
- 1971 0840 0E94 0000 		call MAIN_WaitForJoyRelease
- 1972 0844 D9CF      		rjmp .L274
- 1973               	.L255:
- 1974               	/* epilogue: frame size=0 */
- 1975 0846 CF91      		pop r28
- 1976 0848 1F91      		pop r17
- 1977 084a 0F91      		pop r16
- 1978 084c 0895      		ret
- 1979               	/* epilogue end (size=4) */
- 1980               	/* function FUNCSetISPSpeed size 64 (57) */
- 1981               	.LFE32:
- 1983               	.global	FUNCSleepMode
- 1985               	FUNCSleepMode:
- 1986               	.LFB33:
- 1987               	.LM292:
- 1988               	/* prologue: frame size=0 */
- 1989               	/* prologue end (size=0) */
- 1990               	.LM293:
- 1991 084e 85E0      		ldi r24,lo8(5)
- 1992 0850 83BF      		out 83-0x20,r24
- 1993               	.LM294:
- 1994 0852 8091 E400 		lds r24,228
- 1995 0856 8F77      		andi r24,lo8(127)
- 1996 0858 8093 E400 		sts 228,r24
- 1997               	.LM295:
- 1998 085c F699      		sbic 62-0x20,6
- 1999 085e 03C0      		rjmp .L281
- 2000               	.L279:
- 2001               	.LM296:
- 2002               	/* #APP */
- 2003 0860 8895      		sleep
- 2004               	/* #NOAPP */
- 2005 0862 F69B      		sbis 62-0x20,6
- 2006 0864 FDCF      		rjmp .L279
- 2007               	.L281:
- 2008               	.LM297:
- 2009 0866 8091 E400 		lds r24,228
- 2010 086a 8068      		ori r24,lo8(-128)
- 2011 086c 8093 E400 		sts 228,r24
- 2012               	.LM298:
- 2013 0870 0E94 0000 		call MAIN_WaitForJoyRelease
- 2014               	/* epilogue: frame size=0 */
- 2015 0874 0895      		ret
- 2016               	/* epilogue end (size=1) */
- 2017               	/* function FUNCSleepMode size 21 (20) */
- 2018               	.LFE33:
- 2020               		.section	.progmem.data
- 2023               	__c.1:
- 2024 026b 4E4F 2053 		.string	"NO STORED PRGM"
- 2024      544F 5245 
- 2024      4420 5052 
- 2024      474D 00
- 2025               		.text
- 2026               	.global	FUNCStorageInfo
- 2028               	FUNCStorageInfo:
- 2029               	.LFB34:
- 2030               	.LM299:
- 2031               	/* prologue: frame size=0 */
- 2032 0876 1F93      		push r17
- 2033 0878 CF93      		push r28
- 2034               	/* prologue end (size=2) */
- 2035               	.LM300:
- 2036 087a 10E0      		ldi r17,lo8(0)
- 2037               	.LM301:
- 2038 087c 0E94 0000 		call MAIN_WaitForJoyRelease
- 2039               	.LM302:
- 2040 0880 81E0      		ldi r24,lo8(1)
- 2041 0882 8EBB      		out 62-0x20,r24
- 2042               	.L301:
- 2043               	.LM303:
- 2044 0884 8EB3      		in r24,62-0x20
- 2045 0886 8823      		tst r24
- 2046 0888 E9F3      		breq .L301
- 2047               	.LM304:
- 2048 088a CEB3      		in r28,62-0x20
- 2049 088c C07C      		andi r28,lo8(-64)
- 2050 088e 19F0      		breq .L286
- 2051               	.LM305:
- 2052 0890 81E0      		ldi r24,lo8(1)
- 2053 0892 1827      		eor r17,r24
- 2054 0894 38C0      		rjmp .L287
- 2055               	.L286:
- 2056               	.LM306:
- 2057 0896 F299      		sbic 62-0x20,2
- 2058 0898 43C0      		rjmp .L282
- 2059               	.LM307:
- 2060 089a F49B      		sbis 62-0x20,4
- 2061 089c 34C0      		rjmp .L287
- 2062               	.LM308:
- 2063 089e 1130      		cpi r17,lo8(1)
- 2064 08a0 81F5      		brne .L291
- 2065               	.LM309:
- 2066 08a2 80E0      		ldi r24,lo8(pm(SPI_SPITransmit))
- 2067 08a4 90E0      		ldi r25,hi8(pm(SPI_SPITransmit))
- 2068 08a6 9093 0000 		sts (DFSPIRoutinePointer)+1,r25
- 2069 08aa 8093 0000 		sts DFSPIRoutinePointer,r24
- 2070               	.LM310:
- 2071 08ae 0E94 0000 		call SPI_SPIInit
- 2072               	.LM311:
- 2073 08b2 C093 0000 		sts UseExernalDF,r28
- 2074               	.LM312:
- 2075 08b6 812F      		mov r24,r17
- 2076 08b8 0E94 0000 		call DF_EnableDataflash
- 2077               	.LM313:
- 2078 08bc 0E94 0000 		call DF_CheckCorrectOnboardChip
- 2079 08c0 C82F      		mov r28,r24
- 2080 08c2 8823      		tst r24
- 2081 08c4 41F0      		breq .L292
- 2082               	.LM314:
- 2083 08c6 0E94 0000 		call TM_ShowTags
- 2084               	.LM315:
- 2085 08ca 8091 6400 		lds r24,100
- 2086 08ce 8460      		ori r24,lo8(4)
- 2087 08d0 8093 6400 		sts 100,r24
- 2088 08d4 18C0      		rjmp .L287
- 2089               	.L292:
- 2090               	.LM316:
- 2091 08d6 812F      		mov r24,r17
- 2092 08d8 0E94 0000 		call PM_GetStoredDataSize
- 2093 08dc DC01      		movw r26,r24
- 2094 08de CB01      		movw r24,r22
- 2095 08e0 0097      		sbiw r24,0
- 2096 08e2 A105      		cpc r26,__zero_reg__
- 2097 08e4 B105      		cpc r27,__zero_reg__
- 2098 08e6 79F4      		brne .L287
- 2099               	.LM317:
- 2100 08e8 8C2F      		mov r24,r28
- 2101 08ea 0E94 0000 		call DF_EnableDataflash
- 2102               	.LM318:
- 2103 08ee 8091 6400 		lds r24,100
- 2104 08f2 8460      		ori r24,lo8(4)
- 2105 08f4 8093 6400 		sts 100,r24
- 2106               	.LM319:
- 2107 08f8 80E0      		ldi r24,lo8(__c.1)
- 2108 08fa 90E0      		ldi r25,hi8(__c.1)
- 2109 08fc 0E94 0000 		call MAIN_ShowError
- 2110 0900 02C0      		rjmp .L287
- 2111               	.L291:
- 2112               	.LM320:
- 2113 0902 0E94 0000 		call PM_ShowStoredItemSizes
- 2114               	.L287:
- 2115               	.LBB52:
- 2116               	.LM321:
- 2117 0906 E12F      		mov r30,r17
- 2118 0908 FF27      		clr r31
- 2119 090a EE0F      		add r30,r30
- 2120 090c FF1F      		adc r31,r31
- 2121 090e E050      		subi r30,lo8(-(SIFOOptionPtrs))
- 2122 0910 F040      		sbci r31,hi8(-(SIFOOptionPtrs))
- 2123               	.LBE52:
- 2124               	/* #APP */
- 2125 0912 8591      		lpm r24, Z+
- 2126 0914 9491      		lpm r25, Z
- 2127               		
- 2128               	/* #NOAPP */
- 2129 0916 0E94 0000 		call LCD_puts_f
- 2130               	.LM322:
- 2131 091a 0E94 0000 		call MAIN_WaitForJoyRelease
- 2132 091e B2CF      		rjmp .L301
- 2133               	.L282:
- 2134               	/* epilogue: frame size=0 */
- 2135 0920 CF91      		pop r28
- 2136 0922 1F91      		pop r17
- 2137 0924 0895      		ret
- 2138               	/* epilogue end (size=3) */
- 2139               	/* function FUNCStorageInfo size 93 (88) */
- 2140               	.LFE34:
- 2142               		.section	.progmem.data
- 2145               	__c.0:
- 2146 027a 2A4A 5441 		.string	"*JTAG ON*"
- 2146      4720 4F4E 
- 2146      2A00 
- 2147               		.text
- 2148               	.global	FUNCGoBootloader
- 2150               	FUNCGoBootloader:
- 2151               	.LFB35:
- 2152               	.LM323:
- 2153               	/* prologue: frame size=0 */
- 2154               	/* prologue end (size=0) */
- 2155               	.LM324:
- 2156 0926 85B7      		in r24,85-0x20
- 2157 0928 8F77      		andi r24,lo8(127)
- 2158               	.LM325:
- 2159 092a 85BF      		out 85-0x20,r24
- 2160               	.LM326:
- 2161 092c 85BF      		out 85-0x20,r24
- 2162               	.LM327:
- 2163 092e 80E0      		ldi r24,lo8(__c.0)
- 2164 0930 90E0      		ldi r25,hi8(__c.0)
- 2165 0932 0E94 0000 		call LCD_puts_f
- 2166               	.LM328:
- 2167 0936 0E94 0000 		call MAIN_WaitForJoyRelease
- 2168               	.LM329:
- 2169 093a 88E1      		ldi r24,lo8(24)
- 2170 093c 8093 6000 		sts 96,r24
- 2171               	.L303:
- 2172               	.LM330:
- 2173 0940 FFCF      		rjmp .L303
- 2174               	/* epilogue: frame size=0 */
- 2175               	/* epilogue: noreturn */
- 2176               	/* epilogue end (size=0) */
- 2177               	/* function FUNCGoBootloader size 14 (14) */
- 2178               	.LFE35:
- 2180               	.global	EEPROMVars
- 2181               		.section	.eeprom,"aw",@progbits
- 2184               	EEPROMVars:
- 2185 0000 0000 0000 		.skip 135,0
- 2185      0000 0000 
- 2185      0000 0000 
- 2185      0000 0000 
- 2185      0000 0000 
- 2186               		.text
- 2187               	.Letext0:
+ 115 00c8 0000      		.word	pm(FUNCSetFirmMinorVer)
+ 116 00ca 0000      		.word	pm(FUNCClearMem)
+ 117 00cc 0000      		.word	pm(FUNCGoBootloader)
+ 118               	.global	SettingFunctionNames
+ 121               	SettingFunctionNames:
+ 122 00ce 0000      		.word	SFunc_SETCONTRAST
+ 123 00d0 0000      		.word	SFunc_SETSPISPEED
+ 124 00d2 0000      		.word	SFunc_SETFIRMMINOR
+ 125 00d4 0000      		.word	SFunc_CLEARMEM
+ 126 00d6 0000      		.word	SFunc_GOBOOTLOADER
+ 127               	.global	SFunc_GOBOOTLOADER
+ 130               	SFunc_GOBOOTLOADER:
+ 131 00d8 4A55 4D50 		.string	"JUMP TO BOOTLOADER"
+ 131      2054 4F20 
+ 131      424F 4F54 
+ 131      4C4F 4144 
+ 131      4552 00
+ 132               	.global	SFunc_CLEARMEM
+ 135               	SFunc_CLEARMEM:
+ 136 00eb 434C 4541 		.string	"CLEAR MEMORY"
+ 136      5220 4D45 
+ 136      4D4F 5259 
+ 136      00
+ 137               	.global	SFunc_SETFIRMMINOR
+ 140               	SFunc_SETFIRMMINOR:
+ 141 00f8 5345 5420 		.string	"SET FIRM VERSION"
+ 141      4649 524D 
+ 141      2056 4552 
+ 141      5349 4F4E 
+ 141      00
+ 142               	.global	SFunc_SETSPISPEED
+ 145               	SFunc_SETSPISPEED:
+ 146 0109 5345 5420 		.string	"SET SPI SPEED"
+ 146      5350 4920 
+ 146      5350 4545 
+ 146      4400 
+ 147               	.global	SFunc_SETCONTRAST
+ 150               	SFunc_SETCONTRAST:
+ 151 0117 5345 5420 		.string	"SET CONTRAST"
+ 151      434F 4E54 
+ 151      5241 5354 
+ 151      00
+ 152               	.global	MainFunctionPtrs
+ 155               	MainFunctionPtrs:
+ 156 0124 0000      		.word	pm(FUNCAVRISPMode)
+ 157 0126 0000      		.word	pm(FUNCStoreProgram)
+ 158 0128 0000      		.word	pm(FUNCProgramAVR)
+ 159 012a 0000      		.word	pm(FUNCProgramDataflash)
+ 160 012c 0000      		.word	pm(FUNCStorageInfo)
+ 161 012e 0000      		.word	pm(FUNCChangeSettings)
+ 162 0130 0000      		.word	pm(FUNCSleepMode)
+ 163               	.global	MainFunctionNames
+ 166               	MainFunctionNames:
+ 167 0132 0000      		.word	Func_ISPPRGM
+ 168 0134 0000      		.word	Func_STOREPRGM
+ 169 0136 0000      		.word	Func_PRGMAVR
+ 170 0138 0000      		.word	Func_PRGMDATAFLASH
+ 171 013a 0000      		.word	Func_PRGMSTOREINFO
+ 172 013c 0000      		.word	Func_SETTINGS
+ 173 013e 0000      		.word	Func_SLEEP
+ 174               	.global	Func_SLEEP
+ 177               	Func_SLEEP:
+ 178 0140 534C 4545 		.string	"SLEEP MODE"
+ 178      5020 4D4F 
+ 178      4445 00
+ 179               	.global	Func_SETTINGS
+ 182               	Func_SETTINGS:
+ 183 014b 5345 5454 		.string	"SETTINGS"
+ 183      494E 4753 
+ 183      00
+ 184               	.global	Func_PRGMSTOREINFO
+ 187               	Func_PRGMSTOREINFO:
+ 188 0154 4441 5441 		.string	"DATASTORE INFO"
+ 188      5354 4F52 
+ 188      4520 494E 
+ 188      464F 00
+ 189               	.global	Func_PRGMDATAFLASH
+ 192               	Func_PRGMDATAFLASH:
+ 193 0163 4441 5441 		.string	"DATAFLASH PRGM"
+ 193      464C 4153 
+ 193      4820 5052 
+ 193      474D 00
+ 194               	.global	Func_PRGMAVR
+ 197               	Func_PRGMAVR:
+ 198 0172 5052 4F47 		.string	"PROGRAM AVR"
+ 198      5241 4D20 
+ 198      4156 5200 
+ 199               	.global	Func_STOREPRGM
+ 202               	Func_STOREPRGM:
+ 203 017e 5354 4F52 		.string	"STORE PRGM"
+ 203      4520 5052 
+ 203      474D 00
+ 204               	.global	Func_ISPPRGM
+ 207               	Func_ISPPRGM:
+ 208 0189 4156 5249 		.string	"AVRISP MODE"
+ 208      5350 204D 
+ 208      4F44 4500 
+ 209               	.global	AboutTextPtrs
+ 212               	AboutTextPtrs:
+ 213 0195 0000      		.word	ProgrammerName
+ 214 0197 0000      		.word	VersionInfo
+ 215 0199 0000      		.word	AuthorName
+ 216 019b 0000      		.word	CopyRight
+ 217               	.global	CopyRight
+ 220               	CopyRight:
+ 221 019d 3C43 3E20 		.string	"<C> 2006 - GPL"
+ 221      3230 3036 
+ 221      202D 2047 
+ 221      504C 00
+ 222               	.global	AuthorName
+ 225               	AuthorName:
+ 226 01ac 4259 2044 		.string	"BY DEAN CAMERA"
+ 226      4541 4E20 
+ 226      4341 4D45 
+ 226      5241 00
+ 227               	.global	VersionInfo
+ 230               	VersionInfo:
+ 231 01bb 56        		.byte	86
+ 232 01bc 31        		.byte	49
+ 233 01bd 2D        		.byte	45
+ 234 01be 33        		.byte	51
+ 235 01bf 00        		.byte	0
+ 236               	.global	ProgrammerName
+ 239               	ProgrammerName:
+ 240 01c0 4255 5454 		.string	"BUTTLOAD"
+ 240      4C4F 4144 
+ 240      00
+ 241               	.global	WaitText
+ 244               	WaitText:
+ 245 01c9 2A57 4149 		.string	"*WAIT*"
+ 245      542A 00
+ 246               	.global	BUTTTAG_Author
+ 249               	BUTTTAG_Author:
+ 250 01d0 40        		.byte	64
+ 251 01d1 28        		.byte	40
+ 252 01d2 23        		.byte	35
+ 253 01d3 29        		.byte	41
+ 254 01d4 4259 2044 		.string	"BY DEAN CAMERA"
+ 254      4541 4E20 
+ 254      4341 4D45 
+ 254      5241 00
+ 255               	.global	BUTTTAG_Name
+ 258               	BUTTTAG_Name:
+ 259 01e3 40        		.byte	64
+ 260 01e4 28        		.byte	40
+ 261 01e5 23        		.byte	35
+ 262 01e6 29        		.byte	41
+ 263 01e7 4255 5454 		.string	"BUTTLOAD AVRISP"
+ 263      4C4F 4144 
+ 263      2041 5652 
+ 263      4953 5000 
+ 264               		.text
+ 265               	.global	MAIN_Delay10MS
+ 267               	MAIN_Delay10MS:
+ 268               	.LFB15:
+ 269               	.LM1:
+ 270               	/* prologue: frame size=0 */
+ 271 0000 CF93      		push r28
+ 272 0002 DF93      		push r29
+ 273               	/* prologue end (size=2) */
+ 274               	.LM2:
+ 275 0004 282F      		mov r18,r24
+ 276 0006 2150      		subi r18,lo8(-(-1))
+ 277 0008 2F3F      		cpi r18,lo8(-1)
+ 278 000a 49F0      		breq .L14
+ 279 000c A0E0      		ldi r26,lo8(18432)
+ 280 000e B8E4      		ldi r27,hi8(18432)
+ 281 0010 C0E0      		ldi r28,hlo8(18432)
+ 282 0012 D0E0      		ldi r29,hhi8(18432)
+ 283               	.L12:
+ 284               	.LBB2:
+ 285               	.LBB3:
+ 286               	.LBB4:
+ 287               	.LBB5:
+ 288               	.LM3:
+ 289 0014 CD01      		movw r24,r26
+ 290               	/* #APP */
+ 291 0016 0197      		1: sbiw r24,1
+ 292 0018 F1F7      		brne 1b
+ 293               	/* #NOAPP */
+ 294               	.LBE5:
+ 295               	.LBE4:
+ 296               	.LBE3:
+ 297               	.LBE2:
+ 298 001a 2150      		subi r18,1
+ 299 001c D8F7      		brcc .L12
+ 300               	.L14:
+ 301               	/* epilogue: frame size=0 */
+ 302 001e DF91      		pop r29
+ 303 0020 CF91      		pop r28
+ 304 0022 0895      		ret
+ 305               	/* epilogue end (size=3) */
+ 306               	/* function MAIN_Delay10MS size 21 (16) */
+ 307               	.LFE15:
+ 309               	.global	MAIN_WaitForJoyRelease
+ 311               	MAIN_WaitForJoyRelease:
+ 312               	.LFB18:
+ 313               	.LM4:
+ 314               	/* prologue: frame size=0 */
+ 315               	/* prologue end (size=0) */
+ 316               	.L25:
+ 317               	.LM5:
+ 318 0024 8EB3      		in r24,62-0x20
+ 319 0026 8823      		tst r24
+ 320 0028 E9F7      		brne .L25
+ 321               	.LM6:
+ 322 002a 81E0      		ldi r24,lo8(1)
+ 323 002c 0E94 0000 		call MAIN_Delay10MS
+ 324               	.LM7:
+ 325 0030 8EB3      		in r24,62-0x20
+ 326 0032 8823      		tst r24
+ 327 0034 B9F7      		brne .L25
+ 328               	/* epilogue: frame size=0 */
+ 329 0036 0895      		ret
+ 330               	/* epilogue end (size=1) */
+ 331               	/* function MAIN_WaitForJoyRelease size 10 (9) */
+ 332               	.LFE18:
+ 334               	.global	FUNCShowAbout
+ 336               	FUNCShowAbout:
+ 337               	.LFB25:
+ 338               	.LM8:
+ 339               	/* prologue: frame size=0 */
+ 340 0038 CF93      		push r28
+ 341               	/* prologue end (size=1) */
+ 342               	.LM9:
+ 343 003a C0E0      		ldi r28,lo8(0)
+ 344               	.LM10:
+ 345 003c 81E0      		ldi r24,lo8(1)
+ 346 003e 8EBB      		out 62-0x20,r24
+ 347               	.L42:
+ 348               	.LM11:
+ 349 0040 8EB3      		in r24,62-0x20
+ 350 0042 8823      		tst r24
+ 351 0044 E9F3      		breq .L42
+ 352               	.LM12:
+ 353 0046 F69B      		sbis 62-0x20,6
+ 354 0048 06C0      		rjmp .L30
+ 355               	.LM13:
+ 356 004a CC23      		tst r28
+ 357 004c 11F4      		brne .L31
+ 358 004e C3E0      		ldi r28,lo8(3)
+ 359 0050 0CC0      		rjmp .L33
+ 360               	.L31:
+ 361 0052 C150      		subi r28,lo8(-(-1))
+ 362 0054 0AC0      		rjmp .L33
+ 363               	.L30:
+ 364               	.LM14:
+ 365 0056 F79B      		sbis 62-0x20,7
+ 366 0058 06C0      		rjmp .L34
+ 367               	.LM15:
+ 368 005a C330      		cpi r28,lo8(3)
+ 369 005c 11F4      		brne .L35
+ 370 005e C0E0      		ldi r28,lo8(0)
+ 371 0060 04C0      		rjmp .L33
+ 372               	.L35:
+ 373 0062 CF5F      		subi r28,lo8(-(1))
+ 374 0064 02C0      		rjmp .L33
+ 375               	.L34:
+ 376               	.LM16:
+ 377 0066 F299      		sbic 62-0x20,2
+ 378 0068 0DC0      		rjmp .L26
+ 379               	.L33:
+ 380               	.LBB6:
+ 381               	.LM17:
+ 382 006a EC2F      		mov r30,r28
+ 383 006c FF27      		clr r31
+ 384 006e EE0F      		add r30,r30
+ 385 0070 FF1F      		adc r31,r31
+ 386 0072 E050      		subi r30,lo8(-(AboutTextPtrs))
+ 387 0074 F040      		sbci r31,hi8(-(AboutTextPtrs))
+ 388               	.LBE6:
+ 389               	/* #APP */
+ 390 0076 8591      		lpm r24, Z+
+ 391 0078 9491      		lpm r25, Z
+ 392               		
+ 393               	/* #NOAPP */
+ 394 007a 0E94 0000 		call LCD_puts_f
+ 395               	.LM18:
+ 396 007e 0E94 0000 		call MAIN_WaitForJoyRelease
+ 397 0082 DECF      		rjmp .L42
+ 398               	.L26:
+ 399               	/* epilogue: frame size=0 */
+ 400 0084 CF91      		pop r28
+ 401 0086 0895      		ret
+ 402               	/* epilogue end (size=2) */
+ 403               	/* function FUNCShowAbout size 44 (41) */
+ 404               	.LFE25:
+ 406               	.global	main
+ 408               	main:
+ 409               	.LFB14:
+ 410               	.LM19:
+ 411               	/* prologue: frame size=0 */
+ 412 0088 C0E0      		ldi r28,lo8(__stack - 0)
+ 413 008a D0E0      		ldi r29,hi8(__stack - 0)
+ 414 008c DEBF      		out __SP_H__,r29
+ 415 008e CDBF      		out __SP_L__,r28
+ 416               	/* prologue end (size=4) */
+ 417               	.LM20:
+ 418 0090 C0E0      		ldi r28,lo8(0)
+ 419               	.LM21:
+ 420 0092 80E8      		ldi r24,lo8(-128)
+ 421 0094 85BF      		out 85-0x20,r24
+ 422               	.LM22:
+ 423 0096 85BF      		out 85-0x20,r24
+ 424               	.LM23:
+ 425 0098 80BF      		out 80-0x20,r24
+ 426               	.LM24:
+ 427 009a 85E0      		ldi r24,lo8(5)
+ 428 009c 8093 6400 		sts 100,r24
+ 429               	.LM25:
+ 430 00a0 80E3      		ldi r24,lo8(48)
+ 431 00a2 80BB      		out 48-0x20,r24
+ 432               	.LM26:
+ 433 00a4 87E2      		ldi r24,lo8(39)
+ 434 00a6 84B9      		out 36-0x20,r24
+ 435               	.LM27:
+ 436 00a8 8FED      		ldi r24,lo8(-33)
+ 437 00aa 85B9      		out 37-0x20,r24
+ 438               	.LM28:
+ 439 00ac 8CE0      		ldi r24,lo8(12)
+ 440 00ae 8EB9      		out 46-0x20,r24
+ 441               	.LM29:
+ 442 00b0 8093 6B00 		sts 107,r24
+ 443               	.LM30:
+ 444 00b4 80ED      		ldi r24,lo8(-48)
+ 445 00b6 8093 6C00 		sts 108,r24
+ 446               	.LM31:
+ 447 00ba 80EC      		ldi r24,lo8(-64)
+ 448 00bc 8DBB      		out 61-0x20,r24
+ 449               	.LM32:
+ 450 00be 8CBB      		out 60-0x20,r24
+ 451               	.LM33:
+ 452 00c0 81B3      		in r24,49-0x20
+ 453 00c2 8F7C      		andi r24,lo8(-49)
+ 454 00c4 8062      		ori r24,lo8(32)
+ 455 00c6 81BB      		out 49-0x20,r24
+ 456               	.LM34:
+ 457 00c8 0E94 0000 		call LCD_Init
+ 458               	.LM35:
+ 459 00cc 8FE0      		ldi r24,lo8(15)
+ 460 00ce 8093 E700 		sts 231,r24
+ 461               	.LM36:
+ 462 00d2 80E0      		ldi r24,lo8(WaitText)
+ 463 00d4 90E0      		ldi r25,hi8(WaitText)
+ 464 00d6 0E94 0000 		call LCD_puts_f
+ 465               	.LM37:
+ 466               	/* #APP */
+ 467 00da 7894      		sei
+ 468               	/* #NOAPP */
+ 469               	.LBB7:
+ 470               	.LM38:
+ 471 00dc 20E0      		ldi r18,lo8(EEPROMVars+135)
+ 472 00de 30E0      		ldi r19,hi8(EEPROMVars+135)
+ 473               	.LBB8:
+ 474               	.LM39:
+ 475 00e0 D901      		movw r26,r18
+ 476               	/* #APP */
+ 477 00e2 0E94 0000 		call __eeprom_read_byte_1F2021
+ 478 00e6 802D      		mov r24,__tmp_reg__
+ 479               	/* #NOAPP */
+ 480               	.LBE8:
+ 481               	.LBE7:
+ 482               	.LM40:
+ 483 00e8 8A37      		cpi r24,lo8(122)
+ 484 00ea 89F0      		breq .L46
+ 485               	.LBB9:
+ 486               	.LM41:
+ 487 00ec 80E0      		ldi r24,lo8(0)
+ 488 00ee 90E0      		ldi r25,hi8(0)
+ 489 00f0 4FEF      		ldi r20,lo8(-1)
+ 490               	.L52:
+ 491               	.LBB10:
+ 492               	.LBB11:
+ 493               	.LM42:
+ 494 00f2 DC01      		movw r26,r24
+ 495               	/* #APP */
+ 496 00f4 042E      		mov __tmp_reg__,r20
+ 497 00f6 0E94 0000 		call __eeprom_write_byte_1F2021
+ 498               	/* #NOAPP */
+ 499               	.LBE11:
+ 500               	.LBE10:
+ 501               	.LM43:
+ 502 00fa 0196      		adiw r24,1
+ 503 00fc 52E0      		ldi r21,hi8(512)
+ 504 00fe 8030      		cpi r24,lo8(512)
+ 505 0100 9507      		cpc r25,r21
+ 506 0102 B8F3      		brlo .L52
+ 507               	.LBE9:
+ 508               	.LBB12:
+ 509               	.LM44:
+ 510 0104 8AE7      		ldi r24,lo8(122)
+ 511               	.LBB13:
+ 512               	.LM45:
+ 513 0106 D901      		movw r26,r18
+ 514               	/* #APP */
+ 515 0108 082E      		mov __tmp_reg__,r24
+ 516 010a 0E94 0000 		call __eeprom_write_byte_1F2021
+ 517               	/* #NOAPP */
+ 518               	.L46:
+ 519               	.LBE13:
+ 520               	.LBE12:
+ 521               	.LBB14:
+ 522               	.LM46:
+ 523 010e A0E0      		ldi r26,lo8(EEPROMVars+133)
+ 524 0110 B0E0      		ldi r27,hi8(EEPROMVars+133)
+ 525               	.LBB15:
+ 526               	.LM47:
+ 527               	/* #APP */
+ 528 0112 0E94 0000 		call __eeprom_read_byte_1F2021
+ 529 0116 802D      		mov r24,__tmp_reg__
+ 530               	/* #NOAPP */
+ 531               	.LBE15:
+ 532               	.LBE14:
+ 533               	.LM48:
+ 534 0118 8F70      		andi r24,lo8(15)
+ 535 011a 8093 E700 		sts 231,r24
+ 536               	.LM49:
+ 537 011e 80E0      		ldi r24,lo8(0)
+ 538 0120 0E94 0000 		call DF_EnableDataflash
+ 539               	.LM50:
+ 540 0124 81B3      		in r24,49-0x20
+ 541 0126 8063      		ori r24,lo8(48)
+ 542 0128 81BB      		out 49-0x20,r24
+ 543               	.LM51:
+ 544 012a 0E94 0000 		call USART_Init
+ 545               	.LM52:
+ 546 012e 0E94 0000 		call OSCCAL_Calibrate
+ 547               	.LM53:
+ 548 0132 81B3      		in r24,49-0x20
+ 549 0134 8F7C      		andi r24,lo8(-49)
+ 550 0136 8061      		ori r24,lo8(16)
+ 551 0138 81BB      		out 49-0x20,r24
+ 552               	.LM54:
+ 553 013a 81E0      		ldi r24,lo8(1)
+ 554 013c 8EBB      		out 62-0x20,r24
+ 555               	.LM55:
+ 556 013e 80E8      		ldi r24,lo8(-128)
+ 557 0140 8093 6100 		sts 97,r24
+ 558 0144 83E0      		ldi r24,lo8(3)
+ 559 0146 8093 6100 		sts 97,r24
+ 560               	.L78:
+ 561               	.LM56:
+ 562 014a 8EB3      		in r24,62-0x20
+ 563 014c 8823      		tst r24
+ 564 014e E9F3      		breq .L78
+ 565               	.LM57:
+ 566 0150 F69B      		sbis 62-0x20,6
+ 567 0152 06C0      		rjmp .L62
+ 568               	.LM58:
+ 569 0154 CC23      		tst r28
+ 570 0156 11F4      		brne .L63
+ 571 0158 C6E0      		ldi r28,lo8(6)
+ 572 015a 1BC0      		rjmp .L65
+ 573               	.L63:
+ 574 015c C150      		subi r28,lo8(-(-1))
+ 575 015e 19C0      		rjmp .L65
+ 576               	.L62:
+ 577               	.LM59:
+ 578 0160 F79B      		sbis 62-0x20,7
+ 579 0162 06C0      		rjmp .L66
+ 580               	.LM60:
+ 581 0164 C630      		cpi r28,lo8(6)
+ 582 0166 11F4      		brne .L67
+ 583 0168 C0E0      		ldi r28,lo8(0)
+ 584 016a 13C0      		rjmp .L65
+ 585               	.L67:
+ 586 016c CF5F      		subi r28,lo8(-(1))
+ 587 016e 11C0      		rjmp .L65
+ 588               	.L66:
+ 589               	.LM61:
+ 590 0170 F49B      		sbis 62-0x20,4
+ 591 0172 0BC0      		rjmp .L70
+ 592               	.LBB16:
+ 593               	.LM62:
+ 594 0174 EC2F      		mov r30,r28
+ 595 0176 FF27      		clr r31
+ 596 0178 EE0F      		add r30,r30
+ 597 017a FF1F      		adc r31,r31
+ 598 017c E050      		subi r30,lo8(-(MainFunctionPtrs))
+ 599 017e F040      		sbci r31,hi8(-(MainFunctionPtrs))
+ 600               	/* #APP */
+ 601 0180 8591      		lpm r24, Z+
+ 602 0182 9491      		lpm r25, Z
+ 603               		
+ 604               	/* #NOAPP */
+ 605               	.LBE16:
+ 606 0184 FC01      		movw r30,r24
+ 607 0186 0995      		icall
+ 608 0188 04C0      		rjmp .L65
+ 609               	.L70:
+ 610               	.LM63:
+ 611 018a F39B      		sbis 62-0x20,3
+ 612 018c 02C0      		rjmp .L65
+ 613               	.LM64:
+ 614 018e 0E94 0000 		call FUNCShowAbout
+ 615               	.L65:
+ 616               	.LBB17:
+ 617               	.LM65:
+ 618 0192 EC2F      		mov r30,r28
+ 619 0194 FF27      		clr r31
+ 620 0196 EE0F      		add r30,r30
+ 621 0198 FF1F      		adc r31,r31
+ 622 019a E050      		subi r30,lo8(-(MainFunctionNames))
+ 623 019c F040      		sbci r31,hi8(-(MainFunctionNames))
+ 624               	.LBE17:
+ 625               	/* #APP */
+ 626 019e 8591      		lpm r24, Z+
+ 627 01a0 9491      		lpm r25, Z
+ 628               		
+ 629               	/* #NOAPP */
+ 630 01a2 0E94 0000 		call LCD_puts_f
+ 631               	.LM66:
+ 632 01a6 0E94 0000 		call MAIN_WaitForJoyRelease
+ 633 01aa CFCF      		rjmp .L78
+ 634               	/* epilogue: frame size=0 */
+ 635               	/* epilogue: noreturn */
+ 636               	/* epilogue end (size=0) */
+ 637               	/* function main size 159 (155) */
+ 638               	.LFE14:
+ 640               	.global	MAIN_Delay1MS
+ 642               	MAIN_Delay1MS:
+ 643               	.LFB16:
+ 644               	.LM67:
+ 645               	/* prologue: frame size=0 */
+ 646 01ac CF93      		push r28
+ 647 01ae DF93      		push r29
+ 648               	/* prologue end (size=2) */
+ 649               	.LM68:
+ 650 01b0 282F      		mov r18,r24
+ 651 01b2 2150      		subi r18,lo8(-(-1))
+ 652 01b4 2F3F      		cpi r18,lo8(-1)
+ 653 01b6 49F0      		breq .L92
+ 654 01b8 A3E3      		ldi r26,lo8(1843)
+ 655 01ba B7E0      		ldi r27,hi8(1843)
+ 656 01bc C0E0      		ldi r28,hlo8(1843)
+ 657 01be D0E0      		ldi r29,hhi8(1843)
+ 658               	.L90:
+ 659               	.LBB18:
+ 660               	.LBB19:
+ 661               	.LBB20:
+ 662               	.LBB21:
+ 663               	.LM69:
+ 664 01c0 CD01      		movw r24,r26
+ 665               	/* #APP */
+ 666 01c2 0197      		1: sbiw r24,1
+ 667 01c4 F1F7      		brne 1b
+ 668               	/* #NOAPP */
+ 669               	.LBE21:
+ 670               	.LBE20:
+ 671               	.LBE19:
+ 672               	.LBE18:
+ 673 01c6 2150      		subi r18,1
+ 674 01c8 D8F7      		brcc .L90
+ 675               	.L92:
+ 676               	/* epilogue: frame size=0 */
+ 677 01ca DF91      		pop r29
+ 678 01cc CF91      		pop r28
+ 679 01ce 0895      		ret
+ 680               	/* epilogue end (size=3) */
+ 681               	/* function MAIN_Delay1MS size 21 (16) */
+ 682               	.LFE16:
+ 684               	.global	MAIN_ResetCSLine
+ 686               	MAIN_ResetCSLine:
+ 687               	.LFB17:
+ 688               	.LM70:
+ 689               	/* prologue: frame size=0 */
+ 690               	/* prologue end (size=0) */
+ 691               	.LM71:
+ 692 01d0 9927      		clr r25
+ 693 01d2 8130      		cpi r24,1
+ 694 01d4 9105      		cpc r25,__zero_reg__
+ 695 01d6 B1F0      		breq .L100
+ 696               	.LM72:
+ 697 01d8 8230      		cpi r24,2
+ 698 01da 9105      		cpc r25,__zero_reg__
+ 699 01dc 1CF4      		brge .L101
+ 700 01de 892B      		or r24,r25
+ 701 01e0 21F0      		breq .L95
+ 702 01e2 0895      		ret
+ 703               	.L101:
+ 704 01e4 0297      		sbiw r24,2
+ 705 01e6 59F0      		breq .L99
+ 706 01e8 0895      		ret
+ 707               	.L95:
+ 708               	.LM73:
+ 709 01ea 869A      		sbi 48-0x20,6
+ 710               	.LBB22:
+ 711               	.LM74:
+ 712 01ec A0E0      		ldi r26,lo8(EEPROMVars)
+ 713 01ee B0E0      		ldi r27,hi8(EEPROMVars)
+ 714               	.LBB23:
+ 715               	.LM75:
+ 716               	/* #APP */
+ 717 01f0 0E94 0000 		call __eeprom_read_byte_1F2021
+ 718 01f4 802D      		mov r24,__tmp_reg__
+ 719               	/* #NOAPP */
+ 720               	.LBE23:
+ 721               	.LBE22:
+ 722               	.LM76:
+ 723 01f6 8823      		tst r24
+ 724 01f8 19F4      		brne .L102
+ 725               	.LM77:
+ 726 01fa 8E9A      		sbi 49-0x20,6
+ 727 01fc 0895      		ret
+ 728               	.L99:
+ 729               	.LM78:
+ 730 01fe 869A      		sbi 48-0x20,6
+ 731               	.L102:
+ 732               	.LM79:
+ 733 0200 8E98      		cbi 49-0x20,6
+ 734               	.LM80:
+ 735 0202 0895      		ret
+ 736               	.L100:
+ 737               	.LM81:
+ 738 0204 8698      		cbi 48-0x20,6
+ 739 0206 FCCF      		rjmp .L102
+ 740               	/* epilogue: frame size=0 */
+ 741               	/* epilogue: noreturn */
+ 742               	/* epilogue end (size=0) */
+ 743               	/* function MAIN_ResetCSLine size 30 (30) */
+ 744               	.LFE17:
+ 746               	.global	MAIN_IntToStr
+ 748               	MAIN_IntToStr:
+ 749               	.LFB19:
+ 750               	.LM82:
+ 751               	/* prologue: frame size=0 */
+ 752               	/* prologue end (size=0) */
+ 753 0208 FB01      		movw r30,r22
+ 754               	.LM83:
+ 755 020a 20E0      		ldi r18,lo8(0)
+ 756               	.L114:
+ 757               	.LM84:
+ 758 020c 8436      		cpi r24,100
+ 759 020e 9105      		cpc r25,__zero_reg__
+ 760 0210 20F0      		brlo .L111
+ 761               	.LM85:
+ 762 0212 2F5F      		subi r18,lo8(-(1))
+ 763               	.LM86:
+ 764 0214 8456      		subi r24,lo8(-(-100))
+ 765 0216 9040      		sbci r25,hi8(-(-100))
+ 766 0218 F9CF      		rjmp .L114
+ 767               	.L111:
+ 768               	.LM87:
+ 769 021a 205D      		subi r18,lo8(-(48))
+ 770 021c 2193      		st Z+,r18
+ 771               	.LM88:
+ 772 021e 20E0      		ldi r18,lo8(0)
+ 773               	.L115:
+ 774               	.LM89:
+ 775 0220 8A30      		cpi r24,10
+ 776 0222 9105      		cpc r25,__zero_reg__
+ 777 0224 18F0      		brlo .L113
+ 778               	.LM90:
+ 779 0226 2F5F      		subi r18,lo8(-(1))
+ 780               	.LM91:
+ 781 0228 0A97      		sbiw r24,10
+ 782 022a FACF      		rjmp .L115
+ 783               	.L113:
+ 784               	.LM92:
+ 785 022c 205D      		subi r18,lo8(-(48))
+ 786 022e 2193      		st Z+,r18
+ 787               	.LM93:
+ 788 0230 805D      		subi r24,lo8(-(48))
+ 789 0232 8193      		st Z+,r24
+ 790               	.LM94:
+ 791 0234 1082      		st Z,__zero_reg__
+ 792               	/* epilogue: frame size=0 */
+ 793 0236 0895      		ret
+ 794               	/* epilogue end (size=1) */
+ 795               	/* function MAIN_IntToStr size 24 (23) */
+ 796               	.LFE19:
+ 798               		.section	.progmem.data
+ 801               	__c.15:
+ 802 01f7 5052 473E 		.string	"PRG> "
+ 802      2000 
+ 803               		.text
+ 804               	.global	MAIN_ShowProgType
+ 806               	MAIN_ShowProgType:
+ 807               	.LFB20:
+ 808               	.LM95:
+ 809               	/* prologue: frame size=7 */
+ 810 0238 1F93      		push r17
+ 811 023a CF93      		push r28
+ 812 023c DF93      		push r29
+ 813 023e CDB7      		in r28,__SP_L__
+ 814 0240 DEB7      		in r29,__SP_H__
+ 815 0242 2797      		sbiw r28,7
+ 816 0244 0FB6      		in __tmp_reg__,__SREG__
+ 817 0246 F894      		cli
+ 818 0248 DEBF      		out __SP_H__,r29
+ 819 024a 0FBE      		out __SREG__,__tmp_reg__
+ 820 024c CDBF      		out __SP_L__,r28
+ 821               	/* prologue end (size=11) */
+ 822 024e 182F      		mov r17,r24
+ 823               	.LM96:
+ 824 0250 60E0      		ldi r22,lo8(__c.15)
+ 825 0252 70E0      		ldi r23,hi8(__c.15)
+ 826 0254 CE01      		movw r24,r28
+ 827 0256 0196      		adiw r24,1
+ 828 0258 0E94 0000 		call strcpy_P
+ 829               	.LM97:
+ 830 025c 1E83      		std Y+6,r17
+ 831               	.LM98:
+ 832 025e 1F82      		std Y+7,__zero_reg__
+ 833               	.LM99:
+ 834 0260 CE01      		movw r24,r28
+ 835 0262 0196      		adiw r24,1
+ 836 0264 0E94 0000 		call LCD_puts
+ 837               	/* epilogue: frame size=7 */
+ 838 0268 2796      		adiw r28,7
+ 839 026a 0FB6      		in __tmp_reg__,__SREG__
+ 840 026c F894      		cli
+ 841 026e DEBF      		out __SP_H__,r29
+ 842 0270 0FBE      		out __SREG__,__tmp_reg__
+ 843 0272 CDBF      		out __SP_L__,r28
+ 844 0274 DF91      		pop r29
+ 845 0276 CF91      		pop r28
+ 846 0278 1F91      		pop r17
+ 847 027a 0895      		ret
+ 848               	/* epilogue end (size=10) */
+ 849               	/* function MAIN_ShowProgType size 34 (13) */
+ 850               	.LFE20:
+ 852               	.global	MAIN_ShowError
+ 854               	MAIN_ShowError:
+ 855               	.LFB21:
+ 856               	.LM100:
+ 857               	/* prologue: frame size=20 */
+ 858 027c CF93      		push r28
+ 859 027e DF93      		push r29
+ 860 0280 CDB7      		in r28,__SP_L__
+ 861 0282 DEB7      		in r29,__SP_H__
+ 862 0284 6497      		sbiw r28,20
+ 863 0286 0FB6      		in __tmp_reg__,__SREG__
+ 864 0288 F894      		cli
+ 865 028a DEBF      		out __SP_H__,r29
+ 866 028c 0FBE      		out __SREG__,__tmp_reg__
+ 867 028e CDBF      		out __SP_L__,r28
+ 868               	/* prologue end (size=10) */
+ 869               	.LM101:
+ 870 0290 25E4      		ldi r18,lo8(69)
+ 871 0292 2983      		std Y+1,r18
+ 872               	.LM102:
+ 873 0294 2EE3      		ldi r18,lo8(62)
+ 874 0296 2A83      		std Y+2,r18
+ 875               	.LM103:
+ 876 0298 BC01      		movw r22,r24
+ 877 029a CE01      		movw r24,r28
+ 878 029c 0396      		adiw r24,3
+ 879 029e 0E94 0000 		call strcpy_P
+ 880               	.LM104:
+ 881 02a2 CE01      		movw r24,r28
+ 882 02a4 0196      		adiw r24,1
+ 883 02a6 0E94 0000 		call LCD_puts
+ 884               	.LM105:
+ 885 02aa 0E94 0000 		call MAIN_WaitForJoyRelease
+ 886               	.L118:
+ 887               	.LM106:
+ 888 02ae F49B      		sbis 62-0x20,4
+ 889 02b0 FECF      		rjmp .L118
+ 890               	.LM107:
+ 891 02b2 0E94 0000 		call MAIN_WaitForJoyRelease
+ 892               	/* epilogue: frame size=20 */
+ 893 02b6 6496      		adiw r28,20
+ 894 02b8 0FB6      		in __tmp_reg__,__SREG__
+ 895 02ba F894      		cli
+ 896 02bc DEBF      		out __SP_H__,r29
+ 897 02be 0FBE      		out __SREG__,__tmp_reg__
+ 898 02c0 CDBF      		out __SP_L__,r28
+ 899 02c2 DF91      		pop r29
+ 900 02c4 CF91      		pop r28
+ 901 02c6 0895      		ret
+ 902               	/* epilogue end (size=9) */
+ 903               	/* function MAIN_ShowError size 38 (19) */
+ 904               	.LFE21:
+ 906               	.global	__vector_3
+ 908               	__vector_3:
+ 909               	.LFB22:
+ 910               	.LM108:
+ 911               	/* prologue: frame size=0 */
+ 912 02c8 7894      		sei
+ 913 02ca 1F92      		push __zero_reg__
+ 914 02cc 0F92      		push __tmp_reg__
+ 915 02ce 0FB6      		in __tmp_reg__,__SREG__
+ 916 02d0 0F92      		push __tmp_reg__
+ 917 02d2 1124      		clr __zero_reg__
+ 918 02d4 8F93      		push r24
+ 919 02d6 9F93      		push r25
+ 920               	/* prologue end (size=8) */
+ 921               	.LM109:
+ 922 02d8 93B1      		in r25,35-0x20
+ 923 02da 9095      		com r25
+ 924 02dc 907D      		andi r25,lo8(-48)
+ 925 02de 8CB1      		in r24,44-0x20
+ 926 02e0 8095      		com r24
+ 927 02e2 8C70      		andi r24,lo8(12)
+ 928 02e4 982B      		or r25,r24
+ 929 02e6 9EBB      		out 62-0x20,r25
+ 930               	/* epilogue: frame size=0 */
+ 931 02e8 9F91      		pop r25
+ 932 02ea 8F91      		pop r24
+ 933 02ec 0F90      		pop __tmp_reg__
+ 934 02ee 0FBE      		out __SREG__,__tmp_reg__
+ 935 02f0 0F90      		pop __tmp_reg__
+ 936 02f2 1F90      		pop __zero_reg__
+ 937 02f4 1895      		reti
+ 938               	/* epilogue end (size=7) */
+ 939               	/* function __vector_3 size 23 (8) */
+ 940               	.LFE22:
+ 942               		.section	.progmem.data
+ 945               	__c.14:
+ 946 01fd 4241 4449 		.string	"BADISR"
+ 946      5352 00
+ 947               		.text
+ 948               	.global	__vector_default
+ 950               	__vector_default:
+ 951               	.LFB23:
+ 952               	.LM110:
+ 953               	/* prologue: frame size=0 */
+ 954               	/* prologue: naked */
+ 955               	/* prologue end (size=0) */
+ 956               	.LM111:
+ 957 02f6 80E0      		ldi r24,lo8(__c.14)
+ 958 02f8 90E0      		ldi r25,hi8(__c.14)
+ 959 02fa 0E94 0000 		call MAIN_ShowError
+ 960               	.L123:
+ 961               	.LM112:
+ 962 02fe FFCF      		rjmp .L123
+ 963               	/* epilogue: frame size=0 */
+ 964               	/* epilogue: naked */
+ 965               	/* epilogue end (size=0) */
+ 966               	/* function __vector_default size 5 (5) */
+ 967               	.LFE23:
+ 969               	.global	FUNCChangeSettings
+ 971               	FUNCChangeSettings:
+ 972               	.LFB24:
+ 973               	.LM113:
+ 974               	/* prologue: frame size=0 */
+ 975 0300 CF93      		push r28
+ 976               	/* prologue end (size=1) */
+ 977               	.LM114:
+ 978 0302 C0E0      		ldi r28,lo8(0)
+ 979               	.LM115:
+ 980 0304 81E0      		ldi r24,lo8(1)
+ 981 0306 8EBB      		out 62-0x20,r24
+ 982               	.L143:
+ 983               	.LM116:
+ 984 0308 8EB3      		in r24,62-0x20
+ 985 030a 8823      		tst r24
+ 986 030c E9F3      		breq .L143
+ 987               	.LM117:
+ 988 030e F69B      		sbis 62-0x20,6
+ 989 0310 06C0      		rjmp .L129
+ 990               	.LM118:
+ 991 0312 CC23      		tst r28
+ 992 0314 11F4      		brne .L130
+ 993 0316 C3E0      		ldi r28,lo8(3)
+ 994 0318 19C0      		rjmp .L132
+ 995               	.L130:
+ 996 031a C150      		subi r28,lo8(-(-1))
+ 997 031c 17C0      		rjmp .L132
+ 998               	.L129:
+ 999               	.LM119:
+ 1000 031e F79B      		sbis 62-0x20,7
+ 1001 0320 06C0      		rjmp .L133
+ 1002               	.LM120:
+ 1003 0322 C330      		cpi r28,lo8(3)
+ 1004 0324 11F4      		brne .L134
+ 1005 0326 C0E0      		ldi r28,lo8(0)
+ 1006 0328 11C0      		rjmp .L132
+ 1007               	.L134:
+ 1008 032a CF5F      		subi r28,lo8(-(1))
+ 1009 032c 0FC0      		rjmp .L132
+ 1010               	.L133:
+ 1011               	.LM121:
+ 1012 032e F49B      		sbis 62-0x20,4
+ 1013 0330 0BC0      		rjmp .L137
+ 1014               	.LBB24:
+ 1015               	.LM122:
+ 1016 0332 EC2F      		mov r30,r28
+ 1017 0334 FF27      		clr r31
+ 1018 0336 EE0F      		add r30,r30
+ 1019 0338 FF1F      		adc r31,r31
+ 1020 033a E050      		subi r30,lo8(-(SettingFunctionPtrs))
+ 1021 033c F040      		sbci r31,hi8(-(SettingFunctionPtrs))
+ 1022               	/* #APP */
+ 1023 033e 8591      		lpm r24, Z+
+ 1024 0340 9491      		lpm r25, Z
+ 1025               		
+ 1026               	/* #NOAPP */
+ 1027               	.LBE24:
+ 1028 0342 FC01      		movw r30,r24
+ 1029 0344 0995      		icall
+ 1030 0346 02C0      		rjmp .L132
+ 1031               	.L137:
+ 1032               	.LM123:
+ 1033 0348 F299      		sbic 62-0x20,2
+ 1034 034a 0DC0      		rjmp .L125
+ 1035               	.L132:
+ 1036               	.LBB25:
+ 1037               	.LM124:
+ 1038 034c EC2F      		mov r30,r28
+ 1039 034e FF27      		clr r31
+ 1040 0350 EE0F      		add r30,r30
+ 1041 0352 FF1F      		adc r31,r31
+ 1042 0354 E050      		subi r30,lo8(-(SettingFunctionNames))
+ 1043 0356 F040      		sbci r31,hi8(-(SettingFunctionNames))
+ 1044               	.LBE25:
+ 1045               	/* #APP */
+ 1046 0358 8591      		lpm r24, Z+
+ 1047 035a 9491      		lpm r25, Z
+ 1048               		
+ 1049               	/* #NOAPP */
+ 1050 035c 0E94 0000 		call LCD_puts_f
+ 1051               	.LM125:
+ 1052 0360 0E94 0000 		call MAIN_WaitForJoyRelease
+ 1053 0364 D1CF      		rjmp .L143
+ 1054               	.L125:
+ 1055               	/* epilogue: frame size=0 */
+ 1056 0366 CF91      		pop r28
+ 1057 0368 0895      		ret
+ 1058               	/* epilogue end (size=2) */
+ 1059               	/* function FUNCChangeSettings size 61 (58) */
+ 1060               	.LFE24:
+ 1062               	.global	FUNCAVRISPMode
+ 1064               	FUNCAVRISPMode:
+ 1065               	.LFB26:
+ 1066               	.LM126:
+ 1067               	/* prologue: frame size=0 */
+ 1068               	/* prologue end (size=0) */
+ 1069               	.LM127:
+ 1070 036a 80E0      		ldi r24,lo8(WaitText)
+ 1071 036c 90E0      		ldi r25,hi8(WaitText)
+ 1072 036e 0E94 0000 		call LCD_puts_f
+ 1073 0372 0E94 0000 		call OSCCAL_Calibrate
+ 1074 0376 8091 C100 		lds r24,193
+ 1075 037a 8078      		andi r24,lo8(-128)
+ 1076 037c 8861      		ori r24,lo8(24)
+ 1077 037e 8093 C100 		sts 193,r24
+ 1078               	.LM128:
+ 1079 0382 80E0      		ldi r24,lo8(AVRISPModeMessage)
+ 1080 0384 90E0      		ldi r25,hi8(AVRISPModeMessage)
+ 1081 0386 0E94 0000 		call LCD_puts_f
+ 1082               	.LM129:
+ 1083 038a 80E0      		ldi r24,lo8(pm(AICI_InterpretPacket))
+ 1084 038c 90E0      		ldi r25,hi8(pm(AICI_InterpretPacket))
+ 1085 038e 9093 0000 		sts (InterpretPacketRoutine)+1,r25
+ 1086 0392 8093 0000 		sts InterpretPacketRoutine,r24
+ 1087               	.LM130:
+ 1088 0396 0E94 0000 		call V2P_RunStateMachine
+ 1089               	/* epilogue: frame size=0 */
+ 1090 039a 0895      		ret
+ 1091               	/* epilogue end (size=1) */
+ 1092               	/* function FUNCAVRISPMode size 25 (24) */
+ 1093               	.LFE26:
+ 1095               	.global	FUNCProgramDataflash
+ 1097               	FUNCProgramDataflash:
+ 1098               	.LFB27:
+ 1099               	.LM131:
+ 1100               	/* prologue: frame size=0 */
+ 1101               	/* prologue end (size=0) */
+ 1102               	.LBB26:
+ 1103               	.LM132:
+ 1104 039c A0E0      		ldi r26,lo8(EEPROMVars+1)
+ 1105 039e B0E0      		ldi r27,hi8(EEPROMVars+1)
+ 1106               	.LBB27:
+ 1107               	.LM133:
+ 1108               	/* #APP */
+ 1109 03a0 0E94 0000 		call __eeprom_read_byte_1F2021
+ 1110 03a4 802D      		mov r24,__tmp_reg__
+ 1111               	/* #NOAPP */
+ 1112               	.LBE27:
+ 1113               	.LBE26:
+ 1114               	.LM134:
+ 1115 03a6 0E94 0000 		call USI_SPIInitMaster
+ 1116               	.LM135:
+ 1117 03aa 81E0      		ldi r24,lo8(1)
+ 1118 03ac 8093 0000 		sts UseExernalDF,r24
+ 1119               	.LM136:
+ 1120 03b0 80E0      		ldi r24,lo8(pm(USI_SPITransmit))
+ 1121 03b2 90E0      		ldi r25,hi8(pm(USI_SPITransmit))
+ 1122 03b4 9093 0000 		sts (DFSPIRoutinePointer)+1,r25
+ 1123 03b8 8093 0000 		sts DFSPIRoutinePointer,r24
+ 1124               	.LM137:
+ 1125 03bc 80E0      		ldi r24,lo8(WaitText)
+ 1126 03be 90E0      		ldi r25,hi8(WaitText)
+ 1127 03c0 0E94 0000 		call LCD_puts_f
+ 1128 03c4 0E94 0000 		call OSCCAL_Calibrate
+ 1129 03c8 8091 C100 		lds r24,193
+ 1130 03cc 8078      		andi r24,lo8(-128)
+ 1131 03ce 8861      		ori r24,lo8(24)
+ 1132 03d0 8093 C100 		sts 193,r24
+ 1133               	.LM138:
+ 1134 03d4 80E0      		ldi r24,lo8(DataFlashProgMode)
+ 1135 03d6 90E0      		ldi r25,hi8(DataFlashProgMode)
+ 1136 03d8 0E94 0000 		call LCD_puts_f
+ 1137               	.LM139:
+ 1138 03dc 80E0      		ldi r24,lo8(pm(PD_InterpretAVRISPPacket))
+ 1139 03de 90E0      		ldi r25,hi8(pm(PD_InterpretAVRISPPacket))
+ 1140 03e0 9093 0000 		sts (InterpretPacketRoutine)+1,r25
+ 1141 03e4 8093 0000 		sts InterpretPacketRoutine,r24
+ 1142               	.LM140:
+ 1143 03e8 0E94 0000 		call V2P_RunStateMachine
+ 1144               	.LM141:
+ 1145 03ec 80E0      		ldi r24,lo8(0)
+ 1146 03ee 0E94 0000 		call DF_EnableDataflash
+ 1147               	.LM142:
+ 1148 03f2 8091 6400 		lds r24,100
+ 1149 03f6 8460      		ori r24,lo8(4)
+ 1150 03f8 8093 6400 		sts 100,r24
+ 1151               	/* epilogue: frame size=0 */
+ 1152 03fc 0895      		ret
+ 1153               	/* epilogue end (size=1) */
+ 1154               	/* function FUNCProgramDataflash size 50 (49) */
+ 1155               	.LFE27:
+ 1157               		.section	.progmem.data
+ 1160               	__c.7:
+ 1161 0204 4E4F 2045 		.string	"NO ERASE CMD"
+ 1161      5241 5345 
+ 1161      2043 4D44 
+ 1161      00
+ 1164               	__c.8:
+ 1165 0211 4E4F 2044 		.string	"NO DATA"
+ 1165      4154 4100 
+ 1168               	__c.9:
+ 1169 0219 4E4F 2045 		.string	"NO EEPROM"
+ 1169      4550 524F 
+ 1169      4D00 
+ 1172               	__c.10:
+ 1173 0223 4E4F 2046 		.string	"NO FUSE BYTES"
+ 1173      5553 4520 
+ 1173      4259 5445 
+ 1173      5300 
+ 1176               	__c.11:
+ 1177 0231 4E4F 204C 		.string	"NO LOCK BYTES"
+ 1177      4F43 4B20 
+ 1177      4259 5445 
+ 1177      5300 
+ 1180               	__c.12:
+ 1181 023f 5052 4F47 		.string	"PROGRAMMING DONE"
+ 1181      5241 4D4D 
+ 1181      494E 4720 
+ 1181      444F 4E45 
+ 1181      00
+ 1184               	__c.13:
+ 1185 0250 4641 494C 		.string	"FAILED"
+ 1185      4544 00
+ 1186               		.text
+ 1187               	.global	FUNCProgramAVR
+ 1189               	FUNCProgramAVR:
+ 1190               	.LFB28:
+ 1191               	.LM143:
+ 1192               	/* prologue: frame size=19 */
+ 1193 03fe 0F93      		push r16
+ 1194 0400 1F93      		push r17
+ 1195 0402 CF93      		push r28
+ 1196 0404 DF93      		push r29
+ 1197 0406 CDB7      		in r28,__SP_L__
+ 1198 0408 DEB7      		in r29,__SP_H__
+ 1199 040a 6397      		sbiw r28,19
+ 1200 040c 0FB6      		in __tmp_reg__,__SREG__
+ 1201 040e F894      		cli
+ 1202 0410 DEBF      		out __SP_H__,r29
+ 1203 0412 0FBE      		out __SREG__,__tmp_reg__
+ 1204 0414 CDBF      		out __SP_L__,r28
+ 1205               	/* prologue end (size=12) */
+ 1206               	.LM144:
+ 1207 0416 00E0      		ldi r16,lo8(0)
+ 1208               	.LM145:
+ 1209 0418 102F      		mov r17,r16
+ 1210               	.LM146:
+ 1211 041a 0E94 0000 		call SPI_SPIInit
+ 1212               	.LM147:
+ 1213 041e 0093 0000 		sts UseExernalDF,r16
+ 1214               	.LM148:
+ 1215 0422 80E0      		ldi r24,lo8(pm(SPI_SPITransmit))
+ 1216 0424 90E0      		ldi r25,hi8(pm(SPI_SPITransmit))
+ 1217 0426 9093 0000 		sts (DFSPIRoutinePointer)+1,r25
+ 1218 042a 8093 0000 		sts DFSPIRoutinePointer,r24
+ 1219               	.LM149:
+ 1220 042e 0E94 0000 		call DF_CheckCorrectOnboardChip
+ 1221 0432 8823      		tst r24
+ 1222 0434 09F4      		brne .+2
+ 1223 0436 0DC1      		rjmp .L156
+ 1224               	.LM150:
+ 1225 0438 0E94 0000 		call MAIN_WaitForJoyRelease
+ 1226               	.LM151:
+ 1227 043c 81E0      		ldi r24,lo8(1)
+ 1228 043e 8EBB      		out 62-0x20,r24
+ 1229               	.L211:
+ 1230               	.LM152:
+ 1231 0440 8EB3      		in r24,62-0x20
+ 1232 0442 8823      		tst r24
+ 1233 0444 E9F3      		breq .L211
+ 1234               	.LM153:
+ 1235 0446 F299      		sbic 62-0x20,2
+ 1236 0448 04C1      		rjmp .L156
+ 1237               	.LM154:
+ 1238 044a F499      		sbic 62-0x20,4
+ 1239 044c 1CC0      		rjmp .L159
+ 1240               	.LM155:
+ 1241 044e F69B      		sbis 62-0x20,6
+ 1242 0450 06C0      		rjmp .L165
+ 1243               	.LM156:
+ 1244 0452 1123      		tst r17
+ 1245 0454 11F4      		brne .L166
+ 1246 0456 16E0      		ldi r17,lo8(6)
+ 1247 0458 09C0      		rjmp .L162
+ 1248               	.L166:
+ 1249 045a 1150      		subi r17,lo8(-(-1))
+ 1250 045c 07C0      		rjmp .L162
+ 1251               	.L165:
+ 1252               	.LM157:
+ 1253 045e F79B      		sbis 62-0x20,7
+ 1254 0460 05C0      		rjmp .L162
+ 1255               	.LM158:
+ 1256 0462 1630      		cpi r17,lo8(6)
+ 1257 0464 11F4      		brne .L170
+ 1258 0466 10E0      		ldi r17,lo8(0)
+ 1259 0468 01C0      		rjmp .L162
+ 1260               	.L170:
+ 1261 046a 1F5F      		subi r17,lo8(-(1))
+ 1262               	.L162:
+ 1263               	.LBB28:
+ 1264               	.LM159:
+ 1265 046c E12F      		mov r30,r17
+ 1266 046e FF27      		clr r31
+ 1267 0470 EE0F      		add r30,r30
+ 1268 0472 FF1F      		adc r31,r31
+ 1269 0474 E050      		subi r30,lo8(-(ProgOptions))
+ 1270 0476 F040      		sbci r31,hi8(-(ProgOptions))
+ 1271               	.LBE28:
+ 1272               	/* #APP */
+ 1273 0478 8591      		lpm r24, Z+
+ 1274 047a 9491      		lpm r25, Z
+ 1275               		
+ 1276               	/* #NOAPP */
+ 1277 047c 0E94 0000 		call LCD_puts_f
+ 1278               	.LM160:
+ 1279 0480 0E94 0000 		call MAIN_WaitForJoyRelease
+ 1280 0484 DDCF      		rjmp .L211
+ 1281               	.L159:
+ 1282               	.LM161:
+ 1283 0486 81B3      		in r24,49-0x20
+ 1284 0488 8063      		ori r24,lo8(48)
+ 1285 048a 81BB      		out 49-0x20,r24
+ 1286               	.LM162:
+ 1287 048c 80E0      		ldi r24,lo8(WaitText)
+ 1288 048e 90E0      		ldi r25,hi8(WaitText)
+ 1289 0490 0E94 0000 		call LCD_puts_f
+ 1290               	.LBB29:
+ 1291               	.LM163:
+ 1292 0494 A0E0      		ldi r26,lo8(EEPROMVars+1)
+ 1293 0496 B0E0      		ldi r27,hi8(EEPROMVars+1)
+ 1294               	.LBB30:
+ 1295               	.LM164:
+ 1296               	/* #APP */
+ 1297 0498 0E94 0000 		call __eeprom_read_byte_1F2021
+ 1298 049c 802D      		mov r24,__tmp_reg__
+ 1299               	/* #NOAPP */
+ 1300               	.LBE30:
+ 1301               	.LBE29:
+ 1302               	.LM165:
+ 1303 049e 0E94 0000 		call USI_SPIInitMaster
+ 1304               	.LM166:
+ 1305 04a2 80E0      		ldi r24,lo8(0)
+ 1306 04a4 0E94 0000 		call MAIN_ResetCSLine
+ 1307 04a8 E0E0      		ldi r30,lo8(PacketBytes)
+ 1308 04aa F0E0      		ldi r31,hi8(PacketBytes)
+ 1309 04ac 20E0      		ldi r18,lo8(0)
+ 1310 04ae 30E0      		ldi r19,hi8(0)
+ 1311 04b0 9BE0      		ldi r25,lo8(11)
+ 1312               	.L178:
+ 1313               	.LBB31:
+ 1314               	.LBB32:
+ 1315               	.LM167:
+ 1316 04b2 D901      		movw r26,r18
+ 1317 04b4 A050      		subi r26,lo8(-(EEPROMVars+35))
+ 1318 04b6 B040      		sbci r27,hi8(-(EEPROMVars+35))
+ 1319               	.LBB33:
+ 1320               	.LM168:
+ 1321               	/* #APP */
+ 1322 04b8 0E94 0000 		call __eeprom_read_byte_1F2021
+ 1323 04bc 802D      		mov r24,__tmp_reg__
+ 1324               	/* #NOAPP */
+ 1325               	.LBE33:
+ 1326               	.LBE32:
+ 1327               	.LM169:
+ 1328 04be 8193      		st Z+,r24
+ 1329               	.LM170:
+ 1330 04c0 9150      		subi r25,lo8(-(-1))
+ 1331 04c2 2F5F      		subi r18,lo8(-(1))
+ 1332 04c4 3F4F      		sbci r19,hi8(-(1))
+ 1333 04c6 97FF      		sbrs r25,7
+ 1334 04c8 F4CF      		rjmp .L178
+ 1335               	.LBE31:
+ 1336               	.LM171:
+ 1337 04ca 0E94 0000 		call ISPCC_EnterChipProgrammingMode
+ 1338               	.LM172:
+ 1339 04ce 1092 0000 		sts CurrAddress,__zero_reg__
+ 1340 04d2 1092 0000 		sts (CurrAddress)+1,__zero_reg__
+ 1341 04d6 1092 0000 		sts (CurrAddress)+2,__zero_reg__
+ 1342 04da 1092 0000 		sts (CurrAddress)+3,__zero_reg__
+ 1343               	.LM173:
+ 1344 04de 8091 0000 		lds r24,PacketBytes+1
+ 1345 04e2 8823      		tst r24
+ 1346 04e4 09F0      		breq .+2
+ 1347 04e6 A0C0      		rjmp .L179
+ 1348               	.LM174:
+ 1349 04e8 1630      		cpi r17,lo8(6)
+ 1350 04ea 21F0      		breq .L181
+ 1351 04ec 1123      		tst r17
+ 1352 04ee 11F0      		breq .L181
+ 1353 04f0 1230      		cpi r17,lo8(2)
+ 1354 04f2 91F4      		brne .L180
+ 1355               	.L181:
+ 1356               	.LM175:
+ 1357 04f4 83E4      		ldi r24,lo8(67)
+ 1358 04f6 0E94 0000 		call MAIN_ShowProgType
+ 1359               	.LBB34:
+ 1360               	.LM176:
+ 1361 04fa A0E0      		ldi r26,lo8(EEPROMVars+20)
+ 1362 04fc B0E0      		ldi r27,hi8(EEPROMVars+20)
+ 1363               	.LBB35:
+ 1364               	.LM177:
+ 1365               	/* #APP */
+ 1366 04fe 0E94 0000 		call __eeprom_read_byte_1F2021
+ 1367 0502 802D      		mov r24,__tmp_reg__
+ 1368               	/* #NOAPP */
+ 1369               	.LBE35:
+ 1370               	.LBE34:
+ 1371               	.LM178:
+ 1372 0504 8130      		cpi r24,lo8(1)
+ 1373 0506 31F0      		breq .L182
+ 1374               	.LM179:
+ 1375 0508 02E0      		ldi r16,lo8(2)
+ 1376               	.LM180:
+ 1377 050a 80E0      		ldi r24,lo8(__c.7)
+ 1378 050c 90E0      		ldi r25,hi8(__c.7)
+ 1379 050e 0E94 0000 		call MAIN_ShowError
+ 1380 0512 02C0      		rjmp .L180
+ 1381               	.L182:
+ 1382               	.LM181:
+ 1383 0514 0E94 0000 		call PM_SendEraseCommand
+ 1384               	.L180:
+ 1385               	.LM182:
+ 1386 0518 1123      		tst r17
+ 1387 051a 11F0      		breq .L186
+ 1388 051c 1230      		cpi r17,lo8(2)
+ 1389 051e B9F4      		brne .L185
+ 1390               	.L186:
+ 1391 0520 0023      		tst r16
+ 1392 0522 A9F4      		brne .L185
+ 1393               	.LM183:
+ 1394 0524 84E4      		ldi r24,lo8(68)
+ 1395 0526 0E94 0000 		call MAIN_ShowProgType
+ 1396               	.LM184:
+ 1397 052a 81E0      		ldi r24,lo8(1)
+ 1398 052c 0E94 0000 		call PM_GetStoredDataSize
+ 1399 0530 DC01      		movw r26,r24
+ 1400 0532 CB01      		movw r24,r22
+ 1401 0534 0097      		sbiw r24,0
+ 1402 0536 A105      		cpc r26,__zero_reg__
+ 1403 0538 B105      		cpc r27,__zero_reg__
+ 1404 053a 31F4      		brne .L187
+ 1405               	.LM185:
+ 1406 053c 03E0      		ldi r16,lo8(3)
+ 1407               	.LM186:
+ 1408 053e 80E0      		ldi r24,lo8(__c.8)
+ 1409 0540 90E0      		ldi r25,hi8(__c.8)
+ 1410 0542 0E94 0000 		call MAIN_ShowError
+ 1411 0546 03C0      		rjmp .L185
+ 1412               	.L187:
+ 1413               	.LM187:
+ 1414 0548 81E0      		ldi r24,lo8(1)
+ 1415 054a 0E94 0000 		call PM_CreateProgrammingPackets
+ 1416               	.L185:
+ 1417               	.LM188:
+ 1418 054e 812F      		mov r24,r17
+ 1419 0550 8150      		subi r24,lo8(-(-1))
+ 1420 0552 8230      		cpi r24,lo8(2)
+ 1421 0554 A8F4      		brsh .L189
+ 1422               	.LM189:
+ 1423 0556 85E4      		ldi r24,lo8(69)
+ 1424 0558 0E94 0000 		call MAIN_ShowProgType
+ 1425               	.LM190:
+ 1426 055c 80E0      		ldi r24,lo8(0)
+ 1427 055e 0E94 0000 		call PM_GetStoredDataSize
+ 1428 0562 DC01      		movw r26,r24
+ 1429 0564 CB01      		movw r24,r22
+ 1430 0566 0097      		sbiw r24,0
+ 1431 0568 A105      		cpc r26,__zero_reg__
+ 1432 056a B105      		cpc r27,__zero_reg__
+ 1433 056c 31F4      		brne .L190
+ 1434               	.LM191:
+ 1435 056e 03E0      		ldi r16,lo8(3)
+ 1436               	.LM192:
+ 1437 0570 80E0      		ldi r24,lo8(__c.9)
+ 1438 0572 90E0      		ldi r25,hi8(__c.9)
+ 1439 0574 0E94 0000 		call MAIN_ShowError
+ 1440 0578 03C0      		rjmp .L189
+ 1441               	.L190:
+ 1442               	.LM193:
+ 1443 057a 80E0      		ldi r24,lo8(0)
+ 1444 057c 0E94 0000 		call PM_CreateProgrammingPackets
+ 1445               	.L189:
+ 1446               	.LM194:
+ 1447 0580 1330      		cpi r17,lo8(3)
+ 1448 0582 11F0      		breq .L193
+ 1449 0584 1530      		cpi r17,lo8(5)
+ 1450 0586 99F4      		brne .L192
+ 1451               	.L193:
+ 1452               	.LM195:
+ 1453 0588 86E4      		ldi r24,lo8(70)
+ 1454 058a 0E94 0000 		call MAIN_ShowProgType
+ 1455               	.LBB36:
+ 1456               	.LM196:
+ 1457 058e A0E0      		ldi r26,lo8(EEPROMVars+47)
+ 1458 0590 B0E0      		ldi r27,hi8(EEPROMVars+47)
+ 1459               	.LBB37:
+ 1460               	.LM197:
+ 1461               	/* #APP */
+ 1462 0592 0E94 0000 		call __eeprom_read_byte_1F2021
+ 1463 0596 802D      		mov r24,__tmp_reg__
+ 1464               	/* #NOAPP */
+ 1465               	.LBE37:
+ 1466               	.LBE36:
+ 1467               	.LM198:
+ 1468 0598 8823      		tst r24
+ 1469 059a 31F4      		brne .L194
+ 1470               	.LM199:
+ 1471 059c 03E0      		ldi r16,lo8(3)
+ 1472               	.LM200:
+ 1473 059e 80E0      		ldi r24,lo8(__c.10)
+ 1474 05a0 90E0      		ldi r25,hi8(__c.10)
+ 1475 05a2 0E94 0000 		call MAIN_ShowError
+ 1476 05a6 03C0      		rjmp .L192
+ 1477               	.L194:
+ 1478               	.LM201:
+ 1479 05a8 82E0      		ldi r24,lo8(2)
+ 1480 05aa 0E94 0000 		call PM_SendFuseLockBytes
+ 1481               	.L192:
+ 1482               	.LM202:
+ 1483 05ae 812F      		mov r24,r17
+ 1484 05b0 8450      		subi r24,lo8(-(-4))
+ 1485 05b2 8230      		cpi r24,lo8(2)
+ 1486 05b4 00F5      		brsh .L197
+ 1487               	.LM203:
+ 1488 05b6 1530      		cpi r17,lo8(5)
+ 1489 05b8 59F4      		brne .L198
+ 1490               	.LM204:
+ 1491 05ba 81E0      		ldi r24,lo8(1)
+ 1492 05bc 0E94 0000 		call MAIN_ResetCSLine
+ 1493               	.LM205:
+ 1494 05c0 81E0      		ldi r24,lo8(1)
+ 1495 05c2 0E94 0000 		call MAIN_Delay10MS
+ 1496               	.LM206:
+ 1497 05c6 80E0      		ldi r24,lo8(0)
+ 1498 05c8 0E94 0000 		call MAIN_ResetCSLine
+ 1499               	.LM207:
+ 1500 05cc 0E94 0000 		call ISPCC_EnterChipProgrammingMode
+ 1501               	.L198:
+ 1502               	.LM208:
+ 1503 05d0 8CE4      		ldi r24,lo8(76)
+ 1504 05d2 0E94 0000 		call MAIN_ShowProgType
+ 1505               	.LBB38:
+ 1506               	.LM209:
+ 1507 05d6 A0E0      		ldi r26,lo8(EEPROMVars+48)
+ 1508 05d8 B0E0      		ldi r27,hi8(EEPROMVars+48)
+ 1509               	.LBB39:
+ 1510               	.LM210:
+ 1511               	/* #APP */
+ 1512 05da 0E94 0000 		call __eeprom_read_byte_1F2021
+ 1513 05de 802D      		mov r24,__tmp_reg__
+ 1514               	/* #NOAPP */
+ 1515               	.LBE39:
+ 1516               	.LBE38:
+ 1517               	.LM211:
+ 1518 05e0 8823      		tst r24
+ 1519 05e2 31F4      		brne .L199
+ 1520               	.LM212:
+ 1521 05e4 03E0      		ldi r16,lo8(3)
+ 1522               	.LM213:
+ 1523 05e6 80E0      		ldi r24,lo8(__c.11)
+ 1524 05e8 90E0      		ldi r25,hi8(__c.11)
+ 1525 05ea 0E94 0000 		call MAIN_ShowError
+ 1526 05ee 03C0      		rjmp .L197
+ 1527               	.L199:
+ 1528               	.LM214:
+ 1529 05f0 83E0      		ldi r24,lo8(3)
+ 1530 05f2 0E94 0000 		call PM_SendFuseLockBytes
+ 1531               	.L197:
+ 1532               	.LM215:
+ 1533 05f6 60E0      		ldi r22,lo8(__c.12)
+ 1534 05f8 70E0      		ldi r23,hi8(__c.12)
+ 1535 05fa CE01      		movw r24,r28
+ 1536 05fc 0196      		adiw r24,1
+ 1537 05fe 0E94 0000 		call strcpy_P
+ 1538               	.LM216:
+ 1539 0602 0023      		tst r16
+ 1540 0604 31F0      		breq .L202
+ 1541               	.LM217:
+ 1542 0606 60E0      		ldi r22,lo8(__c.13)
+ 1543 0608 70E0      		ldi r23,hi8(__c.13)
+ 1544 060a CE01      		movw r24,r28
+ 1545 060c 0D96      		adiw r24,13
+ 1546 060e 0E94 0000 		call strcpy_P
+ 1547               	.L202:
+ 1548               	.LM218:
+ 1549 0612 CE01      		movw r24,r28
+ 1550 0614 0196      		adiw r24,1
+ 1551 0616 0E94 0000 		call LCD_puts
+ 1552               	.LM219:
+ 1553 061a 8FEF      		ldi r24,lo8(-1)
+ 1554 061c 0E94 0000 		call MAIN_Delay10MS
+ 1555               	.LM220:
+ 1556 0620 84E6      		ldi r24,lo8(100)
+ 1557 0622 0E94 0000 		call MAIN_Delay10MS
+ 1558 0626 04C0      		rjmp .L203
+ 1559               	.L179:
+ 1560               	.LM221:
+ 1561 0628 80E0      		ldi r24,lo8(SyncErrorMessage)
+ 1562 062a 90E0      		ldi r25,hi8(SyncErrorMessage)
+ 1563 062c 0E94 0000 		call MAIN_ShowError
+ 1564               	.L203:
+ 1565               	.LM222:
+ 1566 0630 81E0      		ldi r24,lo8(1)
+ 1567 0632 0E94 0000 		call MAIN_ResetCSLine
+ 1568               	.LM223:
+ 1569 0636 0E94 0000 		call USI_SPIOff
+ 1570               	.LM224:
+ 1571 063a 80E0      		ldi r24,lo8(0)
+ 1572 063c 0E94 0000 		call DF_EnableDataflash
+ 1573               	.LM225:
+ 1574 0640 8091 6400 		lds r24,100
+ 1575 0644 8460      		ori r24,lo8(4)
+ 1576 0646 8093 6400 		sts 100,r24
+ 1577               	.LM226:
+ 1578 064a 81B3      		in r24,49-0x20
+ 1579 064c 8F7C      		andi r24,lo8(-49)
+ 1580 064e 8061      		ori r24,lo8(16)
+ 1581 0650 81BB      		out 49-0x20,r24
+ 1582               	.L156:
+ 1583               	/* epilogue: frame size=19 */
+ 1584 0652 6396      		adiw r28,19
+ 1585 0654 0FB6      		in __tmp_reg__,__SREG__
+ 1586 0656 F894      		cli
+ 1587 0658 DEBF      		out __SP_H__,r29
+ 1588 065a 0FBE      		out __SREG__,__tmp_reg__
+ 1589 065c CDBF      		out __SP_L__,r28
+ 1590 065e DF91      		pop r29
+ 1591 0660 CF91      		pop r28
+ 1592 0662 1F91      		pop r17
+ 1593 0664 0F91      		pop r16
+ 1594 0666 0895      		ret
+ 1595               	/* epilogue end (size=11) */
+ 1596               	/* function FUNCProgramAVR size 318 (295) */
+ 1597               	.LFE28:
+ 1599               		.section	.progmem.data
+ 1602               	__c.6:
+ 1603 0257 2A53 544F 		.string	"*STORAGE MODE*"
+ 1603      5241 4745 
+ 1603      204D 4F44 
+ 1603      452A 00
+ 1604               		.text
+ 1605               	.global	FUNCStoreProgram
+ 1607               	FUNCStoreProgram:
+ 1608               	.LFB29:
+ 1609               	.LM227:
+ 1610               	/* prologue: frame size=0 */
+ 1611               	/* prologue end (size=0) */
+ 1612               	.LM228:
+ 1613 0668 80E0      		ldi r24,lo8(pm(SPI_SPITransmit))
+ 1614 066a 90E0      		ldi r25,hi8(pm(SPI_SPITransmit))
+ 1615 066c 9093 0000 		sts (DFSPIRoutinePointer)+1,r25
+ 1616 0670 8093 0000 		sts DFSPIRoutinePointer,r24
+ 1617               	.LM229:
+ 1618 0674 0E94 0000 		call SPI_SPIInit
+ 1619               	.LM230:
+ 1620 0678 1092 0000 		sts UseExernalDF,__zero_reg__
+ 1621               	.LM231:
+ 1622 067c 81E0      		ldi r24,lo8(1)
+ 1623 067e 0E94 0000 		call DF_EnableDataflash
+ 1624               	.LM232:
+ 1625 0682 0E94 0000 		call DF_CheckCorrectOnboardChip
+ 1626 0686 8823      		tst r24
+ 1627 0688 01F1      		breq .L212
+ 1628               	.LM233:
+ 1629 068a 80E0      		ldi r24,lo8(WaitText)
+ 1630 068c 90E0      		ldi r25,hi8(WaitText)
+ 1631 068e 0E94 0000 		call LCD_puts_f
+ 1632 0692 0E94 0000 		call OSCCAL_Calibrate
+ 1633 0696 8091 C100 		lds r24,193
+ 1634 069a 8078      		andi r24,lo8(-128)
+ 1635 069c 8861      		ori r24,lo8(24)
+ 1636 069e 8093 C100 		sts 193,r24
+ 1637               	.LM234:
+ 1638 06a2 80E0      		ldi r24,lo8(__c.6)
+ 1639 06a4 90E0      		ldi r25,hi8(__c.6)
+ 1640 06a6 0E94 0000 		call LCD_puts_f
+ 1641               	.LM235:
+ 1642 06aa 80E0      		ldi r24,lo8(pm(PM_InterpretAVRISPPacket))
+ 1643 06ac 90E0      		ldi r25,hi8(pm(PM_InterpretAVRISPPacket))
+ 1644 06ae 9093 0000 		sts (InterpretPacketRoutine)+1,r25
+ 1645 06b2 8093 0000 		sts InterpretPacketRoutine,r24
+ 1646               	.LM236:
+ 1647 06b6 0E94 0000 		call V2P_RunStateMachine
+ 1648               	.LM237:
+ 1649 06ba 80E0      		ldi r24,lo8(0)
+ 1650 06bc 0E94 0000 		call DF_EnableDataflash
+ 1651               	.LM238:
+ 1652 06c0 8091 6400 		lds r24,100
+ 1653 06c4 8460      		ori r24,lo8(4)
+ 1654 06c6 8093 6400 		sts 100,r24
+ 1655               	.L212:
+ 1656 06ca 0895      		ret
+ 1657               	/* epilogue: frame size=0 */
+ 1658               	/* epilogue: noreturn */
+ 1659               	/* epilogue end (size=0) */
+ 1660               	/* function FUNCStoreProgram size 50 (50) */
+ 1661               	.LFE29:
+ 1663               		.section	.progmem.data
+ 1666               	__c.3:
+ 1667 0266 434F 4E46 		.string	"CONFIRM"
+ 1667      4952 4D00 
+ 1670               	__c.4:
+ 1671 026e 3C4E 2059 		.string	"<N Y>"
+ 1671      3E00 
+ 1674               	__c.5:
+ 1675 0274 4D45 4D20 		.string	"MEM CLEARED"
+ 1675      434C 4541 
+ 1675      5245 4400 
+ 1676               		.text
+ 1677               	.global	FUNCClearMem
+ 1679               	FUNCClearMem:
+ 1680               	.LFB30:
+ 1681               	.LM239:
+ 1682               	/* prologue: frame size=0 */
+ 1683 06cc CF93      		push r28
+ 1684 06ce DF93      		push r29
+ 1685               	/* prologue end (size=2) */
+ 1686               	.LM240:
+ 1687 06d0 80E0      		ldi r24,lo8(__c.3)
+ 1688 06d2 90E0      		ldi r25,hi8(__c.3)
+ 1689 06d4 0E94 0000 		call LCD_puts_f
+ 1690               	.LM241:
+ 1691 06d8 84EB      		ldi r24,lo8(-76)
+ 1692 06da 0E94 0000 		call MAIN_Delay10MS
+ 1693               	.LM242:
+ 1694 06de 80E0      		ldi r24,lo8(__c.4)
+ 1695 06e0 90E0      		ldi r25,hi8(__c.4)
+ 1696 06e2 0E94 0000 		call LCD_puts_f
+ 1697               	.L236:
+ 1698               	.LM243:
+ 1699 06e6 8EB3      		in r24,62-0x20
+ 1700 06e8 8823      		tst r24
+ 1701 06ea E9F3      		breq .L236
+ 1702               	.LM244:
+ 1703 06ec 8EB3      		in r24,62-0x20
+ 1704 06ee 9927      		clr r25
+ 1705 06f0 EC01      		movw r28,r24
+ 1706 06f2 C470      		andi r28,lo8(4)
+ 1707 06f4 D070      		andi r29,hi8(4)
+ 1708 06f6 82FD      		sbrc r24,2
+ 1709 06f8 1AC0      		rjmp .L219
+ 1710               	.LM245:
+ 1711 06fa F39B      		sbis 62-0x20,3
+ 1712 06fc F4CF      		rjmp .L236
+ 1713               	.LM246:
+ 1714 06fe 0E94 0000 		call MAIN_WaitForJoyRelease
+ 1715               	.LM247:
+ 1716 0702 80E0      		ldi r24,lo8(WaitText)
+ 1717 0704 90E0      		ldi r25,hi8(WaitText)
+ 1718 0706 0E94 0000 		call LCD_puts_f
+ 1719               	.LBB40:
+ 1720               	.LM248:
+ 1721 070a CE01      		movw r24,r28
+ 1722 070c 2FEF      		ldi r18,lo8(-1)
+ 1723               	.L230:
+ 1724               	.LBB41:
+ 1725               	.LBB42:
+ 1726               	.LM249:
+ 1727 070e DC01      		movw r26,r24
+ 1728               	/* #APP */
+ 1729 0710 022E      		mov __tmp_reg__,r18
+ 1730 0712 0E94 0000 		call __eeprom_write_byte_1F2021
+ 1731               	/* #NOAPP */
+ 1732               	.LBE42:
+ 1733               	.LBE41:
+ 1734               	.LM250:
+ 1735 0716 0196      		adiw r24,1
+ 1736 0718 32E0      		ldi r19,hi8(512)
+ 1737 071a 8030      		cpi r24,lo8(512)
+ 1738 071c 9307      		cpc r25,r19
+ 1739 071e B8F3      		brlo .L230
+ 1740               	.LBE40:
+ 1741               	.LM251:
+ 1742 0720 80E0      		ldi r24,lo8(__c.5)
+ 1743 0722 90E0      		ldi r25,hi8(__c.5)
+ 1744 0724 0E94 0000 		call LCD_puts_f
+ 1745               	.LM252:
+ 1746 0728 8FEF      		ldi r24,lo8(-1)
+ 1747 072a 0E94 0000 		call MAIN_Delay10MS
+ 1748               	.L219:
+ 1749               	/* epilogue: frame size=0 */
+ 1750 072e DF91      		pop r29
+ 1751 0730 CF91      		pop r28
+ 1752 0732 0895      		ret
+ 1753               	/* epilogue end (size=3) */
+ 1754               	/* function FUNCClearMem size 53 (48) */
+ 1755               	.LFE30:
+ 1757               	.global	FUNCSetContrast
+ 1759               	FUNCSetContrast:
+ 1760               	.LFB31:
+ 1761               	.LM253:
+ 1762               	/* prologue: frame size=6 */
+ 1763 0734 EF92      		push r14
+ 1764 0736 FF92      		push r15
+ 1765 0738 1F93      		push r17
+ 1766 073a CF93      		push r28
+ 1767 073c DF93      		push r29
+ 1768 073e CDB7      		in r28,__SP_L__
+ 1769 0740 DEB7      		in r29,__SP_H__
+ 1770 0742 2697      		sbiw r28,6
+ 1771 0744 0FB6      		in __tmp_reg__,__SREG__
+ 1772 0746 F894      		cli
+ 1773 0748 DEBF      		out __SP_H__,r29
+ 1774 074a 0FBE      		out __SREG__,__tmp_reg__
+ 1775 074c CDBF      		out __SP_L__,r28
+ 1776               	/* prologue end (size=13) */
+ 1777               	.LBB43:
+ 1778               	.LM254:
+ 1779 074e 80E0      		ldi r24,lo8(EEPROMVars+133)
+ 1780 0750 E82E      		mov r14,r24
+ 1781 0752 80E0      		ldi r24,hi8(EEPROMVars+133)
+ 1782 0754 F82E      		mov r15,r24
+ 1783               	.LBB44:
+ 1784               	.LM255:
+ 1785 0756 D701      		movw r26,r14
+ 1786               	/* #APP */
+ 1787 0758 0E94 0000 		call __eeprom_read_byte_1F2021
+ 1788 075c 802D      		mov r24,__tmp_reg__
+ 1789               	/* #NOAPP */
+ 1790               	.LBE44:
+ 1791               	.LBE43:
+ 1792               	.LM256:
+ 1793 075e 182F      		mov r17,r24
+ 1794 0760 1F70      		andi r17,lo8(15)
+ 1795               	.LM257:
+ 1796 0762 81E0      		ldi r24,lo8(1)
+ 1797 0764 8EBB      		out 62-0x20,r24
+ 1798               	.L254:
+ 1799               	.LM258:
+ 1800 0766 8EB3      		in r24,62-0x20
+ 1801 0768 8823      		tst r24
+ 1802 076a E9F3      		breq .L254
+ 1803               	.LM259:
+ 1804 076c F69B      		sbis 62-0x20,6
+ 1805 076e 04C0      		rjmp .L242
+ 1806               	.LM260:
+ 1807 0770 1F30      		cpi r17,lo8(15)
+ 1808 0772 78F4      		brsh .L244
+ 1809               	.LM261:
+ 1810 0774 1F5F      		subi r17,lo8(-(1))
+ 1811 0776 0DC0      		rjmp .L244
+ 1812               	.L242:
+ 1813               	.LM262:
+ 1814 0778 F79B      		sbis 62-0x20,7
+ 1815 077a 04C0      		rjmp .L245
+ 1816               	.LM263:
+ 1817 077c 1230      		cpi r17,lo8(2)
+ 1818 077e 48F0      		brlo .L244
+ 1819               	.LM264:
+ 1820 0780 1150      		subi r17,lo8(-(-1))
+ 1821 0782 07C0      		rjmp .L244
+ 1822               	.L245:
+ 1823               	.LM265:
+ 1824 0784 F29B      		sbis 62-0x20,2
+ 1825 0786 05C0      		rjmp .L244
+ 1826               	.LBB45:
+ 1827               	.LBB46:
+ 1828               	.LM266:
+ 1829 0788 D701      		movw r26,r14
+ 1830               	/* #APP */
+ 1831 078a 012E      		mov __tmp_reg__,r17
+ 1832 078c 0E94 0000 		call __eeprom_write_byte_1F2021
+ 1833               	/* #NOAPP */
+ 1834               	.LBE46:
+ 1835               	.LBE45:
+ 1836               	.LM267:
+ 1837 0790 18C0      		rjmp .L237
+ 1838               	.L244:
+ 1839               	.LM268:
+ 1840 0792 83E4      		ldi r24,lo8(67)
+ 1841 0794 8983      		std Y+1,r24
+ 1842               	.LM269:
+ 1843 0796 84E5      		ldi r24,lo8(84)
+ 1844 0798 8A83      		std Y+2,r24
+ 1845               	.LM270:
+ 1846 079a 80E2      		ldi r24,lo8(32)
+ 1847 079c 8B83      		std Y+3,r24
+ 1848               	.LM271:
+ 1849 079e BE01      		movw r22,r28
+ 1850 07a0 6C5F      		subi r22,lo8(-(4))
+ 1851 07a2 7F4F      		sbci r23,hi8(-(4))
+ 1852 07a4 812F      		mov r24,r17
+ 1853 07a6 9927      		clr r25
+ 1854 07a8 0E94 0000 		call MAIN_IntToStr
+ 1855               	.LM272:
+ 1856 07ac CE01      		movw r24,r28
+ 1857 07ae 0196      		adiw r24,1
+ 1858 07b0 0E94 0000 		call LCD_puts
+ 1859               	.LM273:
+ 1860 07b4 812F      		mov r24,r17
+ 1861 07b6 8F70      		andi r24,lo8(15)
+ 1862 07b8 8093 E700 		sts 231,r24
+ 1863               	.LM274:
+ 1864 07bc 0E94 0000 		call MAIN_WaitForJoyRelease
+ 1865 07c0 D2CF      		rjmp .L254
+ 1866               	.L237:
+ 1867               	/* epilogue: frame size=6 */
+ 1868 07c2 2696      		adiw r28,6
+ 1869 07c4 0FB6      		in __tmp_reg__,__SREG__
+ 1870 07c6 F894      		cli
+ 1871 07c8 DEBF      		out __SP_H__,r29
+ 1872 07ca 0FBE      		out __SREG__,__tmp_reg__
+ 1873 07cc CDBF      		out __SP_L__,r28
+ 1874 07ce DF91      		pop r29
+ 1875 07d0 CF91      		pop r28
+ 1876 07d2 1F91      		pop r17
+ 1877 07d4 FF90      		pop r15
+ 1878 07d6 EF90      		pop r14
+ 1879 07d8 0895      		ret
+ 1880               	/* epilogue end (size=12) */
+ 1881               	/* function FUNCSetContrast size 85 (60) */
+ 1882               	.LFE31:
+ 1884               	.global	FUNCSetISPSpeed
+ 1886               	FUNCSetISPSpeed:
+ 1887               	.LFB32:
+ 1888               	.LM275:
+ 1889               	/* prologue: frame size=0 */
+ 1890 07da 0F93      		push r16
+ 1891 07dc 1F93      		push r17
+ 1892 07de CF93      		push r28
+ 1893               	/* prologue end (size=3) */
+ 1894               	.LBB47:
+ 1895               	.LM276:
+ 1896 07e0 00E0      		ldi r16,lo8(EEPROMVars+1)
+ 1897 07e2 10E0      		ldi r17,hi8(EEPROMVars+1)
+ 1898               	.LBB48:
+ 1899               	.LM277:
+ 1900 07e4 D801      		movw r26,r16
+ 1901               	/* #APP */
+ 1902 07e6 0E94 0000 		call __eeprom_read_byte_1F2021
+ 1903 07ea 802D      		mov r24,__tmp_reg__
+ 1904               	/* #NOAPP */
+ 1905               	.LBE48:
+ 1906               	.LBE47:
+ 1907               	.LM278:
+ 1908 07ec C82F      		mov r28,r24
+ 1909               	.LM279:
+ 1910 07ee 8430      		cpi r24,lo8(4)
+ 1911 07f0 08F0      		brlo .L257
+ 1912               	.LM280:
+ 1913 07f2 C0E0      		ldi r28,lo8(0)
+ 1914               	.L257:
+ 1915               	.LM281:
+ 1916 07f4 81E0      		ldi r24,lo8(1)
+ 1917 07f6 8EBB      		out 62-0x20,r24
+ 1918               	.L274:
+ 1919               	.LM282:
+ 1920 07f8 8EB3      		in r24,62-0x20
+ 1921 07fa 8823      		tst r24
+ 1922 07fc E9F3      		breq .L274
+ 1923               	.LM283:
+ 1924 07fe F69B      		sbis 62-0x20,6
+ 1925 0800 06C0      		rjmp .L261
+ 1926               	.LM284:
+ 1927 0802 CC23      		tst r28
+ 1928 0804 11F4      		brne .L262
+ 1929 0806 C3E0      		ldi r28,lo8(3)
+ 1930 0808 11C0      		rjmp .L264
+ 1931               	.L262:
+ 1932 080a C150      		subi r28,lo8(-(-1))
+ 1933 080c 0FC0      		rjmp .L264
+ 1934               	.L261:
+ 1935               	.LM285:
+ 1936 080e F79B      		sbis 62-0x20,7
+ 1937 0810 06C0      		rjmp .L265
+ 1938               	.LM286:
+ 1939 0812 C330      		cpi r28,lo8(3)
+ 1940 0814 11F4      		brne .L266
+ 1941 0816 C0E0      		ldi r28,lo8(0)
+ 1942 0818 09C0      		rjmp .L264
+ 1943               	.L266:
+ 1944 081a CF5F      		subi r28,lo8(-(1))
+ 1945 081c 07C0      		rjmp .L264
+ 1946               	.L265:
+ 1947               	.LM287:
+ 1948 081e F29B      		sbis 62-0x20,2
+ 1949 0820 05C0      		rjmp .L264
+ 1950               	.LBB49:
+ 1951               	.LBB50:
+ 1952               	.LM288:
+ 1953 0822 D801      		movw r26,r16
+ 1954               	/* #APP */
+ 1955 0824 0C2E      		mov __tmp_reg__,r28
+ 1956 0826 0E94 0000 		call __eeprom_write_byte_1F2021
+ 1957               	/* #NOAPP */
+ 1958               	.LBE50:
+ 1959               	.LBE49:
+ 1960               	.LM289:
+ 1961 082a 0DC0      		rjmp .L255
+ 1962               	.L264:
+ 1963               	.LBB51:
+ 1964               	.LM290:
+ 1965 082c EC2F      		mov r30,r28
+ 1966 082e FF27      		clr r31
+ 1967 0830 EE0F      		add r30,r30
+ 1968 0832 FF1F      		adc r31,r31
+ 1969 0834 E050      		subi r30,lo8(-(USIPSNamePtrs))
+ 1970 0836 F040      		sbci r31,hi8(-(USIPSNamePtrs))
+ 1971               	.LBE51:
+ 1972               	/* #APP */
+ 1973 0838 8591      		lpm r24, Z+
+ 1974 083a 9491      		lpm r25, Z
+ 1975               		
+ 1976               	/* #NOAPP */
+ 1977 083c 0E94 0000 		call LCD_puts_f
+ 1978               	.LM291:
+ 1979 0840 0E94 0000 		call MAIN_WaitForJoyRelease
+ 1980 0844 D9CF      		rjmp .L274
+ 1981               	.L255:
+ 1982               	/* epilogue: frame size=0 */
+ 1983 0846 CF91      		pop r28
+ 1984 0848 1F91      		pop r17
+ 1985 084a 0F91      		pop r16
+ 1986 084c 0895      		ret
+ 1987               	/* epilogue end (size=4) */
+ 1988               	/* function FUNCSetISPSpeed size 64 (57) */
+ 1989               	.LFE32:
+ 1991               		.section	.progmem.data
+ 1994               	__c.2:
+ 1995 0280 5632 2D20 		.string	"V2- "
+ 1995      00
+ 1996               		.text
+ 1997               	.global	FUNCSetFirmMinorVer
+ 1999               	FUNCSetFirmMinorVer:
+ 2000               	.LFB33:
+ 2001               	.LM292:
+ 2002               	/* prologue: frame size=5 */
+ 2003 084e EF92      		push r14
+ 2004 0850 FF92      		push r15
+ 2005 0852 1F93      		push r17
+ 2006 0854 CF93      		push r28
+ 2007 0856 DF93      		push r29
+ 2008 0858 CDB7      		in r28,__SP_L__
+ 2009 085a DEB7      		in r29,__SP_H__
+ 2010 085c 2597      		sbiw r28,5
+ 2011 085e 0FB6      		in __tmp_reg__,__SREG__
+ 2012 0860 F894      		cli
+ 2013 0862 DEBF      		out __SP_H__,r29
+ 2014 0864 0FBE      		out __SREG__,__tmp_reg__
+ 2015 0866 CDBF      		out __SP_L__,r28
+ 2016               	/* prologue end (size=13) */
+ 2017               	.LBB52:
+ 2018               	.LM293:
+ 2019 0868 90E0      		ldi r25,lo8(EEPROMVars+134)
+ 2020 086a E92E      		mov r14,r25
+ 2021 086c 90E0      		ldi r25,hi8(EEPROMVars+134)
+ 2022 086e F92E      		mov r15,r25
+ 2023               	.LBB53:
+ 2024               	.LM294:
+ 2025 0870 D701      		movw r26,r14
+ 2026               	/* #APP */
+ 2027 0872 0E94 0000 		call __eeprom_read_byte_1F2021
+ 2028 0876 802D      		mov r24,__tmp_reg__
+ 2029               	/* #NOAPP */
+ 2030               	.LBE53:
+ 2031               	.LBE52:
+ 2032               	.LM295:
+ 2033 0878 182F      		mov r17,r24
+ 2034               	.LM296:
+ 2035 087a 8A30      		cpi r24,lo8(10)
+ 2036 087c 08F0      		brlo .L277
+ 2037               	.LM297:
+ 2038 087e 14E0      		ldi r17,lo8(4)
+ 2039               	.L277:
+ 2040               	.LM298:
+ 2041 0880 60E0      		ldi r22,lo8(__c.2)
+ 2042 0882 70E0      		ldi r23,hi8(__c.2)
+ 2043 0884 CE01      		movw r24,r28
+ 2044 0886 0196      		adiw r24,1
+ 2045 0888 0E94 0000 		call strcpy_P
+ 2046               	.LM299:
+ 2047 088c 81E0      		ldi r24,lo8(1)
+ 2048 088e 8EBB      		out 62-0x20,r24
+ 2049               	.L293:
+ 2050               	.LM300:
+ 2051 0890 8EB3      		in r24,62-0x20
+ 2052 0892 8823      		tst r24
+ 2053 0894 E9F3      		breq .L293
+ 2054               	.LM301:
+ 2055 0896 F69B      		sbis 62-0x20,6
+ 2056 0898 05C0      		rjmp .L281
+ 2057               	.LM302:
+ 2058 089a 1930      		cpi r17,lo8(9)
+ 2059 089c 11F4      		brne .L282
+ 2060 089e 10E0      		ldi r17,lo8(0)
+ 2061 08a0 01C0      		rjmp .L281
+ 2062               	.L282:
+ 2063 08a2 1F5F      		subi r17,lo8(-(1))
+ 2064               	.L281:
+ 2065               	.LM303:
+ 2066 08a4 F79B      		sbis 62-0x20,7
+ 2067 08a6 06C0      		rjmp .L284
+ 2068               	.LM304:
+ 2069 08a8 1123      		tst r17
+ 2070 08aa 11F4      		brne .L285
+ 2071 08ac 19E0      		ldi r17,lo8(9)
+ 2072 08ae 09C0      		rjmp .L287
+ 2073               	.L285:
+ 2074 08b0 1150      		subi r17,lo8(-(-1))
+ 2075 08b2 07C0      		rjmp .L287
+ 2076               	.L284:
+ 2077               	.LM305:
+ 2078 08b4 F29B      		sbis 62-0x20,2
+ 2079 08b6 05C0      		rjmp .L287
+ 2080               	.LBB54:
+ 2081               	.LBB55:
+ 2082               	.LM306:
+ 2083 08b8 D701      		movw r26,r14
+ 2084               	/* #APP */
+ 2085 08ba 012E      		mov __tmp_reg__,r17
+ 2086 08bc 0E94 0000 		call __eeprom_write_byte_1F2021
+ 2087               	/* #NOAPP */
+ 2088               	.LBE55:
+ 2089               	.LBE54:
+ 2090               	.LM307:
+ 2091 08c0 0AC0      		rjmp .L275
+ 2092               	.L287:
+ 2093               	.LM308:
+ 2094 08c2 105D      		subi r17,lo8(-(48))
+ 2095 08c4 1C83      		std Y+4,r17
+ 2096 08c6 1053      		subi r17,lo8(-(-48))
+ 2097               	.LM309:
+ 2098 08c8 CE01      		movw r24,r28
+ 2099 08ca 0196      		adiw r24,1
+ 2100 08cc 0E94 0000 		call LCD_puts
+ 2101               	.LM310:
+ 2102 08d0 0E94 0000 		call MAIN_WaitForJoyRelease
+ 2103 08d4 DDCF      		rjmp .L293
+ 2104               	.L275:
+ 2105               	/* epilogue: frame size=5 */
+ 2106 08d6 2596      		adiw r28,5
+ 2107 08d8 0FB6      		in __tmp_reg__,__SREG__
+ 2108 08da F894      		cli
+ 2109 08dc DEBF      		out __SP_H__,r29
+ 2110 08de 0FBE      		out __SREG__,__tmp_reg__
+ 2111 08e0 CDBF      		out __SP_L__,r28
+ 2112 08e2 DF91      		pop r29
+ 2113 08e4 CF91      		pop r28
+ 2114 08e6 1F91      		pop r17
+ 2115 08e8 FF90      		pop r15
+ 2116 08ea EF90      		pop r14
+ 2117 08ec 0895      		ret
+ 2118               	/* epilogue end (size=12) */
+ 2119               	/* function FUNCSetFirmMinorVer size 82 (57) */
+ 2120               	.LFE33:
+ 2122               	.global	FUNCSleepMode
+ 2124               	FUNCSleepMode:
+ 2125               	.LFB34:
+ 2126               	.LM311:
+ 2127               	/* prologue: frame size=0 */
+ 2128               	/* prologue end (size=0) */
+ 2129               	.LM312:
+ 2130 08ee 85E0      		ldi r24,lo8(5)
+ 2131 08f0 83BF      		out 83-0x20,r24
+ 2132               	.LM313:
+ 2133 08f2 8091 E400 		lds r24,228
+ 2134 08f6 8F77      		andi r24,lo8(127)
+ 2135 08f8 8093 E400 		sts 228,r24
+ 2136               	.LM314:
+ 2137 08fc F699      		sbic 62-0x20,6
+ 2138 08fe 03C0      		rjmp .L300
+ 2139               	.L298:
+ 2140               	.LM315:
+ 2141               	/* #APP */
+ 2142 0900 8895      		sleep
+ 2143               	/* #NOAPP */
+ 2144 0902 F69B      		sbis 62-0x20,6
+ 2145 0904 FDCF      		rjmp .L298
+ 2146               	.L300:
+ 2147               	.LM316:
+ 2148 0906 8091 E400 		lds r24,228
+ 2149 090a 8068      		ori r24,lo8(-128)
+ 2150 090c 8093 E400 		sts 228,r24
+ 2151               	.LM317:
+ 2152 0910 0E94 0000 		call MAIN_WaitForJoyRelease
+ 2153               	/* epilogue: frame size=0 */
+ 2154 0914 0895      		ret
+ 2155               	/* epilogue end (size=1) */
+ 2156               	/* function FUNCSleepMode size 21 (20) */
+ 2157               	.LFE34:
+ 2159               		.section	.progmem.data
+ 2162               	__c.1:
+ 2163 0285 4E4F 2053 		.string	"NO STORED PRGM"
+ 2163      544F 5245 
+ 2163      4420 5052 
+ 2163      474D 00
+ 2164               		.text
+ 2165               	.global	FUNCStorageInfo
+ 2167               	FUNCStorageInfo:
+ 2168               	.LFB35:
+ 2169               	.LM318:
+ 2170               	/* prologue: frame size=0 */
+ 2171 0916 1F93      		push r17
+ 2172 0918 CF93      		push r28
+ 2173               	/* prologue end (size=2) */
+ 2174               	.LM319:
+ 2175 091a 10E0      		ldi r17,lo8(0)
+ 2176               	.LM320:
+ 2177 091c 0E94 0000 		call MAIN_WaitForJoyRelease
+ 2178               	.LM321:
+ 2179 0920 81E0      		ldi r24,lo8(1)
+ 2180 0922 8EBB      		out 62-0x20,r24
+ 2181               	.L320:
+ 2182               	.LM322:
+ 2183 0924 8EB3      		in r24,62-0x20
+ 2184 0926 8823      		tst r24
+ 2185 0928 E9F3      		breq .L320
+ 2186               	.LM323:
+ 2187 092a CEB3      		in r28,62-0x20
+ 2188 092c C07C      		andi r28,lo8(-64)
+ 2189 092e 19F0      		breq .L305
+ 2190               	.LM324:
+ 2191 0930 81E0      		ldi r24,lo8(1)
+ 2192 0932 1827      		eor r17,r24
+ 2193 0934 38C0      		rjmp .L306
+ 2194               	.L305:
+ 2195               	.LM325:
+ 2196 0936 F299      		sbic 62-0x20,2
+ 2197 0938 43C0      		rjmp .L301
+ 2198               	.LM326:
+ 2199 093a F49B      		sbis 62-0x20,4
+ 2200 093c 34C0      		rjmp .L306
+ 2201               	.LM327:
+ 2202 093e 1130      		cpi r17,lo8(1)
+ 2203 0940 81F5      		brne .L310
+ 2204               	.LM328:
+ 2205 0942 80E0      		ldi r24,lo8(pm(SPI_SPITransmit))
+ 2206 0944 90E0      		ldi r25,hi8(pm(SPI_SPITransmit))
+ 2207 0946 9093 0000 		sts (DFSPIRoutinePointer)+1,r25
+ 2208 094a 8093 0000 		sts DFSPIRoutinePointer,r24
+ 2209               	.LM329:
+ 2210 094e 0E94 0000 		call SPI_SPIInit
+ 2211               	.LM330:
+ 2212 0952 C093 0000 		sts UseExernalDF,r28
+ 2213               	.LM331:
+ 2214 0956 812F      		mov r24,r17
+ 2215 0958 0E94 0000 		call DF_EnableDataflash
+ 2216               	.LM332:
+ 2217 095c 0E94 0000 		call DF_CheckCorrectOnboardChip
+ 2218 0960 C82F      		mov r28,r24
+ 2219 0962 8823      		tst r24
+ 2220 0964 41F0      		breq .L311
+ 2221               	.LM333:
+ 2222 0966 0E94 0000 		call TM_ShowTags
+ 2223               	.LM334:
+ 2224 096a 8091 6400 		lds r24,100
+ 2225 096e 8460      		ori r24,lo8(4)
+ 2226 0970 8093 6400 		sts 100,r24
+ 2227 0974 18C0      		rjmp .L306
+ 2228               	.L311:
+ 2229               	.LM335:
+ 2230 0976 812F      		mov r24,r17
+ 2231 0978 0E94 0000 		call PM_GetStoredDataSize
+ 2232 097c DC01      		movw r26,r24
+ 2233 097e CB01      		movw r24,r22
+ 2234 0980 0097      		sbiw r24,0
+ 2235 0982 A105      		cpc r26,__zero_reg__
+ 2236 0984 B105      		cpc r27,__zero_reg__
+ 2237 0986 79F4      		brne .L306
+ 2238               	.LM336:
+ 2239 0988 8C2F      		mov r24,r28
+ 2240 098a 0E94 0000 		call DF_EnableDataflash
+ 2241               	.LM337:
+ 2242 098e 8091 6400 		lds r24,100
+ 2243 0992 8460      		ori r24,lo8(4)
+ 2244 0994 8093 6400 		sts 100,r24
+ 2245               	.LM338:
+ 2246 0998 80E0      		ldi r24,lo8(__c.1)
+ 2247 099a 90E0      		ldi r25,hi8(__c.1)
+ 2248 099c 0E94 0000 		call MAIN_ShowError
+ 2249 09a0 02C0      		rjmp .L306
+ 2250               	.L310:
+ 2251               	.LM339:
+ 2252 09a2 0E94 0000 		call PM_ShowStoredItemSizes
+ 2253               	.L306:
+ 2254               	.LBB56:
+ 2255               	.LM340:
+ 2256 09a6 E12F      		mov r30,r17
+ 2257 09a8 FF27      		clr r31
+ 2258 09aa EE0F      		add r30,r30
+ 2259 09ac FF1F      		adc r31,r31
+ 2260 09ae E050      		subi r30,lo8(-(SIFOOptionPtrs))
+ 2261 09b0 F040      		sbci r31,hi8(-(SIFOOptionPtrs))
+ 2262               	.LBE56:
+ 2263               	/* #APP */
+ 2264 09b2 8591      		lpm r24, Z+
+ 2265 09b4 9491      		lpm r25, Z
+ 2266               		
+ 2267               	/* #NOAPP */
+ 2268 09b6 0E94 0000 		call LCD_puts_f
+ 2269               	.LM341:
+ 2270 09ba 0E94 0000 		call MAIN_WaitForJoyRelease
+ 2271 09be B2CF      		rjmp .L320
+ 2272               	.L301:
+ 2273               	/* epilogue: frame size=0 */
+ 2274 09c0 CF91      		pop r28
+ 2275 09c2 1F91      		pop r17
+ 2276 09c4 0895      		ret
+ 2277               	/* epilogue end (size=3) */
+ 2278               	/* function FUNCStorageInfo size 93 (88) */
+ 2279               	.LFE35:
+ 2281               		.section	.progmem.data
+ 2284               	__c.0:
+ 2285 0294 2A4A 5441 		.string	"*JTAG ON*"
+ 2285      4720 4F4E 
+ 2285      2A00 
+ 2286               		.text
+ 2287               	.global	FUNCGoBootloader
+ 2289               	FUNCGoBootloader:
+ 2290               	.LFB36:
+ 2291               	.LM342:
+ 2292               	/* prologue: frame size=0 */
+ 2293               	/* prologue end (size=0) */
+ 2294               	.LM343:
+ 2295 09c6 85B7      		in r24,85-0x20
+ 2296 09c8 8F77      		andi r24,lo8(127)
+ 2297               	.LM344:
+ 2298 09ca 85BF      		out 85-0x20,r24
+ 2299               	.LM345:
+ 2300 09cc 85BF      		out 85-0x20,r24
+ 2301               	.LM346:
+ 2302 09ce 80E0      		ldi r24,lo8(__c.0)
+ 2303 09d0 90E0      		ldi r25,hi8(__c.0)
+ 2304 09d2 0E94 0000 		call LCD_puts_f
+ 2305               	.LM347:
+ 2306 09d6 0E94 0000 		call MAIN_WaitForJoyRelease
+ 2307               	.LM348:
+ 2308 09da 88E1      		ldi r24,lo8(24)
+ 2309 09dc 8093 6000 		sts 96,r24
+ 2310               	.L322:
+ 2311               	.LM349:
+ 2312 09e0 FFCF      		rjmp .L322
+ 2313               	/* epilogue: frame size=0 */
+ 2314               	/* epilogue: noreturn */
+ 2315               	/* epilogue end (size=0) */
+ 2316               	/* function FUNCGoBootloader size 14 (14) */
+ 2317               	.LFE36:
+ 2319               	.global	EEPROMVars
+ 2320               		.section	.eeprom,"aw",@progbits
+ 2323               	EEPROMVars:
+ 2324 0000 0000 0000 		.skip 136,0
+ 2324      0000 0000 
+ 2324      0000 0000 
+ 2324      0000 0000 
+ 2324      0000 0000 
+ 2325               		.text
+ 2326               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 Main.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:22     .progmem.data:00000000 SIFOOptionPtrs
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:33     .progmem.data:00000013 SIFO_Size
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:28     .progmem.data:00000004 SIFO_Tags
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:38     .progmem.data:00000021 USIPSNamePtrs
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:61     .progmem.data:00000047 USI_Speed0
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:56     .progmem.data:0000003d USI_Speed1
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:51     .progmem.data:00000033 USI_Speed2
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:46     .progmem.data:00000029 USI_Speed3
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:66     .progmem.data:00000051 ProgOptions
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:107    .progmem.data:000000ba PRG_D
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:102    .progmem.data:000000ae PRG_E
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:97     .progmem.data:0000009e PRG_DE
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:92     .progmem.data:0000008e PRG_F
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:87     .progmem.data:0000007e PRG_L
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:82     .progmem.data:0000006a PRG_FL
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:77     .progmem.data:0000005f PRG_C
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:112    .progmem.data:000000c4 SettingFunctionPtrs
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1752   .text:00000734 FUNCSetContrast
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1879   .text:000007da FUNCSetISPSpeed
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1672   .text:000006cc FUNCClearMem
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:2150   .text:00000926 FUNCGoBootloader
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:120    .progmem.data:000000cc SettingFunctionNames
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:143    .progmem.data:00000102 SFunc_SETCONTRAST
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:138    .progmem.data:000000f4 SFunc_SETSPISPEED
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:133    .progmem.data:000000e7 SFunc_CLEARMEM
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:128    .progmem.data:000000d4 SFunc_GOBOOTLOADER
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:148    .progmem.data:0000010f MainFunctionPtrs
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1057   .text:0000036a FUNCAVRISPMode
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1600   .text:00000668 FUNCStoreProgram
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1182   .text:000003fe FUNCProgramAVR
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1090   .text:0000039c FUNCProgramDataflash
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:2028   .text:00000876 FUNCStorageInfo
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:964    .text:00000300 FUNCChangeSettings
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1985   .text:0000084e FUNCSleepMode
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:159    .progmem.data:0000011d MainFunctionNames
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:200    .progmem.data:00000174 Func_ISPPRGM
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:195    .progmem.data:00000169 Func_STOREPRGM
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:190    .progmem.data:0000015d Func_PRGMAVR
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:185    .progmem.data:0000014e Func_PRGMDATAFLASH
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:180    .progmem.data:0000013f Func_PRGMSTOREINFO
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:175    .progmem.data:00000136 Func_SETTINGS
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:170    .progmem.data:0000012b Func_SLEEP
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:205    .progmem.data:00000180 AboutTextPtrs
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:232    .progmem.data:000001ab ProgrammerName
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:223    .progmem.data:000001a6 VersionInfo
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:218    .progmem.data:00000197 AuthorName
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:213    .progmem.data:00000188 CopyRight
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:237    .progmem.data:000001b4 WaitText
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:242    .progmem.data:000001bb BUTTTAG_Author
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:251    .progmem.data:000001ce BUTTTAG_Name
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:260    .text:00000000 MAIN_Delay10MS
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:304    .text:00000024 MAIN_WaitForJoyRelease
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:329    .text:00000038 FUNCShowAbout
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:401    .text:00000088 main
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:2184   .eeprom:00000000 EEPROMVars
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:635    .text:000001ac MAIN_Delay1MS
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:679    .text:000001d0 MAIN_ResetCSLine
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:741    .text:00000208 MAIN_IntToStr
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:794    .progmem.data:000001e2 __c.14
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:799    .text:00000238 MAIN_ShowProgType
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:847    .text:0000027c MAIN_ShowError
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:901    .text:000002c8 __vector_3
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:938    .progmem.data:000001e8 __c.13
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:943    .text:000002f6 __vector_default
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1153   .progmem.data:000001ef __c.6
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1157   .progmem.data:000001fc __c.7
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1161   .progmem.data:00000204 __c.8
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1165   .progmem.data:0000020e __c.9
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1169   .progmem.data:0000021c __c.10
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1173   .progmem.data:0000022a __c.11
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1177   .progmem.data:0000023b __c.12
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1595   .progmem.data:00000242 __c.5
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1659   .progmem.data:00000251 __c.2
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1663   .progmem.data:00000259 __c.3
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:1667   .progmem.data:0000025f __c.4
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:2023   .progmem.data:0000026b __c.1
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cckBaaaa.s:2145   .progmem.data:0000027a __c.0
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:22     .progmem.data:00000000 SIFOOptionPtrs
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:33     .progmem.data:00000013 SIFO_Size
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:28     .progmem.data:00000004 SIFO_Tags
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:38     .progmem.data:00000021 USIPSNamePtrs
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:61     .progmem.data:00000047 USI_Speed0
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:56     .progmem.data:0000003d USI_Speed1
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:51     .progmem.data:00000033 USI_Speed2
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:46     .progmem.data:00000029 USI_Speed3
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:66     .progmem.data:00000051 ProgOptions
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:107    .progmem.data:000000ba PRG_D
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:102    .progmem.data:000000ae PRG_E
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:97     .progmem.data:0000009e PRG_DE
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:92     .progmem.data:0000008e PRG_F
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:87     .progmem.data:0000007e PRG_L
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:82     .progmem.data:0000006a PRG_FL
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:77     .progmem.data:0000005f PRG_C
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:112    .progmem.data:000000c4 SettingFunctionPtrs
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:1759   .text:00000734 FUNCSetContrast
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:1886   .text:000007da FUNCSetISPSpeed
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:1999   .text:0000084e FUNCSetFirmMinorVer
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:1679   .text:000006cc FUNCClearMem
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:2289   .text:000009c6 FUNCGoBootloader
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:121    .progmem.data:000000ce SettingFunctionNames
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:150    .progmem.data:00000117 SFunc_SETCONTRAST
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:145    .progmem.data:00000109 SFunc_SETSPISPEED
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:140    .progmem.data:000000f8 SFunc_SETFIRMMINOR
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:135    .progmem.data:000000eb SFunc_CLEARMEM
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:130    .progmem.data:000000d8 SFunc_GOBOOTLOADER
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:155    .progmem.data:00000124 MainFunctionPtrs
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:1064   .text:0000036a FUNCAVRISPMode
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:1607   .text:00000668 FUNCStoreProgram
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:1189   .text:000003fe FUNCProgramAVR
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:1097   .text:0000039c FUNCProgramDataflash
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:2167   .text:00000916 FUNCStorageInfo
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:971    .text:00000300 FUNCChangeSettings
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:2124   .text:000008ee FUNCSleepMode
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:166    .progmem.data:00000132 MainFunctionNames
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:207    .progmem.data:00000189 Func_ISPPRGM
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:202    .progmem.data:0000017e Func_STOREPRGM
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:197    .progmem.data:00000172 Func_PRGMAVR
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:192    .progmem.data:00000163 Func_PRGMDATAFLASH
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:187    .progmem.data:00000154 Func_PRGMSTOREINFO
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:182    .progmem.data:0000014b Func_SETTINGS
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:177    .progmem.data:00000140 Func_SLEEP
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:212    .progmem.data:00000195 AboutTextPtrs
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:239    .progmem.data:000001c0 ProgrammerName
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:230    .progmem.data:000001bb VersionInfo
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:225    .progmem.data:000001ac AuthorName
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:220    .progmem.data:0000019d CopyRight
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:244    .progmem.data:000001c9 WaitText
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:249    .progmem.data:000001d0 BUTTTAG_Author
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:258    .progmem.data:000001e3 BUTTTAG_Name
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:267    .text:00000000 MAIN_Delay10MS
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:311    .text:00000024 MAIN_WaitForJoyRelease
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:336    .text:00000038 FUNCShowAbout
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:408    .text:00000088 main
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:2323   .eeprom:00000000 EEPROMVars
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:642    .text:000001ac MAIN_Delay1MS
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:686    .text:000001d0 MAIN_ResetCSLine
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:748    .text:00000208 MAIN_IntToStr
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:801    .progmem.data:000001f7 __c.15
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:806    .text:00000238 MAIN_ShowProgType
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:854    .text:0000027c MAIN_ShowError
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:908    .text:000002c8 __vector_3
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:945    .progmem.data:000001fd __c.14
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:950    .text:000002f6 __vector_default
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:1160   .progmem.data:00000204 __c.7
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:1164   .progmem.data:00000211 __c.8
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:1168   .progmem.data:00000219 __c.9
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:1172   .progmem.data:00000223 __c.10
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:1176   .progmem.data:00000231 __c.11
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:1180   .progmem.data:0000023f __c.12
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:1184   .progmem.data:00000250 __c.13
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:1602   .progmem.data:00000257 __c.6
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:1666   .progmem.data:00000266 __c.3
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:1670   .progmem.data:0000026e __c.4
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:1674   .progmem.data:00000274 __c.5
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:1994   .progmem.data:00000280 __c.2
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:2162   .progmem.data:00000285 __c.1
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEjaaaa.s:2284   .progmem.data:00000294 __c.0
 
 UNDEFINED SYMBOLS
 __do_copy_data

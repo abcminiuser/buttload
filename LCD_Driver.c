@@ -111,7 +111,7 @@ void LCD_puts_f(const uint8_t *FlashData)
 	LCD_puts(StrBuff);
 }
 
-void LCD_puts(uint8_t *Data)
+void LCD_puts(const uint8_t *Data)
 {
 	uint8_t LoadB;
 	
@@ -141,7 +141,7 @@ void LCD_puts(uint8_t *Data)
 	UpdateLCD  = TRUE;
 }
 
-void LCD_WriteChar(uint8_t Byte, uint8_t Digit)
+void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit)
 {
 	uint16_t SegData  = 0x00;
 	uint8_t  *BuffPtr = (&SegBuffer[0] + (Digit >> 1));

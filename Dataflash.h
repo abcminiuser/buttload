@@ -47,12 +47,12 @@ extern const uint8_t DataFlashError[] PROGMEM;
 // PROTOTYPES:
 uint8_t DF_CheckCorrectOnboardChip(void);
 uint8_t DF_GetChipCharacteristics(void);
-void    DF_CopyBufferToFlashPage(uint16_t PageAddress);
-void    DF_CopyFlashPageToBuffer(uint16_t PageAddress);
-void    DF_ContinuousReadEnable(uint16_t PageAddress, uint16_t BuffAddress);
-uint8_t DF_ReadBufferByte(uint16_t BuffAddress);
-void    DF_BufferWriteEnable(uint16_t BuffAddress);
-void    DF_EraseBlock(uint16_t BlockToErase);
-void    DF_EnableDataflash(uint8_t Enabled);
+void    DF_CopyBufferToFlashPage(const uint16_t PageAddress);
+void    DF_CopyFlashPageToBuffer(const uint16_t PageAddress);
+void    DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddress);
+uint8_t DF_ReadBufferByte(const uint16_t BuffAddress);
+void    DF_BufferWriteEnable(const uint16_t BuffAddress);
+void    DF_EraseBlock(const uint16_t BlockToErase);
+void    DF_EnableDataflash(const uint8_t Enabled);
 
 #endif

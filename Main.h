@@ -88,10 +88,10 @@ extern EEPROMVarsType EEPROMVars EEMEM;
 #define NOP()                    MACROS{ asm volatile ("nop"::);   }MACROE
 
 // PROTOTYPES:
-void MAIN_ResetCSLine(uint8_t ActiveInactive);
+void MAIN_ResetCSLine(const uint8_t ActiveInactive);
 void MAIN_WaitForJoyRelease(void);
 void MAIN_IntToStr(uint16_t IntV, uint8_t* Buff);
-void MAIN_ShowProgType(uint8_t Letter);
+void MAIN_ShowProgType(const uint8_t Letter);
 void MAIN_ShowError(const uint8_t *pFlashStr);
 
 void MAIN_Delay10MS(uint8_t loops);
@@ -106,6 +106,7 @@ void FUNCStoreProgram(void);
 void FUNCClearMem(void);
 void FUNCSetContrast(void);
 void FUNCSetISPSpeed(void);
+void FUNCSetFirmMinorVer(void);
 void FUNCSleepMode(void);
 void FUNCStorageInfo(void);
 void FUNCGoBootloader(void);

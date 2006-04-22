@@ -14,7 +14,7 @@ uint16_t GPageLength         = 0;
 
 // ======================================================================================
 
-uint32_t PM_GetStoredDataSize(uint8_t Type)
+uint32_t PM_GetStoredDataSize(const uint8_t Type)
 {
 	/* This take a **LOT** of code (202 bytes), and is accessed several times throughout
 	   the program, so I've put it into a seperate function to save on flash.            */
@@ -29,7 +29,7 @@ uint32_t PM_GetStoredDataSize(uint8_t Type)
 	return ProgDataSize;
 }
 
-void PM_SetupDFAddressCounters(uint8_t Type)
+void PM_SetupDFAddressCounters(const uint8_t Type)
 {
 	uint32_t StartAddress;
 	
@@ -52,7 +52,7 @@ void PM_SetupDFAddressCounters(uint8_t Type)
 	CurrBuffByte = (uint16_t)StartAddress;                               // The buffer byte is the remainder
 }
 
-void PM_StoreProgramByte(uint8_t Data)
+void PM_StoreProgramByte(const uint8_t Data)
 {
 	if (CurrBuffByte == DF_INTERNALDF_BUFFBYTES)
 	{
@@ -218,10 +218,7 @@ void PM_InterpretAVRISPPacket(void)
 				CurrentMode = PM_DATAFLASH_WRITE;
 				
 				for (uint8_t B = 1; B <= 9; B++)                       // Save the command bytes
-				{
-					eeprom_write_byte(EEPROMAddress, PacketBytes[B]);
-					EEPROMAddress++;				
-				}
+				  eeprom_write_byte(EEPROMAddress, PacketBytes[B]);
 			}
 
 			uint16_t BytesToWrite = ((uint16_t)PacketBytes[1] << 8)
@@ -311,7 +308,7 @@ void PM_CheckEndOfFuseLockStore(void)
 	  eeprom_write_byte(((MemoryType == TYPE_FUSE)? &EEPROMVars.TotalFuseBytes : &EEPROMVars.TotalLockBytes), CurrBuffByte); // CurrBuffByte stores the total number of fuse/lock bytes written in this case
 }
 
-void PM_SendFuseLockBytes(uint8_t Type)
+void PM_SendFuseLockBytes(const uint8_t Type)
 {
 	uint8_t* EEPROMAddress;
 	uint8_t  TotalBytes;
@@ -351,7 +348,7 @@ void PM_SendEraseCommand(void)
 	}
 }
 
-void PM_CreateProgrammingPackets(uint8_t Type)
+void PM_CreateProgrammingPackets(const uint8_t Type)
 {			
 	uint32_t BytesRead       = 0;
 	uint32_t BytesToRead     = PM_GetStoredDataSize(Type);      // Get the byte size of the stored program

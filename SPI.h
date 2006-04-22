@@ -18,7 +18,7 @@
 
 // PROTOTYPES:
 void    SPI_SPIInit(void);
-uint8_t SPI_SPITransmit(uint8_t Data);
-uint8_t SPI_SPITransmitWord(uint16_t Data);
+uint8_t SPI_SPITransmit(const uint8_t Data);
+uint8_t SPI_SPITransmitWord(const uint16_t Data);
 
 #endif

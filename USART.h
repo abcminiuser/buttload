@@ -48,8 +48,8 @@
 
 // PROTOTYPES:
 void USART_Init(void);
-void USART_TxString(char *data);
-void USART_Tx(char data);
+void USART_TxString(const char *data);
+void USART_Tx(const char data);
 char USART_Rx(void);
 
 #endif

@@ -18,8 +18,8 @@
   29               	Ticks:
   30 0001 00        		.skip 1,0
   31               		.text
-  32               	.global	__vector_9
-  34               	__vector_9:
+  32               	.global	__vector_4
+  34               	__vector_4:
   35               	.LFB14:
   36               	.LM1:
   37               	/* prologue: frame size=0 */
@@ -36,7 +36,7 @@
   48 0012 8F5F      		subi r24,lo8(-(1))
   49 0014 8093 0000 		sts Ticks,r24
   50 0018 8091 0000 		lds r24,Ticks
-  51 001c 8730      		cpi r24,lo8(7)
+  51 001c 8739      		cpi r24,lo8(-105)
   52 001e 29F4      		brne .L1
   53               	.LM3:
   54 0020 1092 0000 		sts Ticks,__zero_reg__
@@ -52,43 +52,19 @@
   64 0032 1F90      		pop __zero_reg__
   65 0034 1895      		reti
   66               	/* epilogue end (size=6) */
-  67               	/* function __vector_9 size 27 (14) */
+  67               	/* function __vector_4 size 27 (14) */
   68               	.LFE14:
-  70               	.global	TIMEOUT_SetupTimeoutTimer
-  72               	TIMEOUT_SetupTimeoutTimer:
-  73               	.LFB15:
-  74               	.LM5:
-  75               	/* prologue: frame size=0 */
-  76               	/* prologue end (size=0) */
-  77               	.LM6:
-  78 0036 1092 8000 		sts 128,__zero_reg__
-  79               	.LM7:
-  80 003a 1092 8100 		sts 129,__zero_reg__
-  81 003e 1092 0000 		sts Ticks,__zero_reg__
-  82 0042 1092 8500 		sts (132)+1,__zero_reg__
-  83 0046 1092 8400 		sts 132,__zero_reg__
-  84               	.LM8:
-  85 004a 1092 8200 		sts 130,__zero_reg__
-  86               	.LM9:
-  87 004e 81E0      		ldi r24,lo8(1)
-  88 0050 8093 6F00 		sts 111,r24
-  89               	/* epilogue: frame size=0 */
-  90 0054 0895      		ret
-  91               	/* epilogue end (size=1) */
-  92               	/* function TIMEOUT_SetupTimeoutTimer size 16 (15) */
-  93               	.LFE15:
-  95               	.Letext0:
+  70               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 Timeout.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc82aaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc82aaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc82aaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc82aaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc82aaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc82aaaa.s:23     .bss:00000000 TimeOut
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc82aaaa.s:29     .bss:00000001 Ticks
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc82aaaa.s:34     .text:00000000 __vector_9
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc82aaaa.s:72     .text:00000036 TIMEOUT_SetupTimeoutTimer
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO0aaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO0aaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO0aaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO0aaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO0aaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO0aaaa.s:23     .bss:00000000 TimeOut
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO0aaaa.s:29     .bss:00000001 Ticks
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO0aaaa.s:34     .text:00000000 __vector_4
 
 UNDEFINED SYMBOLS
 __do_copy_data

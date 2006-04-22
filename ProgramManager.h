@@ -35,15 +35,15 @@ extern uint8_t  MemoryType;
 extern uint8_t  CurrentMode;
 
 // PROTOTYPES:
-uint32_t PM_GetStoredDataSize(uint8_t Type);
-void     PM_SetupDFAddressCounters(uint8_t Type);
-void     PM_StoreProgramByte(uint8_t Data);
+uint32_t PM_GetStoredDataSize(const uint8_t Type);
+void     PM_SetupDFAddressCounters(const uint8_t Type);
+void     PM_StoreProgramByte(const uint8_t Data);
 void     PM_InterpretAVRISPPacket(void);
 void     PM_CheckEndOfProgramming(void);
 void     PM_CheckEndOfFuseLockStore(void);
-void     PM_SendFuseLockBytes(uint8_t Type);
+void     PM_SendFuseLockBytes(const uint8_t Type);
 void     PM_SendEraseCommand(void);
-void     PM_CreateProgrammingPackets(uint8_t Type);
+void     PM_CreateProgrammingPackets(const uint8_t Type);
 void     PM_ShowStoredItemSizes(void);
 
 #endif
