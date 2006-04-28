@@ -44,7 +44,6 @@ typedef void (*FuncPtr)(void);
 extern const uint8_t WaitText[];
 extern const uint8_t ProgrammerName[];
 extern const uint8_t VersionInfo[];
-extern const uint8_t FAULTERR_ISPShort[];
 
 extern EEPROMVarsType EEPROMVars EEMEM;
 #define JoyStatus GPIOR0 // Pseudo-variable; "JoyStatus" becomes an alias for the General Purpose IO Storage Register 0

@@ -10,7 +10,6 @@
 
 	// Includes:
 	#include "Main.h"
-	#include <avr/io.h>
    
 	// Configuration:
 	#define BuffLen  64

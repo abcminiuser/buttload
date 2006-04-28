@@ -39,7 +39,7 @@
 
 // Define the new ISR macro:
 #define ISR(vector, attributes)  \
-void vector (void) attributes; \
-void vector (void)
+ void vector (void) attributes; \
+ void vector (void)
 
 #endif

@@ -26,7 +26,6 @@ typedef struct
 
 // DEFINES AND MACROS:
 #define DF_TOGGLEENABLE()        MACROS{ DF_EnableDataflash(FALSE); DF_EnableDataflash(TRUE); }MACROE
-#define DF_BUSY()                !(DF_GetChipCharacteristics() & DF_BUSYMASK)
 
 #define DF_BUSYMASK              0x80
 #define DF_INTERNALDF_BUFFBYTES  264
@@ -46,7 +45,8 @@ extern const uint8_t DataFlashError[] PROGMEM;
 
 // PROTOTYPES:
 uint8_t DF_CheckCorrectOnboardChip(void);
-uint8_t DF_GetChipCharacteristics(void);
+void    DF_GetChipCharacteristics(void);
+void    DF_WaitWhileBusy(void);
 void    DF_CopyBufferToFlashPage(const uint16_t PageAddress);
 void    DF_CopyFlashPageToBuffer(const uint16_t PageAddress);
 void    DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddress);

@@ -411,9 +411,9 @@ void FUNCChangeSettings(void)
 		if (JoyStatus)                         // Joystick is in the non-center position
 		{
 			if (JoyStatus & JOY_UP)            // Previous function
-			  (CurrSFunc == 0)? CurrSFunc = 3 : CurrSFunc--;
+			  (CurrSFunc == 0)? CurrSFunc = 4 : CurrSFunc--;
 			else if (JoyStatus & JOY_DOWN)     // Next function
-			  (CurrSFunc == 3)? CurrSFunc = 0 : CurrSFunc++;
+			  (CurrSFunc == 4)? CurrSFunc = 0 : CurrSFunc++;
 			else if (JoyStatus & JOY_PRESS)    // Select current function
 			  ((FuncPtr)pgm_read_word(&SettingFunctionPtrs[CurrSFunc]))(); // Run associated function
 			else if (JoyStatus & JOY_LEFT)

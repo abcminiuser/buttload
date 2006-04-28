@@ -49,17 +49,15 @@ uint8_t DF_CheckCorrectOnboardChip(void) // Ensures onboard Butterfly dataflash 
 	}
 }
 
-uint8_t DF_GetChipCharacteristics(void)
+void DF_GetChipCharacteristics(void)
 {
-	uint8_t StatusBits;
 	uint8_t DataIndex;
 	
 	DF_TOGGLEENABLE();
 	
 	DF_SENDSPIBYTE(StatusReg);                    // Send the get status register command
 	
-	StatusBits = DF_SENDSPIBYTE(0x00);
-	DataIndex  = ((StatusBits & 0x38) >> 3);
+	DataIndex  = ((DF_SENDSPIBYTE(0x00) & 0x38) >> 3);
 
 	DataflashInfo.PageBits   = pgm_read_byte(&DF_PageBits[DataIndex]);	// Get number of internal page address bits from look-up table
 	DataflashInfo.PageSize   = pgm_read_word(&DF_PageSize[DataIndex]);  // Get the size of the page (in bytes)
@@ -67,8 +65,15 @@ uint8_t DF_GetChipCharacteristics(void)
 
 	PageShiftHigh = (16 - DataflashInfo.PageBits);
 	PageShiftLow  = (DataflashInfo.PageBits - 8);
+}
+
+void DF_WaitWhileBusy(void)
+{
+	DF_TOGGLEENABLE();
 	
-	return StatusBits;
+	DF_SENDSPIBYTE(StatusReg);                    // Send the get status register command
+	
+	while (!(DF_SENDSPIBYTE(0x00) & DF_BUSYMASK));
 }
 
 void DF_CopyBufferToFlashPage(const uint16_t PageAddress)
@@ -80,7 +85,7 @@ void DF_CopyBufferToFlashPage(const uint16_t PageAddress)
 	DF_SENDSPIBYTE((uint8_t)(PageAddress << PageShiftLow));  // Send the lower part of the page address
 	DF_SENDSPIBYTE(0x00);                         // Send a dummy byte	
 	
-	while (DF_BUSY());	
+	DF_WaitWhileBusy();
 }
 
 void DF_CopyFlashPageToBuffer(const uint16_t PageAddress)
@@ -92,7 +97,7 @@ void DF_CopyFlashPageToBuffer(const uint16_t PageAddress)
 	DF_SENDSPIBYTE((uint8_t)(PageAddress << PageShiftLow));  // Send the lower part of the page address
 	DF_SENDSPIBYTE(0x00);                         // Send a dummy byte	
 	
-	while (DF_BUSY());	
+	DF_WaitWhileBusy();
 }
 
 void DF_BufferWriteEnable(const uint16_t BuffAddress)
@@ -139,7 +144,7 @@ void DF_EraseBlock(const uint16_t BlockToErase)
 	DF_SENDSPIBYTE((uint8_t)(BlockToErase));
 	DF_SENDSPIBYTE(0x00);
 
-	while (DF_BUSY());
+	DF_WaitWhileBusy();
 }
 
 void DF_EnableDataflash(const uint8_t Enabled)

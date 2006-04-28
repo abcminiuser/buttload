@@ -17,16 +17,16 @@
 
 #include "LCD_Driver.h"
 
-uint8_t  TextBuffer[LCD_TEXTBUFFER_SIZE + 7];
-uint8_t  SegBuffer[LCD_SEGBUFFER_SIZE];
-uint8_t  StrStart;
-uint8_t  StrEnd;
-uint8_t  ScrollMode;
-uint8_t  ScrollCount;
-uint8_t  DelayCount;
-uint8_t  UpdateLCD;
+static uint8_t  TextBuffer[LCD_TEXTBUFFER_SIZE + 7];
+static uint8_t  SegBuffer[LCD_SEGBUFFER_SIZE];
+static uint8_t  StrStart;
+static uint8_t  StrEnd;
+static uint8_t  ScrollMode;
+static uint8_t  ScrollCount;
+static uint8_t  DelayCount;
+static uint8_t  UpdateLCD;
 
-uint16_t LCD_SegTable[] PROGMEM =
+static uint16_t LCD_SegTable[] PROGMEM =
 {
     0xEAA8,     // '*'
     0x2A80,     // '+'
@@ -88,19 +88,17 @@ uint16_t LCD_SegTable[] PROGMEM =
 
 void LCD_Init(void)
 {
+	// Set the initial contrast level to maximum:
 	LCDCCR = 0x0F;
 
-    // Select asynchronous clock source, enable all COM pins and enable all segment pins.
+    // Select asynchronous clock source, enable all COM pins and enable all segment pins:
     LCDCRB  = (1<<LCDCS) | (3<<LCDMUX0) | (7<<LCDPM0);
 
-    // Set LCD prescaler to give a framerate of 32,0 Hz
-    LCDFRR  = (0<<LCDPS0) | (7<<LCDCD0);    
+    // Set LCD prescaler to give a framerate of 32Hz:
+    LCDFRR  = (7<<LCDCD0);    
 
-	// Enable LCD and set low power waveform
-    LCDCRA  = (1<<LCDEN) | (1<<LCDAB); 
-
-    //Enable LCD start of frame interrupt
-    LCDCRA |= (1<<LCDIE);
+	// Enable LCD and set low power waveform, enable start of frame interrupt:
+    LCDCRA  = (1<<LCDEN) | (1<<LCDAB) | (1<<LCDIE);
 }
 
 void LCD_puts_f(const uint8_t *FlashData)
@@ -119,8 +117,8 @@ void LCD_puts(const uint8_t *Data)
 	{
 		uint8_t CByte = *(Data++);
 	
-		if ((CByte >= '*') && (CByte <= 'z'))
-		  TextBuffer[LoadB] = ((CByte == ' ')? 0xFF : (CByte - '*'));
+		if ((CByte >= '*') && (CByte <= 'z') && (CByte != ' '))
+		  TextBuffer[LoadB] = (CByte - '*');
 		else if (CByte == 0x00)
 		  break;
 		else
