@@ -76,23 +76,6 @@ void USART_Tx(const char data)
 
 /*****************************************************************************
 *
-*   Function name : Usart_Tx
-*
-*   Returns :       None
-*
-*   Parameters :    char data: byte to send
-*
-*   Purpose :       Send one byte through the USART
-*
-*****************************************************************************/
-void USART_TxString(const char *data)
-{
-	while (*data != '\0')
-	  USART_Tx(*data++);
-}
-
-/*****************************************************************************
-*
 *   Function name : Usart_Rx
 *
 *   Returns :       char: byte received
@@ -104,6 +87,6 @@ void USART_TxString(const char *data)
 *****************************************************************************/
 char USART_Rx(void)
 {
-    while (!(BuffElements) && !(TimeOut)) {};
+    while (!(BuffElements) && !(PacketTimeOut)) {};
     return BUFF_GetBuffByte();
 }

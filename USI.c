@@ -109,7 +109,7 @@ void USI_SPIOff(void)
  *  If a transfer is in progress, this function will set the write collision flag
  *  and return without altering the data registers.
  *
- *  \returns  0 if a write collision occurred, 1 otherwise.
+ *  \returns  Value returned by slave.
  */
 uint8_t USI_SPITransmit(uint8_t val)
 {

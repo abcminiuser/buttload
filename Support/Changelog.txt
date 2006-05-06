@@ -1,18 +1,21 @@
 Current Version: Public Release 1.4
 
-	FROM PUBLIC RELEASE 1.3:
+	IN PUBLIC RELEASE 1.4:
 	=======================================
 	  * OSCCAL is now calibrated before any function involving the USART
 	  * Removed the now unnessesary manual and auto calibration settings menu items
+	  * Removed unused USART_TxString function
 	  * EEPROM handling changed over to the (now M169 compatible) AVRLibC routines
 	  * USART Rx interrupt moved to RingBuff.c and changed to the contents of the ringbuffer store routine for size/speed
 	  * Fixed a few more dataflash glitches
 	  * Moved the timeout setup function code to the TIMEOUT_TIMER_ON() macro
-	  * Timeout system now uses Timer2, freeing up Timer1 for sound generation duties
+	  * Timeout system now uses Timer2, freeing up Timer1 for auto sleep
 	  * Function parameters changed to const (where possible) for robustness
 	  * Dataflash busy checking moved to a seperate routine for speed
+	  * Added auto-powerdown with user settable timeout
+	  * Correct command timeout error is now returned via the packet state machine instead of a command error
 
-	FROM PUBLIC RELEASE 1.2:
+	IN PUBLIC RELEASE 1.3:
 	=======================================
 	  * PROGRAMMING DONE/FAIL messaged display code altered for smaller codesize
 	  * Fixed EEPROM poll bug - now uses wait poll if last byte in page is the same as the poll value
@@ -28,20 +31,20 @@ Current Version: Public Release 1.4
 	  * Removed unnessesary CopyFlashToBuffer command in ProgramManager.c
 	  * Added code to exit OSCCAL faster if a value within the tollerace cannot be found (closest value used)
 
-	FROM PUBLIC RELEASE 1.1:
+	IN PUBLIC RELEASE 1.2:
 	=======================================
 	  * PROGRAMMING DONE and PROGRAMMING FAIL messages are now shown for a longer time so they can be fully read
 	  * DATAFLASH ERROR now also shown in PRGM DATAFLASH MODE if no attached dataflash is found
 	  * ISP short detection routines removed for technical reasons
 	  * Atmel LCD driver rewritten for size and speed
 
-	FROM PUBLIC RELEASE 1.0:
+	IN PUBLIC RELEASE 1.1:
 	=======================================
 	  * PROGRAMMING DONE message changed so that it will show PROGRAMMING FAIL after an error
 	  * Unnessesary clearing of invalid JoyStatus values removed
 	  * Seperate external dataflash /CS pin removed, function integrated into slave AVR /RESET pin
 
-	FROM PUBLIC BETA 3:
+	IN PUBLIC RELEASE 1.0:
 	=======================================
 	  * Fixed ISP short detection bug (always returning ISP short)
 	  * ISP Short detection system now checks for Dataflash /CS short correctly

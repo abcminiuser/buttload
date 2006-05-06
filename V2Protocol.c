@@ -8,7 +8,7 @@
 #include "V2Protocol.h"
 
 // PROGMEM CONSTANTS:
-const uint8_t SignonResponse[11]   PROGMEM   = {CMD_SIGN_ON, STATUS_CMD_OK, 8, 'A', 'V', 'R', 'I', 'S', 'P', '_', '2'};
+const uint8_t SignonResponse[11] PROGMEM = {CMD_SIGN_ON, STATUS_CMD_OK, 8, 'A', 'V', 'R', 'I', 'S', 'P', '_', '2'};
 
 // GLOBAL VARIABLES:
 FuncPtr  InterpretPacketRoutine         = AICI_InterpretPacket;
@@ -29,28 +29,39 @@ void V2P_RunStateMachine(void)
 	uint16_t CurrentMessageByte  = 0;
 
 	BUFF_InitialiseBuffer();
-
+	
+	TIMEOUT_SLEEP_TIMER_OFF();
+	
 	InProgrammingMode = FALSE;
 	CurrAddress       = 0;
 
 	while (1)
 	{
-		if (TimeOut == TRUE)        // Packet has timed out waiting for data
-		   V2PState = V2P_STATE_PACKERR;
+		if (PacketTimeOut == TRUE)  // Packet has timed out waiting for data
+		   V2PState = V2P_STATE_TIMEOUT;
 		else if (V2PState != V2P_STATE_IDLE)
-		   TIMEOUT_TIMER_ON();      // Reset the timer on each loop if not in idle mode
+		   TIMEOUT_PACKET_TIMER_ON();      // Reset the timer on each loop if not in idle mode
 		
 		switch (V2PState)
 		{
+			case V2P_STATE_TIMEOUT:
+				MessageSize    = 2;
+				PacketBytes[1] = STATUS_CMD_TOUT;
+				V2P_SendPacket();
+
+				V2PState  = V2P_STATE_PACKOK;
+				break;
 			case V2P_STATE_PACKERR:
 				MessageSize    = 2;
 				PacketBytes[1] = STATUS_CMD_FAILED;
-				TimeOut = FALSE;
 				V2P_SendPacket();
-				// Note - PACKERR falls through to PACKOK in order to clear the buffer
+
+				V2PState  = V2P_STATE_PACKOK;
+				break;
 			case V2P_STATE_PACKOK:
+				PacketTimeOut = FALSE;
 				BUFF_InitialiseBuffer();          // Flush the ringbuffer
-				TIMEOUT_TIMER_OFF();
+				TIMEOUT_PACKET_TIMER_OFF();
 				V2PState  = V2P_STATE_IDLE;
 				
 				break;
@@ -61,6 +72,7 @@ void V2P_RunStateMachine(void)
 				if ((JoyStatus & JOY_LEFT) && !(InProgrammingMode))
 				{
 					USART_ENABLE(USART_TX_OFF, USART_RX_OFF);
+					TIMEOUT_SLEEP_TIMER_ON();
 					return;
 				}
 								
@@ -112,7 +124,7 @@ void V2P_RunStateMachine(void)
 	
 				break;
 			case V2P_STATE_GETCHECKSUM:
-				if (V2P_GetChecksum() == USART_Rx())   // If checksum is ok, process the packet
+				if ((V2P_GetChecksum() == USART_Rx()) && !(PacketTimeOut)) // If checksum is ok, process the packet
 				{
 					switch (PacketBytes[0])            // \/ Look for generic commands which can be interpreted, 
 					{                                   //  \ otherwise run the custom interpret routine
@@ -164,7 +176,7 @@ void V2P_RunStateMachine(void)
 					V2PState       = V2P_STATE_PACKOK;
 				}				
 		}
-	}
+	}	
 }
 
 void V2P_SendPacket(void)

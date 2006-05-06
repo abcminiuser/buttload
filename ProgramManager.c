@@ -16,8 +16,8 @@ uint16_t GPageLength         = 0;
 
 uint32_t PM_GetStoredDataSize(const uint8_t Type)
 {
-	/* This take a **LOT** of code (202 bytes), and is accessed several times throughout
-	   the program, so I've put it into a seperate function to save on flash.            */
+	/* This take a **LOT** of code and is accessed several times throughout
+	   the program, so I've put it into a seperate function to save on flash. */
 
 	uint32_t ProgDataSize = 0;
 
@@ -145,14 +145,14 @@ void PM_InterpretAVRISPPacket(void)
 				CurrentMode  = PM_LOCKFUSEBITS_READ;
 			}
 			
-			if (CurrBuffByte > eeprom_read_byte((uint8_t*)((PacketBytes[0] == CMD_READ_FUSE_ISP)? &EEPROMVars.TotalFuseBytes : &EEPROMVars.TotalLockBytes)))    // Trying to read more fuse/lock bytes than are stored in memory
+			if (CurrBuffByte > eeprom_read_byte((PacketBytes[0] == CMD_READ_FUSE_ISP)? &EEPROMVars.TotalFuseBytes : &EEPROMVars.TotalLockBytes))  // Trying to read more fuse/lock bytes than are stored in memory
 			{
 				PacketBytes[2] = 0xFF;                                  // Return 0xFF for the fuse/lock byte
 			}
 			else
 			{
-				PacketBytes[2] = eeprom_read_byte((uint8_t*)((PacketBytes[0] == CMD_READ_FUSE_ISP)? &EEPROMVars.FuseBytes : &EEPROMVars.LockBytes) // Starting location
-									                         + (CurrBuffByte << 2) + (PacketBytes[1] - 1));                                        // The start position of the actual fuse/lock byte to read (4 bytes each));
+				PacketBytes[2] = eeprom_read_byte((uint8_t*)(((PacketBytes[0] == CMD_READ_FUSE_ISP)? &EEPROMVars.FuseBytes : &EEPROMVars.LockBytes) // Starting location
+									                         + (CurrBuffByte << 2) + (PacketBytes[1] - 1)));                                        // The start position of the actual fuse/lock byte to read (4 bytes each));
 			}
 
 			PacketBytes[1] = STATUS_CMD_OK;                            // Data byte is encased in CMD_OKs
@@ -344,7 +344,7 @@ void PM_SendEraseCommand(void)
 	}
 	else                                              // Cleared flag means use a predefined delay
 	{		
-		MAIN_Delay1MS(eeprom_read_byte((uint8_t*)&EEPROMVars.EraseChip)); // Wait the erase delay
+		MAIN_Delay1MS(eeprom_read_byte(&EEPROMVars.EraseChip[0])); // Wait the erase delay
 	}
 }
 
@@ -357,7 +357,7 @@ void PM_CreateProgrammingPackets(const uint8_t Type)
 	uint8_t* EEPROMAddress;
 	uint8_t  ContinuedPage   = FALSE;
 
-	PageLength  = eeprom_read_word((uint16_t*)(Type == TYPE_FLASH)? &EEPROMVars.PageLength : &EEPROMVars.EPageLength);
+	PageLength  = eeprom_read_word((Type == TYPE_FLASH)? &EEPROMVars.PageLength : &EEPROMVars.EPageLength);
 	CurrAddress = 0;
 
 	if (Type == TYPE_FLASH)

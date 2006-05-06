@@ -8,6 +8,10 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+// REMOVE BEFORE RELEASE!!!!
+#define DEBUG
+// !!!!!!!!!!!!!!!!!!!!!!!!!
+
 // TYPE DEFINITIONS:
 typedef void (*FuncPtr)(void);
 
@@ -40,6 +44,12 @@ typedef void (*FuncPtr)(void);
 	#error AVRLibC Version 1.4.1 or higher is required to compile this project.
 #endif
 
+// DEBUG MODE CHECK:
+#if defined(DEBUG)
+	#warning DEBUG mode is activated - JTAG system is enabled. Remove before releasing.
+#endif
+
+
 // EXTERNAL VARIABLES:
 extern const uint8_t WaitText[];
 extern const uint8_t ProgrammerName[];
@@ -50,7 +60,7 @@ extern EEPROMVarsType EEPROMVars EEMEM;
 
 // DEFINES AND MACROS:
 #define VERSION_MAJOR            1
-#define VERSION_MINOR            3
+#define VERSION_MINOR            4
 
 #define MAGIC_NUM                0b01111010 // Magic number, used for first-run detection or upgrade incompatibility checks
 
@@ -106,6 +116,7 @@ void FUNCClearMem(void);
 void FUNCSetContrast(void);
 void FUNCSetISPSpeed(void);
 void FUNCSetFirmMinorVer(void);
+void FUNCSetAutoSleepTimeOut(void);
 void FUNCSleepMode(void);
 void FUNCStorageInfo(void);
 void FUNCGoBootloader(void);

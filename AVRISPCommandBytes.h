@@ -42,5 +42,6 @@
 
 #define STATUS_CMD_OK             0x00
 #define STATUS_CMD_FAILED         0xC0
-#define STATUS_CKSUM_ERROR        0xC1
 #define STATUS_CMD_UNKNOWN        0xC9
+#define STATUS_CMD_TOUT           0x80
+#define STATUS_CKSUM_ERROR        0xC1

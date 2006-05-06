@@ -161,11 +161,12 @@ const FuncPtr    MainFunctionPtrs[]      PROGMEM = {FUNCAVRISPMode, FUNCStorePro
 const uint8_t    SFunc_SETCONTRAST[]     PROGMEM = "SET CONTRAST";
 const uint8_t    SFunc_SETSPISPEED[]     PROGMEM = "SET SPI SPEED";
 const uint8_t    SFunc_SETFIRMMINOR[]    PROGMEM = "SET FIRM VERSION";
+const uint8_t    SFunc_SETAUTOSLEEPTO[]  PROGMEM = "SET SLEEP TIMEOUT";
 const uint8_t    SFunc_CLEARMEM[]        PROGMEM = "CLEAR MEMORY";
 const uint8_t    SFunc_GOBOOTLOADER[]    PROGMEM = "JUMP TO BOOTLOADER";
 
-const uint8_t*   SettingFunctionNames[]  PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_SETFIRMMINOR , SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
-const FuncPtr    SettingFunctionPtrs[]   PROGMEM = {FUNCSetContrast  , FUNCSetISPSpeed  , FUNCSetFirmMinorVer, FUNCClearMem  , FUNCGoBootloader};
+const uint8_t*   SettingFunctionNames[]  PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_SETFIRMMINOR , SFunc_SETAUTOSLEEPTO   , SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
+const FuncPtr    SettingFunctionPtrs[]   PROGMEM = {FUNCSetContrast  , FUNCSetISPSpeed  , FUNCSetFirmMinorVer, FUNCSetAutoSleepTimeOut, FUNCClearMem  , FUNCGoBootloader};
 
 const uint8_t    PRG_D[]                 PROGMEM = "DATA ONLY";
 const uint8_t    PRG_E[]                 PROGMEM = "EEPROM ONLY";
@@ -177,17 +178,8 @@ const uint8_t    PRG_C[]                 PROGMEM = "ERASE ONLY";
 
 const uint8_t*   ProgOptions[]           PROGMEM = {PRG_D, PRG_E, PRG_DE, PRG_F, PRG_L, PRG_FL, PRG_C};
 
-const uint8_t    USI_Speed0[]            PROGMEM = " 57153 HZ";
-const uint8_t    USI_Speed1[]            PROGMEM = " 86738 HZ";
-const uint8_t    USI_Speed2[]            PROGMEM = "113427 HZ";
-const uint8_t    USI_Speed3[]            PROGMEM = "210651 HZ";
-
-const uint8_t*   USIPSNamePtrs[USI_PRESET_SPEEDS] PROGMEM = {USI_Speed0, USI_Speed1, USI_Speed2, USI_Speed3};
-
-const uint8_t    SIFO_Size[]             PROGMEM = "STORAGE SIZES";
-const uint8_t    SIFO_Tags[]             PROGMEM = "VIEW DATA TAGS";
-
-const uint8_t*   SIFOOptionPtrs[]        PROGMEM = {SIFO_Size, SIFO_Tags};
+const uint8_t    USISpeeds[USI_PRESET_SPEEDS][9] PROGMEM = {" 57153 HZ", " 86738 HZ", "113427 HZ", "210651 HZ"};
+const uint8_t    SIFONames[2][14]                PROGMEM = {"STORAGE SIZES ", "VIEW DATA TAGS"};
 
 // GLOBAL EEPROM VARIABLE STRUCT:
 EEPROMVarsType EEPROMVars EEMEM;
@@ -198,8 +190,10 @@ int main(void)
 {
 	uint8_t CurrFunc = 0;
 
-	MCUCR   = (1 << JTD);                        // Turn off JTAG via code
-	MCUCR   = (1 << JTD);                        // Twice as specified in datasheet
+	#ifndef DEBUG
+	    MCUCR   = (1 << JTD);                    // Turn off JTAG via code
+	    MCUCR   = (1 << JTD);                    // Twice as specified in datasheet
+	#endif
 	
 	ACSR    = (1 << ACD);                        // Disable the unused Analogue Comparitor to save power
 	PRR     = ((1 << PRADC) | (1 << PRSPI));     // Disable the ADC (unused) and SPI (for now) to save power
@@ -237,6 +231,7 @@ int main(void)
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);      // Set status LEDs to orange (busy)
 	USART_Init();                                // UART at 115200 baud (7.3MHz clock, double USART speed)
 	OSCCAL_Calibrate();                          // Calibrate the internal RC occilator
+	TOUT_SetupSleepTimer();                      // Set up and start the auto-sleep timer
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);	     // Set status LEDs to green (ready)	
 	JoyStatus = 1;                               // Use an invalid joystick value to force the program to write the
 	                                             // name of the default command onto the LCD
@@ -297,7 +292,7 @@ void MAIN_ResetCSLine(const uint8_t ActiveInactive)
 	
 	switch (ActiveInactive)
 	{
-		case MAIN_RESETCS_ACTIVE:   // The target RESET line may be either active high or low.
+		case MAIN_RESETCS_ACTIVE:      // The target RESET line may be either active high or low.
 			DDRF |= (1 << 6);
 		
 			if (!(eeprom_read_byte(&EEPROMVars.ResetPolarity))) // Translate to correct logic level for target device type
@@ -311,7 +306,7 @@ void MAIN_ResetCSLine(const uint8_t ActiveInactive)
 			PORTF &= ~(1 << 6);
 			
 			break;
-		case MAIN_RESETCS_INACTIVE: // Both modes tristate the pins when inactive.
+		case MAIN_RESETCS_INACTIVE:    // Both modes tristate the pins when inactive.
 			DDRF  &= ~(1 << 6);
 			PORTF &= ~(1 << 6);
 	}
@@ -361,16 +356,15 @@ void MAIN_ShowProgType(const uint8_t Letter)
 {
 	uint8_t ProgTypeBuffer[7];
 
-	strcpy_P(ProgTypeBuffer, PSTR("PRG> "));
+	strcpy_P(ProgTypeBuffer, PSTR("PRG>  "));
 	ProgTypeBuffer[5] = Letter;
-	ProgTypeBuffer[6] = '\0';
 	
 	LCD_puts(ProgTypeBuffer);
 }
 
 void MAIN_ShowError(const uint8_t *pFlashStr)
 {
-	uint8_t ErrorBuff[LCD_TEXTBUFFER_SIZE];       // New buffer, LCD text buffer size
+	uint8_t ErrorBuff[LCD_TEXTBUFFER_SIZE];   // New buffer, LCD text buffer size
 	
 	ErrorBuff[0] = 'E';
 	ErrorBuff[1] = '>';
@@ -390,6 +384,8 @@ ISR(PCINT1_vect, ISR_NOBLOCK)                 // Joystick routine; PCINT0_vect i
 {
 	JoyStatus = (~PINB & JOY_BMASK)
 	          | (~PINE & JOY_EMASK);
+			  
+	TIMEOUT_SLEEP_TIMEOUT_RESET();
 }
 
 ISR(BADISR_vect, ISR_NAKED)                   // Bad ISR routine; should never be called, here for safety
@@ -411,9 +407,9 @@ void FUNCChangeSettings(void)
 		if (JoyStatus)                         // Joystick is in the non-center position
 		{
 			if (JoyStatus & JOY_UP)            // Previous function
-			  (CurrSFunc == 0)? CurrSFunc = 4 : CurrSFunc--;
+			  (CurrSFunc == 0)? CurrSFunc = 5 : CurrSFunc--;
 			else if (JoyStatus & JOY_DOWN)     // Next function
-			  (CurrSFunc == 4)? CurrSFunc = 0 : CurrSFunc++;
+			  (CurrSFunc == 5)? CurrSFunc = 0 : CurrSFunc++;
 			else if (JoyStatus & JOY_PRESS)    // Select current function
 			  ((FuncPtr)pgm_read_word(&SettingFunctionPtrs[CurrSFunc]))(); // Run associated function
 			else if (JoyStatus & JOY_LEFT)
@@ -493,8 +489,8 @@ void FUNCProgramAVR(void)
 
 	MAIN_WaitForJoyRelease();
 	
-	JoyStatus = 1;                            // Use an invalid joystick value to force the program to write the
-	                                          // name of the default command onto the LCD
+	JoyStatus = 1;                              // Use an invalid joystick value to force the program to write the
+	                                            // name of the default command onto the LCD
 	while (1)
 	{
 		if (JoyStatus)
@@ -751,7 +747,7 @@ void FUNCSetISPSpeed(void)
 			}
 			
 			// Show selected USI speed value onto the LCD:
-			LCD_puts_f((uint8_t*)pgm_read_word(&USIPSNamePtrs[CurrSpeed]));
+			LCD_puts_f(USISpeeds[CurrSpeed]);
 
 			MAIN_WaitForJoyRelease();
 		}
@@ -763,7 +759,7 @@ void FUNCSetFirmMinorVer(void)
 	uint8_t VerBuffer[5];
 	uint8_t VerMinor = eeprom_read_byte(&EEPROMVars.FirmVerMinor);
 
-	if (VerMinor > 0x09)
+	if (VerMinor > 9)
 	  VerMinor = V2P_SW_VERSION_MINOR_DEFAULT;
 	
 	strcpy_P(VerBuffer, PSTR("V2- "));
@@ -776,11 +772,13 @@ void FUNCSetFirmMinorVer(void)
 		{
 			if (JoyStatus & JOY_UP)
 			{
-				(VerMinor == 9)? VerMinor = 0 : VerMinor++;
+				if (VerMinor < 9)
+				  VerMinor++;
 			}
 			if (JoyStatus & JOY_DOWN)
 			{
-				(VerMinor == 0)? VerMinor = 9 : VerMinor--;
+				if (VerMinor)
+				  VerMinor--;
 			}
 			else if (JoyStatus & JOY_LEFT)
 			{
@@ -790,6 +788,53 @@ void FUNCSetFirmMinorVer(void)
 			
 			VerBuffer[3] = ('0' + VerMinor);
 			LCD_puts(VerBuffer);
+
+			MAIN_WaitForJoyRelease();
+		}
+	}	
+}
+
+void FUNCSetAutoSleepTimeOut(void)
+{
+	uint8_t SleepTxtBuffer[8];
+	uint8_t SleepVal = eeprom_read_byte(&EEPROMVars.AutoSleepValIndex);
+
+	if (SleepVal > 4)
+	  SleepVal = 4;
+
+	strcpy_P(SleepTxtBuffer, PSTR("    SEC"));
+	
+	JoyStatus = 1;                        // Invalid value to force the LCD to update
+
+	while (1)
+	{
+		if (JoyStatus)
+		{
+			if (JoyStatus & JOY_UP)
+			{
+				(SleepVal == 0)? SleepVal = 4 : SleepVal--;
+			}
+			if (JoyStatus & JOY_DOWN)
+			{
+				(SleepVal == 4)? SleepVal = 0 : SleepVal++;
+			}
+			else if (JoyStatus & JOY_LEFT)
+			{
+				eeprom_write_byte(&EEPROMVars.AutoSleepValIndex, SleepVal);
+				TOUT_SetupSleepTimer();
+				return;
+			}
+
+			if (!(SleepVal))
+			{
+				LCD_puts_f(PSTR("OFF"));
+			}
+			else
+			{
+				MAIN_IntToStr(pgm_read_byte(&AutoSleepTOValues[SleepVal]), &SleepTxtBuffer[0]);
+				SleepTxtBuffer[3] = ' '; // Remove the auto-string termination from the buffer
+				LCD_puts(SleepTxtBuffer);
+			}
 
 			MAIN_WaitForJoyRelease();
 		}
@@ -857,7 +902,7 @@ void FUNCStorageInfo(void)
 				}
 			}
 			
-			LCD_puts_f((uint8_t*)pgm_read_word(&SIFOOptionPtrs[SelectedItem]));
+			LCD_puts_f(SIFONames[SelectedItem]);
 
 			MAIN_WaitForJoyRelease();
 		}
