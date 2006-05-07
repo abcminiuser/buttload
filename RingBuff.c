@@ -13,14 +13,14 @@
 // Global Variables:
 volatile BuffType       *StoreLoc;
 volatile BuffType       *RetrieveLoc;
-volatile BuffType       RingBuffer[BuffLen];
+volatile BuffType       RingBuffer[BUFF_BUFFLEN];
 volatile ElemType       BuffElements;
 
 // ======================================================================================
 
 ISR(USART0_RX_vect, ISR_BLOCK)
 {
-	if (BuffElements == BuffLen)          // Buffer full
+	if (BuffElements == BUFF_BUFFLEN)     // Buffer full
 	{
 		MAIN_ShowError(PSTR("BUFF OVERFLOW"));
 		return;
@@ -31,7 +31,7 @@ ISR(USART0_RX_vect, ISR_BLOCK)
 	StoreLoc++;                           // Increment the IN pointer to the next element
 	BuffElements++;                       // Increment the total elements variable
 
-	if (StoreLoc == (BuffType*)&RingBuffer[BuffLen])
+	if (StoreLoc == (BuffType*)&RingBuffer[BUFF_BUFFLEN])
 		StoreLoc = (BuffType*)&RingBuffer[0]; // Wrap pointer if end of array reached
 }	
 
@@ -55,7 +55,7 @@ BuffType BUFF_GetBuffByte(void)
 	RetrieveLoc++;                         // Increment the OUT pointer to the next element if flag set
 	BuffElements--;                        // Decrement the total elements variable
 	
-	if (RetrieveLoc == (BuffType*)&RingBuffer[BuffLen])
+	if (RetrieveLoc == (BuffType*)&RingBuffer[BUFF_BUFFLEN])
 		RetrieveLoc = (BuffType*)&RingBuffer[0]; // Wrap pointer if end of array reached
 		
 	return RetrievedData;                 // Return the retrieved data

@@ -12,7 +12,7 @@
 	#include "Main.h"
    
 	// Configuration:
-	#define BuffLen  64
+	#define BUFF_BUFFLEN  64
 	typedef uint8_t BuffType; // Replace "uint8_t" with desired buffer storage type
 	typedef uint8_t ElemType; // Replace "uint8_t" with the smallest datatype that can hold BuffLen
 

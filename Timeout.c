@@ -6,7 +6,6 @@ volatile uint8_t  PacketTimeOut        = FALSE;
 volatile uint16_t SleepTimeOutTicks    = 0;
 volatile uint16_t TicksBeforeAutoSleep = 0;
 
-const uint16_t  AutoSleepTOTicks[5]  PROGMEM = {   0,  150, 300, 600, 1200};
 const uint8_t   AutoSleepTOValues[5] PROGMEM = {   0,   15,  30,  60,  120};
 
 // ======================================================================================
@@ -42,7 +41,7 @@ void TOUT_SetupSleepTimer(void)
 	  NewTicksIndex = 4;
 
 	TIMSK1 = (1 << TOIE1);
-	TicksBeforeAutoSleep = pgm_read_word(&AutoSleepTOTicks[NewTicksIndex]);
+	TicksBeforeAutoSleep = (pgm_read_byte(&AutoSleepTOValues[NewTicksIndex]) * 10);
 
 	TIMEOUT_SLEEP_TIMEOUT_RESET();
 	

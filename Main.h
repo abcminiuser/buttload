@@ -94,7 +94,6 @@ extern EEPROMVarsType EEPROMVars EEMEM;
 #define MACROE                   while (0)
 
 #define SLEEP()                  MACROS{ asm volatile ("sleep"::); }MACROE
-#define NOP()                    MACROS{ asm volatile ("nop"::);   }MACROE
 
 // PROTOTYPES:
 void MAIN_ResetCSLine(const uint8_t ActiveInactive);

@@ -9,7 +9,7 @@
 #define OSCCAL_H
 
 // DEFINES:
-#define OSCCAL_TARGETCOUNT         (uint16_t)((7372800 / 128) - OSCCAL_OFFSET) // (Target Freq / Reference Freq) - Offset
+#define OSCCAL_TARGETCOUNT         (uint16_t)((7372800UL / 128) - OSCCAL_OFFSET) // (Target Freq / Reference Freq) - Offset
 #define OSCCAL_OFFSET              5
 #define OSCCAL_TOLERANCE           5
 

@@ -16,213 +16,206 @@
   25 0002 1E        		.byte	30
   26 0003 3C        		.byte	60
   27 0004 78        		.byte	120
-  28               	.global	AutoSleepTOTicks
-  31               	AutoSleepTOTicks:
-  32 0005 0000      		.word	0
-  33 0007 9600      		.word	150
-  34 0009 2C01      		.word	300
-  35 000b 5802      		.word	600
-  36 000d B004      		.word	1200
-  37               	.global	TicksBeforeAutoSleep
-  38               	.global	TicksBeforeAutoSleep
-  39               		.section .bss
-  42               	TicksBeforeAutoSleep:
-  43 0000 0000      		.skip 2,0
-  44               	.global	SleepTimeOutTicks
-  45               	.global	SleepTimeOutTicks
-  48               	SleepTimeOutTicks:
-  49 0002 0000      		.skip 2,0
-  50               	.global	PacketTimeOut
-  51               	.global	PacketTimeOut
-  54               	PacketTimeOut:
-  55 0004 00        		.skip 1,0
-  56               	.global	PacketTimeOutTicks
-  57               	.global	PacketTimeOutTicks
-  60               	PacketTimeOutTicks:
-  61 0005 00        		.skip 1,0
-  62               		.text
-  63               	.global	__vector_4
-  65               	__vector_4:
-  66               	.LFB14:
-  67               	.LM1:
-  68               	/* prologue: frame size=0 */
-  69 0000 7894      		sei
-  70 0002 1F92      		push __zero_reg__
-  71 0004 0F92      		push __tmp_reg__
-  72 0006 0FB6      		in __tmp_reg__,__SREG__
-  73 0008 0F92      		push __tmp_reg__
-  74 000a 1124      		clr __zero_reg__
-  75 000c 8F93      		push r24
-  76               	/* prologue end (size=7) */
-  77               	.LM2:
-  78 000e 8091 0000 		lds r24,PacketTimeOutTicks
-  79 0012 8F5F      		subi r24,lo8(-(1))
-  80 0014 8093 0000 		sts PacketTimeOutTicks,r24
-  81 0018 8091 0000 		lds r24,PacketTimeOutTicks
-  82 001c 8739      		cpi r24,lo8(-105)
-  83 001e 29F4      		brne .L1
-  84               	.LM3:
-  85 0020 1092 0000 		sts PacketTimeOutTicks,__zero_reg__
-  86               	.LM4:
-  87 0024 81E0      		ldi r24,lo8(1)
-  88 0026 8093 0000 		sts PacketTimeOut,r24
-  89               	.L1:
-  90               	/* epilogue: frame size=0 */
-  91 002a 8F91      		pop r24
-  92 002c 0F90      		pop __tmp_reg__
-  93 002e 0FBE      		out __SREG__,__tmp_reg__
-  94 0030 0F90      		pop __tmp_reg__
-  95 0032 1F90      		pop __zero_reg__
-  96 0034 1895      		reti
-  97               	/* epilogue end (size=6) */
-  98               	/* function __vector_4 size 27 (14) */
-  99               	.LFE14:
- 101               	.global	TOUT_SetupSleepTimer
- 103               	TOUT_SetupSleepTimer:
- 104               	.LFB16:
- 105               	.LM5:
- 106               	/* prologue: frame size=0 */
- 107               	/* prologue end (size=0) */
- 108               	.LBB2:
- 109               	.LM6:
- 110 0036 A0E0      		ldi r26,lo8(EEPROMVars+135)
- 111 0038 B0E0      		ldi r27,hi8(EEPROMVars+135)
- 112               	.LBB3:
- 113               	.LM7:
- 114               	/* #APP */
- 115 003a 0E94 0000 		call __eeprom_read_byte_1F2021
- 116 003e 802D      		mov r24,__tmp_reg__
- 117               	/* #NOAPP */
- 118               	.LBE3:
- 119               	.LBE2:
- 120               	.LM8:
- 121 0040 282F      		mov r18,r24
- 122               	.LM9:
- 123 0042 8F3F      		cpi r24,lo8(-1)
- 124 0044 09F4      		brne .L5
- 125               	.LM10:
- 126 0046 24E0      		ldi r18,lo8(4)
- 127               	.L5:
- 128               	.LM11:
- 129 0048 31E0      		ldi r19,lo8(1)
- 130 004a 3093 6F00 		sts 111,r19
- 131               	.LBB4:
- 132               	.LM12:
- 133 004e E22F      		mov r30,r18
- 134 0050 FF27      		clr r31
- 135 0052 EE0F      		add r30,r30
- 136 0054 FF1F      		adc r31,r31
- 137 0056 E050      		subi r30,lo8(-(AutoSleepTOTicks))
- 138 0058 F040      		sbci r31,hi8(-(AutoSleepTOTicks))
- 139               	/* #APP */
- 140 005a 8591      		lpm r24, Z+
- 141 005c 9491      		lpm r25, Z
- 142               		
- 143               	/* #NOAPP */
- 144               	.LBE4:
- 145 005e 9093 0000 		sts (TicksBeforeAutoSleep)+1,r25
- 146 0062 8093 0000 		sts TicksBeforeAutoSleep,r24
- 147               	.LM13:
- 148 0066 1092 0000 		sts (SleepTimeOutTicks)+1,__zero_reg__
- 149 006a 1092 0000 		sts SleepTimeOutTicks,__zero_reg__
- 150 006e 1092 8500 		sts (132)+1,__zero_reg__
- 151 0072 1092 8400 		sts 132,__zero_reg__
- 152               	.LM14:
- 153 0076 2223      		tst r18
- 154 0078 19F0      		breq .L7
- 155               	.LM15:
- 156 007a 3093 8100 		sts 129,r19
- 157 007e 0895      		ret
- 158               	.L7:
- 159               	.LM16:
- 160 0080 2093 8100 		sts 129,r18
- 161 0084 0895      		ret
- 162               	/* epilogue: frame size=0 */
- 163               	/* epilogue: noreturn */
- 164               	/* epilogue end (size=0) */
- 165               	/* function TOUT_SetupSleepTimer size 45 (45) */
- 166               	.LFE16:
- 168               	.global	__vector_9
- 170               	__vector_9:
- 171               	.LFB15:
- 172               	.LM17:
- 173               	/* prologue: frame size=0 */
- 174 0086 7894      		sei
- 175 0088 1F92      		push __zero_reg__
- 176 008a 0F92      		push __tmp_reg__
- 177 008c 0FB6      		in __tmp_reg__,__SREG__
- 178 008e 0F92      		push __tmp_reg__
- 179 0090 1124      		clr __zero_reg__
- 180 0092 2F93      		push r18
- 181 0094 3F93      		push r19
- 182 0096 4F93      		push r20
- 183 0098 5F93      		push r21
- 184 009a 6F93      		push r22
- 185 009c 7F93      		push r23
- 186 009e 8F93      		push r24
- 187 00a0 9F93      		push r25
- 188 00a2 AF93      		push r26
- 189 00a4 BF93      		push r27
- 190 00a6 EF93      		push r30
- 191 00a8 FF93      		push r31
- 192               	/* prologue end (size=18) */
- 193               	.LM18:
- 194 00aa 8091 0000 		lds r24,SleepTimeOutTicks
- 195 00ae 9091 0000 		lds r25,(SleepTimeOutTicks)+1
- 196 00b2 9C01      		movw r18,r24
- 197 00b4 0196      		adiw r24,1
- 198 00b6 9093 0000 		sts (SleepTimeOutTicks)+1,r25
- 199 00ba 8093 0000 		sts SleepTimeOutTicks,r24
- 200 00be 8091 0000 		lds r24,TicksBeforeAutoSleep
- 201 00c2 9091 0000 		lds r25,(TicksBeforeAutoSleep)+1
- 202 00c6 2817      		cp r18,r24
- 203 00c8 3907      		cpc r19,r25
- 204 00ca 31F4      		brne .L11
- 205               	.LM19:
- 206 00cc 1092 8100 		sts 129,__zero_reg__
- 207               	.LM20:
- 208 00d0 0E94 0000 		call FUNCSleepMode
- 209               	.LM21:
- 210 00d4 0E94 0000 		call TOUT_SetupSleepTimer
- 211               	.L11:
- 212               	/* epilogue: frame size=0 */
- 213 00d8 FF91      		pop r31
- 214 00da EF91      		pop r30
- 215 00dc BF91      		pop r27
- 216 00de AF91      		pop r26
- 217 00e0 9F91      		pop r25
- 218 00e2 8F91      		pop r24
- 219 00e4 7F91      		pop r23
- 220 00e6 6F91      		pop r22
- 221 00e8 5F91      		pop r21
- 222 00ea 4F91      		pop r20
- 223 00ec 3F91      		pop r19
- 224 00ee 2F91      		pop r18
- 225 00f0 0F90      		pop __tmp_reg__
- 226 00f2 0FBE      		out __SREG__,__tmp_reg__
- 227 00f4 0F90      		pop __tmp_reg__
- 228 00f6 1F90      		pop __zero_reg__
- 229 00f8 1895      		reti
- 230               	/* epilogue end (size=17) */
- 231               	/* function __vector_9 size 58 (23) */
- 232               	.LFE15:
- 234               	.Letext0:
+  28               	.global	TicksBeforeAutoSleep
+  29               	.global	TicksBeforeAutoSleep
+  30               		.section .bss
+  33               	TicksBeforeAutoSleep:
+  34 0000 0000      		.skip 2,0
+  35               	.global	SleepTimeOutTicks
+  36               	.global	SleepTimeOutTicks
+  39               	SleepTimeOutTicks:
+  40 0002 0000      		.skip 2,0
+  41               	.global	PacketTimeOut
+  42               	.global	PacketTimeOut
+  45               	PacketTimeOut:
+  46 0004 00        		.skip 1,0
+  47               	.global	PacketTimeOutTicks
+  48               	.global	PacketTimeOutTicks
+  51               	PacketTimeOutTicks:
+  52 0005 00        		.skip 1,0
+  53               		.text
+  54               	.global	__vector_4
+  56               	__vector_4:
+  57               	.LFB14:
+  58               	.LM1:
+  59               	/* prologue: frame size=0 */
+  60 0000 7894      		sei
+  61 0002 1F92      		push __zero_reg__
+  62 0004 0F92      		push __tmp_reg__
+  63 0006 0FB6      		in __tmp_reg__,__SREG__
+  64 0008 0F92      		push __tmp_reg__
+  65 000a 1124      		clr __zero_reg__
+  66 000c 8F93      		push r24
+  67               	/* prologue end (size=7) */
+  68               	.LM2:
+  69 000e 8091 0000 		lds r24,PacketTimeOutTicks
+  70 0012 8F5F      		subi r24,lo8(-(1))
+  71 0014 8093 0000 		sts PacketTimeOutTicks,r24
+  72 0018 8091 0000 		lds r24,PacketTimeOutTicks
+  73 001c 8739      		cpi r24,lo8(-105)
+  74 001e 29F4      		brne .L1
+  75               	.LM3:
+  76 0020 1092 0000 		sts PacketTimeOutTicks,__zero_reg__
+  77               	.LM4:
+  78 0024 81E0      		ldi r24,lo8(1)
+  79 0026 8093 0000 		sts PacketTimeOut,r24
+  80               	.L1:
+  81               	/* epilogue: frame size=0 */
+  82 002a 8F91      		pop r24
+  83 002c 0F90      		pop __tmp_reg__
+  84 002e 0FBE      		out __SREG__,__tmp_reg__
+  85 0030 0F90      		pop __tmp_reg__
+  86 0032 1F90      		pop __zero_reg__
+  87 0034 1895      		reti
+  88               	/* epilogue end (size=6) */
+  89               	/* function __vector_4 size 27 (14) */
+  90               	.LFE14:
+  92               	.global	TOUT_SetupSleepTimer
+  94               	TOUT_SetupSleepTimer:
+  95               	.LFB16:
+  96               	.LM5:
+  97               	/* prologue: frame size=0 */
+  98               	/* prologue end (size=0) */
+  99               	.LBB2:
+ 100               	.LM6:
+ 101 0036 A0E0      		ldi r26,lo8(EEPROMVars+135)
+ 102 0038 B0E0      		ldi r27,hi8(EEPROMVars+135)
+ 103               	.LBB3:
+ 104               	.LM7:
+ 105               	/* #APP */
+ 106 003a 0E94 0000 		call __eeprom_read_byte_1F2021
+ 107 003e 802D      		mov r24,__tmp_reg__
+ 108               	/* #NOAPP */
+ 109               	.LBE3:
+ 110               	.LBE2:
+ 111               	.LM8:
+ 112 0040 282F      		mov r18,r24
+ 113               	.LM9:
+ 114 0042 8F3F      		cpi r24,lo8(-1)
+ 115 0044 09F4      		brne .L5
+ 116               	.LM10:
+ 117 0046 24E0      		ldi r18,lo8(4)
+ 118               	.L5:
+ 119               	.LM11:
+ 120 0048 31E0      		ldi r19,lo8(1)
+ 121 004a 3093 6F00 		sts 111,r19
+ 122               	.LBB4:
+ 123               	.LM12:
+ 124 004e E22F      		mov r30,r18
+ 125 0050 FF27      		clr r31
+ 126 0052 E050      		subi r30,lo8(-(AutoSleepTOValues))
+ 127 0054 F040      		sbci r31,hi8(-(AutoSleepTOValues))
+ 128               	/* #APP */
+ 129 0056 9491      		lpm r25, Z
+ 130               		
+ 131               	/* #NOAPP */
+ 132               	.LBE4:
+ 133 0058 8AE0      		ldi r24,lo8(10)
+ 134 005a 989F      		mul r25,r24
+ 135 005c C001      		movw r24,r0
+ 136 005e 1124      		clr r1
+ 137 0060 9093 0000 		sts (TicksBeforeAutoSleep)+1,r25
+ 138 0064 8093 0000 		sts TicksBeforeAutoSleep,r24
+ 139               	.LM13:
+ 140 0068 1092 0000 		sts (SleepTimeOutTicks)+1,__zero_reg__
+ 141 006c 1092 0000 		sts SleepTimeOutTicks,__zero_reg__
+ 142 0070 1092 8500 		sts (132)+1,__zero_reg__
+ 143 0074 1092 8400 		sts 132,__zero_reg__
+ 144               	.LM14:
+ 145 0078 2223      		tst r18
+ 146 007a 19F0      		breq .L7
+ 147               	.LM15:
+ 148 007c 3093 8100 		sts 129,r19
+ 149 0080 0895      		ret
+ 150               	.L7:
+ 151               	.LM16:
+ 152 0082 2093 8100 		sts 129,r18
+ 153 0086 0895      		ret
+ 154               	/* epilogue: frame size=0 */
+ 155               	/* epilogue: noreturn */
+ 156               	/* epilogue end (size=0) */
+ 157               	/* function TOUT_SetupSleepTimer size 45 (45) */
+ 158               	.LFE16:
+ 160               	.global	__vector_9
+ 162               	__vector_9:
+ 163               	.LFB15:
+ 164               	.LM17:
+ 165               	/* prologue: frame size=0 */
+ 166 0088 7894      		sei
+ 167 008a 1F92      		push __zero_reg__
+ 168 008c 0F92      		push __tmp_reg__
+ 169 008e 0FB6      		in __tmp_reg__,__SREG__
+ 170 0090 0F92      		push __tmp_reg__
+ 171 0092 1124      		clr __zero_reg__
+ 172 0094 2F93      		push r18
+ 173 0096 3F93      		push r19
+ 174 0098 4F93      		push r20
+ 175 009a 5F93      		push r21
+ 176 009c 6F93      		push r22
+ 177 009e 7F93      		push r23
+ 178 00a0 8F93      		push r24
+ 179 00a2 9F93      		push r25
+ 180 00a4 AF93      		push r26
+ 181 00a6 BF93      		push r27
+ 182 00a8 EF93      		push r30
+ 183 00aa FF93      		push r31
+ 184               	/* prologue end (size=18) */
+ 185               	.LM18:
+ 186 00ac 8091 0000 		lds r24,SleepTimeOutTicks
+ 187 00b0 9091 0000 		lds r25,(SleepTimeOutTicks)+1
+ 188 00b4 9C01      		movw r18,r24
+ 189 00b6 0196      		adiw r24,1
+ 190 00b8 9093 0000 		sts (SleepTimeOutTicks)+1,r25
+ 191 00bc 8093 0000 		sts SleepTimeOutTicks,r24
+ 192 00c0 8091 0000 		lds r24,TicksBeforeAutoSleep
+ 193 00c4 9091 0000 		lds r25,(TicksBeforeAutoSleep)+1
+ 194 00c8 2817      		cp r18,r24
+ 195 00ca 3907      		cpc r19,r25
+ 196 00cc 31F4      		brne .L11
+ 197               	.LM19:
+ 198 00ce 1092 8100 		sts 129,__zero_reg__
+ 199               	.LM20:
+ 200 00d2 0E94 0000 		call FUNCSleepMode
+ 201               	.LM21:
+ 202 00d6 0E94 0000 		call TOUT_SetupSleepTimer
+ 203               	.L11:
+ 204               	/* epilogue: frame size=0 */
+ 205 00da FF91      		pop r31
+ 206 00dc EF91      		pop r30
+ 207 00de BF91      		pop r27
+ 208 00e0 AF91      		pop r26
+ 209 00e2 9F91      		pop r25
+ 210 00e4 8F91      		pop r24
+ 211 00e6 7F91      		pop r23
+ 212 00e8 6F91      		pop r22
+ 213 00ea 5F91      		pop r21
+ 214 00ec 4F91      		pop r20
+ 215 00ee 3F91      		pop r19
+ 216 00f0 2F91      		pop r18
+ 217 00f2 0F90      		pop __tmp_reg__
+ 218 00f4 0FBE      		out __SREG__,__tmp_reg__
+ 219 00f6 0F90      		pop __tmp_reg__
+ 220 00f8 1F90      		pop __zero_reg__
+ 221 00fa 1895      		reti
+ 222               	/* epilogue end (size=17) */
+ 223               	/* function __vector_9 size 58 (23) */
+ 224               	.LFE15:
+ 226               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 Timeout.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cciMaaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cciMaaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cciMaaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cciMaaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cciMaaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cciMaaaa.s:22     .progmem.data:00000000 AutoSleepTOValues
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cciMaaaa.s:31     .progmem.data:00000005 AutoSleepTOTicks
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cciMaaaa.s:42     .bss:00000000 TicksBeforeAutoSleep
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cciMaaaa.s:48     .bss:00000002 SleepTimeOutTicks
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cciMaaaa.s:54     .bss:00000004 PacketTimeOut
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cciMaaaa.s:60     .bss:00000005 PacketTimeOutTicks
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cciMaaaa.s:65     .text:00000000 __vector_4
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cciMaaaa.s:103    .text:00000036 TOUT_SetupSleepTimer
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cciMaaaa.s:170    .text:00000086 __vector_9
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO4aaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO4aaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO4aaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO4aaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO4aaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO4aaaa.s:22     .progmem.data:00000000 AutoSleepTOValues
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO4aaaa.s:33     .bss:00000000 TicksBeforeAutoSleep
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO4aaaa.s:39     .bss:00000002 SleepTimeOutTicks
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO4aaaa.s:45     .bss:00000004 PacketTimeOut
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO4aaaa.s:51     .bss:00000005 PacketTimeOutTicks
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO4aaaa.s:56     .text:00000000 __vector_4
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO4aaaa.s:94     .text:00000036 TOUT_SetupSleepTimer
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccO4aaaa.s:162    .text:00000088 __vector_9
 
 UNDEFINED SYMBOLS
 __do_copy_data

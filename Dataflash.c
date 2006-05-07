@@ -9,6 +9,13 @@
 	Compatible with most Atmel dataflash memory devices. This is a re-written, bare-bones
 	version of the generic Atmel Dataflash driver, with some specific ButtLoad routines
 	added in.
+	
+	This uses a lot of abstraction to perform the dataflash tasks. A global pointer to a
+	routine for sending the SPI bytes is kept in DFSPIRoutinePointer which may be changed
+	by the program to redirect the output (in ButtLoad this is changed between the SPI bus
+	and the USI bus which is set to SPI mode. This global pointer is then copied to a local
+	pointer by DF_MAKELOCALSPIFUNCPTR() to prevent it from being copied before every use and
+	this macro must be in all routines using the DF_SENDSPIBYTE macro.
 */
 
 #include "Dataflash.h"
@@ -49,6 +56,8 @@ void DF_GetChipCharacteristics(void)
 {
 	uint8_t DataIndex;
 	
+	DF_MAKELOCALSPIFUNCPTR();
+
 	DF_TOGGLEENABLE();
 	
 	DF_SENDSPIBYTE(StatusReg);                    // Send the get status register command
@@ -65,6 +74,8 @@ void DF_GetChipCharacteristics(void)
 
 void DF_WaitWhileBusy(void)
 {
+	DF_MAKELOCALSPIFUNCPTR();
+
 	DF_TOGGLEENABLE();
 	
 	DF_SENDSPIBYTE(StatusReg);                    // Send the get status register command
@@ -74,6 +85,8 @@ void DF_WaitWhileBusy(void)
 
 void DF_CopyBufferToFlashPage(const uint16_t PageAddress)
 {
+	DF_MAKELOCALSPIFUNCPTR();
+
 	DF_TOGGLEENABLE();
 
 	DF_SENDSPIBYTE(Buf1ToFlashWE);                // Send the buffer copy command code
@@ -86,6 +99,8 @@ void DF_CopyBufferToFlashPage(const uint16_t PageAddress)
 
 void DF_CopyFlashPageToBuffer(const uint16_t PageAddress)
 {
+	DF_MAKELOCALSPIFUNCPTR();
+
 	DF_TOGGLEENABLE();
 
 	DF_SENDSPIBYTE(FlashToBuf1Transfer);          // Send the memory copy command code
@@ -98,6 +113,8 @@ void DF_CopyFlashPageToBuffer(const uint16_t PageAddress)
 
 void DF_BufferWriteEnable(const uint16_t BuffAddress)
 {
+	DF_MAKELOCALSPIFUNCPTR();
+
 	DF_TOGGLEENABLE();
 
 	DF_SENDSPIBYTE(Buf1Write);                    // Send the buffer write command code
@@ -108,6 +125,8 @@ void DF_BufferWriteEnable(const uint16_t BuffAddress)
 
 void DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddress)
 {
+	DF_MAKELOCALSPIFUNCPTR();
+
 	DF_TOGGLEENABLE();
 	
 	DF_SENDSPIBYTE(ContArrayRead);
@@ -121,6 +140,8 @@ void DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddr
 
 uint8_t DF_ReadBufferByte(const uint16_t BuffAddress)
 {
+	DF_MAKELOCALSPIFUNCPTR();
+
 	DF_TOGGLEENABLE();
 	
 	DF_SENDSPIBYTE(Buf1Read);
@@ -133,6 +154,8 @@ uint8_t DF_ReadBufferByte(const uint16_t BuffAddress)
 
 void DF_EraseBlock(const uint16_t BlockToErase)
 {
+	DF_MAKELOCALSPIFUNCPTR();
+
 	DF_TOGGLEENABLE();
 
 	DF_SENDSPIBYTE(BlockErase);                   // Send block erase command

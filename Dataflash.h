@@ -30,7 +30,8 @@ typedef struct
 #define DF_BUSYMASK              0x80
 #define DF_INTERNALDF_BUFFBYTES  264
 
-#define DF_SENDSPIBYTE(data)     (DFSPIRoutinePointer)(data)
+#define DF_MAKELOCALSPIFUNCPTR() SPIFuncPtr LocalSPISendRoutinePtr = DFSPIRoutinePointer;
+#define DF_SENDSPIBYTE(data)     (LocalSPISendRoutinePtr)(data)
 
 #define PageShiftHigh            GPIOR1 // Psuedo variable; linked to the General Purpose Storage register 1 for speed
 #define PageShiftLow             GPIOR2 // Psuedo variable; linked to the General Purpose Storage register 2 for speed
