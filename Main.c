@@ -178,8 +178,8 @@ const uint8_t    PRG_C[]                 PROGMEM = "ERASE ONLY";
 
 const uint8_t*   ProgOptions[]           PROGMEM = {PRG_D, PRG_E, PRG_DE, PRG_F, PRG_L, PRG_FL, PRG_C};
 
-const uint8_t    USISpeeds[USI_PRESET_SPEEDS][9] PROGMEM = {" 57153 HZ", " 86738 HZ", "113427 HZ", "210651 HZ"};
-const uint8_t    SIFONames[2][14]                PROGMEM = {"STORAGE SIZES ", "VIEW DATA TAGS"};
+const uint8_t    USISpeeds[USI_PRESET_SPEEDS][10] PROGMEM = {" 57153 HZ", " 86738 HZ", "113427 HZ", "210651 HZ"};
+const uint8_t    SIFONames[2][15]                 PROGMEM = {"STORAGE SIZES", "VIEW DATA TAGS"};
 
 // GLOBAL EEPROM VARIABLE STRUCT:
 EEPROMVarsType EEPROMVars EEMEM;
@@ -724,7 +724,7 @@ void FUNCSetISPSpeed(void)
 {
 	uint8_t CurrSpeed = eeprom_read_byte(&EEPROMVars.SCKDuration);
 
-	if (CurrSpeed > (USI_PRESET_SPEEDS - 1)) CurrSpeed = 0; // Protection against blank EEPROM
+	if (CurrSpeed > (USI_PRESET_SPEEDS - 1)) CurrSpeed = (USI_PRESET_SPEEDS - 1); // Protection against blank EEPROM
 
 	JoyStatus = 1;                         // Invalid value to force the LCD to update
 
