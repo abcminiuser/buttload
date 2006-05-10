@@ -11,8 +11,8 @@
 #include "ButtLoadTag.h"
 
 #ifdef BUTTLOADTAG // Can be used in program to prevent errors if ButtLoadTag not included
-	BUTTLOADTAG(Name,   "BUTTLOAD AVRISP");
 	BUTTLOADTAG(Author, "BY DEAN CAMERA");
+	BUTTLOADTAG(Name,   "BUTTLOAD AVRISP");
 #endif
 
 /*
@@ -914,6 +914,8 @@ void FUNCGoBootloader(void)
 	uint8_t MD = (MCUCR & ~(1 << JTD));   // Forces compiler to use IN, AND plus two OUTs rather than two lots of IN/AND/OUTs
 	MCUCR = MD;                           // Turn on JTAG via code
 	MCUCR = MD;                           // Set bit twice as specified in datasheet        
+
+	TIMEOUT_SLEEP_TIMER_OFF();
 	
 	LCD_puts_f(PSTR("*JTAG ON*"));
 	

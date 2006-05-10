@@ -37,7 +37,10 @@
 #define V2P_STATE_PACKERR            9
 #define V2P_STATE_TIMEOUT            10
 
+#define V2P_LOAD_EXTENDED_ADDR_FLAG  (1UL << 31)
 #define V2P_LOAD_EXTENDED_ADDR_CMD   0x4D
+#define V2P_LOAD_EXTENDED_ADDR_MASK  0x00FF0000UL
+#define V2P_LOAD_EXTENDED_ADDR_SHIFT 16
 
 #define V2P_HW_VERSION               2
 #define V2P_SW_VERSION_MAJOR         2

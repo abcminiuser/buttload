@@ -288,13 +288,9 @@ void V2P_GetSetParamater(void)
 			   and the SCK duration byte will not be sent.                                             */
 		
 			if (PacketBytes[0] == CMD_GET_PARAMETER)
-			{
-			   PacketBytes[2] = 0;            // If the command is a read, return a 0 for both parameters
-			}
+			  PacketBytes[2] = 0;             // If the command is a read, return a 0 for both parameters
 			else
-			{
-				MessageSize = 2;              // Otherwise just send back an OK if the command is a set		
-			}
+			  MessageSize = 2;                // Otherwise just send back an OK if the command is a set		
 			
 			break;
 		default:                             // Unrecognised parameter
@@ -317,13 +313,13 @@ void V2P_IncrementCurrAddress(void)
 
 void V2P_CheckForExtendedAddress(void)
 {
-	if (CurrAddress & (1UL << 31))                     // MSB set of the address, indicates a LOAD_EXTENDED_ADDRESS must be executed
+	if (CurrAddress & V2P_LOAD_EXTENDED_ADDR_FLAG)     // MSB set of the address, indicates a LOAD_EXTENDED_ADDRESS must be executed
 	{
 		USI_SPITransmit(V2P_LOAD_EXTENDED_ADDR_CMD);   // Load extended address command
 		USI_SPITransmit(0x00);
-		USI_SPITransmit((CurrAddress & 0x00FF0000) >> 16); // The 3rd byte of the long holds the extended address
+		USI_SPITransmit((CurrAddress & V2P_LOAD_EXTENDED_ADDR_MASK) >> V2P_LOAD_EXTENDED_ADDR_SHIFT);
 		USI_SPITransmit(0x00);
 		
-		CurrAddress &= ~(1UL << 31);                   // Clear the flag
+		CurrAddress &= ~(V2P_LOAD_EXTENDED_ADDR_FLAG); // Clear the flag
 	}
 }
