@@ -17,7 +17,7 @@ void PD_InterpretAVRISPPacket(void)
 
 	switch (PacketBytes[0])
 	{
-		case CMD_ENTER_PROGMODE_ISP:
+		case AICB_CMD_ENTER_PROGMODE_ISP:
 			MessageSize = 2;
 			
 			DF_EnableDataflash(TRUE);
@@ -29,77 +29,77 @@ void PD_InterpretAVRISPPacket(void)
 			
 				InProgrammingMode = TRUE;                  // Set the flag, prevent the user from exiting the V2P state machine			
 				MAIN_SETSTATUSLED(MAIN_STATLED_RED);
-				PacketBytes[1] = STATUS_CMD_OK;
+				PacketBytes[1] = AICB_STATUS_CMD_OK;
 			}
 			else
 			{
 				LCD_puts_f(DataFlashError);
 			
 				DF_EnableDataflash(FALSE);
-				PacketBytes[1] = STATUS_CMD_FAILED;
+				PacketBytes[1] = AICB_STATUS_CMD_FAILED;
 			}
 			
 			break;			
-		case CMD_LEAVE_PROGMODE_ISP:
+		case AICB_CMD_LEAVE_PROGMODE_ISP:
 			MessageSize = 2;
 
 			InProgrammingMode = FALSE;                     // Clear the flag, allow the user to exit the V2P state machine
 
 			DF_EnableDataflash(FALSE);
 			MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);
-			PacketBytes[1] = STATUS_CMD_OK;
+			PacketBytes[1] = AICB_STATUS_CMD_OK;
 
 			break;
-		case CMD_READ_SIGNATURE_ISP:
+		case AICB_CMD_READ_SIGNATURE_ISP:
 			MessageSize = 4;
 
-			PacketBytes[1] = STATUS_CMD_OK;                // Data byte is encased in CMD_OKs
+			PacketBytes[1] = AICB_STATUS_CMD_OK;           // Data byte is encased in CMD_OKs
 			PacketBytes[2] = 0x02;                         // Signature bytes all return "02" in program dataflash mode
-			PacketBytes[3] = STATUS_CMD_OK;                // Data byte is encased in CMD_OKs
+			PacketBytes[3] = AICB_STATUS_CMD_OK;           // Data byte is encased in CMD_OKs
 
 			break;
-		case CMD_CHIP_ERASE_ISP:
+		case AICB_CMD_CHIP_ERASE_ISP:
 			MessageSize = 2;
 
 			EraseDataflash = TRUE;
-			PacketBytes[1] = STATUS_CMD_OK;
+			PacketBytes[1] = AICB_STATUS_CMD_OK;
 			
 			break;
-		case CMD_READ_OSCCAL_ISP:
-		case CMD_READ_FUSE_ISP:
-		case CMD_READ_LOCK_ISP:
+		case AICB_CMD_READ_OSCCAL_ISP:
+		case AICB_CMD_READ_FUSE_ISP:
+		case AICB_CMD_READ_LOCK_ISP:
 			MessageSize = 4;
 
-			PacketBytes[1] = STATUS_CMD_OK;               // Data byte is encased in CMD_OKs
+			PacketBytes[1] = AICB_STATUS_CMD_OK;          // Data byte is encased in CMD_OKs
 			PacketBytes[2] = 0xFF;                        // Return 0xFFs for the bytes since they're not applicable
-			PacketBytes[3] = STATUS_CMD_OK;               // Data byte is encased in CMD_OKs
+			PacketBytes[3] = AICB_STATUS_CMD_OK;          // Data byte is encased in CMD_OKs
 
 			break;
-		case CMD_PROGRAM_FUSE_ISP:
-		case CMD_PROGRAM_LOCK_ISP:
+		case AICB_CMD_PROGRAM_FUSE_ISP:
+		case AICB_CMD_PROGRAM_LOCK_ISP:
 			MessageSize = 3;
 			
-			PacketBytes[1] = STATUS_CMD_OK;               // Two CMD_OKs are always returned
-			PacketBytes[2] = STATUS_CMD_OK;               // Two CMD_OKs are always returned
+			PacketBytes[1] = AICB_STATUS_CMD_OK;          // Two CMD_OKs are always returned
+			PacketBytes[2] = AICB_STATUS_CMD_OK;          // Two CMD_OKs are always returned
 
 			break;
-		case CMD_PROGRAM_FLASH_ISP:
+		case AICB_CMD_PROGRAM_FLASH_ISP:
 			MessageSize = 2;
 
-			PacketBytes[1] = STATUS_CMD_OK;
+			PacketBytes[1] = AICB_STATUS_CMD_OK;
 		
 			break;
-		case CMD_READ_FLASH_ISP:
+		case AICB_CMD_READ_FLASH_ISP:
 			MessageSize = (((uint16_t)PacketBytes[1] << 8) | PacketBytes[2]) + 3;
 
 			for (uint16_t DB = 1; DB < (MessageSize - 2); DB++)
 			   PacketBytes[DB] = 0xFF;
 
-			PacketBytes[1]               = STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
-			PacketBytes[MessageSize - 1] = STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
+			PacketBytes[1]               = AICB_STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
+			PacketBytes[MessageSize - 1] = AICB_STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
 				
 			break;
-		case CMD_PROGRAM_EEPROM_ISP:
+		case AICB_CMD_PROGRAM_EEPROM_ISP:
 			PD_SetupDFAddressCounters();
 			
 			DF_CopyFlashPageToBuffer(CurrPageAddress);
@@ -115,10 +115,10 @@ void PD_InterpretAVRISPPacket(void)
 				V2P_IncrementCurrAddress();
 			}
 
-			PacketBytes[1] = STATUS_CMD_OK;
+			PacketBytes[1] = AICB_STATUS_CMD_OK;
 		
 			break;
-		case CMD_READ_EEPROM_ISP:
+		case AICB_CMD_READ_EEPROM_ISP:
 			PD_SetupDFAddressCounters();
 			DF_CopyFlashPageToBuffer(CurrPageAddress);
 			
@@ -139,14 +139,14 @@ void PD_InterpretAVRISPPacket(void)
 			
 			MessageSize = BytesToRead + 3;
 
-			PacketBytes[1]               = STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
-			PacketBytes[2 + BytesToRead] = STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
+			PacketBytes[1]               = AICB_STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
+			PacketBytes[2 + BytesToRead] = AICB_STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
 			
 			break;
 		default:
 			MessageSize = 1;
 			
-			PacketBytes[1] = STATUS_CMD_UNKNOWN;
+			PacketBytes[1] = AICB_STATUS_CMD_UNKNOWN;
 	}
 
 	V2P_SendPacket();                                   // Send the response packet

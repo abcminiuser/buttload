@@ -8,7 +8,7 @@
 #include "V2Protocol.h"
 
 // PROGMEM CONSTANTS:
-const uint8_t SignonResponse[11] PROGMEM = {CMD_SIGN_ON, STATUS_CMD_OK, 8, 'A', 'V', 'R', 'I', 'S', 'P', '_', '2'};
+const uint8_t SignonResponse[11] PROGMEM = {AICB_CMD_SIGN_ON, AICB_STATUS_CMD_OK, 8, 'A', 'V', 'R', 'I', 'S', 'P', '_', '2'};
 
 // GLOBAL VARIABLES:
 FuncPtr  InterpretPacketRoutine         = AICI_InterpretPacket;
@@ -28,8 +28,7 @@ void V2P_RunStateMachine(void)
 	uint8_t  V2PState            = V2P_STATE_IDLE;
 	uint16_t CurrentMessageByte  = 0;
 
-	BUFF_InitialiseBuffer();
-	
+	BUFF_InitialiseBuffer();	
 	TIMEOUT_SLEEP_TIMER_OFF();
 	
 	InProgrammingMode = FALSE;
@@ -46,14 +45,14 @@ void V2P_RunStateMachine(void)
 		{
 			case V2P_STATE_TIMEOUT:
 				MessageSize    = 2;
-				PacketBytes[1] = STATUS_CMD_TOUT;
+				PacketBytes[1] = AICB_STATUS_CMD_TOUT;
 				V2P_SendPacket();
 
 				V2PState  = V2P_STATE_PACKOK;
 				break;
 			case V2P_STATE_PACKERR:
 				MessageSize    = 2;
-				PacketBytes[1] = STATUS_CMD_FAILED;
+				PacketBytes[1] = AICB_STATUS_CMD_FAILED;
 				V2P_SendPacket();
 
 				V2PState  = V2P_STATE_PACKOK;
@@ -72,13 +71,13 @@ void V2P_RunStateMachine(void)
 				if ((JoyStatus & JOY_LEFT) && !(InProgrammingMode))
 				{
 					USART_ENABLE(USART_TX_OFF, USART_RX_OFF);
-					TIMEOUT_SLEEP_TIMER_ON();
+					TOUT_SetupSleepTimer();       // Re-setup and start the auto-sleep timer
 					return;
 				}
 								
 				break;
 			case V2P_STATE_START:
-				if (USART_Rx() == MESSAGE_START)  // Start bit is always 0x1B
+				if (USART_Rx() == AICB_MESSAGE_START)  // Start bit is always 0x1B
 					V2PState  = V2P_STATE_GETSEQUENCENUM;
 				else
 					V2PState  = V2P_STATE_PACKERR;
@@ -110,7 +109,7 @@ void V2P_RunStateMachine(void)
 	
 				break;
 			case V2P_STATE_GETTOKEN:
-				if (USART_Rx() == TOKEN)           // Token bit is always 0x0E
+				if (USART_Rx() == AICB_TOKEN)      // Token bit is always 0x0E
 					V2PState  = V2P_STATE_GETDATA;
 				else                               // Incorrect token bit
 					V2PState  = V2P_STATE_PACKERR;
@@ -128,7 +127,7 @@ void V2P_RunStateMachine(void)
 				{
 					switch (PacketBytes[0])            // \/ Look for generic commands which can be interpreted, 
 					{                                   //  \ otherwise run the custom interpret routine
-						case CMD_SIGN_ON:
+						case AICB_CMD_SIGN_ON:
 							MessageSize = 11;
 
 							for (uint8_t SOByte = 0; SOByte < 11; SOByte++) // Load the sign-on sequence from program memory
@@ -136,14 +135,14 @@ void V2P_RunStateMachine(void)
 
 							V2P_SendPacket();
 							break;
-						case CMD_FIRMWARE_UPGRADE:
+						case AICB_CMD_FIRMWARE_UPGRADE:
 							MessageSize = 2;
 			
-							PacketBytes[1] = STATUS_CMD_FAILED;  // Return failed (no automatic firmware upgrades)
+							PacketBytes[1] = AICB_STATUS_CMD_FAILED;  // Return failed (no automatic firmware upgrades)
 			
 							V2P_SendPacket();
 							break;				
-						case CMD_LOAD_ADDRESS:
+						case AICB_CMD_LOAD_ADDRESS:
 							MessageSize  = 2;
 			
 							V2P_CheckForExtendedAddress();
@@ -153,12 +152,12 @@ void V2P_RunStateMachine(void)
 							             | ((uint32_t)PacketBytes[3] << 8)
 							             | PacketBytes[4];
 
-							PacketBytes[1] = STATUS_CMD_OK;
+							PacketBytes[1] = AICB_STATUS_CMD_OK;
 
 							V2P_SendPacket();
 							break;			
-						case CMD_GET_PARAMETER:
-						case CMD_SET_PARAMETER:						
+						case AICB_CMD_GET_PARAMETER:
+						case AICB_CMD_SET_PARAMETER:						
 							V2P_GetSetParamater();
 							break;
 						default:
@@ -170,7 +169,7 @@ void V2P_RunStateMachine(void)
 				else
 				{					
 					MessageSize    = 2;
-					PacketBytes[1] = STATUS_CKSUM_ERROR;
+					PacketBytes[1] = AICB_STATUS_CKSUM_ERROR;
 					V2P_SendPacket();
 			
 					V2PState       = V2P_STATE_PACKOK;
@@ -181,11 +180,11 @@ void V2P_RunStateMachine(void)
 
 void V2P_SendPacket(void)
 {
-	USART_Tx(MESSAGE_START);
+	USART_Tx(AICB_MESSAGE_START);
 	USART_Tx(SequenceNum);
 	USART_Tx(MessageSize >> 8);
 	USART_Tx(MessageSize & 0xFF);
-	USART_Tx(TOKEN);
+	USART_Tx(AICB_TOKEN);
 
 	for (uint16_t SentBytes = 0; SentBytes < MessageSize; SentBytes++)
 		USART_Tx(PacketBytes[SentBytes]);
@@ -202,11 +201,11 @@ uint8_t V2P_GetChecksum()
 	/* Checksum for the V2 protocol is comprised of an XOR of all the packet 
       bytes, including the start, sequence number, size and token bytes.    */
 	
-	CheckSumByte  = MESSAGE_START;
+	CheckSumByte  = AICB_MESSAGE_START;
 	CheckSumByte ^= SequenceNum;
 	CheckSumByte ^= (uint8_t)(MessageSize >> 8);
 	CheckSumByte ^= (uint8_t)(MessageSize);
-	CheckSumByte ^= TOKEN;
+	CheckSumByte ^= AICB_TOKEN;
 	
 	for (uint16_t CByteIndex = 0; CByteIndex < MessageSize; CByteIndex++)
 	   CheckSumByte ^= PacketBytes[CByteIndex];
@@ -219,32 +218,32 @@ void V2P_GetSetParamater(void)
 	uint8_t Param_Name = PacketBytes[1];    // Save the parameter number
 
 	MessageSize = 3;                        // Set the default response message size to 3 bytes     
-	PacketBytes[1] = STATUS_CMD_OK;         // Set the default response to OK
+	PacketBytes[1] = AICB_STATUS_CMD_OK;    // Set the default response to OK
 
 	switch (Param_Name)                    // Switch based on the recieved parameter byte
 	{
-		case PARAM_BUILD_NUMBER_LOW:
+		case AICB_PARAM_BUILD_NUMBER_LOW:
 			PacketBytes[2] = VERSION_MINOR;
 
 			break;
-		case PARAM_BUILD_NUMBER_HIGH:
+		case AICB_PARAM_BUILD_NUMBER_HIGH:
 			PacketBytes[2] = VERSION_MAJOR;
 
 			break;
-		case PARAM_HARDWARE_VERSION:
+		case AICB_PARAM_HARDWARE_VERSION:
 			PacketBytes[2] = V2P_HW_VERSION;
 
 			break;
-		case PARAM_SW_MAJOR:
+		case AICB_PARAM_SW_MAJOR:
 			PacketBytes[2] = V2P_SW_VERSION_MAJOR;
 
 			break;
-		case PARAM_SW_MINOR:
+		case AICB_PARAM_SW_MINOR:
 			PacketBytes[2] = ((eeprom_read_byte(&EEPROMVars.FirmVerMinor) == 0xFF)? V2P_SW_VERSION_MINOR_DEFAULT : eeprom_read_byte(&EEPROMVars.FirmVerMinor));
 
 			break;
-		case PARAM_CONTROLLER_INIT:
-			if (PacketBytes[0] == CMD_GET_PARAMETER)
+		case AICB_PARAM_CONTROLLER_INIT:
+			if (PacketBytes[0] == AICB_CMD_GET_PARAMETER)
 			{
 				PacketBytes[2] = Param_ControllerInit;
 			}
@@ -255,8 +254,8 @@ void V2P_GetSetParamater(void)
 			}
 			
 			break;
-		case PARAM_SCK_DURATION:
-			if (PacketBytes[0] == CMD_GET_PARAMETER)
+		case AICB_PARAM_SCK_DURATION:
+			if (PacketBytes[0] == AICB_CMD_GET_PARAMETER)
 			{
 				PacketBytes[2] = eeprom_read_byte(&EEPROMVars.SCKDuration);
 			}
@@ -268,8 +267,8 @@ void V2P_GetSetParamater(void)
 			}
 					
 			break;
-		case PARAM_RESET_POLARITY:
-			if (PacketBytes[0] == CMD_GET_PARAMETER)
+		case AICB_PARAM_RESET_POLARITY:
+			if (PacketBytes[0] == AICB_CMD_GET_PARAMETER)
 			{
 				PacketBytes[2] = eeprom_read_byte(&EEPROMVars.ResetPolarity);		
 			}
@@ -281,13 +280,13 @@ void V2P_GetSetParamater(void)
 			}
 			
 			break;
-		case PARAM_OSC_PSCALE:
-		case PARAM_OSC_CMATCH:
+		case AICB_PARAM_OSC_PSCALE:
+		case AICB_PARAM_OSC_CMATCH:
 			/* Despite not supporting these parameters (STK500 only), the AVR Studio programmer
 			   sends them along with the SCK duration. A OK must be returned or the sequence will fail
 			   and the SCK duration byte will not be sent.                                             */
 		
-			if (PacketBytes[0] == CMD_GET_PARAMETER)
+			if (PacketBytes[0] == AICB_CMD_GET_PARAMETER)
 			  PacketBytes[2] = 0;             // If the command is a read, return a 0 for both parameters
 			else
 			  MessageSize = 2;                // Otherwise just send back an OK if the command is a set		
@@ -295,7 +294,7 @@ void V2P_GetSetParamater(void)
 			break;
 		default:                             // Unrecognised parameter
 			MessageSize = 2;
-			PacketBytes[1] = STATUS_CMD_FAILED;			
+			PacketBytes[1] = AICB_STATUS_CMD_FAILED;			
 	}
 	
 	V2P_SendPacket();

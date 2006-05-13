@@ -24,11 +24,11 @@
 #define PM_LOCKFUSEBITS_WRITE  3
 #define PM_LOCKFUSEBITS_READ   4
 
-#define PM_PAGELENGTH_FOUNDBIT (uint16_t)(1 << 15)
+#define PM_PAGELENGTH_FOUNDBIT (1 << 15)
 
 #define PM_MAX_FUSELOCKBITS    10
 
-#define PM_EEPROM_OFFSET       (uint32_t)(1024UL * 257UL)
+#define PM_EEPROM_OFFSET       (1024UL * 257UL)
 
 // EXTERNAL VARIABLES:
 extern uint8_t  MemoryType;

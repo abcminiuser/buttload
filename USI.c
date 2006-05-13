@@ -1,19 +1,18 @@
-// This file has been prepared for Doxygen automatic documentation generation.
-/*! \file ********************************************************************
+/*!*************************************************************************
 *
 * Atmel Corporation
 *
-* \li File:               spi_via_usi_driver.c
-* \li Compiler:           IAR EWAAVR 3.10c
-* \li Support mail:       avr@atmel.com
+* File:               USI.c
+* Compiler:           GCC (Ported)
+* Support mail:       avr@atmel.com
 *
-* \li Supported devices:  All devices with Universal Serial Interface (USI)
+* Supported devices:  All devices with Universal Serial Interface (USI)
 *                         capabilities can be used.
 *                         The example is written for ATmega169.
 *
-* \li AppNote:            AVR319 - Using the USI module for SPI communication.
+* AppNote:            AVR319 - Using the USI module for SPI communication.
 *
-* \li Description:        Example on how to use the USI module for communicating
+* Description:        Example on how to use the USI module for communicating
 *                         with SPI compatible devices. The functions and variables
 *                         prefixed 'USI_' can be renamed to be able to use several
 *                         spi drivers (using different interfaces) with similar names.
@@ -22,15 +21,17 @@
 *                         $Revision: 1.4 $
 *                         $Date: Monday, September 13, 2004 12:08:54 UTC $
 ****************************************************************************/
+
+/*
+	Dean's Note: The USI port is *EXTREAMELY* temperemental. If the setting are
+	             not absolutely correct, the USI system will not function and the
+				 AVR will hang (eternal wait for the TransferComplete flag). Do
+				 not change any part of the USI code as even the simplest of changes
+				 will most likely cause the USI port to not function correctly.
+*/
+
 #include "USI.h"
 
-/*! \brief  Data input register buffer.
- *
- *  Incoming bytes are stored in this byte until the next transfer is complete.
- *  This byte can be used the same way as the SPI data register in the native
- *  SPI module, which means that the byte must be read before the next transfer
- *  completes and overwrites the current value.
- */
 volatile uint8_t storedUSIDR;
 volatile uint8_t TransferComplete;
 

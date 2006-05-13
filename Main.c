@@ -178,8 +178,8 @@ const uint8_t    PRG_C[]                 PROGMEM = "ERASE ONLY";
 
 const uint8_t*   ProgOptions[]           PROGMEM = {PRG_D, PRG_E, PRG_DE, PRG_F, PRG_L, PRG_FL, PRG_C};
 
-const uint8_t    USISpeeds[USI_PRESET_SPEEDS][10] PROGMEM = {" 57153 HZ", " 86738 HZ", "113427 HZ", "210651 HZ"};
-const uint8_t    SIFONames[2][15]                 PROGMEM = {"STORAGE SIZES", "VIEW DATA TAGS"};
+const uint8_t    USISpeeds[USI_PRESET_SPEEDS][10]  PROGMEM = {" 57153 HZ", " 86738 HZ", "113427 HZ", "210651 HZ"};
+const uint8_t    SIFONames[2][15]                  PROGMEM = {"STORAGE SIZES", "VIEW DATA TAGS"};
 
 // GLOBAL EEPROM VARIABLE STRUCT:
 EEPROMVarsType EEPROMVars EEMEM;
@@ -220,7 +220,7 @@ int main(void)
 	if (eeprom_read_byte(&EEPROMVars.MagicNumber) != MAGIC_NUM) // Check if first ButtLoad run
 	{
 
-		for (uint16_t EAddr = 0; EAddr < 512; EAddr++) // Clear the EEPROM if first run
+		for (uint16_t EAddr = 0; EAddr < sizeof(EEPROMVars); EAddr++) // Clear the EEPROM if first run
 		   eeprom_write_byte((uint8_t*)EAddr, 0xFF);
 
 		eeprom_write_byte(&EEPROMVars.MagicNumber, MAGIC_NUM);
@@ -243,9 +243,9 @@ int main(void)
 		if (JoyStatus)                           // Joystick is in the non-center position
 		{
 			if (JoyStatus & JOY_UP)              // Previous function
-			  (CurrFunc == 0)? CurrFunc = (MAIN_TOTALMAINMENUITEMS - 1): CurrFunc--;
+			  (CurrFunc == 0)? CurrFunc = ARRAY_UPPERBOUND(MainFunctionPtrs): CurrFunc--;
 			else if (JoyStatus & JOY_DOWN)      // Next function
-			  (CurrFunc == (MAIN_TOTALMAINMENUITEMS - 1))? CurrFunc = 0 : CurrFunc++;
+			  (CurrFunc == ARRAY_UPPERBOUND(MainFunctionPtrs))? CurrFunc = 0 : CurrFunc++;
 			else if (JoyStatus & JOY_PRESS)     // Select current function
 			  ((FuncPtr)pgm_read_word(&MainFunctionPtrs[CurrFunc]))(); // Run associated function
 			else if (JoyStatus & JOY_RIGHT)
@@ -407,9 +407,9 @@ void FUNCChangeSettings(void)
 		if (JoyStatus)                         // Joystick is in the non-center position
 		{
 			if (JoyStatus & JOY_UP)            // Previous function
-			  (CurrSFunc == 0)? CurrSFunc = 5 : CurrSFunc--;
+			  (CurrSFunc == 0)? CurrSFunc = ARRAY_UPPERBOUND(SettingFunctionPtrs) : CurrSFunc--;
 			else if (JoyStatus & JOY_DOWN)     // Next function
-			  (CurrSFunc == 5)? CurrSFunc = 0 : CurrSFunc++;
+			  (CurrSFunc == ARRAY_UPPERBOUND(SettingFunctionPtrs))? CurrSFunc = 0 : CurrSFunc++;
 			else if (JoyStatus & JOY_PRESS)    // Select current function
 			  ((FuncPtr)pgm_read_word(&SettingFunctionPtrs[CurrSFunc]))(); // Run associated function
 			else if (JoyStatus & JOY_LEFT)
@@ -434,9 +434,9 @@ void FUNCShowAbout(void)
 		if (JoyStatus)
 		{
 			if (JoyStatus & JOY_UP)
-			  (InfoNum == 0)? InfoNum = 3 : InfoNum--;
+			  (InfoNum == 0)? InfoNum = ARRAY_UPPERBOUND(AboutTextPtrs) : InfoNum--;
 			else if (JoyStatus & JOY_DOWN)
-			  (InfoNum == 3)? InfoNum = 0 : InfoNum++;
+			  (InfoNum == ARRAY_UPPERBOUND(AboutTextPtrs))? InfoNum = 0 : InfoNum++;
 			else if (JoyStatus & JOY_LEFT)
 			  return;
 
@@ -450,7 +450,6 @@ void FUNCShowAbout(void)
 void FUNCAVRISPMode(void)
 {
 	USART_ENABLE(USART_TX_ON, USART_RX_ON);
-
 	LCD_puts_f(AVRISPModeMessage);
 	
 	InterpretPacketRoutine = (FuncPtr)AICI_InterpretPacket;
@@ -464,7 +463,6 @@ void FUNCProgramDataflash(void)
 	DFSPIRoutinePointer = USI_SPITransmit;
 	
 	USART_ENABLE(USART_TX_ON, USART_RX_ON);
-
 	LCD_puts_f(DataFlashProgMode);
 
 	InterpretPacketRoutine = (FuncPtr)PD_InterpretAVRISPPacket;
@@ -477,7 +475,7 @@ void FUNCProgramDataflash(void)
 void FUNCProgramAVR(void)
 {
 	uint8_t  DoneFailMessageBuff[19];
-	uint8_t  Fault = ISPCC_NO_FAULT;
+	uint8_t  Fault    = ISPCC_NO_FAULT;
 	uint8_t  ProgMode = 0;
 
 	SPI_SPIInit();
@@ -500,9 +498,9 @@ void FUNCProgramAVR(void)
 			else if (JoyStatus & JOY_PRESS)
 			  break;
 			else if (JoyStatus & JOY_UP)
-			  (ProgMode == 0)? ProgMode = 6 : ProgMode--;
+			  (ProgMode == 0)? ProgMode = ARRAY_UPPERBOUND(ProgOptions) : ProgMode--;
 			else if (JoyStatus & JOY_DOWN)
-			  (ProgMode == 6)? ProgMode = 0 : ProgMode++;
+			  (ProgMode == ARRAY_UPPERBOUND(ProgOptions))? ProgMode = 0 : ProgMode++;
 
 			LCD_puts_f((uint8_t*)pgm_read_word(&ProgOptions[ProgMode])); // Show current function onto the LCD
 
@@ -523,7 +521,7 @@ void FUNCProgramAVR(void)
 
 	CurrAddress = 0;
 
-	if (PacketBytes[1] == STATUS_CMD_OK) // ISPCC_EnterChipProgrammingMode alters the PacketBytes buffer rather than returning a value
+	if (PacketBytes[1] == AICB_STATUS_CMD_OK) // ISPCC_EnterChipProgrammingMode alters the PacketBytes buffer rather than returning a value
 	{						
 		if ((ProgMode == 6) || (ProgMode == 0) || (ProgMode == 2)) // Erase chip, or program flash mode
 		{
@@ -641,11 +639,11 @@ void FUNCStoreProgram(void)
 	  return;
 			
 	USART_ENABLE(USART_TX_ON, USART_RX_ON);
-
 	LCD_puts_f(PSTR("*STORAGE MODE*"));
 
 	InterpretPacketRoutine = (FuncPtr)PM_InterpretAVRISPPacket;
 	V2P_RunStateMachine();
+	
 	DF_EnableDataflash(FALSE);
 	SPI_SPIOFF();
 }
@@ -672,7 +670,7 @@ void FUNCClearMem(void)
 
 	LCD_puts_f(WaitText);
 
-	for (uint16_t EAddr = 0; EAddr < 512; EAddr++)
+	for (uint16_t EAddr = 0; EAddr < sizeof(EEPROMVars); EAddr++)
 	  eeprom_write_byte((uint8_t*)EAddr, 0xFF);
 
 	LCD_puts_f(PSTR("MEM CLEARED"));
@@ -724,7 +722,7 @@ void FUNCSetISPSpeed(void)
 {
 	uint8_t CurrSpeed = eeprom_read_byte(&EEPROMVars.SCKDuration);
 
-	if (CurrSpeed > (USI_PRESET_SPEEDS - 1)) CurrSpeed = (USI_PRESET_SPEEDS - 1); // Protection against blank EEPROM
+	if (CurrSpeed > ARRAY_UPPERBOUND(USISpeeds)) CurrSpeed = ARRAY_UPPERBOUND(USISpeeds); // Protection against blank EEPROM
 
 	JoyStatus = 1;                         // Invalid value to force the LCD to update
 
@@ -734,11 +732,11 @@ void FUNCSetISPSpeed(void)
 		{
 			if (JoyStatus & JOY_UP)
 			{
-				(CurrSpeed == 0)? CurrSpeed = (USI_PRESET_SPEEDS - 1) : CurrSpeed--;
+				(CurrSpeed == 0)? CurrSpeed = ARRAY_UPPERBOUND(USISpeeds) : CurrSpeed--;
 			}
 			else if (JoyStatus & JOY_DOWN)
 			{
-				(CurrSpeed == (USI_PRESET_SPEEDS - 1))? CurrSpeed = 0 : CurrSpeed++;
+				(CurrSpeed == ARRAY_UPPERBOUND(USISpeeds))? CurrSpeed = 0 : CurrSpeed++;
 			}
 			else if (JoyStatus & JOY_LEFT)
 			{
@@ -812,11 +810,11 @@ void FUNCSetAutoSleepTimeOut(void)
 		{
 			if (JoyStatus & JOY_UP)
 			{
-				(SleepVal == 0)? SleepVal = 4 : SleepVal--;
+				(SleepVal == 0)? SleepVal = ARRAY_UPPERBOUND(AutoSleepTOValues) : SleepVal--;
 			}
 			if (JoyStatus & JOY_DOWN)
 			{
-				(SleepVal == 4)? SleepVal = 0 : SleepVal++;
+				(SleepVal == ARRAY_UPPERBOUND(AutoSleepTOValues))? SleepVal = 0 : SleepVal++;
 			}
 			else if (JoyStatus & JOY_LEFT)
 			{

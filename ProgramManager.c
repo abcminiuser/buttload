@@ -72,7 +72,7 @@ void PM_InterpretAVRISPPacket(void)
 
 	switch (PacketBytes[0])
 	{
-		case CMD_ENTER_PROGMODE_ISP:
+		case AICB_CMD_ENTER_PROGMODE_ISP:
 			MessageSize = 2;
 						
 			for (uint8_t PacketB = 0; PacketB <= 11; PacketB++)          // Save the enter programming mode command bytes
@@ -82,10 +82,10 @@ void PM_InterpretAVRISPPacket(void)
 			CurrentMode = PM_NO_SETUP;                                   // Clear the current mode variable
 
 			MAIN_SETSTATUSLED(MAIN_STATLED_RED);
-			PacketBytes[1] = STATUS_CMD_OK;
+			PacketBytes[1] = AICB_STATUS_CMD_OK;
 
 			break;			
-		case CMD_LEAVE_PROGMODE_ISP:
+		case AICB_CMD_LEAVE_PROGMODE_ISP:
 			MessageSize = 2;
 
 			PM_CheckEndOfFuseLockData();                                 // Check for remaining bytes to be stored and general cleanup
@@ -95,18 +95,18 @@ void PM_InterpretAVRISPPacket(void)
 			DF_EnableDataflash(FALSE);
 
 			MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);
-			PacketBytes[1] = STATUS_CMD_OK;
+			PacketBytes[1] = AICB_STATUS_CMD_OK;
 
 			break;
-		case CMD_READ_SIGNATURE_ISP:
+		case AICB_CMD_READ_SIGNATURE_ISP:
 			MessageSize = 4;
 
-			PacketBytes[1] = STATUS_CMD_OK;                              // Data byte is encased in CMD_OKs
-			PacketBytes[2] = 0x01;                                       // Signature bytes all return "01" in storage mode
-			PacketBytes[3] = STATUS_CMD_OK;                              // Data byte is encased in CMD_OKs
+			PacketBytes[1] = AICB_STATUS_CMD_OK;                          // Data byte is encased in CMD_OKs
+			PacketBytes[2] = 0x01;                                        // Signature bytes all return "01" in storage mode
+			PacketBytes[3] = AICB_STATUS_CMD_OK;                          // Data byte is encased in CMD_OKs
 
 			break;
-		case CMD_CHIP_ERASE_ISP:
+		case AICB_CMD_CHIP_ERASE_ISP:
 			MessageSize = 2;
 
 			for (uint8_t PacketB = 1; PacketB <= 6; PacketB++)          // Save the erase chip command bytes to EEPROM
@@ -120,19 +120,19 @@ void PM_InterpretAVRISPPacket(void)
 						
 			eeprom_write_byte(&EEPROMVars.EraseCmdStored, TRUE);
 			
-			PacketBytes[1] = STATUS_CMD_OK;
+			PacketBytes[1] = AICB_STATUS_CMD_OK;
 			
 			break;
-		case CMD_READ_OSCCAL_ISP:
+		case AICB_CMD_READ_OSCCAL_ISP:
 			MessageSize = 4;
 
-			PacketBytes[1] = STATUS_CMD_OK;                             // Data byte is encased in CMD_OKs
+			PacketBytes[1] = AICB_STATUS_CMD_OK;                        // Data byte is encased in CMD_OKs
 			PacketBytes[2] = 0x00;                                      // Return 0x00 for the OSCCAL byte
-			PacketBytes[3] = STATUS_CMD_OK;                             // Data byte is encased in CMD_OKs
+			PacketBytes[3] = AICB_STATUS_CMD_OK;                        // Data byte is encased in CMD_OKs
 
 			break;
-		case CMD_READ_FUSE_ISP:
-		case CMD_READ_LOCK_ISP:
+		case AICB_CMD_READ_FUSE_ISP:
+		case AICB_CMD_READ_LOCK_ISP:
 			MessageSize = 4;
 	
 			if (CurrentMode != PM_LOCKFUSEBITS_READ)                    // First lock or fuse byte being read, set the EEPROM pointer
@@ -143,24 +143,24 @@ void PM_InterpretAVRISPPacket(void)
 				CurrentMode  = PM_LOCKFUSEBITS_READ;
 			}
 			
-			if (CurrBuffByte > eeprom_read_byte((PacketBytes[0] == CMD_READ_FUSE_ISP)? &EEPROMVars.TotalFuseBytes : &EEPROMVars.TotalLockBytes))  // Trying to read more fuse/lock bytes than are stored in memory
+			if (CurrBuffByte > eeprom_read_byte((PacketBytes[0] == AICB_CMD_READ_FUSE_ISP)? &EEPROMVars.TotalFuseBytes : &EEPROMVars.TotalLockBytes))  // Trying to read more fuse/lock bytes than are stored in memory
 			{
 				PacketBytes[2] = 0xFF;                                 // Return 0xFF for the fuse/lock byte
 			}
 			else
 			{
-				PacketBytes[2] = eeprom_read_byte((uint8_t*)(((PacketBytes[0] == CMD_READ_FUSE_ISP)? &EEPROMVars.FuseBytes : &EEPROMVars.LockBytes) // Starting location
-									                         + (CurrBuffByte << 2) + (PacketBytes[1] - 1)));                                        // The start position of the actual fuse/lock byte to read (4 bytes each));
+				PacketBytes[2] = eeprom_read_byte((uint8_t*)(((PacketBytes[0] == AICB_CMD_READ_FUSE_ISP)? &EEPROMVars.FuseBytes : &EEPROMVars.LockBytes) // Starting location
+									                         + (CurrBuffByte << 2) + (PacketBytes[1] - 1)));                                             // The start position of the actual fuse/lock byte to read (4 bytes each));
 			}
 
-			PacketBytes[1] = STATUS_CMD_OK;                            // Data byte is encased in CMD_OKs
-			PacketBytes[3] = STATUS_CMD_OK;                            // Data byte is encased in CMD_OKs
+			PacketBytes[1] = AICB_STATUS_CMD_OK;                       // Data byte is encased in CMD_OKs
+			PacketBytes[3] = AICB_STATUS_CMD_OK;                       // Data byte is encased in CMD_OKs
 
 			CurrBuffByte++;
 
 			break;
-		case CMD_PROGRAM_FUSE_ISP:
-		case CMD_PROGRAM_LOCK_ISP:
+		case AICB_CMD_PROGRAM_FUSE_ISP:
+		case AICB_CMD_PROGRAM_LOCK_ISP:
 			MessageSize = 3;
 
 			if (CurrentMode != PM_LOCKFUSEBITS_WRITE)                  // First lock or fuse byte being written, set the EEPROM pointer
@@ -169,7 +169,7 @@ void PM_InterpretAVRISPPacket(void)
 				CurrBuffByte  = 0;                                     // CurrBuffByte is used to store the total fuse/lock bytes written
 			}
 
-			if (PacketBytes[0] == CMD_PROGRAM_FUSE_ISP)
+			if (PacketBytes[0] == AICB_CMD_PROGRAM_FUSE_ISP)
 			{
 				EEPROMAddress = (uint8_t*)(&EEPROMVars.FuseBytes + (CurrBuffByte << 2));
 				MemoryType    = TYPE_FUSE;
@@ -191,17 +191,17 @@ void PM_InterpretAVRISPPacket(void)
 				CurrBuffByte++;                                        // Increment the total fuse/lock bytes written counter
 			}
 			
-			PacketBytes[1] = STATUS_CMD_OK;                            // Two CMD_OKs are always returned
-			PacketBytes[2] = STATUS_CMD_OK;                            // Two CMD_OKs are always returned
+			PacketBytes[1] = AICB_STATUS_CMD_OK;                       // Two CMD_OKs are always returned
+			PacketBytes[2] = AICB_STATUS_CMD_OK;                       // Two CMD_OKs are always returned
 
 			break;
-		case CMD_PROGRAM_FLASH_ISP:
-		case CMD_PROGRAM_EEPROM_ISP:
+		case AICB_CMD_PROGRAM_FLASH_ISP:
+		case AICB_CMD_PROGRAM_EEPROM_ISP:
 			MessageSize = 2;
 
-			if (CurrentMode != PM_DATAFLASH_WRITE)                     // First programming packet
+			if (CurrentMode != PM_DATAFLASH_WRITE)                      // First programming packet
 			{
-				if (PacketBytes[0] == CMD_PROGRAM_FLASH_ISP)           // Flash programming mode
+				if (PacketBytes[0] == AICB_CMD_PROGRAM_FLASH_ISP)       // Flash programming mode
 				{
 					EEPROMAddress = (uint8_t*)&EEPROMVars.WriteProgram; // Set the eeprom address to the Program command bytes location
 					PM_SetupDFAddressCounters(TYPE_FLASH);
@@ -232,16 +232,16 @@ void PM_InterpretAVRISPPacket(void)
 				GPageLength |= PM_PAGELENGTH_FOUNDBIT;                 // Bit 15 is used to indicate if the length has been found
 			}
 
-			PacketBytes[1] = STATUS_CMD_OK;
+			PacketBytes[1] = AICB_STATUS_CMD_OK;
 		
 			break;
-		case CMD_READ_FLASH_ISP:
-		case CMD_READ_EEPROM_ISP:	
+		case AICB_CMD_READ_FLASH_ISP:
+		case AICB_CMD_READ_EEPROM_ISP:	
 			if (CurrentMode != PM_DATAFLASH_READ)
 			{
 				PM_CheckEndOfFuseLockData();                           // Check for remaining bytes to be stored and general cleanup
 				
-				PM_SetupDFAddressCounters((PacketBytes[0] == CMD_READ_FLASH_ISP)? TYPE_FLASH : TYPE_EEPROM);
+				PM_SetupDFAddressCounters((PacketBytes[0] == AICB_CMD_READ_FLASH_ISP)? TYPE_FLASH : TYPE_EEPROM);
 				DF_ContinuousReadEnable(CurrPageAddress, CurrBuffByte);
 				
 				CurrentMode = PM_DATAFLASH_READ;
@@ -251,7 +251,7 @@ void PM_InterpretAVRISPPacket(void)
 			uint16_t BytesToRead = ((uint16_t)PacketBytes[1] << 8)    // \. Load in the number of bytes that is to
 			                     | PacketBytes[2];                    // /  be read into a temp variable (MSB first)
 						
-			uint16_t BytesInMem  = PM_GetStoredDataSize((PacketBytes[0] == CMD_READ_FLASH_ISP)? TYPE_FLASH : TYPE_EEPROM);
+			uint16_t BytesInMem  = PM_GetStoredDataSize((PacketBytes[0] == AICB_CMD_READ_FLASH_ISP)? TYPE_FLASH : TYPE_EEPROM);
 
 			for (uint16_t ReadByte = 0; ReadByte < BytesToRead; ReadByte++)
 			{
@@ -261,14 +261,14 @@ void PM_InterpretAVRISPPacket(void)
 			
 			MessageSize = BytesToRead + 3;
 
-			PacketBytes[1]               = STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
-			PacketBytes[2 + BytesToRead] = STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
+			PacketBytes[1]               = AICB_STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
+			PacketBytes[2 + BytesToRead] = AICB_STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
 		
 			break;
 		default:
 			MessageSize = 1;
 			
-			PacketBytes[1] = STATUS_CMD_UNKNOWN;
+			PacketBytes[1] = AICB_STATUS_CMD_UNKNOWN;
 	}
 
 	V2P_SendPacket();                                   // Send the response packet
@@ -363,13 +363,13 @@ void PM_CreateProgrammingPackets(const uint8_t Type)
 	{
 		EEPROMAddress = (uint8_t*)&EEPROMVars.WriteProgram;       // Set the EEPROM pointer to the write flash command bytes location
 		DF_ContinuousReadEnable(0, 0);
-		PacketBytes[0] = CMD_PROGRAM_FLASH_ISP;
+		PacketBytes[0] = AICB_CMD_PROGRAM_FLASH_ISP;
 	}
 	else
 	{
 		EEPROMAddress = (uint8_t*)&EEPROMVars.WriteEEPROM;        // Set the EEPROM pointer to the write EEPROM command bytes location
 		DF_ContinuousReadEnable(PM_EEPROM_OFFSET / DF_INTERNALDF_BUFFBYTES, PM_EEPROM_OFFSET % DF_INTERNALDF_BUFFBYTES); // Start read from the EEPROM offset location
-		PacketBytes[0] = CMD_PROGRAM_EEPROM_ISP;
+		PacketBytes[0] = AICB_CMD_PROGRAM_EEPROM_ISP;
 	}
 
 	for (uint8_t B = 1; B <= 9 ; B++)                 // Load in the write data command bytes

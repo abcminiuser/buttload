@@ -60,7 +60,7 @@ void DF_GetChipCharacteristics(void)
 
 	DF_TOGGLEENABLE();
 	
-	DF_SENDSPIBYTE(StatusReg);                    // Send the get status register command
+	DF_SENDSPIBYTE(DFCB_STATUSREG);               // Send the get status register command
 	
 	DataIndex  = ((DF_SENDSPIBYTE(0x00) & 0x38) >> 3);
 
@@ -78,7 +78,7 @@ void DF_WaitWhileBusy(void)
 
 	DF_TOGGLEENABLE();
 	
-	DF_SENDSPIBYTE(StatusReg);                    // Send the get status register command
+	DF_SENDSPIBYTE(DFCB_STATUSREG);               // Send the get status register command
 	
 	while (!(DF_SENDSPIBYTE(0x00) & DF_BUSYMASK));
 }
@@ -89,7 +89,7 @@ void DF_CopyBufferToFlashPage(const uint16_t PageAddress)
 
 	DF_TOGGLEENABLE();
 
-	DF_SENDSPIBYTE(Buf1ToFlashWE);                // Send the buffer copy command code
+	DF_SENDSPIBYTE(DFCB_BUF1TOFLASHWE);           // Send the buffer copy command code
 	DF_SENDSPIBYTE((uint8_t)(PageAddress >> PageShiftHigh)); // Send the upper part of the page address
 	DF_SENDSPIBYTE((uint8_t)(PageAddress << PageShiftLow));  // Send the lower part of the page address
 	DF_SENDSPIBYTE(0x00);                         // Send a dummy byte	
@@ -103,7 +103,7 @@ void DF_CopyFlashPageToBuffer(const uint16_t PageAddress)
 
 	DF_TOGGLEENABLE();
 
-	DF_SENDSPIBYTE(FlashToBuf1Transfer);          // Send the memory copy command code
+	DF_SENDSPIBYTE(DFCB_FLASHTOBUF1TRANSFER);     // Send the memory copy command code
 	DF_SENDSPIBYTE((uint8_t)(PageAddress >> PageShiftHigh)); // Send the upper part of the page address
 	DF_SENDSPIBYTE((uint8_t)(PageAddress << PageShiftLow));  // Send the lower part of the page address
 	DF_SENDSPIBYTE(0x00);                         // Send a dummy byte	
@@ -117,7 +117,7 @@ void DF_BufferWriteEnable(const uint16_t BuffAddress)
 
 	DF_TOGGLEENABLE();
 
-	DF_SENDSPIBYTE(Buf1Write);                    // Send the buffer write command code
+	DF_SENDSPIBYTE(DFCB_BUF1WRITE);               // Send the buffer write command code
 	DF_SENDSPIBYTE(0x00);                         // Send a dummy byte
 	DF_SENDSPIBYTE((uint8_t)(BuffAddress >> 8));  // Send the buffer high address	
 	DF_SENDSPIBYTE((uint8_t)(BuffAddress));       // Send the buffer low address	
@@ -129,7 +129,7 @@ void DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddr
 
 	DF_TOGGLEENABLE();
 	
-	DF_SENDSPIBYTE(ContArrayRead);
+	DF_SENDSPIBYTE(DFCB_CONTARRAYREAD);
 	DF_SENDSPIBYTE((uint8_t)(PageAddress >> PageShiftHigh));
 	DF_SENDSPIBYTE((uint8_t)((PageAddress << PageShiftLow) + (BuffAddress >> 8)));
 	DF_SENDSPIBYTE((uint8_t)(BuffAddress));
@@ -144,7 +144,7 @@ uint8_t DF_ReadBufferByte(const uint16_t BuffAddress)
 
 	DF_TOGGLEENABLE();
 	
-	DF_SENDSPIBYTE(Buf1Read);
+	DF_SENDSPIBYTE(DFCB_BUF1READ);
 	DF_SENDSPIBYTE((uint8_t)(BuffAddress >> 8));
 	DF_SENDSPIBYTE((uint8_t)(BuffAddress));
 	DF_SENDSPIBYTE(0x00);
@@ -158,7 +158,7 @@ void DF_EraseBlock(const uint16_t BlockToErase)
 
 	DF_TOGGLEENABLE();
 
-	DF_SENDSPIBYTE(BlockErase);                   // Send block erase command
+	DF_SENDSPIBYTE(DFCB_BLOCKERASE);                   // Send block erase command
 	DF_SENDSPIBYTE((uint8_t)(BlockToErase >> 8));
 	DF_SENDSPIBYTE((uint8_t)(BlockToErase));
 	DF_SENDSPIBYTE(0x00);

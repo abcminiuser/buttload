@@ -43,7 +43,7 @@ void ISPCC_EnterChipProgrammingMode(void)
 
 			InProgrammingMode = TRUE;
 			MAIN_SETSTATUSLED(MAIN_STATLED_RED);
-			PacketBytes[1] = STATUS_CMD_OK;
+			PacketBytes[1] = AICB_STATUS_CMD_OK;
 			return;
 		}
 		
@@ -55,7 +55,7 @@ void ISPCC_EnterChipProgrammingMode(void)
 	// resetting the status leds to green (ready) and send a fail message.
 
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);
-	PacketBytes[1] = STATUS_CMD_FAILED;
+	PacketBytes[1] = AICB_STATUS_CMD_FAILED;
 }
 
 void ISPCC_ProgramChip(void)
@@ -75,7 +75,7 @@ void ISPCC_ProgramChip(void)
 		{
 			ByteToWrite = PacketBytes[10 + WriteByte];
 		
-			if (PacketBytes[0] == CMD_PROGRAM_FLASH_ISP) // Flash write mode - word addresses so MSB/LSB masking 
+			if (PacketBytes[0] == AICB_CMD_PROGRAM_FLASH_ISP) // Flash write mode - word addresses so MSB/LSB masking 
 			   USI_SPITransmit(WriteCommand | ((WriteByte & 0x01)? ISPCC_HIGH_BYTE_WRITE : ISPCC_LOW_BYTE_WRITE));
 			else                                         // EEPROM write mode - byte addresses so no masking 
 			   USI_SPITransmit(WriteCommand);
@@ -86,17 +86,17 @@ void ISPCC_ProgramChip(void)
 			if (!(PollAddress))
 			{
 				if ((PacketBytes[8] != ByteToWrite)       // Can do polling
-				   && ((PacketBytes[0] == CMD_PROGRAM_FLASH_ISP) || ((PacketBytes[0] == CMD_PROGRAM_EEPROM_ISP) && (PacketBytes[9] != ByteToWrite))))
+				   && ((PacketBytes[0] == AICB_CMD_PROGRAM_FLASH_ISP) || ((PacketBytes[0] == AICB_CMD_PROGRAM_EEPROM_ISP) && (PacketBytes[9] != ByteToWrite))))
 				{
 					PollAddress = (CurrAddress & 0xFFFF); // Save the current address
 				
-					if (PacketBytes[0] == CMD_PROGRAM_FLASH_ISP)
+					if (PacketBytes[0] == AICB_CMD_PROGRAM_FLASH_ISP)
 					   PollAddress = ((PollAddress << 1) + (WriteByte & 0x01));
 				}
 			}
 
 			// Flash addresses are in words; only increment address on odd byte, OR if it's the EEPROM being programmed (byte addresses)
-			if ((WriteByte & 0x01) || (PacketBytes[0] == CMD_PROGRAM_EEPROM_ISP))
+			if ((WriteByte & 0x01) || (PacketBytes[0] == AICB_CMD_PROGRAM_EEPROM_ISP))
 			   V2P_IncrementCurrAddress();
 		}
 
@@ -120,7 +120,7 @@ void ISPCC_ProgramChip(void)
 		{
 			ByteToWrite = PacketBytes[10 + WriteByte];
 
-			if (PacketBytes[0] == CMD_PROGRAM_FLASH_ISP)
+			if (PacketBytes[0] == AICB_CMD_PROGRAM_FLASH_ISP)
 			   USI_SPITransmit(WriteCommand | ((WriteByte & 0x01)? ISPCC_HIGH_BYTE_WRITE : ISPCC_LOW_BYTE_WRITE));
 			else
 			   USI_SPITransmit(WriteCommand);					
@@ -131,11 +131,11 @@ void ISPCC_ProgramChip(void)
 			PollType = ProgMode;
 
 			if ((PacketBytes[8] != ByteToWrite)           // Can do polling
-			   && ((PacketBytes[0] == CMD_PROGRAM_FLASH_ISP) || ((PacketBytes[0] == CMD_PROGRAM_EEPROM_ISP) && (PacketBytes[9] != ByteToWrite))))
+			   && ((PacketBytes[0] == AICB_CMD_PROGRAM_FLASH_ISP) || ((PacketBytes[0] == AICB_CMD_PROGRAM_EEPROM_ISP) && (PacketBytes[9] != ByteToWrite))))
 			{
 				PollAddress = (CurrAddress & 0xFFFF);     // Save the current address;
 
-				if (PacketBytes[0] == CMD_PROGRAM_FLASH_ISP)
+				if (PacketBytes[0] == AICB_CMD_PROGRAM_FLASH_ISP)
 				   PollAddress = ((PollAddress << 1) + (WriteByte & 0x01));
 			}
 			else
@@ -144,7 +144,7 @@ void ISPCC_ProgramChip(void)
 			}					
 
 			// Flash addresses are in words; only increment address on the odd byte, OR if it's the EEPROM being programmed (byte addresses)
-			if ((WriteByte & 0x01) || (PacketBytes[0] == CMD_PROGRAM_EEPROM_ISP))
+			if ((WriteByte & 0x01) || (PacketBytes[0] == AICB_CMD_PROGRAM_EEPROM_ISP))
 			   V2P_IncrementCurrAddress();
 
 			ISPCC_PollForProgComplete(PollType, PollAddress);
@@ -167,7 +167,7 @@ void ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr)
 		case ISPCC_POLLTYPE_DATA:
 			ProgCommand = PacketBytes[7];
 			
-			if (PacketBytes[0] == CMD_PROGRAM_FLASH_ISP) // Flash uses word addresses
+			if (PacketBytes[0] == AICB_CMD_PROGRAM_FLASH_ISP) // Flash uses word addresses
 			{
 				ProgCommand  |= ((PollAddr & 0x01)? ISPCC_HIGH_BYTE_READ : ISPCC_LOW_BYTE_READ);
 				PollAddr    >>= 1;

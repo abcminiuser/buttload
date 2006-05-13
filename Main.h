@@ -9,7 +9,7 @@
 #define MAIN_H
 
 // REMOVE BEFORE RELEASE!!!!
-#define DEBUG
+//#define DEBUG
 // !!!!!!!!!!!!!!!!!!!!!!!!!
 
 // TYPE DEFINITIONS:
@@ -72,8 +72,6 @@ extern EEPROMVarsType EEPROMVars EEMEM;
 #define MAIN_RESETCS_INACTIVE    1
 #define MAIN_RESETCS_EXTDFACTIVE 2
 
-#define MAIN_TOTALMAINMENUITEMS  7
-
 #define JOY_LEFT                 (1 << 2)
 #define JOY_RIGHT                (1 << 3)
 #define JOY_UP                   (1 << 6)
@@ -89,6 +87,8 @@ extern EEPROMVarsType EEPROMVars EEMEM;
 
 #define TRUE                     1
 #define FALSE                    0
+
+#define ARRAY_UPPERBOUND(array)  ((sizeof(array) / sizeof(array[0])) - 1)
 
 #define MACROS                   do
 #define MACROE                   while (0)

@@ -16,6 +16,8 @@ Current Version: Public Release 1.4
 	  * Correct command timeout error is now returned via the packet state machine instead of a command error
 	  * Dataflash routines now make local copies of the SPI send routine pointer to save codespace and time
 	  * Fixed default USI speed of 210651Hz showing as 57153Hz in SET SPI SPEED function
+	  * EEPROM erasing changed so that only the used memory locations are cleared to minimise wear
+	  * Added a ARRAY_UPPERBOUND macro to provide automatic code adjustment to increased array sizes
 
 	IN PUBLIC RELEASE 1.3:
 	=======================================

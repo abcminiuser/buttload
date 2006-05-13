@@ -26,7 +26,7 @@ void OSCCAL_Calibrate(void)
 	// Make sure all clock division is turned off (8Mhz RC clock)
 	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_CLOCKSPEED_8MHZ);
 
-	// Inital OSCCAL of half its maximum for speed
+	// Inital OSCCAL of half its maximum
 	OSCCAL = (0x7F / 2);
 
 	// Save the SREG

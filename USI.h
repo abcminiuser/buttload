@@ -25,9 +25,9 @@
 /*  Prescaler value converted to bit settings. */
 #define TC0_PS_1               (1<<CS00)
 #define TC0_PS_8               (1<<CS01)
-#define TC0_PS_64              (1<<CS01)|(1<<CS00)
+#define TC0_PS_64              ((1<<CS01)|(1<<CS00))
 #define TC0_PS_256             (1<<CS02)
-#define TC0_PS_1024            (1<<CS02)|(1<<CS00)
+#define TC0_PS_1024            ((1<<CS02)|(1<<CS00))
 
 /* Other Defines */
 #define USI_PRESET_SPEEDS       4

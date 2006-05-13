@@ -15,7 +15,7 @@ void AICI_InterpretPacket(void)
 {
 	switch (PacketBytes[0])
 	{
-		case CMD_ENTER_PROGMODE_ISP:
+		case AICB_CMD_ENTER_PROGMODE_ISP:
 			MessageSize = 2;
 			
 			USI_SPIInitMaster(eeprom_read_byte(&EEPROMVars.SCKDuration));
@@ -30,7 +30,7 @@ void AICI_InterpretPacket(void)
 			   LCD_puts_f(SyncErrorMessage);
 			
 			break;
-		case CMD_LEAVE_PROGMODE_ISP:
+		case AICB_CMD_LEAVE_PROGMODE_ISP:
 			MessageSize = 2;
 
 			MAIN_Delay1MS(PacketBytes[1]);           // Wait for the "PreDelay" amount specified in the packet
@@ -41,30 +41,30 @@ void AICI_InterpretPacket(void)
 			
 			USI_SPIOff();
 
-			PacketBytes[1] = STATUS_CMD_OK;      // Return OK
+			PacketBytes[1] = AICB_STATUS_CMD_OK;     // Return OK
 
 			break;
-		case CMD_CHIP_ERASE_ISP:
+		case AICB_CMD_CHIP_ERASE_ISP:
 			MessageSize = 2;
 			
 			for (uint8_t PacketB = 3; PacketB <= 6; PacketB++) // Send the erase commands to the slave AVR
 				USI_SPITransmit(PacketBytes[PacketB]);
 
-			if (PacketBytes[2])                  // Poll mode, value of 1 indicates a busy flag wait
+			if (PacketBytes[2])                       // Poll mode, value of 1 indicates a busy flag wait
 			{
 				do
 					USI_SPITransmitWord(0xF000);
 				while (USI_SPITransmitWord(0x0000) & 0x01);
 			}
-			else                                // Poll mode flag of 0 indicates a predefined delay
+			else                                      // Poll mode flag of 0 indicates a predefined delay
 			{
-				MAIN_Delay1MS(PacketBytes[1]);   // Wait the specified interval to ensure erase complete
+				MAIN_Delay1MS(PacketBytes[1]);         // Wait the specified interval to ensure erase complete
 			}
 			
-			PacketBytes[1] = STATUS_CMD_OK;      // Always return OK
+			PacketBytes[1] = AICB_STATUS_CMD_OK;       // Always return OK
 			
 			break;
-		case CMD_SPI_MULTI:
+		case AICB_CMD_SPI_MULTI:
 				MessageSize = (3 + PacketBytes[2]);    // Number of recieved bytes, plus two OKs and the command byte
 		
 				uint8_t TxBytes      = PacketBytes[1]; // \. The packet data is overwritten during the transfer. Because
@@ -85,14 +85,14 @@ void AICI_InterpretPacket(void)
 				while (RxByteNum++ < RxBytes)                         // Still more bytes to recieve
 				   PacketBytes[2 + RxByteNum] = USI_SPITransmit(0x00); // its answer to be recorded (or more bytes than sent need responses), send dummy bytes to fetch the response(s)
 
-				PacketBytes[1]             = STATUS_CMD_OK; // Data should be encompassed
-				PacketBytes[3 + RxByteNum] = STATUS_CMD_OK; //  by STATS_CMD_OKs
+				PacketBytes[1]             = AICB_STATUS_CMD_OK; // Data should be encompassed
+				PacketBytes[3 + RxByteNum] = AICB_STATUS_CMD_OK; //  by STATS_CMD_OKs
 
 				break;
-		case CMD_READ_SIGNATURE_ISP:
-		case CMD_READ_FUSE_ISP:
-		case CMD_READ_LOCK_ISP:
-		case CMD_READ_OSCCAL_ISP:
+		case AICB_CMD_READ_SIGNATURE_ISP:
+		case AICB_CMD_READ_FUSE_ISP:
+		case AICB_CMD_READ_LOCK_ISP:
+		case AICB_CMD_READ_OSCCAL_ISP:
 			MessageSize = 4;
 	
 			for (uint8_t ByteNum = 1; ByteNum <= 4; ByteNum++)
@@ -103,23 +103,23 @@ void AICI_InterpretPacket(void)
 					PacketBytes[2] = Response;
 			}
 
-			PacketBytes[1] = STATUS_CMD_OK;            // Data byte is encased in CMD_OKs
-			PacketBytes[3] = STATUS_CMD_OK;            // Data byte is encased in CMD_OKs
+			PacketBytes[1] = AICB_STATUS_CMD_OK;       // Data byte is encased in CMD_OKs
+			PacketBytes[3] = AICB_STATUS_CMD_OK;       // Data byte is encased in CMD_OKs
 
 			break;
-		case CMD_PROGRAM_FUSE_ISP:
-		case CMD_PROGRAM_LOCK_ISP:
+		case AICB_CMD_PROGRAM_FUSE_ISP:
+		case AICB_CMD_PROGRAM_LOCK_ISP:
 			MessageSize = 3;
 			
 			for (uint8_t PacketB = 1; PacketB <= 4; PacketB++) // Send the lock-byte values to the slave AVR
 				USI_SPITransmit(PacketBytes[PacketB]);
 
-			PacketBytes[1] = STATUS_CMD_OK;            // Two CMD_OKs are always returned
-			PacketBytes[2] = STATUS_CMD_OK;            // Two CMD_OKs are always returned
+			PacketBytes[1] = AICB_STATUS_CMD_OK;       // Two CMD_OKs are always returned
+			PacketBytes[2] = AICB_STATUS_CMD_OK;       // Two CMD_OKs are always returned
 
 			break;
-		case CMD_READ_FLASH_ISP:
-		case CMD_READ_EEPROM_ISP:
+		case AICB_CMD_READ_FLASH_ISP:
+		case AICB_CMD_READ_EEPROM_ISP:
 			MessageSize = 0;                           // Here to prevent compiler from complaining if a var dec appears straight after a case
 
 			uint8_t  ReadCommand = PacketBytes[3];
@@ -130,7 +130,7 @@ void AICI_InterpretPacket(void)
 
 			for (uint16_t ReadByte = 0; ReadByte < BytesToRead; ReadByte++)
 			{
-				if (PacketBytes[0] == CMD_READ_FLASH_ISP)  // Flash read mode - word addresses so MSB/LSB masking nessesary
+				if (PacketBytes[0] == AICB_CMD_READ_FLASH_ISP)  // Flash read mode - word addresses so MSB/LSB masking nessesary
 				{
 					USI_SPITransmit(ReadCommand | ((ReadByte & 0x01)? ISPCC_HIGH_BYTE_READ : ISPCC_LOW_BYTE_READ));
 				}
@@ -143,7 +143,7 @@ void AICI_InterpretPacket(void)
 
 				PacketBytes[2 + ReadByte] = USI_SPITransmit(0x00); // Read in the byte stored at the requested location
 
-				if ((ReadByte & 0x01) || (PacketBytes[0] == CMD_READ_EEPROM_ISP)) // Flash addresses are given in words; only increment on the odd byte if reading the flash.
+				if ((ReadByte & 0x01) || (PacketBytes[0] == AICB_CMD_READ_EEPROM_ISP)) // Flash addresses are given in words; only increment on the odd byte if reading the flash.
 				{
 					V2P_IncrementCurrAddress();             // Increment the address counter
 				}
@@ -157,23 +157,23 @@ void AICI_InterpretPacket(void)
 				}
 			}
 			
-			PacketBytes[1]               = STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
-			PacketBytes[2 + BytesToRead] = STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
+			PacketBytes[1]               = AICB_STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
+			PacketBytes[2 + BytesToRead] = AICB_STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
 
 			break;
-		case CMD_PROGRAM_FLASH_ISP:
-		case CMD_PROGRAM_EEPROM_ISP:
+		case AICB_CMD_PROGRAM_FLASH_ISP:
+		case AICB_CMD_PROGRAM_EEPROM_ISP:
 			ISPCC_ProgramChip();                          // Program the bytes into the chip
 			
 			MessageSize = 2;
 
-			PacketBytes[1] = STATUS_CMD_OK;
+			PacketBytes[1] = AICB_STATUS_CMD_OK;
 			
 			break;
 		default:                                        // Unknown command, return error
 			MessageSize = 1;
 			
-			PacketBytes[1] = STATUS_CMD_UNKNOWN;
+			PacketBytes[1] = AICB_STATUS_CMD_UNKNOWN;
 	}
 
 	V2P_SendPacket();                                   // Send the response packet
