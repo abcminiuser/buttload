@@ -508,6 +508,7 @@ void FUNCProgramAVR(void)
 		}
 	}
 
+	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_CLOCKSPEED_8MHZ);
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);                // Orange = busy
 	LCD_puts_f(WaitText);
 
@@ -621,6 +622,7 @@ void FUNCProgramAVR(void)
 		MAIN_ShowError(SyncErrorMessage);
 	}
 	
+	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_CLOCKSPEED_1MHZ);
 	MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE); // Release the RESET line and allow the slave AVR to run	
 	USI_SPIOff();
 	DF_EnableDataflash(FALSE);
