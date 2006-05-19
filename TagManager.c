@@ -8,7 +8,7 @@
 #include "TagManager.h"
 
 uint8_t  TagExists  = FALSE;
-uint32_t DFPos;
+uint32_t DFPos      = 0;
 
 // ======================================================================================
 

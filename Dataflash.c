@@ -28,10 +28,10 @@ const uint16_t DF_Pages[]    PROGMEM = {256, 512, 1024, 2048, 4096, 4096, 8192, 
 const uint8_t DataFlashError[] PROGMEM = "DATAFLASH ERROR";
 
 SPIFuncPtr DFSPIRoutinePointer = SPI_SPITransmit;
-DFinfo     DataflashInfo;
-uint16_t   CurrPageAddress;
-uint16_t   CurrBuffByte;
-uint8_t    UseExernalDF;
+uint16_t   CurrPageAddress     = 0;
+uint16_t   CurrBuffByte        = 0;
+uint8_t    UseExernalDF        = FALSE;
+DFinfo     DataflashInfo       = {0,0,0};
 
 // ======================================================================================
 

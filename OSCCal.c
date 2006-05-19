@@ -12,7 +12,7 @@
    mode with an overflow interrupt (clock source is the external 32768Hz crystal on the Butterfly.
    Code will calibrate to 7372800Hz for correct serial transmission at 115200 baud.                 */
 
-static volatile uint16_t ActualCount;
+volatile uint16_t ActualCount = 0;
 
 void OSCCAL_Calibrate(void)
 {

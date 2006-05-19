@@ -8,269 +8,272 @@
    8               		.global __do_copy_data
    9               		.global __do_clear_bss
   17               	.Ltext0:
-  18               	.global	TagExists
-  19               	.global	TagExists
+  18               	.global	DFPos
+  19               	.global	DFPos
   20               		.section .bss
-  23               	TagExists:
-  24 0000 00        		.skip 1,0
-  25               		.section	.progmem.data,"a",@progbits
-  28               	__c.0:
-  29 0000 4E4F 2054 		.string	"NO TAGS"
-  29      4147 5300 
-  30               		.text
-  31               	.global	TM_FindNextTag
-  33               	TM_FindNextTag:
-  34               	.LFB15:
-  35               	.LM1:
-  36               	/* prologue: frame size=25 */
-  37 0000 AF92      		push r10
-  38 0002 BF92      		push r11
-  39 0004 DF92      		push r13
-  40 0006 EF92      		push r14
-  41 0008 FF92      		push r15
-  42 000a 0F93      		push r16
-  43 000c 1F93      		push r17
-  44 000e CF93      		push r28
-  45 0010 DF93      		push r29
-  46 0012 CDB7      		in r28,__SP_L__
-  47 0014 DEB7      		in r29,__SP_H__
-  48 0016 6997      		sbiw r28,25
-  49 0018 0FB6      		in __tmp_reg__,__SREG__
-  50 001a F894      		cli
-  51 001c DEBF      		out __SP_H__,r29
-  52 001e 0FBE      		out __SREG__,__tmp_reg__
-  53 0020 CDBF      		out __SP_L__,r28
-  54               	/* prologue end (size=17) */
-  55               	.LM2:
-  56 0022 80E4      		ldi r24,lo8(64)
-  57 0024 8E8B      		std Y+22,r24
-  58 0026 86E1      		ldi r24,lo8(22)
-  59 0028 A82E      		mov r10,r24
-  60 002a B12C      		mov r11,__zero_reg__
-  61 002c AC0E      		add r10,r28
-  62 002e BD1E      		adc r11,r29
-  63 0030 88E2      		ldi r24,lo8(40)
-  64 0032 8F8B      		std Y+23,r24
-  65 0034 83E2      		ldi r24,lo8(35)
-  66 0036 888F      		std Y+24,r24
-  67 0038 89E2      		ldi r24,lo8(41)
-  68 003a 898F      		std Y+25,r24
-  69               	.LM3:
-  70 003c 81E0      		ldi r24,lo8(1)
-  71 003e 0E94 0000 		call PM_GetStoredDataSize
-  72 0042 7B01      		movw r14,r22
-  73 0044 8C01      		movw r16,r24
-  74               	.LM4:
-  75 0046 DD24      		clr r13
-  76               	.LM5:
-  77 0048 81B3      		in r24,49-0x20
-  78 004a 8063      		ori r24,lo8(48)
-  79 004c 81BB      		out 49-0x20,r24
-  80               	.LM6:
-  81 004e 8091 0000 		lds r24,DFPos
-  82 0052 9091 0000 		lds r25,(DFPos)+1
-  83 0056 A091 0000 		lds r26,(DFPos)+2
-  84 005a B091 0000 		lds r27,(DFPos)+3
-  85               	.L22:
-  86               	.LM7:
-  87 005e 8E15      		cp r24,r14
-  88 0060 9F05      		cpc r25,r15
-  89 0062 A007      		cpc r26,r16
-  90 0064 B107      		cpc r27,r17
-  91 0066 08F0      		brlo .+2
-  92 0068 43C0      		rjmp .L20
-  93               	.LM8:
-  94 006a 80E0      		ldi r24,lo8(0)
-  95 006c 0E94 0000 		call SPI_SPITransmit
-  96 0070 F501      		movw r30,r10
-  97 0072 ED0D      		add r30,r13
-  98 0074 F11D      		adc r31,__zero_reg__
-  99 0076 D394      		inc r13
- 100 0078 9081      		ld r25,Z
- 101 007a 8917      		cp r24,r25
- 102 007c 21F5      		brne .L5
- 103               	.LM9:
- 104 007e 84E0      		ldi r24,lo8(4)
- 105 0080 D816      		cp r13,r24
- 106 0082 11F5      		brne .L13
- 107               	.LBB2:
- 108               	.LM10:
- 109 0084 FF24      		clr r15
- 110 0086 00E0      		ldi r16,lo8(0)
- 111 0088 10E0      		ldi r17,hi8(0)
- 112               	.L11:
- 113               	.LM11:
- 114 008a 80E0      		ldi r24,lo8(0)
- 115 008c 0E94 0000 		call SPI_SPITransmit
- 116               	.LM12:
- 117 0090 9E01      		movw r18,r28
- 118 0092 2F5F      		subi r18,lo8(-(1))
- 119 0094 3F4F      		sbci r19,hi8(-(1))
- 120 0096 F801      		movw r30,r16
- 121 0098 E20F      		add r30,r18
- 122 009a F31F      		adc r31,r19
- 123 009c 8083      		st Z,r24
- 124               	.LM13:
- 125 009e 8823      		tst r24
- 126 00a0 31F0      		breq .L8
- 127               	.LM14:
- 128 00a2 F394      		inc r15
- 129 00a4 0F5F      		subi r16,lo8(-(1))
- 130 00a6 1F4F      		sbci r17,hi8(-(1))
- 131 00a8 83E1      		ldi r24,lo8(19)
- 132 00aa 8F15      		cp r24,r15
- 133 00ac 70F7      		brsh .L11
- 134               	.L8:
- 135               	.LM15:
- 136 00ae 1D8A      		std Y+21,__zero_reg__
- 137               	.LM16:
- 138 00b0 81E0      		ldi r24,lo8(1)
- 139 00b2 8093 0000 		sts TagExists,r24
- 140               	.LM17:
- 141 00b6 C901      		movw r24,r18
- 142 00b8 0E94 0000 		call LCD_puts
- 143               	.LM18:
- 144 00bc 81B3      		in r24,49-0x20
- 145 00be 8F7C      		andi r24,lo8(-49)
- 146 00c0 8061      		ori r24,lo8(16)
- 147 00c2 81BB      		out 49-0x20,r24
- 148               	.LM19:
- 149 00c4 31C0      		rjmp .L1
- 150               	.L5:
- 151               	.LBE2:
- 152               	.LM20:
- 153 00c6 DD24      		clr r13
- 154               	.L13:
- 155               	.LM21:
- 156 00c8 8091 0000 		lds r24,DFPos
- 157 00cc 9091 0000 		lds r25,(DFPos)+1
- 158 00d0 A091 0000 		lds r26,(DFPos)+2
- 159 00d4 B091 0000 		lds r27,(DFPos)+3
- 160 00d8 0196      		adiw r24,1
- 161 00da A11D      		adc r26,__zero_reg__
- 162 00dc B11D      		adc r27,__zero_reg__
- 163 00de 8093 0000 		sts DFPos,r24
- 164 00e2 9093 0000 		sts (DFPos)+1,r25
- 165 00e6 A093 0000 		sts (DFPos)+2,r26
- 166 00ea B093 0000 		sts (DFPos)+3,r27
- 167 00ee B7CF      		rjmp .L22
- 168               	.L20:
- 169               	.LM22:
- 170 00f0 60E0      		ldi r22,lo8(0)
- 171 00f2 70E0      		ldi r23,hi8(0)
- 172 00f4 CB01      		movw r24,r22
- 173 00f6 0E94 0000 		call DF_ContinuousReadEnable
- 174               	.LM23:
- 175 00fa 1092 0000 		sts DFPos,__zero_reg__
- 176 00fe 1092 0000 		sts (DFPos)+1,__zero_reg__
- 177 0102 1092 0000 		sts (DFPos)+2,__zero_reg__
- 178 0106 1092 0000 		sts (DFPos)+3,__zero_reg__
- 179               	.LM24:
- 180 010a 8091 0000 		lds r24,TagExists
- 181 010e 8823      		tst r24
- 182 0110 49F4      		brne .L15
- 183               	.LM25:
- 184 0112 81B3      		in r24,49-0x20
- 185 0114 8F7C      		andi r24,lo8(-49)
- 186 0116 8061      		ori r24,lo8(16)
- 187 0118 81BB      		out 49-0x20,r24
- 188               	.LM26:
- 189 011a 80E0      		ldi r24,lo8(__c.0)
- 190 011c 90E0      		ldi r25,hi8(__c.0)
- 191 011e 0E94 0000 		call MAIN_ShowError
- 192 0122 02C0      		rjmp .L1
- 193               	.L15:
- 194               	.LM27:
- 195 0124 0E94 0000 		call TM_FindNextTag
- 196               	.L1:
- 197               	/* epilogue: frame size=25 */
- 198 0128 6996      		adiw r28,25
- 199 012a 0FB6      		in __tmp_reg__,__SREG__
- 200 012c F894      		cli
- 201 012e DEBF      		out __SP_H__,r29
- 202 0130 0FBE      		out __SREG__,__tmp_reg__
- 203 0132 CDBF      		out __SP_L__,r28
- 204 0134 DF91      		pop r29
- 205 0136 CF91      		pop r28
- 206 0138 1F91      		pop r17
- 207 013a 0F91      		pop r16
- 208 013c FF90      		pop r15
- 209 013e EF90      		pop r14
- 210 0140 DF90      		pop r13
- 211 0142 BF90      		pop r11
- 212 0144 AF90      		pop r10
- 213 0146 0895      		ret
- 214               	/* epilogue end (size=16) */
- 215               	/* function TM_FindNextTag size 164 (131) */
- 216               	.LFE15:
- 218               	.global	TM_ShowTags
- 220               	TM_ShowTags:
- 221               	.LFB14:
- 222               	.LM28:
- 223               	/* prologue: frame size=0 */
- 224               	/* prologue end (size=0) */
- 225               	.LM29:
- 226 0148 60E0      		ldi r22,lo8(0)
- 227 014a 70E0      		ldi r23,hi8(0)
- 228 014c CB01      		movw r24,r22
- 229 014e 0E94 0000 		call DF_ContinuousReadEnable
- 230               	.LM30:
- 231 0152 1092 0000 		sts TagExists,__zero_reg__
- 232               	.LM31:
- 233 0156 1092 0000 		sts DFPos,__zero_reg__
- 234 015a 1092 0000 		sts (DFPos)+1,__zero_reg__
- 235 015e 1092 0000 		sts (DFPos)+2,__zero_reg__
- 236 0162 1092 0000 		sts (DFPos)+3,__zero_reg__
- 237               	.LM32:
- 238 0166 0E94 0000 		call TM_FindNextTag
- 239               	.LM33:
- 240 016a 8091 0000 		lds r24,TagExists
- 241 016e 8823      		tst r24
- 242 0170 71F0      		breq .L34
- 243               	.L35:
- 244               	.LM34:
- 245 0172 8EB3      		in r24,62-0x20
- 246 0174 8823      		tst r24
- 247 0176 E9F3      		breq .L35
- 248               	.LM35:
- 249 0178 F79B      		sbis 62-0x20,7
- 250 017a 03C0      		rjmp .L28
- 251               	.LM36:
- 252 017c 0E94 0000 		call TM_FindNextTag
- 253 0180 02C0      		rjmp .L29
- 254               	.L28:
- 255               	.LM37:
- 256 0182 F299      		sbic 62-0x20,2
- 257 0184 03C0      		rjmp .L26
- 258               	.L29:
- 259               	.LM38:
- 260 0186 0E94 0000 		call MAIN_WaitForJoyRelease
- 261 018a F3CF      		rjmp .L35
- 262               	.L26:
- 263               	.LM39:
- 264 018c 80E0      		ldi r24,lo8(0)
- 265               	.L34:
- 266 018e 0E94 0000 		call DF_EnableDataflash
- 267 0192 0895      		ret
- 268               	/* epilogue: frame size=0 */
- 269               	/* epilogue: noreturn */
- 270               	/* epilogue end (size=0) */
- 271               	/* function TM_ShowTags size 38 (38) */
- 272               	.LFE14:
- 274               		.comm DFPos,4,1
- 275               	.Letext0:
+  23               	DFPos:
+  24 0000 0000 0000 		.skip 4,0
+  25               	.global	TagExists
+  26               	.global	TagExists
+  29               	TagExists:
+  30 0004 00        		.skip 1,0
+  31               		.section	.progmem.data,"a",@progbits
+  34               	__c.0:
+  35 0000 4E4F 2054 		.string	"NO TAGS"
+  35      4147 5300 
+  36               		.text
+  37               	.global	TM_FindNextTag
+  39               	TM_FindNextTag:
+  40               	.LFB15:
+  41               	.LM1:
+  42               	/* prologue: frame size=25 */
+  43 0000 AF92      		push r10
+  44 0002 BF92      		push r11
+  45 0004 DF92      		push r13
+  46 0006 EF92      		push r14
+  47 0008 FF92      		push r15
+  48 000a 0F93      		push r16
+  49 000c 1F93      		push r17
+  50 000e CF93      		push r28
+  51 0010 DF93      		push r29
+  52 0012 CDB7      		in r28,__SP_L__
+  53 0014 DEB7      		in r29,__SP_H__
+  54 0016 6997      		sbiw r28,25
+  55 0018 0FB6      		in __tmp_reg__,__SREG__
+  56 001a F894      		cli
+  57 001c DEBF      		out __SP_H__,r29
+  58 001e 0FBE      		out __SREG__,__tmp_reg__
+  59 0020 CDBF      		out __SP_L__,r28
+  60               	/* prologue end (size=17) */
+  61               	.LM2:
+  62 0022 80E4      		ldi r24,lo8(64)
+  63 0024 8E8B      		std Y+22,r24
+  64 0026 86E1      		ldi r24,lo8(22)
+  65 0028 A82E      		mov r10,r24
+  66 002a B12C      		mov r11,__zero_reg__
+  67 002c AC0E      		add r10,r28
+  68 002e BD1E      		adc r11,r29
+  69 0030 88E2      		ldi r24,lo8(40)
+  70 0032 8F8B      		std Y+23,r24
+  71 0034 83E2      		ldi r24,lo8(35)
+  72 0036 888F      		std Y+24,r24
+  73 0038 89E2      		ldi r24,lo8(41)
+  74 003a 898F      		std Y+25,r24
+  75               	.LM3:
+  76 003c 81E0      		ldi r24,lo8(1)
+  77 003e 0E94 0000 		call PM_GetStoredDataSize
+  78 0042 7B01      		movw r14,r22
+  79 0044 8C01      		movw r16,r24
+  80               	.LM4:
+  81 0046 DD24      		clr r13
+  82               	.LM5:
+  83 0048 81B3      		in r24,49-0x20
+  84 004a 8063      		ori r24,lo8(48)
+  85 004c 81BB      		out 49-0x20,r24
+  86               	.LM6:
+  87 004e 8091 0000 		lds r24,DFPos
+  88 0052 9091 0000 		lds r25,(DFPos)+1
+  89 0056 A091 0000 		lds r26,(DFPos)+2
+  90 005a B091 0000 		lds r27,(DFPos)+3
+  91               	.L22:
+  92               	.LM7:
+  93 005e 8E15      		cp r24,r14
+  94 0060 9F05      		cpc r25,r15
+  95 0062 A007      		cpc r26,r16
+  96 0064 B107      		cpc r27,r17
+  97 0066 08F0      		brlo .+2
+  98 0068 43C0      		rjmp .L20
+  99               	.LM8:
+ 100 006a 80E0      		ldi r24,lo8(0)
+ 101 006c 0E94 0000 		call SPI_SPITransmit
+ 102 0070 F501      		movw r30,r10
+ 103 0072 ED0D      		add r30,r13
+ 104 0074 F11D      		adc r31,__zero_reg__
+ 105 0076 D394      		inc r13
+ 106 0078 9081      		ld r25,Z
+ 107 007a 8917      		cp r24,r25
+ 108 007c 21F5      		brne .L5
+ 109               	.LM9:
+ 110 007e 84E0      		ldi r24,lo8(4)
+ 111 0080 D816      		cp r13,r24
+ 112 0082 11F5      		brne .L13
+ 113               	.LBB2:
+ 114               	.LM10:
+ 115 0084 FF24      		clr r15
+ 116 0086 00E0      		ldi r16,lo8(0)
+ 117 0088 10E0      		ldi r17,hi8(0)
+ 118               	.L11:
+ 119               	.LM11:
+ 120 008a 80E0      		ldi r24,lo8(0)
+ 121 008c 0E94 0000 		call SPI_SPITransmit
+ 122               	.LM12:
+ 123 0090 9E01      		movw r18,r28
+ 124 0092 2F5F      		subi r18,lo8(-(1))
+ 125 0094 3F4F      		sbci r19,hi8(-(1))
+ 126 0096 F801      		movw r30,r16
+ 127 0098 E20F      		add r30,r18
+ 128 009a F31F      		adc r31,r19
+ 129 009c 8083      		st Z,r24
+ 130               	.LM13:
+ 131 009e 8823      		tst r24
+ 132 00a0 31F0      		breq .L8
+ 133               	.LM14:
+ 134 00a2 F394      		inc r15
+ 135 00a4 0F5F      		subi r16,lo8(-(1))
+ 136 00a6 1F4F      		sbci r17,hi8(-(1))
+ 137 00a8 83E1      		ldi r24,lo8(19)
+ 138 00aa 8F15      		cp r24,r15
+ 139 00ac 70F7      		brsh .L11
+ 140               	.L8:
+ 141               	.LM15:
+ 142 00ae 1D8A      		std Y+21,__zero_reg__
+ 143               	.LM16:
+ 144 00b0 81E0      		ldi r24,lo8(1)
+ 145 00b2 8093 0000 		sts TagExists,r24
+ 146               	.LM17:
+ 147 00b6 C901      		movw r24,r18
+ 148 00b8 0E94 0000 		call LCD_puts
+ 149               	.LM18:
+ 150 00bc 81B3      		in r24,49-0x20
+ 151 00be 8F7C      		andi r24,lo8(-49)
+ 152 00c0 8061      		ori r24,lo8(16)
+ 153 00c2 81BB      		out 49-0x20,r24
+ 154               	.LM19:
+ 155 00c4 31C0      		rjmp .L1
+ 156               	.L5:
+ 157               	.LBE2:
+ 158               	.LM20:
+ 159 00c6 DD24      		clr r13
+ 160               	.L13:
+ 161               	.LM21:
+ 162 00c8 8091 0000 		lds r24,DFPos
+ 163 00cc 9091 0000 		lds r25,(DFPos)+1
+ 164 00d0 A091 0000 		lds r26,(DFPos)+2
+ 165 00d4 B091 0000 		lds r27,(DFPos)+3
+ 166 00d8 0196      		adiw r24,1
+ 167 00da A11D      		adc r26,__zero_reg__
+ 168 00dc B11D      		adc r27,__zero_reg__
+ 169 00de 8093 0000 		sts DFPos,r24
+ 170 00e2 9093 0000 		sts (DFPos)+1,r25
+ 171 00e6 A093 0000 		sts (DFPos)+2,r26
+ 172 00ea B093 0000 		sts (DFPos)+3,r27
+ 173 00ee B7CF      		rjmp .L22
+ 174               	.L20:
+ 175               	.LM22:
+ 176 00f0 60E0      		ldi r22,lo8(0)
+ 177 00f2 70E0      		ldi r23,hi8(0)
+ 178 00f4 CB01      		movw r24,r22
+ 179 00f6 0E94 0000 		call DF_ContinuousReadEnable
+ 180               	.LM23:
+ 181 00fa 1092 0000 		sts DFPos,__zero_reg__
+ 182 00fe 1092 0000 		sts (DFPos)+1,__zero_reg__
+ 183 0102 1092 0000 		sts (DFPos)+2,__zero_reg__
+ 184 0106 1092 0000 		sts (DFPos)+3,__zero_reg__
+ 185               	.LM24:
+ 186 010a 8091 0000 		lds r24,TagExists
+ 187 010e 8823      		tst r24
+ 188 0110 49F4      		brne .L15
+ 189               	.LM25:
+ 190 0112 81B3      		in r24,49-0x20
+ 191 0114 8F7C      		andi r24,lo8(-49)
+ 192 0116 8061      		ori r24,lo8(16)
+ 193 0118 81BB      		out 49-0x20,r24
+ 194               	.LM26:
+ 195 011a 80E0      		ldi r24,lo8(__c.0)
+ 196 011c 90E0      		ldi r25,hi8(__c.0)
+ 197 011e 0E94 0000 		call MAIN_ShowError
+ 198 0122 02C0      		rjmp .L1
+ 199               	.L15:
+ 200               	.LM27:
+ 201 0124 0E94 0000 		call TM_FindNextTag
+ 202               	.L1:
+ 203               	/* epilogue: frame size=25 */
+ 204 0128 6996      		adiw r28,25
+ 205 012a 0FB6      		in __tmp_reg__,__SREG__
+ 206 012c F894      		cli
+ 207 012e DEBF      		out __SP_H__,r29
+ 208 0130 0FBE      		out __SREG__,__tmp_reg__
+ 209 0132 CDBF      		out __SP_L__,r28
+ 210 0134 DF91      		pop r29
+ 211 0136 CF91      		pop r28
+ 212 0138 1F91      		pop r17
+ 213 013a 0F91      		pop r16
+ 214 013c FF90      		pop r15
+ 215 013e EF90      		pop r14
+ 216 0140 DF90      		pop r13
+ 217 0142 BF90      		pop r11
+ 218 0144 AF90      		pop r10
+ 219 0146 0895      		ret
+ 220               	/* epilogue end (size=16) */
+ 221               	/* function TM_FindNextTag size 164 (131) */
+ 222               	.LFE15:
+ 224               	.global	TM_ShowTags
+ 226               	TM_ShowTags:
+ 227               	.LFB14:
+ 228               	.LM28:
+ 229               	/* prologue: frame size=0 */
+ 230               	/* prologue end (size=0) */
+ 231               	.LM29:
+ 232 0148 60E0      		ldi r22,lo8(0)
+ 233 014a 70E0      		ldi r23,hi8(0)
+ 234 014c CB01      		movw r24,r22
+ 235 014e 0E94 0000 		call DF_ContinuousReadEnable
+ 236               	.LM30:
+ 237 0152 1092 0000 		sts TagExists,__zero_reg__
+ 238               	.LM31:
+ 239 0156 1092 0000 		sts DFPos,__zero_reg__
+ 240 015a 1092 0000 		sts (DFPos)+1,__zero_reg__
+ 241 015e 1092 0000 		sts (DFPos)+2,__zero_reg__
+ 242 0162 1092 0000 		sts (DFPos)+3,__zero_reg__
+ 243               	.LM32:
+ 244 0166 0E94 0000 		call TM_FindNextTag
+ 245               	.LM33:
+ 246 016a 8091 0000 		lds r24,TagExists
+ 247 016e 8823      		tst r24
+ 248 0170 71F0      		breq .L34
+ 249               	.L35:
+ 250               	.LM34:
+ 251 0172 8EB3      		in r24,62-0x20
+ 252 0174 8823      		tst r24
+ 253 0176 E9F3      		breq .L35
+ 254               	.LM35:
+ 255 0178 F79B      		sbis 62-0x20,7
+ 256 017a 03C0      		rjmp .L28
+ 257               	.LM36:
+ 258 017c 0E94 0000 		call TM_FindNextTag
+ 259 0180 02C0      		rjmp .L29
+ 260               	.L28:
+ 261               	.LM37:
+ 262 0182 F299      		sbic 62-0x20,2
+ 263 0184 03C0      		rjmp .L26
+ 264               	.L29:
+ 265               	.LM38:
+ 266 0186 0E94 0000 		call MAIN_WaitForJoyRelease
+ 267 018a F3CF      		rjmp .L35
+ 268               	.L26:
+ 269               	.LM39:
+ 270 018c 80E0      		ldi r24,lo8(0)
+ 271               	.L34:
+ 272 018e 0E94 0000 		call DF_EnableDataflash
+ 273 0192 0895      		ret
+ 274               	/* epilogue: frame size=0 */
+ 275               	/* epilogue: noreturn */
+ 276               	/* epilogue end (size=0) */
+ 277               	/* function TM_ShowTags size 38 (38) */
+ 278               	.LFE14:
+ 280               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 TagManager.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccW0aaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccW0aaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccW0aaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccW0aaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccW0aaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccW0aaaa.s:23     .bss:00000000 TagExists
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccW0aaaa.s:28     .progmem.data:00000000 __c.0
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccW0aaaa.s:33     .text:00000000 TM_FindNextTag
-                            *COM*:00000004 DFPos
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccW0aaaa.s:220    .text:00000148 TM_ShowTags
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEPaaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEPaaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEPaaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEPaaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEPaaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEPaaaa.s:23     .bss:00000000 DFPos
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEPaaaa.s:29     .bss:00000004 TagExists
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEPaaaa.s:34     .progmem.data:00000000 __c.0
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEPaaaa.s:39     .text:00000000 TM_FindNextTag
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccEPaaaa.s:226    .text:00000148 TM_ShowTags
 
 UNDEFINED SYMBOLS
 __do_copy_data

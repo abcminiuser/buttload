@@ -17,14 +17,14 @@
 
 #include "LCD_Driver.h"
 
-static uint8_t  TextBuffer[LCD_TEXTBUFFER_SIZE + 7];
-static uint8_t  SegBuffer[LCD_SEGBUFFER_SIZE];
-static uint8_t  StrStart;
-static uint8_t  StrEnd;
-static uint8_t  ScrollMode;
-static uint8_t  ScrollCount;
-static uint8_t  DelayCount;
-static uint8_t  UpdateLCD;
+static uint8_t  TextBuffer[LCD_TEXTBUFFER_SIZE + 7] = {};
+static uint8_t  SegBuffer[LCD_SEGBUFFER_SIZE]       = {};
+static uint8_t  StrStart                            = 0;
+static uint8_t  StrEnd                              = 0;
+static uint8_t  ScrollMode                          = 0;
+static uint8_t  ScrollCount                         = 0;
+static uint8_t  DelayCount                          = 0;
+static uint8_t  UpdateLCD                           = 0;
 
 static uint16_t LCD_SegTable[] PROGMEM =
 {

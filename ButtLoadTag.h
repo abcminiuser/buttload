@@ -27,6 +27,6 @@ struct ButtLoadData
 };
 
 #define BT_TAGHEADER          {'@','(','#',')'}
-#define BUTTLOADTAG(id, data) struct ButtLoadData BUTTTAG_##id PROGMEM = {BT_TAGHEADER, data}
+#define BUTTLOADTAG(id, data) const struct ButtLoadData BUTTTAG_##id PROGMEM = {BT_TAGHEADER, data}
 
 #endif

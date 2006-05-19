@@ -11,8 +11,8 @@
 #include "ButtLoadTag.h"
 
 #ifdef BUTTLOADTAG // Can be used in program to prevent errors if ButtLoadTag not included
-	BUTTLOADTAG(Author, "BY DEAN CAMERA");
-	BUTTLOADTAG(Name,   "BUTTLOAD AVRISP");
+	BUTTLOADTAG(Author,   "BY DEAN CAMERA");
+	BUTTLOADTAG(Name,     "BUTTLOAD AVRISP");
 #endif
 
 /*

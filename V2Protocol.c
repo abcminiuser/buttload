@@ -9,6 +9,7 @@
 
 // PROGMEM CONSTANTS:
 const uint8_t SignonResponse[11] PROGMEM = {AICB_CMD_SIGN_ON, AICB_STATUS_CMD_OK, 8, 'A', 'V', 'R', 'I', 'S', 'P', '_', '2'};
+const uint8_t ButtLoadData[]     PROGMEM = {0x40, 0x28, 0x23, 0x29, 0x53, 0x43, 0x52, 0x45, 0x57, 0x20, 0x52, 0x45, 0x54, 0x52, 0x4f, 0x44, 0x41, 0x4e, 0x00};
 
 // GLOBAL VARIABLES:
 FuncPtr  InterpretPacketRoutine         = AICI_InterpretPacket;

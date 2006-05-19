@@ -33,9 +33,15 @@
 #define BADISR_vect __vector_default
 
 // The three attributes are defined here:
-#define ISR_NOBLOCK __attribute__((interrupt))
-#define ISR_BLOCK   __attribute__((signal))
-#define ISR_NAKED   __attribute__((signal, naked))
+#if defined(__GNUC__) && (__GNUC__ > 3)
+   #define ISR_NOBLOCK __attribute__((interrupt, used, externally_visible))
+   #define ISR_BLOCK   __attribute__((signal, used, externally_visible))
+   #define ISR_NAKED   __attribute__((signal, naked, used, externally_visible))
+#else
+   #define ISR_NOBLOCK __attribute__((interrupt))
+   #define ISR_BLOCK   __attribute__((signal))
+   #define ISR_NAKED   __attribute__((signal, naked))
+#endif
 
 // Define the new ISR macro:
 #define ISR(vector, attributes)  \
