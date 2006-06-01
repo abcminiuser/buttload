@@ -175,10 +175,8 @@ ISR(LCD_vect, ISR_NOBLOCK)
 		}
 		else
 		{
-			if (!(ScrollCount))
+			if (!(ScrollCount--))
 			  UpdateLCD = TRUE;
-			else
-			  ScrollCount--;
 		}
 	}
 

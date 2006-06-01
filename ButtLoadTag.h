@@ -22,8 +22,8 @@
 
 struct ButtLoadData
 {
-	uint8_t BUTTLOAD_MAGICSTRING[4];
-	uint8_t BUTTLOAD_TAGDATA[];
+	uint8_t MagicString[4];
+	uint8_t TagData[];
 };
 
 #define BT_TAGHEADER          {'@','(','#',')'}

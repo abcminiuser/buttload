@@ -20,16 +20,16 @@ volatile ElemType       BuffElements;
 
 ISR(USART0_RX_vect, ISR_BLOCK)
 {
-	if (BuffElements == BUFF_BUFFLEN)     // Buffer full
+	if (BuffElements == BUFF_BUFFLEN)      // Buffer full
 	{
 		MAIN_ShowError(PSTR("BUFF OVERFLOW"));
 		return;
 	}
 		
-	*StoreLoc = UDR;                      // Store the data
+	*StoreLoc = UDR;                       // Store the data
 
-	StoreLoc++;                           // Increment the IN pointer to the next element
-	BuffElements++;                       // Increment the total elements variable
+	StoreLoc++;                            // Increment the IN pointer to the next element
+	BuffElements++;                        // Increment the total elements variable
 
 	if (StoreLoc == (BuffType*)&RingBuffer[BUFF_BUFFLEN])
 		StoreLoc = (BuffType*)&RingBuffer[0]; // Wrap pointer if end of array reached
@@ -42,12 +42,12 @@ void BUFF_InitialiseBuffer(void)
 	StoreLoc    = (BuffType*)&RingBuffer[0]; // Set up the IN pointer to the start of the buffer
 	RetrieveLoc = (BuffType*)&RingBuffer[0]; // Set up the OUT pointer to the start of the buffer
 
-	BuffElements = 0;                     // Reset the buffer elements counter
+	BuffElements = 0;                      // Reset the buffer elements counter
 }
 
 BuffType BUFF_GetBuffByte(void)
 {
-	if (!(BuffElements))                  // No elements in the buffer
+	if (!(BuffElements))                   // No elements in the buffer
 		return 0;
 
 	BuffType RetrievedData = *RetrieveLoc; // Grab the stored byte into a temp variable

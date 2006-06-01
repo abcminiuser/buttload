@@ -9,12 +9,7 @@
 #define OSCCAL_H
 
 // DEFINES:
-#define OSCCAL_TARGETCOUNT         (uint16_t)((7372800UL / 128) - OSCCAL_OFFSET) // (Target Freq / Reference Freq) - Offset
-#define OSCCAL_OFFSET              5
-#define OSCCAL_TOLERANCE           5
-
-#define OSCCAL_LOWERCOUNTBOUND     (OSCCAL_TARGETCOUNT - OSCCAL_TOLERANCE)
-#define OSCCAL_UPPERCOUNTBOUND     (OSCCAL_TARGETCOUNT + OSCCAL_TOLERANCE)
+#define OSCCAL_TARGETCOUNT         (uint16_t)(7372800UL / 128) // (Target Freq / Reference Freq)
 
 #define OSCCAL_SETSYSCLOCKSPEED(x) 	MACROS{ CLKPR = (1 << CLKPCE); CLKPR = x; }MACROE
 #define OSCCAL_CLOCKSPEED_8MHZ      0

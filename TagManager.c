@@ -56,7 +56,8 @@ void TM_FindNextTag(void)
 	{
 		BytesRead = 1;
 		
-		if (SPI_SPITransmit(0x00) == HeadBuff[TotalOkHeadBytes++])
+		TagByte = SPI_SPITransmit(0x00);       // Get next byte from dataflash
+		if (TagByte == HeadBuff[TotalOkHeadBytes++])
 		{
 			if (TotalOkHeadBytes == 4)
 			{
@@ -83,7 +84,7 @@ void TM_FindNextTag(void)
 		}
 		else
 		{
-			TotalOkHeadBytes = 0;
+			TotalOkHeadBytes = ((TagByte == HeadBuff[0])? 1 : 0);
 		}
 
 		DFPos += BytesRead;

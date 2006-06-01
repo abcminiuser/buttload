@@ -42,6 +42,8 @@
 # MCU name
 MCU = atmega169
 
+# GCC version
+GCCV = 4
 
 # Processor frequency.
 #     This will define a symbol, F_CPU, in all source code files equal to the 
@@ -139,6 +141,11 @@ CFLAGS += $(CDEFS) $(CINCS)
 CFLAGS += -O$(OPT)
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
 CFLAGS += -Wall -Wstrict-prototypes -Wextra
+
+ifeq ($(GCCV), 4)
+ CFLAGS += -Wno-pointer-sign
+endif
+
 CFLAGS += -Wa,-adhlns=$(<:.c=.lst)
 CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
 CFLAGS += $(CSTANDARD)
@@ -336,6 +343,7 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 # Default target.
 all: begin gccversion sizebefore build sizeafter end
 
+#EDIT: FIX ME WHEN 4.1 FIXED
 build: elf hex eep lss sym
 
 elf: $(TARGET).elf

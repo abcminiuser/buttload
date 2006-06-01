@@ -66,16 +66,14 @@ void OSCCAL_Calibrate(void)
 		PrevOSCALValues[1] = PrevOSCALValues[0];
 		PrevOSCALValues[0] = OSCCAL;
         
-		if (ActualCount > OSCCAL_UPPERCOUNTBOUND)       // Clock is running too fast
+		if (ActualCount > OSCCAL_TARGETCOUNT)       // Clock is running too fast
 			OSCCAL--;
-		else if (ActualCount < OSCCAL_LOWERCOUNTBOUND) // Clock is running too slow
+		else if (ActualCount < OSCCAL_TARGETCOUNT) // Clock is running too slow
 			OSCCAL++;
-		else		                                     // Clock is just right
-			break;
 		
-		// If the routine cannot find a value withing the count tollerance,
+		// When the routine finds the closest value for the given target count,
 		// it will cause the OSCCAL to hover around the closest two values.
-		// If the current value is the same as the 2*n previous, exit the
+		// If the current value is the same as two loops previous, exit the
 		// routine as the best value has been found.
 		if (OSCCAL == PrevOSCALValues[1])
 		  break;

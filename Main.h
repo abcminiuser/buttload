@@ -8,9 +8,9 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-// REMOVE BEFORE RELEASE!!!!
+// DEBUG SWITCH
 //#define DEBUG
-// !!!!!!!!!!!!!!!!!!!!!!!!!
+// END DEBUG SWITCH
 
 // TYPE DEFINITIONS:
 typedef void (*FuncPtr)(void);
@@ -38,6 +38,7 @@ typedef void (*FuncPtr)(void);
 #include "RingBuff.h"
 #include "EEPROMVariables.h"
 #include "TagManager.h"
+#include "ButtLoadTag.h"
 
 // LIB C VERSION CHECK:
 #if (!defined(__AVR_LIBC_VERSION__) || (__AVR_LIBC_VERSION__ < 10401UL)) // In future requirements may be increased with changes
@@ -49,10 +50,8 @@ typedef void (*FuncPtr)(void);
 	#warning DEBUG mode is activated - JTAG system is enabled. Remove before releasing.
 #endif
 
-
 // EXTERNAL VARIABLES:
 extern const uint8_t WaitText[];
-extern const uint8_t ProgrammerName[];
 extern const uint8_t VersionInfo[];
 
 extern EEPROMVarsType EEPROMVars EEMEM;
@@ -61,6 +60,7 @@ extern EEPROMVarsType EEPROMVars EEMEM;
 // DEFINES AND MACROS:
 #define VERSION_MAJOR            1
 #define VERSION_MINOR            4
+#define VERSION_VSTRING          {'V','0' + VERSION_MAJOR,'-','0' + VERSION_MINOR, '\0'}
 
 #define MAGIC_NUM                0b01111010 // Magic number, used for first-run detection or upgrade incompatibility checks
 

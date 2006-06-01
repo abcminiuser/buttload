@@ -17,6 +17,8 @@ void ISPCC_EnterChipProgrammingMode(void)
 	uint8_t Attempts  = PacketBytes[4];
 	uint8_t Response;
 
+	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE); // Orange = Busy
+
 	MAIN_Delay1MS(PacketBytes[2]);         // Wait before continuing, amount specified in the packet
 
 	if ((!(Attempts)) || (Attempts > 100)) // if no attempts or too high a value is specified, a fixed number is chosen

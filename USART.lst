@@ -8,93 +8,95 @@
    8               		.global __do_copy_data
    9               		.global __do_clear_bss
   17               	.Ltext0:
-  18               	.global	USART_Init
-  20               	USART_Init:
-  21               	.LFB14:
+  18               	.global	USART_Tx
+  20               	USART_Tx:
+  21               	.LFB15:
   22               	.LM1:
   23               	/* prologue: frame size=0 */
   24               	/* prologue end (size=0) */
-  25               	.LM2:
-  26 0000 1092 C500 		sts 197,__zero_reg__
-  27               	.LM3:
-  28 0004 87E0      		ldi r24,lo8(7)
-  29 0006 8093 C400 		sts 196,r24
-  30               	.LM4:
-  31 000a 82E0      		ldi r24,lo8(2)
-  32 000c 8093 C000 		sts 192,r24
-  33               	.LM5:
-  34 0010 80E8      		ldi r24,lo8(-128)
-  35 0012 8093 C100 		sts 193,r24
-  36               	.LM6:
-  37 0016 86E0      		ldi r24,lo8(6)
-  38 0018 8093 C200 		sts 194,r24
-  39               	.LM7:
-  40 001c 0E94 0000 		call BUFF_InitialiseBuffer
-  41               	/* epilogue: frame size=0 */
-  42 0020 0895      		ret
-  43               	/* epilogue end (size=1) */
-  44               	/* function USART_Init size 17 (16) */
-  45               	.LFE14:
-  47               	.global	USART_Tx
-  49               	USART_Tx:
-  50               	.LFB15:
-  51               	.LM8:
-  52               	/* prologue: frame size=0 */
-  53               	/* prologue end (size=0) */
-  54 0022 982F      		mov r25,r24
-  55               	.L3:
-  56               	.LM9:
-  57 0024 8091 C000 		lds r24,192
-  58 0028 85FF      		sbrs r24,5
-  59 002a FCCF      		rjmp .L3
-  60               	.LM10:
-  61 002c 9093 C600 		sts 198,r25
+  25               	.LVL0:
+  26 0000 982F      		mov r25,r24
+  27               	.LVL1:
+  28               	.L3:
+  29               	.LM2:
+  30 0002 8091 C000 		lds r24,192
+  31 0006 85FF      		sbrs r24,5
+  32 0008 00C0      		rjmp .L3
+  33               	.LM3:
+  34 000a 9093 C600 		sts 198,r25
+  35               	/* epilogue: frame size=0 */
+  36 000e 0895      		ret
+  37               	/* epilogue end (size=1) */
+  38               	/* function USART_Tx size 8 (7) */
+  39               	.LFE15:
+  41               	.global	USART_Rx
+  43               	USART_Rx:
+  44               	.LFB16:
+  45               	.LM4:
+  46               	/* prologue: frame size=0 */
+  47               	/* prologue end (size=0) */
+  48               	.L10:
+  49               	.LM5:
+  50 0010 8091 0000 		lds r24,BuffElements
+  51 0014 8823      		tst r24
+  52 0016 01F4      		brne .L11
+  53               	.LM6:
+  54 0018 8091 0000 		lds r24,PacketTimeOut
+  55 001c 8823      		tst r24
+  56 001e 01F0      		breq .L10
+  57               	.L11:
+  58               	.LM7:
+  59 0020 0E94 0000 		call BUFF_GetBuffByte
+  60               	.LM8:
+  61 0024 9927      		clr r25
   62               	/* epilogue: frame size=0 */
-  63 0030 0895      		ret
+  63 0026 0895      		ret
   64               	/* epilogue end (size=1) */
-  65               	/* function USART_Tx size 8 (7) */
-  66               	.LFE15:
-  68               	.global	USART_Rx
-  70               	USART_Rx:
-  71               	.LFB16:
-  72               	.LM11:
+  65               	/* function USART_Rx size 12 (11) */
+  66               	.LFE16:
+  68               	.global	USART_Init
+  70               	USART_Init:
+  71               	.LFB14:
+  72               	.LM9:
   73               	/* prologue: frame size=0 */
   74               	/* prologue end (size=0) */
-  75               	.L7:
-  76               	.LM12:
-  77 0032 8091 0000 		lds r24,BuffElements
-  78 0036 8823      		tst r24
-  79 0038 21F4      		brne .L8
-  80               	.LM13:
-  81 003a 8091 0000 		lds r24,PacketTimeOut
-  82 003e 8823      		tst r24
-  83 0040 C1F3      		breq .L7
-  84               	.L8:
-  85               	.LM14:
-  86 0042 0E94 0000 		call BUFF_GetBuffByte
-  87               	.LM15:
-  88 0046 9927      		clr r25
-  89               	/* epilogue: frame size=0 */
-  90 0048 0895      		ret
-  91               	/* epilogue end (size=1) */
-  92               	/* function USART_Rx size 12 (11) */
-  93               	.LFE16:
-  95               	.Letext0:
+  75               	.LM10:
+  76 0028 1092 C500 		sts 197,__zero_reg__
+  77               	.LM11:
+  78 002c 87E0      		ldi r24,lo8(7)
+  79 002e 8093 C400 		sts 196,r24
+  80               	.LM12:
+  81 0032 82E0      		ldi r24,lo8(2)
+  82 0034 8093 C000 		sts 192,r24
+  83               	.LM13:
+  84 0038 80E8      		ldi r24,lo8(-128)
+  85 003a 8093 C100 		sts 193,r24
+  86               	.LM14:
+  87 003e 86E0      		ldi r24,lo8(6)
+  88 0040 8093 C200 		sts 194,r24
+  89               	.LM15:
+  90 0044 0E94 0000 		call BUFF_InitialiseBuffer
+  91               	/* epilogue: frame size=0 */
+  92 0048 0895      		ret
+  93               	/* epilogue end (size=1) */
+  94               	/* function USART_Init size 17 (16) */
+  95               	.LFE14:
+ 133               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 USART.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccITaaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccITaaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccITaaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccITaaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccITaaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccITaaaa.s:20     .text:00000000 USART_Init
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccITaaaa.s:49     .text:00000022 USART_Tx
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccITaaaa.s:70     .text:00000032 USART_Rx
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc06aaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc06aaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc06aaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc06aaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc06aaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc06aaaa.s:20     .text:00000000 USART_Tx
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc06aaaa.s:43     .text:00000010 USART_Rx
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc06aaaa.s:70     .text:00000028 USART_Init
 
 UNDEFINED SYMBOLS
 __do_copy_data
 __do_clear_bss
-BUFF_InitialiseBuffer
 BuffElements
 PacketTimeOut
 BUFF_GetBuffByte
+BUFF_InitialiseBuffer

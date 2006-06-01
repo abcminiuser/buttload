@@ -14,6 +14,8 @@
 // TYPE DEFINITIONS:
 typedef struct
 {
+	uint8_t  JUNKVAR;           // Unused location 0 to guard against EEPROM corruption
+
 	uint8_t  ResetPolarity;
 	uint8_t  SCKDuration;
 	uint8_t  WriteProgram[9];

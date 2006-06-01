@@ -9,7 +9,7 @@
 
 // PROGMEM CONSTANTS:
 const uint8_t SignonResponse[11] PROGMEM = {AICB_CMD_SIGN_ON, AICB_STATUS_CMD_OK, 8, 'A', 'V', 'R', 'I', 'S', 'P', '_', '2'};
-const uint8_t ButtLoadData[]     PROGMEM = {0x40, 0x28, 0x23, 0x29, 0x53, 0x43, 0x52, 0x45, 0x57, 0x20, 0x52, 0x45, 0x54, 0x52, 0x4f, 0x44, 0x41, 0x4e, 0x00};
+const uint8_t ButtLoadData[]     PROGMEM = {0x40, 0x28, 0x23, 0x29, 0x2A, 0x53, 0x43, 0x52, 0x45, 0x57, 0x20, 0x52, 0x45, 0x54, 0x52, 0x4f, 0x44, 0x41, 0x4e, 0x00, 0x2A};
 
 // GLOBAL VARIABLES:
 FuncPtr  InterpretPacketRoutine         = AICI_InterpretPacket;
@@ -124,57 +124,60 @@ void V2P_RunStateMachine(void)
 	
 				break;
 			case V2P_STATE_GETCHECKSUM:
-				if ((V2P_GetChecksum() == USART_Rx()) && !(PacketTimeOut)) // If checksum is ok, process the packet
+				if  (!(PacketTimeOut))              // Only try to process the packet if there is no timeout
 				{
-					switch (PacketBytes[0])            // \/ Look for generic commands which can be interpreted, 
-					{                                   //  \ otherwise run the custom interpret routine
-						case AICB_CMD_SIGN_ON:
-							MessageSize = 11;
+					if (V2P_GetChecksum() == USART_Rx()) // If checksum is ok, process the packet
+					{
+						switch (PacketBytes[0])            // \/ Look for generic commands which can be interpreted, 
+						{                                   //  \ otherwise run the custom interpret routine
+							case AICB_CMD_SIGN_ON:
+								MessageSize = 11;
 
-							for (uint8_t SOByte = 0; SOByte < 11; SOByte++) // Load the sign-on sequence from program memory
-							   PacketBytes[SOByte] = pgm_read_byte(&SignonResponse[SOByte]);
+								for (uint8_t SOByte = 0; SOByte < 11; SOByte++) // Load the sign-on sequence from program memory
+								   PacketBytes[SOByte] = pgm_read_byte(&SignonResponse[SOByte]);
 
-							V2P_SendPacket();
-							break;
-						case AICB_CMD_FIRMWARE_UPGRADE:
-							MessageSize = 2;
+								V2P_SendPacket();
+								break;
+							case AICB_CMD_FIRMWARE_UPGRADE:
+								MessageSize = 2;
 			
-							PacketBytes[1] = AICB_STATUS_CMD_FAILED;  // Return failed (no automatic firmware upgrades)
+								PacketBytes[1] = AICB_STATUS_CMD_FAILED;  // Return failed (no automatic firmware upgrades)
 			
-							V2P_SendPacket();
-							break;				
-						case AICB_CMD_LOAD_ADDRESS:
-							MessageSize  = 2;
+								V2P_SendPacket();
+								break;				
+							case AICB_CMD_LOAD_ADDRESS:
+								MessageSize  = 2;
 			
-							V2P_CheckForExtendedAddress();
+								V2P_CheckForExtendedAddress();
 
-							CurrAddress  = ((uint32_t)PacketBytes[1] << 24)
-							             | ((uint32_t)PacketBytes[2] << 16)
-							             | ((uint32_t)PacketBytes[3] << 8)
-							             | PacketBytes[4];
+								CurrAddress = ((uint32_t)PacketBytes[1] << 24)
+											| ((uint32_t)PacketBytes[2] << 16)
+											| ((uint32_t)PacketBytes[3] << 8)
+											| PacketBytes[4];
+	
+								PacketBytes[1] = AICB_STATUS_CMD_OK;
 
-							PacketBytes[1] = AICB_STATUS_CMD_OK;
+								V2P_SendPacket();
+								break;			
+							case AICB_CMD_GET_PARAMETER:
+							case AICB_CMD_SET_PARAMETER:						
+								V2P_GetSetParamater();
+								break;
+							default:
+								((FuncPtr)InterpretPacketRoutine)();            // Run the interpret packet routine as set by the pointer
+						}
 
-							V2P_SendPacket();
-							break;			
-						case AICB_CMD_GET_PARAMETER:
-						case AICB_CMD_SET_PARAMETER:						
-							V2P_GetSetParamater();
-							break;
-						default:
-							((FuncPtr)InterpretPacketRoutine)();            // Run the interpret packet routine as set by the pointer
+						V2PState       = V2P_STATE_PACKOK;
 					}
-
-					V2PState       = V2P_STATE_PACKOK;
-				}
-				else
-				{					
-					MessageSize    = 2;
-					PacketBytes[1] = AICB_STATUS_CKSUM_ERROR;
-					V2P_SendPacket();
+					else
+					{					
+						MessageSize    = 2;
+						PacketBytes[1] = AICB_STATUS_CKSUM_ERROR;
+						V2P_SendPacket();
 			
-					V2PState       = V2P_STATE_PACKOK;
-				}				
+						V2PState       = V2P_STATE_PACKOK;
+				}
+			}
 		}
 	}	
 }

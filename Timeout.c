@@ -20,7 +20,7 @@ ISR(TIMER2_COMP_vect, ISR_NOBLOCK)
 	}
 }
 
-// Autosleep Timeout = (TIMEOUT_TICKSBEFORETIMEOUT / 10) secs between timeouts
+// Autosleep Timeout = (TicksBeforeAutoSleep / 10) secs between timeouts
 ISR(TIMER1_OVF_vect, ISR_NOBLOCK)
 {
 	if (SleepTimeOutTicks++ == TicksBeforeAutoSleep)
@@ -37,7 +37,7 @@ void TOUT_SetupSleepTimer(void)
 {
 	uint8_t NewTicksIndex = eeprom_read_byte(&EEPROMVars.AutoSleepValIndex);
 
-	if (NewTicksIndex == 0xFF)
+	if (NewTicksIndex == 0xFF) // Blank EEPROM protection
 	  NewTicksIndex = 4;
 
 	TIMSK1 = (1 << TOIE1);

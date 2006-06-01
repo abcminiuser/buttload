@@ -8,13 +8,6 @@
   Requires: AVR-GCC 3.4.3 or above, AVRLibC version 1.4.1 or above
 */
 
-#include "ButtLoadTag.h"
-
-#ifdef BUTTLOADTAG // Can be used in program to prevent errors if ButtLoadTag not included
-	BUTTLOADTAG(Author,   "BY DEAN CAMERA");
-	BUTTLOADTAG(Name,     "BUTTLOAD AVRISP");
-#endif
-
 /*
     LICENCE:
       
@@ -138,14 +131,14 @@
 #include "Main.h"
 
 // PROGMEM CONSTANTS:
+BUTTLOADTAG(Title,     "BUTTLOAD AVRISP");
+BUTTLOADTAG(Version,   VERSION_VSTRING);
+BUTTLOADTAG(Author,    "BY DEAN CAMERA");
+BUTTLOADTAG(Copyright, "<C> 2006 - GPL");
+
+const uint8_t*   AboutTextPtrs[]         PROGMEM = {BUTTTAG_Title.TagData, BUTTTAG_Version.TagData, BUTTTAG_Author.TagData, BUTTTAG_Copyright.TagData};
+
 const uint8_t    WaitText[]              PROGMEM = "*WAIT*";
-
-const uint8_t    ProgrammerName[]        PROGMEM = "BUTTLOAD";
-const uint8_t    VersionInfo[]           PROGMEM = {'V','0' + VERSION_MAJOR,'-','0' + VERSION_MINOR, '\0'};
-const uint8_t    AuthorName[]            PROGMEM = "BY DEAN CAMERA";
-const uint8_t    CopyRight[]             PROGMEM = "<C> 2006 - GPL";
-
-const uint8_t*   AboutTextPtrs[]         PROGMEM = {ProgrammerName, VersionInfo, AuthorName, CopyRight};
 
 const uint8_t    Func_ISPPRGM[]          PROGMEM = "AVRISP MODE";
 const uint8_t    Func_STOREPRGM[]        PROGMEM = "STORE PRGM";
@@ -168,6 +161,7 @@ const uint8_t    SFunc_GOBOOTLOADER[]    PROGMEM = "JUMP TO BOOTLOADER";
 const uint8_t*   SettingFunctionNames[]  PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_SETFIRMMINOR , SFunc_SETAUTOSLEEPTO   , SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
 const FuncPtr    SettingFunctionPtrs[]   PROGMEM = {FUNCSetContrast  , FUNCSetISPSpeed  , FUNCSetFirmMinorVer, FUNCSetAutoSleepTimeOut, FUNCClearMem  , FUNCGoBootloader};
 
+const uint8_t    PRG_A[]                 PROGMEM = "PROGRAM ALL";
 const uint8_t    PRG_D[]                 PROGMEM = "DATA ONLY";
 const uint8_t    PRG_E[]                 PROGMEM = "EEPROM ONLY";
 const uint8_t    PRG_DE[]                PROGMEM = "DATA AND EEPROM";
@@ -176,7 +170,7 @@ const uint8_t    PRG_L[]                 PROGMEM = "LOCK BYTES ONLY";
 const uint8_t    PRG_FL[]                PROGMEM = "FUSE AND LOCK BYTES";
 const uint8_t    PRG_C[]                 PROGMEM = "ERASE ONLY";
 
-const uint8_t*   ProgOptions[]           PROGMEM = {PRG_D, PRG_E, PRG_DE, PRG_F, PRG_L, PRG_FL, PRG_C};
+const uint8_t*   ProgOptions[]           PROGMEM = {PRG_A, PRG_D, PRG_E, PRG_DE, PRG_F, PRG_L, PRG_FL, PRG_C};
 
 const uint8_t    USISpeeds[USI_PRESET_SPEEDS][10]  PROGMEM = {" 57153 HZ", " 86738 HZ", "113427 HZ", "210651 HZ"};
 const uint8_t    SIFONames[2][15]                  PROGMEM = {"STORAGE SIZES", "VIEW DATA TAGS"};
@@ -209,7 +203,7 @@ int main(void)
 	EIMSK   = ((1<<PCIE0) | (1<<PCIE1));         // |  interrupts
 	EIFR    = ((1<<PCIF0) | (1<<PCIF1));         // /
 
-	MAIN_SETSTATUSLED(MAIN_STATLED_RED);	     // Set status LEDs to red (busy)
+	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);      // Set status LEDs to orange (busy)
 
 	LCD_Init();
 	LCD_CONTRAST_LEVEL(0x0F);
@@ -228,7 +222,6 @@ int main(void)
 	
 	LCD_CONTRAST_LEVEL(eeprom_read_byte(&EEPROMVars.LCDContrast));
 	DF_EnableDataflash(FALSE);                   // Pull internal Dataflash /CS high to disable it and thus save power
-	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);      // Set status LEDs to orange (busy)
 	USART_Init();                                // UART at 115200 baud (7.3MHz clock, double USART speed)
 	OSCCAL_Calibrate();                          // Calibrate the internal RC occilator
 	TOUT_SetupSleepTimer();                      // Set up and start the auto-sleep timer
@@ -509,7 +502,6 @@ void FUNCProgramAVR(void)
 	}
 
 	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_CLOCKSPEED_8MHZ);
-	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);                // Orange = busy
 	LCD_puts_f(WaitText);
 
 	USI_SPIInitMaster(eeprom_read_byte(&EEPROMVars.SCKDuration));
@@ -524,7 +516,7 @@ void FUNCProgramAVR(void)
 
 	if (PacketBytes[1] == AICB_STATUS_CMD_OK) // ISPCC_EnterChipProgrammingMode alters the PacketBytes buffer rather than returning a value
 	{						
-		if ((ProgMode == 6) || (ProgMode == 0) || (ProgMode == 2)) // Erase chip, or program flash mode
+		if (!(ProgMode) || (ProgMode == 7) || (ProgMode == 1) || (ProgMode == 3)) // All, erase chip, flash and eeprom, or program flash mode
 		{
 			MAIN_ShowProgType('C');
 			
@@ -539,7 +531,7 @@ void FUNCProgramAVR(void)
 			}
 		}
 
-		if (((ProgMode == 0) || (ProgMode == 2)) && (Fault == ISPCC_NO_FAULT)) // Program flash
+		if ((!(ProgMode) || (ProgMode == 1) || (ProgMode == 3)) && (Fault == ISPCC_NO_FAULT)) // All, flash and EEPROM, or program flash mode
 		{
 			MAIN_ShowProgType('D');
 
@@ -554,7 +546,7 @@ void FUNCProgramAVR(void)
 			}
 		}
 	
-		if ((ProgMode == 1) || (ProgMode == 2)) // Program EEPROM
+		if (!(ProgMode) || (ProgMode == 2) || (ProgMode == 3)) // All, flash and EEPROM, or program EEPROM mode
 		{
 			MAIN_ShowProgType('E');
 				
@@ -569,7 +561,7 @@ void FUNCProgramAVR(void)
 			}
 		}
 
-		if ((ProgMode == 3) || (ProgMode == 5)) // Program Fuse bytes
+		if (!(ProgMode) || (ProgMode == 4) || (ProgMode == 6)) // All, fuse and lock bytes, or program fuse bytes mode
 		{
 			MAIN_ShowProgType('F');
 			
@@ -584,13 +576,13 @@ void FUNCProgramAVR(void)
 			}
 		}
 
-		if ((ProgMode == 4) || (ProgMode == 5)) // Program Lock bytes
+		if (!(ProgMode) || (ProgMode == 5) || (ProgMode == 6)) // All, fuse and lock bytes, or program lock bytes mode
 		{
-			if (ProgMode == 5)                    // If fusebytes have already been written, we need to reenter programming mode to latch them
+			if (ProgMode == 6)                    // If fusebytes have already been written, we need to reenter programming mode to latch them
 			{
 				MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE); // Release the RESET line of the slave AVR
 				MAIN_Delay10MS(1);
-				MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE); // Capture the RESET line of the slave AVR
+				MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE);   // Capture the RESET line of the slave AVR
 				ISPCC_EnterChipProgrammingMode(); // Try to sync with the slave AVR
 			}
 

@@ -21,7 +21,6 @@ void AICI_InterpretPacket(void)
 			USI_SPIInitMaster(eeprom_read_byte(&EEPROMVars.SCKDuration));
 
 			MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE);  // Pull the slave AVR's RESET line to active
-			MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE); // Orange = Busy
 			ISPCC_EnterChipProgrammingMode();       // Run the Enter Programming Mode routine
 
 			if (InProgrammingMode)
