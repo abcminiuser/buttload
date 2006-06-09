@@ -22,6 +22,6 @@
 TIMER0_COMP_vect:
   push r24
   ldi r24, (USI_CONTROL_REG_FLAGS | (1<<USITC))
-  sts _SFR_MEM_ADDR(USICR), r24
+  sts _SFR_IO_ADDR(USICR), r24
   pop r24
   reti

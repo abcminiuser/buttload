@@ -8,12 +8,10 @@
 #include "V2Protocol.h"
 
 // PROGMEM CONSTANTS:
-const uint8_t SignonResponse[11] PROGMEM = {AICB_CMD_SIGN_ON, AICB_STATUS_CMD_OK, 8, 'A', 'V', 'R', 'I', 'S', 'P', '_', '2'};
+const uint8_t SignonResponse[]   PROGMEM = {AICB_CMD_SIGN_ON, AICB_STATUS_CMD_OK, 8, 'A', 'V', 'R', 'I', 'S', 'P', '_', '2', 0x00};
 const uint8_t ButtLoadData[]     PROGMEM = {0x40, 0x28, 0x23, 0x29, 0x2A, 0x53, 0x43, 0x52, 0x45, 0x57, 0x20, 0x52, 0x45, 0x54, 0x52, 0x4f, 0x44, 0x41, 0x4e, 0x00, 0x2A};
 
 // GLOBAL VARIABLES:
-FuncPtr  InterpretPacketRoutine         = AICI_InterpretPacket;
-
 uint8_t  PacketBytes[V2P_MAXBUFFSIZE]   = {};
 uint16_t SequenceNum                    = 0;
 uint16_t MessageSize                    = 0;
@@ -24,10 +22,10 @@ uint8_t  Param_ControllerInit           = 0; // This is set to zero on reset, an
 
 // ======================================================================================
 
-void V2P_RunStateMachine(void)
+void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 {
-	uint8_t  V2PState            = V2P_STATE_IDLE;
-	uint16_t CurrentMessageByte  = 0;
+	uint8_t  V2PState               = V2P_STATE_IDLE;
+	uint16_t CurrentMessageByte     = 0;
 
 	BUFF_InitialiseBuffer();	
 	TIMEOUT_SLEEP_TIMER_OFF();
@@ -38,36 +36,15 @@ void V2P_RunStateMachine(void)
 	while (1)
 	{
 		if (PacketTimeOut == TRUE)  // Packet has timed out waiting for data
-		   V2PState = V2P_STATE_TIMEOUT;
+		  V2PState = V2P_STATE_TIMEOUT;
 		else if (V2PState != V2P_STATE_IDLE)
-		   TIMEOUT_PACKET_TIMER_ON();      // Reset the timer on each loop if not in idle mode
+		  TIMEOUT_PACKET_TIMER_ON();      // Reset the timer on each loop if not in idle mode
 		
 		switch (V2PState)
 		{
-			case V2P_STATE_TIMEOUT:
-				MessageSize    = 2;
-				PacketBytes[1] = AICB_STATUS_CMD_TOUT;
-				V2P_SendPacket();
-
-				V2PState  = V2P_STATE_PACKOK;
-				break;
-			case V2P_STATE_PACKERR:
-				MessageSize    = 2;
-				PacketBytes[1] = AICB_STATUS_CMD_FAILED;
-				V2P_SendPacket();
-
-				V2PState  = V2P_STATE_PACKOK;
-				break;
-			case V2P_STATE_PACKOK:
-				PacketTimeOut = FALSE;
-				BUFF_InitialiseBuffer();          // Flush the ringbuffer
-				TIMEOUT_PACKET_TIMER_OFF();
-				V2PState  = V2P_STATE_IDLE;
-				
-				break;
 			case V2P_STATE_IDLE:	
 				if (BuffElements)                 // Serial data recieved in FIFO buffer
-				   V2PState  = V2P_STATE_START;
+				  V2PState = V2P_STATE_START;
 				
 				if ((JoyStatus & JOY_LEFT) && !(InProgrammingMode))
 				{
@@ -77,11 +54,11 @@ void V2P_RunStateMachine(void)
 				}
 								
 				break;
-			case V2P_STATE_START:
+			case V2P_STATE_START:			
 				if (USART_Rx() == AICB_MESSAGE_START)  // Start bit is always 0x1B
-					V2PState  = V2P_STATE_GETSEQUENCENUM;
+				  V2PState = V2P_STATE_GETSEQUENCENUM;
 				else
-					V2PState  = V2P_STATE_PACKERR;
+				  V2PState = V2P_STATE_PACKERR;
 				
 				break;
 			case V2P_STATE_GETSEQUENCENUM:
@@ -91,8 +68,8 @@ void V2P_RunStateMachine(void)
 
 				break;
 			case V2P_STATE_GETMESSAGESIZE1:
-				MessageSize  = ((uint16_t)USART_Rx() << 8);  // Message size is MSB first
-				V2PState     = V2P_STATE_GETMESSAGESIZE2;
+				MessageSize = ((uint16_t)USART_Rx() << 8);  // Message size is MSB first
+				V2PState = V2P_STATE_GETMESSAGESIZE2;
 				
 				break;
 			case V2P_STATE_GETMESSAGESIZE2:
@@ -111,16 +88,16 @@ void V2P_RunStateMachine(void)
 				break;
 			case V2P_STATE_GETTOKEN:
 				if (USART_Rx() == AICB_TOKEN)      // Token bit is always 0x0E
-					V2PState  = V2P_STATE_GETDATA;
+				  V2PState = V2P_STATE_GETDATA;
 				else                               // Incorrect token bit
-					V2PState  = V2P_STATE_PACKERR;
+				  V2PState = V2P_STATE_PACKERR;
 
 				break;
 			case V2P_STATE_GETDATA:
 				if (CurrentMessageByte == MessageSize) // Packet reception complete
-					V2PState  = V2P_STATE_GETCHECKSUM;
+				  V2PState = V2P_STATE_GETCHECKSUM;
 				else
-					PacketBytes[CurrentMessageByte++] = USART_Rx(); // Store the byte
+				  PacketBytes[CurrentMessageByte++] = USART_Rx(); // Store the byte
 	
 				break;
 			case V2P_STATE_GETCHECKSUM:
@@ -128,7 +105,7 @@ void V2P_RunStateMachine(void)
 				{
 					if (V2P_GetChecksum() == USART_Rx()) // If checksum is ok, process the packet
 					{
-						switch (PacketBytes[0])            // \/ Look for generic commands which can be interpreted, 
+						switch (PacketBytes[0])            // \/ Look for generic commands which can be interpreted here, 
 						{                                   //  \ otherwise run the custom interpret routine
 							case AICB_CMD_SIGN_ON:
 								MessageSize = 11;
@@ -164,20 +141,38 @@ void V2P_RunStateMachine(void)
 								V2P_GetSetParamater();
 								break;
 							default:
-								((FuncPtr)InterpretPacketRoutine)();            // Run the interpret packet routine as set by the pointer
+								((FuncPtr)PacketDecodeFunction)();        // Run the interpret packet routine as set by the pointer
 						}
 
-						V2PState       = V2P_STATE_PACKOK;
+						V2PState = V2P_STATE_PACKOK;
 					}
 					else
 					{					
-						MessageSize    = 2;
-						PacketBytes[1] = AICB_STATUS_CKSUM_ERROR;
-						V2P_SendPacket();
-			
-						V2PState       = V2P_STATE_PACKOK;
+						V2PState = V2P_STATE_BADCHKSUM;
+					}
 				}
-			}
+
+				break;
+			case V2P_STATE_BADCHKSUM:
+			case V2P_STATE_TIMEOUT:
+			case V2P_STATE_PACKERR:
+				if (V2PState == V2P_STATE_BADCHKSUM)
+				  PacketBytes[1] = AICB_STATUS_CKSUM_ERROR;
+				else if (V2PState == V2P_STATE_TIMEOUT)
+				  PacketBytes[1] = AICB_STATUS_CMD_TOUT;
+				else
+				  PacketBytes[1] = AICB_STATUS_CMD_FAILED;
+
+				MessageSize = 2;
+				V2P_SendPacket();
+
+				// Fall through to V2P_STATE_PACKOK
+			case V2P_STATE_PACKOK:
+				PacketTimeOut = FALSE;
+				BUFF_InitialiseBuffer();          // Flush the ringbuffer
+				TIMEOUT_PACKET_TIMER_OFF();
+
+				V2PState = V2P_STATE_IDLE;
 		}
 	}	
 }

@@ -139,9 +139,10 @@ CINCS =
 CFLAGS = -g$(DEBUG)
 CFLAGS += $(CDEFS) $(CINCS)
 CFLAGS += -O$(OPT)
-CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
+CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums -fwhole-program
 CFLAGS += -Wall -Wstrict-prototypes -Wextra
 
+# GCC4 exclusive options:
 ifeq ($(GCCV), 4)
  CFLAGS += -Wno-pointer-sign
 endif

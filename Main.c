@@ -161,7 +161,7 @@ const uint8_t    SFunc_GOBOOTLOADER[]    PROGMEM = "JUMP TO BOOTLOADER";
 const uint8_t*   SettingFunctionNames[]  PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_SETFIRMMINOR , SFunc_SETAUTOSLEEPTO   , SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
 const FuncPtr    SettingFunctionPtrs[]   PROGMEM = {FUNCSetContrast  , FUNCSetISPSpeed  , FUNCSetFirmMinorVer, FUNCSetAutoSleepTimeOut, FUNCClearMem  , FUNCGoBootloader};
 
-const uint8_t    PRG_A[]                 PROGMEM = "PROGRAM ALL";
+const uint8_t    PRG_A[]                 PROGMEM = "PRGM ALL";
 const uint8_t    PRG_D[]                 PROGMEM = "DATA ONLY";
 const uint8_t    PRG_E[]                 PROGMEM = "EEPROM ONLY";
 const uint8_t    PRG_DE[]                PROGMEM = "DATA AND EEPROM";
@@ -190,7 +190,7 @@ int main(void)
 	#endif
 	
 	ACSR    = (1 << ACD);                        // Disable the unused Analogue Comparitor to save power
-	PRR     = ((1 << PRADC) | (1 << PRSPI));     // Disable the ADC (unused) and SPI (for now) to save power
+	PRR     = ((1 << PRADC) | (1 << PRSPI));     // Disable the ADC and SPI (for now) to save power
 	
 	DDRF    = ((1 << 4) | (1 << 5)); // Set status LEDs as outputs
 	DDRB    = ((1 << 0) | (1 << 1) | (1 << 2) | (1 << 5)); // On-board dataflash /CS, ISP MOSI/SCK and beeper as outputs
@@ -207,7 +207,7 @@ int main(void)
 
 	LCD_Init();
 	LCD_CONTRAST_LEVEL(0x0F);
-	LCD_puts_f(WaitText); 
+	LCD_puts_f(WaitText);
 
 	sei();
 
@@ -311,7 +311,7 @@ void MAIN_WaitForJoyRelease(void)
 	{
 		while (JoyStatus) {};                   // Wait until joystick released
 
-		MAIN_Delay10MS(1);
+		MAIN_Delay10MS(2);
 
 		if (!(JoyStatus))                       // Joystick still released (not bouncing), return
 		  return;
@@ -371,6 +371,18 @@ void MAIN_ShowError(const uint8_t *pFlashStr)
 	MAIN_WaitForJoyRelease();
 }
 
+void MAIN_CrashProgram(uint8_t *ErrTxtPtr)
+{
+	LCD_puts(ErrTxtPtr);
+	
+	SPI_SPIOFF();
+	USI_SPIOff();
+	TIMEOUT_PACKET_TIMER_OFF();
+	TIMEOUT_SLEEP_TIMER_OFF();
+	
+	abort();                                  // Infinite loop (part of LibC)
+}
+
 // ======================================================================================
 
 ISR(PCINT1_vect, ISR_NOBLOCK)                 // Joystick routine; PCINT0_vect is bound to this also via JoystickInterrupt.S
@@ -383,8 +395,7 @@ ISR(PCINT1_vect, ISR_NOBLOCK)                 // Joystick routine; PCINT0_vect i
 
 ISR(BADISR_vect, ISR_NAKED)                   // Bad ISR routine; should never be called, here for safety
 {
-	MAIN_ShowError(PSTR("BADISR"));
-	while (1) {};
+	MAIN_CrashProgram(PSTR("BADISR"));
 }
 
 // ======================================================================================
@@ -445,21 +456,19 @@ void FUNCAVRISPMode(void)
 	USART_ENABLE(USART_TX_ON, USART_RX_ON);
 	LCD_puts_f(AVRISPModeMessage);
 	
-	InterpretPacketRoutine = (FuncPtr)AICI_InterpretPacket;
-	V2P_RunStateMachine();
+	V2P_RunStateMachine(AICI_InterpretPacket);
 }
 
 void FUNCProgramDataflash(void)
 {
 	USI_SPIInitMaster(eeprom_read_byte(&EEPROMVars.SCKDuration));
-	UseExernalDF = TRUE;
+	DataflashInfo.UseExernalDF = TRUE;
 	DFSPIRoutinePointer = USI_SPITransmit;
 	
 	USART_ENABLE(USART_TX_ON, USART_RX_ON);
 	LCD_puts_f(DataFlashProgMode);
 
-	InterpretPacketRoutine = (FuncPtr)PD_InterpretAVRISPPacket;
-	V2P_RunStateMachine();
+	V2P_RunStateMachine(PD_InterpretAVRISPPacket);
 	   
 	DF_EnableDataflash(FALSE);
 	SPI_SPIOFF();
@@ -471,9 +480,9 @@ void FUNCProgramAVR(void)
 	uint8_t  Fault    = ISPCC_NO_FAULT;
 	uint8_t  ProgMode = 0;
 
+	DFSPIRoutinePointer = (SPIFuncPtr)SPI_SPITransmit;
 	SPI_SPIInit();
-	UseExernalDF = FALSE;
-	DFSPIRoutinePointer = SPI_SPITransmit;
+	DataflashInfo.UseExernalDF = FALSE;
 	
 	if (!(DF_CheckCorrectOnboardChip()))
 	  return;
@@ -507,10 +516,10 @@ void FUNCProgramAVR(void)
 	USI_SPIInitMaster(eeprom_read_byte(&EEPROMVars.SCKDuration));
 	MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE); // Capture the RESET line of the slave AVR
 			
-	for (uint8_t PacketB = 0; PacketB <= 11; PacketB++) // Read the enter programming mode command bytes
+	for (uint8_t PacketB = 0; PacketB < 12; PacketB++) // Read the enter programming mode command bytes
 	  PacketBytes[PacketB] = eeprom_read_byte(&EEPROMVars.EnterProgMode[PacketB]);
 	
-	ISPCC_EnterChipProgrammingMode();    // Try to sync with the slave AVR
+	ISPCC_EnterChipProgrammingMode();      // Try to sync with the slave AVR
 
 	CurrAddress = 0;
 
@@ -619,14 +628,14 @@ void FUNCProgramAVR(void)
 	USI_SPIOff();
 	DF_EnableDataflash(FALSE);
 	SPI_SPIOFF();
-	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);   // Green = ready
+	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);   // Set status LEDs to green (ready)
 }
 
 void FUNCStoreProgram(void)
 {
 	DFSPIRoutinePointer = (SPIFuncPtr)SPI_SPITransmit;
 	SPI_SPIInit();
-	UseExernalDF = FALSE;
+	DataflashInfo.UseExernalDF = FALSE;
 	DF_EnableDataflash(TRUE);
 
 	if (!(DF_CheckCorrectOnboardChip()))
@@ -635,8 +644,7 @@ void FUNCStoreProgram(void)
 	USART_ENABLE(USART_TX_ON, USART_RX_ON);
 	LCD_puts_f(PSTR("*STORAGE MODE*"));
 
-	InterpretPacketRoutine = (FuncPtr)PM_InterpretAVRISPPacket;
-	V2P_RunStateMachine();
+	V2P_RunStateMachine(PM_InterpretAVRISPPacket);
 	
 	DF_EnableDataflash(FALSE);
 	SPI_SPIOFF();
@@ -663,10 +671,12 @@ void FUNCClearMem(void)
 	MAIN_WaitForJoyRelease();
 
 	LCD_puts_f(WaitText);
+	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);      // Set status LEDs to orange (busy)
 
 	for (uint16_t EAddr = 0; EAddr < sizeof(EEPROMVars); EAddr++)
 	  eeprom_write_byte((uint8_t*)EAddr, 0xFF);
 
+	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Set status LEDs to green (ready)
 	LCD_puts_f(PSTR("MEM CLEARED"));
 	MAIN_Delay10MS(255);
 }
@@ -716,9 +726,10 @@ void FUNCSetISPSpeed(void)
 {
 	uint8_t CurrSpeed = eeprom_read_byte(&EEPROMVars.SCKDuration);
 
-	if (CurrSpeed > ARRAY_UPPERBOUND(USISpeeds)) CurrSpeed = ARRAY_UPPERBOUND(USISpeeds); // Protection against blank EEPROM
+	if (CurrSpeed > ARRAY_UPPERBOUND(USISpeeds))
+	  CurrSpeed = ARRAY_UPPERBOUND(USISpeeds); // Protection against blank EEPROM
 
-	JoyStatus = 1;                         // Invalid value to force the LCD to update
+	JoyStatus = 1;                        // Invalid value to force the LCD to update
 
 	while (1)
 	{
@@ -838,9 +849,13 @@ void FUNCSleepMode(void)
 	SMCR    = ((1 << SM1) | (1 << SE));    // Power down sleep mode
 	LCDCRA &= ~(1 << LCDEN); 
 	
+	MAIN_SETSTATUSLED(MAIN_STATLED_OFF);   // Save battery power - turn off status LED
+
 	while (!(JoyStatus & JOY_UP))         // Joystick interrupt wakes the micro
 	  SLEEP();
 	   
+	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN); // Turn status LED back on
+
 	LCDCRA |= (1 << LCDEN);
 	
 	MAIN_WaitForJoyRelease();
@@ -872,7 +887,7 @@ void FUNCStorageInfo(void)
 				{
 					DFSPIRoutinePointer = (SPIFuncPtr)SPI_SPITransmit;
 					SPI_SPIInit();
-					UseExernalDF = FALSE;
+					DataflashInfo.UseExernalDF = FALSE;
 					DF_EnableDataflash(TRUE);
 
 					if (DF_CheckCorrectOnboardChip())

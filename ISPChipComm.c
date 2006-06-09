@@ -19,9 +19,9 @@ void ISPCC_EnterChipProgrammingMode(void)
 
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE); // Orange = Busy
 
-	MAIN_Delay1MS(PacketBytes[2]);         // Wait before continuing, amount specified in the packet
+	MAIN_Delay1MS(PacketBytes[2]);          // Wait before continuing, amount specified in the packet
 
-	if ((!(Attempts)) || (Attempts > 100)) // if no attempts or too high a value is specified, a fixed number is chosen
+	if ((!(Attempts)) || (Attempts > 100))  // if no attempts or too high a value is specified, a fixed number is chosen
 	   Attempts = 24;
 		
 	while (Attempts--)
@@ -50,7 +50,7 @@ void ISPCC_EnterChipProgrammingMode(void)
 		}
 		
 		MAIN_Delay1MS(ByteDelay);
-		USI_SPIToggleClock();            // Out of sync, shift in one bit and try again
+		USI_SPIToggleClock();               // Out of sync, shift in one bit and try again
 	}
 
 	// If function hasn't returned by now, all the attempts have failed. Show this by
@@ -68,6 +68,7 @@ void ISPCC_ProgramChip(void)
 	uint16_t StartAddress = (uint16_t)CurrAddress;
 	uint16_t BytesToWrite = ((uint16_t)PacketBytes[1] << 8)
 	                      | PacketBytes[2];
+	uint8_t  CmdMemType   = PacketBytes[0];  
 	uint8_t  PollType;
 	uint8_t  ByteToWrite;
 			
@@ -77,7 +78,7 @@ void ISPCC_ProgramChip(void)
 		{
 			ByteToWrite = PacketBytes[10 + WriteByte];
 		
-			if (PacketBytes[0] == AICB_CMD_PROGRAM_FLASH_ISP) // Flash write mode - word addresses so MSB/LSB masking 
+			if (CmdMemType == AICB_CMD_PROGRAM_FLASH_ISP) // Flash write mode - word addresses so MSB/LSB masking 
 			   USI_SPITransmit(WriteCommand | ((WriteByte & 0x01)? ISPCC_HIGH_BYTE_WRITE : ISPCC_LOW_BYTE_WRITE));
 			else                                         // EEPROM write mode - byte addresses so no masking 
 			   USI_SPITransmit(WriteCommand);
@@ -88,17 +89,17 @@ void ISPCC_ProgramChip(void)
 			if (!(PollAddress))
 			{
 				if ((PacketBytes[8] != ByteToWrite)       // Can do polling
-				   && ((PacketBytes[0] == AICB_CMD_PROGRAM_FLASH_ISP) || ((PacketBytes[0] == AICB_CMD_PROGRAM_EEPROM_ISP) && (PacketBytes[9] != ByteToWrite))))
+				   && ((CmdMemType == AICB_CMD_PROGRAM_FLASH_ISP) || ((CmdMemType == AICB_CMD_PROGRAM_EEPROM_ISP) && (PacketBytes[9] != ByteToWrite))))
 				{
 					PollAddress = (CurrAddress & 0xFFFF); // Save the current address
 				
-					if (PacketBytes[0] == AICB_CMD_PROGRAM_FLASH_ISP)
+					if (CmdMemType == AICB_CMD_PROGRAM_FLASH_ISP)
 					   PollAddress = ((PollAddress << 1) + (WriteByte & 0x01));
 				}
 			}
 
 			// Flash addresses are in words; only increment address on odd byte, OR if it's the EEPROM being programmed (byte addresses)
-			if ((WriteByte & 0x01) || (PacketBytes[0] == AICB_CMD_PROGRAM_EEPROM_ISP))
+			if ((WriteByte & 0x01) || (CmdMemType == AICB_CMD_PROGRAM_EEPROM_ISP))
 			   V2P_IncrementCurrAddress();
 		}
 
@@ -122,7 +123,7 @@ void ISPCC_ProgramChip(void)
 		{
 			ByteToWrite = PacketBytes[10 + WriteByte];
 
-			if (PacketBytes[0] == AICB_CMD_PROGRAM_FLASH_ISP)
+			if (CmdMemType == AICB_CMD_PROGRAM_FLASH_ISP)
 			   USI_SPITransmit(WriteCommand | ((WriteByte & 0x01)? ISPCC_HIGH_BYTE_WRITE : ISPCC_LOW_BYTE_WRITE));
 			else
 			   USI_SPITransmit(WriteCommand);					
@@ -133,11 +134,11 @@ void ISPCC_ProgramChip(void)
 			PollType = ProgMode;
 
 			if ((PacketBytes[8] != ByteToWrite)           // Can do polling
-			   && ((PacketBytes[0] == AICB_CMD_PROGRAM_FLASH_ISP) || ((PacketBytes[0] == AICB_CMD_PROGRAM_EEPROM_ISP) && (PacketBytes[9] != ByteToWrite))))
+			   && ((CmdMemType == AICB_CMD_PROGRAM_FLASH_ISP) || ((CmdMemType == AICB_CMD_PROGRAM_EEPROM_ISP) && (PacketBytes[9] != ByteToWrite))))
 			{
 				PollAddress = (CurrAddress & 0xFFFF);     // Save the current address;
 
-				if (PacketBytes[0] == AICB_CMD_PROGRAM_FLASH_ISP)
+				if (CmdMemType == AICB_CMD_PROGRAM_FLASH_ISP)
 				   PollAddress = ((PollAddress << 1) + (WriteByte & 0x01));
 			}
 			else
@@ -146,7 +147,7 @@ void ISPCC_ProgramChip(void)
 			}					
 
 			// Flash addresses are in words; only increment address on the odd byte, OR if it's the EEPROM being programmed (byte addresses)
-			if ((WriteByte & 0x01) || (PacketBytes[0] == AICB_CMD_PROGRAM_EEPROM_ISP))
+			if ((WriteByte & 0x01) || (CmdMemType == AICB_CMD_PROGRAM_EEPROM_ISP))
 			   V2P_IncrementCurrAddress();
 
 			ISPCC_PollForProgComplete(PollType, PollAddress);

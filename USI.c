@@ -23,7 +23,7 @@
 ****************************************************************************/
 
 /*
-	Dean's Note: The USI port is *EXTREAMELY* temperemental. If the setting are
+	Dean's Note: The USI port is *EXTREAMELY* temperemental. If the settings are
 	             not absolutely correct, the USI system will not function and the
 				 AVR will hang (eternal wait for the TransferComplete flag). Do
 				 not change any part of the USI code as even the simplest of changes

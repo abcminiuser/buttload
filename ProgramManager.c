@@ -19,14 +19,14 @@ uint32_t PM_GetStoredDataSize(const uint8_t Type)
 	/* This take a **LOT** of code and is accessed several times throughout
 	   the program, so I've put it into a seperate function to save on flash. */
 
-	uint32_t ProgDataSize = 0;
+	uint32_t ProgDataSize;
 
 	eeprom_read_block((void*)&ProgDataSize, (const void*)((Type == TYPE_FLASH)? &EEPROMVars.DataSize : &EEPROMVars.EEPROMSize), sizeof(uint32_t));
 
 	if (ProgDataSize == 0xFFFFFFFF)                                      // Blank EEPROM, return a size  of 0 bytes
-	  ProgDataSize = 0x00;
-
-	return ProgDataSize;
+	  return 0;
+	else
+	  return ProgDataSize;
 }
 
 void PM_SetupDFAddressCounters(const uint8_t Type)
@@ -37,32 +37,32 @@ void PM_SetupDFAddressCounters(const uint8_t Type)
 	GPageLength = 0;
 
 	if (Type == TYPE_FLASH)                                              // Type 1 = Flash
-	  StartAddress = (CurrAddress << 1);                               // Convert flash word address to byte address
+	  StartAddress = (CurrAddress << 1);                                 // Convert flash word address to byte address
 	else
-	  StartAddress = CurrAddress + PM_EEPROM_OFFSET;                   // EEPROM uses byte addresses, and starts at the 257th kilobyte in Dataflash
+	  StartAddress = CurrAddress + PM_EEPROM_OFFSET;                     // EEPROM uses byte addresses, and starts at the 257th kilobyte in Dataflash
 	
-	CurrPageAddress = 0;
+	DataflashInfo.CurrPageAddress = 0;
 
-	while (StartAddress >= DF_INTERNALDF_BUFFBYTES)                      // This loop is the equivalent of a DIV and a MOD
+	while (StartAddress >= DF_INTERNALDF_BUFFBYTES)                     // This loop is the equivalent of a DIV and a MOD
 	{
 		StartAddress -= DF_INTERNALDF_BUFFBYTES;                         // Subtract one page's worth of bytes from the desired address
-		CurrPageAddress++;
+		DataflashInfo.CurrPageAddress++;
 	}
 	
-	CurrBuffByte = (uint16_t)StartAddress;                               // The buffer byte is the remainder
+	DataflashInfo.CurrBuffByte = (uint16_t)StartAddress;                 // The buffer byte is the remainder
 }
 
 void PM_StoreProgramByte(const uint8_t Data)
 {
-	if (CurrBuffByte == DF_INTERNALDF_BUFFBYTES)
+	if (DataflashInfo.CurrBuffByte == DF_INTERNALDF_BUFFBYTES)
 	{
-		DF_CopyBufferToFlashPage(CurrPageAddress++);
+		DF_CopyBufferToFlashPage(DataflashInfo.CurrPageAddress++);
 		DF_BufferWriteEnable(0);
-		CurrBuffByte = 0;
+		DataflashInfo.CurrBuffByte = 0;
 	}
 	
 	SPI_SPITransmit(Data);                                               // Store the byte, dataflash is in write mode due to DF_BufferWriteEnable
-	CurrBuffByte++;
+	DataflashInfo.CurrBuffByte++;
 	GPageLength++;
 }
 
@@ -139,24 +139,24 @@ void PM_InterpretAVRISPPacket(void)
 			{
 				PM_CheckEndOfFuseLockData();                            // Check for remaining bytes to be stored and general cleanup
 				
-				CurrBuffByte = 0;
+				DataflashInfo.CurrBuffByte = 0;
 				CurrentMode  = PM_LOCKFUSEBITS_READ;
 			}
 			
-			if (CurrBuffByte > eeprom_read_byte((PacketBytes[0] == AICB_CMD_READ_FUSE_ISP)? &EEPROMVars.TotalFuseBytes : &EEPROMVars.TotalLockBytes))  // Trying to read more fuse/lock bytes than are stored in memory
+			if (DataflashInfo.CurrBuffByte > eeprom_read_byte((PacketBytes[0] == AICB_CMD_READ_FUSE_ISP)? &EEPROMVars.TotalFuseBytes : &EEPROMVars.TotalLockBytes))  // Trying to read more fuse/lock bytes than are stored in memory
 			{
 				PacketBytes[2] = 0xFF;                                 // Return 0xFF for the fuse/lock byte
 			}
 			else
 			{
 				PacketBytes[2] = eeprom_read_byte((uint8_t*)(((PacketBytes[0] == AICB_CMD_READ_FUSE_ISP)? &EEPROMVars.FuseBytes : &EEPROMVars.LockBytes) // Starting location
-									                         + (CurrBuffByte << 2) + (PacketBytes[1] - 1)));                                             // The start position of the actual fuse/lock byte to read (4 bytes each));
+									                         + (DataflashInfo.CurrBuffByte << 2) + (PacketBytes[1] - 1)));                               // The start position of the actual fuse/lock byte to read (4 bytes each));
 			}
+
+			DataflashInfo.CurrBuffByte++;
 
 			PacketBytes[1] = AICB_STATUS_CMD_OK;                       // Data byte is encased in CMD_OKs
 			PacketBytes[3] = AICB_STATUS_CMD_OK;                       // Data byte is encased in CMD_OKs
-
-			CurrBuffByte++;
 
 			break;
 		case AICB_CMD_PROGRAM_FUSE_ISP:
@@ -166,21 +166,21 @@ void PM_InterpretAVRISPPacket(void)
 			if (CurrentMode != PM_LOCKFUSEBITS_WRITE)                  // First lock or fuse byte being written, set the EEPROM pointer
 			{
 				CurrentMode   = PM_LOCKFUSEBITS_WRITE;
-				CurrBuffByte  = 0;                                     // CurrBuffByte is used to store the total fuse/lock bytes written
+				DataflashInfo.CurrBuffByte  = 0;                       // CurrBuffByte is used to store the total fuse/lock bytes written
 			}
 
 			if (PacketBytes[0] == AICB_CMD_PROGRAM_FUSE_ISP)
 			{
-				EEPROMAddress = (uint8_t*)(&EEPROMVars.FuseBytes + (CurrBuffByte << 2));
+				EEPROMAddress = (uint8_t*)(&EEPROMVars.FuseBytes + (DataflashInfo.CurrBuffByte << 2));
 				MemoryType    = TYPE_FUSE;
 			}
 			else
 			{
-				EEPROMAddress = (uint8_t*)(&EEPROMVars.LockBytes + (CurrBuffByte << 2));
+				EEPROMAddress = (uint8_t*)(&EEPROMVars.LockBytes + (DataflashInfo.CurrBuffByte << 2));
 				MemoryType    = TYPE_LOCK;
 			}				
 			
-			if (CurrBuffByte < PM_MAX_FUSELOCKBITS)
+			if (DataflashInfo.CurrBuffByte < PM_MAX_FUSELOCKBITS)
 			{
 				for (uint8_t FLByte = 1; FLByte <= 4; FLByte++)
 				{
@@ -188,7 +188,7 @@ void PM_InterpretAVRISPPacket(void)
 					EEPROMAddress++;
 				}
 
-				CurrBuffByte++;                                        // Increment the total fuse/lock bytes written counter
+				DataflashInfo.CurrBuffByte++;                          // Increment the total fuse/lock bytes written counter
 			}
 			
 			PacketBytes[1] = AICB_STATUS_CMD_OK;                       // Two CMD_OKs are always returned
@@ -212,7 +212,7 @@ void PM_InterpretAVRISPPacket(void)
 					PM_SetupDFAddressCounters(TYPE_EEPROM);
 				}
 				
-				DF_BufferWriteEnable(CurrBuffByte);
+				DF_BufferWriteEnable(DataflashInfo.CurrBuffByte);
 				CurrentMode = PM_DATAFLASH_WRITE;
 				
 				for (uint8_t B = 1; B <= 9; B++)                       // Save the command bytes
@@ -242,7 +242,7 @@ void PM_InterpretAVRISPPacket(void)
 				PM_CheckEndOfFuseLockData();                           // Check for remaining bytes to be stored and general cleanup
 				
 				PM_SetupDFAddressCounters((PacketBytes[0] == AICB_CMD_READ_FLASH_ISP)? TYPE_FLASH : TYPE_EEPROM);
-				DF_ContinuousReadEnable(CurrPageAddress, CurrBuffByte);
+				DF_ContinuousReadEnable(DataflashInfo.CurrPageAddress, DataflashInfo.CurrBuffByte);
 				
 				CurrentMode = PM_DATAFLASH_READ;
 				CurrAddress = 0;
@@ -278,10 +278,10 @@ void PM_CheckEndOfFuseLockData(void)
 {
 	if (CurrentMode == PM_DATAFLASH_WRITE)
 	{
-		if (CurrBuffByte)                               // Data in the dataflash buffer, pending to be written
-		  DF_CopyBufferToFlashPage(CurrPageAddress);    // Save the remaining buffer bytes
+		if (DataflashInfo.CurrBuffByte)                               // Data in the dataflash buffer, pending to be written
+		  DF_CopyBufferToFlashPage(DataflashInfo.CurrPageAddress);    // Save the remaining buffer bytes
 
-		uint32_t DataSize = ((CurrPageAddress * DF_INTERNALDF_BUFFBYTES) + CurrBuffByte);
+		uint32_t DataSize = ((DataflashInfo.CurrPageAddress * DF_INTERNALDF_BUFFBYTES) + DataflashInfo.CurrBuffByte);
 
 		if (MemoryType == TYPE_FLASH)
 		{
@@ -296,14 +296,14 @@ void PM_CheckEndOfFuseLockData(void)
 	else if (CurrentMode == PM_LOCKFUSEBITS_WRITE)
 	{
 		// CurrBuffByte stores the total number of fuse/lock bytes written in this case:
-		eeprom_write_byte(((MemoryType == TYPE_FUSE)? &EEPROMVars.TotalFuseBytes : &EEPROMVars.TotalLockBytes), CurrBuffByte);
+		eeprom_write_byte(((MemoryType == TYPE_FUSE)? &EEPROMVars.TotalFuseBytes : &EEPROMVars.TotalLockBytes), DataflashInfo.CurrBuffByte);
 	}
 }
 
 void PM_SendFuseLockBytes(const uint8_t Type)
 {
-	uint8_t* EEPROMAddress;
 	uint8_t  TotalBytes;
+	uint8_t* EEPROMAddress;
 
 	if (Type == TYPE_FUSE)
 	{

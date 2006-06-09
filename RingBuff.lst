@@ -8,182 +8,103 @@
    8               		.global __do_copy_data
    9               		.global __do_clear_bss
   17               	.Ltext0:
-  18               	.global	BUFF_InitialiseBuffer
-  20               	BUFF_InitialiseBuffer:
-  21               	.LFB15:
+  18               	.global	__vector_13
+  20               	__vector_13:
+  21               	.LFB14:
   22               	.LM1:
   23               	/* prologue: frame size=0 */
-  24               	/* prologue end (size=0) */
-  25               	.LM2:
-  26 0000 80E0      		ldi r24,lo8(RingBuffer)
-  27 0002 90E0      		ldi r25,hi8(RingBuffer)
-  28 0004 9093 0000 		sts (StoreLoc)+1,r25
-  29 0008 8093 0000 		sts StoreLoc,r24
-  30               	.LM3:
-  31 000c 9093 0000 		sts (RetrieveLoc)+1,r25
-  32 0010 8093 0000 		sts RetrieveLoc,r24
-  33               	.LM4:
-  34 0014 1092 0000 		sts BuffElements,__zero_reg__
-  35               	/* epilogue: frame size=0 */
-  36 0018 0895      		ret
-  37               	/* epilogue end (size=1) */
-  38               	/* function BUFF_InitialiseBuffer size 13 (12) */
-  39               	.LFE15:
-  41               	.global	BUFF_GetBuffByte
-  43               	BUFF_GetBuffByte:
-  44               	.LFB16:
-  45               	.LM5:
-  46               	/* prologue: frame size=0 */
-  47               	/* prologue end (size=0) */
-  48               	.LM6:
-  49 001a 8091 0000 		lds r24,BuffElements
-  50 001e 8823      		tst r24
-  51 0020 01F4      		brne .L4
-  52               	.LM7:
-  53 0022 80E0      		ldi r24,lo8(0)
-  54 0024 90E0      		ldi r25,hi8(0)
-  55 0026 0895      		ret
-  56               	.L4:
-  57               	.LM8:
-  58 0028 E091 0000 		lds r30,RetrieveLoc
-  59 002c F091 0000 		lds r31,(RetrieveLoc)+1
-  60 0030 2191      		ld r18,Z+
-  61               	.LVL0:
-  62               	.LM9:
-  63 0032 F093 0000 		sts (RetrieveLoc)+1,r31
-  64 0036 E093 0000 		sts RetrieveLoc,r30
-  65               	.LM10:
-  66 003a 8091 0000 		lds r24,BuffElements
-  67 003e 8150      		subi r24,lo8(-(-1))
-  68 0040 8093 0000 		sts BuffElements,r24
-  69               	.LM11:
-  70 0044 E050      		subi r30,lo8(RingBuffer+64)
-  71 0046 F040      		sbci r31,hi8(RingBuffer+64)
-  72 0048 01F4      		brne .L7
-  73               	.LM12:
-  74 004a 80E0      		ldi r24,lo8(RingBuffer)
-  75 004c 90E0      		ldi r25,hi8(RingBuffer)
-  76 004e 9093 0000 		sts (RetrieveLoc)+1,r25
-  77 0052 8093 0000 		sts RetrieveLoc,r24
-  78               	.L7:
-  79               	.LM13:
-  80 0056 822F      		mov r24,r18
-  81 0058 9927      		clr r25
-  82               	.LM14:
-  83 005a 0895      		ret
-  84               	/* epilogue: frame size=0 */
-  85               	/* epilogue: noreturn */
-  86               	/* epilogue end (size=0) */
-  87               	/* function BUFF_GetBuffByte size 34 (34) */
-  88               	.LFE16:
-  90               	.global	__vector_13
-  92               	__vector_13:
-  93               	.LFB14:
-  94               	.LM15:
-  95               	/* prologue: frame size=0 */
-  96 005c 1F92      		push __zero_reg__
-  97 005e 0F92      		push __tmp_reg__
-  98 0060 0FB6      		in __tmp_reg__,__SREG__
-  99 0062 0F92      		push __tmp_reg__
- 100 0064 1124      		clr __zero_reg__
- 101 0066 2F93      		push r18
- 102 0068 3F93      		push r19
- 103 006a 4F93      		push r20
- 104 006c 5F93      		push r21
- 105 006e 6F93      		push r22
- 106 0070 7F93      		push r23
- 107 0072 8F93      		push r24
- 108 0074 9F93      		push r25
- 109 0076 AF93      		push r26
- 110 0078 BF93      		push r27
- 111 007a EF93      		push r30
- 112 007c FF93      		push r31
- 113               	/* prologue end (size=17) */
- 114               	.LM16:
- 115 007e 8091 0000 		lds r24,BuffElements
- 116 0082 8034      		cpi r24,lo8(64)
- 117 0084 01F4      		brne .L11
- 118               	.LM17:
- 119 0086 80E0      		ldi r24,lo8(__c.1863)
- 120 0088 90E0      		ldi r25,hi8(__c.1863)
- 121 008a 0E94 0000 		call MAIN_ShowError
- 122 008e 00C0      		rjmp .L15
- 123               	.L11:
- 124               	.LM18:
- 125 0090 E091 0000 		lds r30,StoreLoc
- 126 0094 F091 0000 		lds r31,(StoreLoc)+1
- 127 0098 8091 C600 		lds r24,198
- 128 009c 8083      		st Z,r24
- 129               	.LM19:
- 130 009e 2091 0000 		lds r18,StoreLoc
- 131 00a2 3091 0000 		lds r19,(StoreLoc)+1
- 132 00a6 2F5F      		subi r18,lo8(-(1))
- 133 00a8 3F4F      		sbci r19,hi8(-(1))
- 134 00aa 3093 0000 		sts (StoreLoc)+1,r19
- 135 00ae 2093 0000 		sts StoreLoc,r18
- 136               	.LM20:
- 137 00b2 8091 0000 		lds r24,BuffElements
- 138 00b6 8F5F      		subi r24,lo8(-(1))
- 139 00b8 8093 0000 		sts BuffElements,r24
- 140               	.LM21:
- 141 00bc 2050      		subi r18,lo8(RingBuffer+64)
- 142 00be 3040      		sbci r19,hi8(RingBuffer+64)
- 143 00c0 01F4      		brne .L15
- 144               	.LM22:
- 145 00c2 80E0      		ldi r24,lo8(RingBuffer)
- 146 00c4 90E0      		ldi r25,hi8(RingBuffer)
- 147 00c6 9093 0000 		sts (StoreLoc)+1,r25
- 148 00ca 8093 0000 		sts StoreLoc,r24
- 149               	.L15:
- 150               	/* epilogue: frame size=0 */
- 151 00ce FF91      		pop r31
- 152 00d0 EF91      		pop r30
- 153 00d2 BF91      		pop r27
- 154 00d4 AF91      		pop r26
- 155 00d6 9F91      		pop r25
- 156 00d8 8F91      		pop r24
- 157 00da 7F91      		pop r23
- 158 00dc 6F91      		pop r22
- 159 00de 5F91      		pop r21
- 160 00e0 4F91      		pop r20
- 161 00e2 3F91      		pop r19
- 162 00e4 2F91      		pop r18
- 163 00e6 0F90      		pop __tmp_reg__
- 164 00e8 0FBE      		out __SREG__,__tmp_reg__
- 165 00ea 0F90      		pop __tmp_reg__
- 166 00ec 1F90      		pop __zero_reg__
- 167 00ee 1895      		reti
- 168               	/* epilogue end (size=17) */
- 169               	/* function __vector_13 size 75 (41) */
- 170               	.LFE14:
- 172               		.section	.progmem.data,"a",@progbits
- 175               	__c.1863:
- 176 0000 4255 4646 		.string	"BUFF OVERFLOW"
- 176      204F 5645 
- 176      5246 4C4F 
- 176      5700 
- 177               		.comm BuffElements,1,1
- 178               		.comm StoreLoc,2,1
- 179               		.comm RetrieveLoc,2,1
- 180               		.comm RingBuffer,64,1
- 217               	.Letext0:
+  24 0000 1F92      		push __zero_reg__
+  25 0002 0F92      		push __tmp_reg__
+  26 0004 0FB6      		in __tmp_reg__,__SREG__
+  27 0006 0F92      		push __tmp_reg__
+  28 0008 1124      		clr __zero_reg__
+  29 000a 2F93      		push r18
+  30 000c 3F93      		push r19
+  31 000e 4F93      		push r20
+  32 0010 5F93      		push r21
+  33 0012 6F93      		push r22
+  34 0014 7F93      		push r23
+  35 0016 8F93      		push r24
+  36 0018 9F93      		push r25
+  37 001a AF93      		push r26
+  38 001c BF93      		push r27
+  39 001e EF93      		push r30
+  40 0020 FF93      		push r31
+  41               	/* prologue end (size=17) */
+  42               	.LM2:
+  43 0022 8091 0000 		lds r24,BuffElements
+  44 0026 8034      		cpi r24,lo8(64)
+  45 0028 01F4      		brne .L2
+  46               	.LM3:
+  47 002a 80E0      		ldi r24,lo8(__c.1862)
+  48 002c 90E0      		ldi r25,hi8(__c.1862)
+  49 002e 0E94 0000 		call MAIN_CrashProgram
+  50               	.L2:
+  51               	.LM4:
+  52 0032 8091 0000 		lds r24,InPos
+  53 0036 E82F      		mov r30,r24
+  54 0038 FF27      		clr r31
+  55 003a 9091 C600 		lds r25,198
+  56 003e E050      		subi r30,lo8(-(RingBuffer))
+  57 0040 F040      		sbci r31,hi8(-(RingBuffer))
+  58 0042 9083      		st Z,r25
+  59 0044 8F5F      		subi r24,lo8(-(1))
+  60 0046 8093 0000 		sts InPos,r24
+  61               	.LM5:
+  62 004a 8091 0000 		lds r24,BuffElements
+  63 004e 8F5F      		subi r24,lo8(-(1))
+  64 0050 8093 0000 		sts BuffElements,r24
+  65               	.LM6:
+  66 0054 8091 0000 		lds r24,InPos
+  67 0058 8034      		cpi r24,lo8(64)
+  68 005a 01F4      		brne .L6
+  69               	.LM7:
+  70 005c 1092 0000 		sts InPos,__zero_reg__
+  71               	.L6:
+  72               	/* epilogue: frame size=0 */
+  73 0060 FF91      		pop r31
+  74 0062 EF91      		pop r30
+  75 0064 BF91      		pop r27
+  76 0066 AF91      		pop r26
+  77 0068 9F91      		pop r25
+  78 006a 8F91      		pop r24
+  79 006c 7F91      		pop r23
+  80 006e 6F91      		pop r22
+  81 0070 5F91      		pop r21
+  82 0072 4F91      		pop r20
+  83 0074 3F91      		pop r19
+  84 0076 2F91      		pop r18
+  85 0078 0F90      		pop __tmp_reg__
+  86 007a 0FBE      		out __SREG__,__tmp_reg__
+  87 007c 0F90      		pop __tmp_reg__
+  88 007e 1F90      		pop __zero_reg__
+  89 0080 1895      		reti
+  90               	/* epilogue end (size=17) */
+  91               	/* function __vector_13 size 65 (31) */
+  92               	.LFE14:
+  94               		.section	.progmem.data,"a",@progbits
+  97               	__c.1862:
+  98 0000 4255 4646 		.string	"BUFF OVF"
+  98      204F 5646 
+  98      00
+  99               		.lcomm BuffElements,1
+ 100               		.lcomm RingBuffer,64
+ 101               		.lcomm InPos,1
+ 124               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 RingBuff.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccaAaaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccaAaaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccaAaaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccaAaaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccaAaaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccaAaaaa.s:20     .text:00000000 BUFF_InitialiseBuffer
-                            *COM*:00000040 RingBuffer
-                            *COM*:00000002 StoreLoc
-                            *COM*:00000002 RetrieveLoc
-                            *COM*:00000001 BuffElements
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccaAaaaa.s:43     .text:0000001a BUFF_GetBuffByte
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccaAaaaa.s:92     .text:0000005c __vector_13
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccaAaaaa.s:175    .progmem.data:00000000 __c.1863
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc27aaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc27aaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc27aaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc27aaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc27aaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc27aaaa.s:20     .text:00000000 __vector_13
+                             .bss:00000000 BuffElements
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc27aaaa.s:97     .progmem.data:00000000 __c.1862
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc27aaaa.s:100    .bss:00000041 InPos
+C:\DOCUME~1\Dean\LOCALS~1\Temp/cc27aaaa.s:99     .bss:00000001 RingBuffer
 
 UNDEFINED SYMBOLS
 __do_copy_data
 __do_clear_bss
-MAIN_ShowError
+MAIN_CrashProgram

@@ -7,23 +7,21 @@
 
 #ifndef AICI_H
 #define AICI_H
-
-// INCLUDES:
-#include <avr/io.h>
-#include <avr/pgmspace.h>
-#include <util/delay.h>
-
-#include "Main.h"
-#include "LCD_Driver.h"
-#include "SPI.h"
-#include "ISPChipComm.h"
-#include "V2Protocol.h"
-#include "AVRISPCommandBytes.h"
-
-// EXTERNAL VARIABLES:
-extern const uint8_t AVRISPModeMessage[] PROGMEM;
-
-// PROTOTYPES:
-void AICI_InterpretPacket(void);
-
+	// INCLUDES:
+	#include <avr/io.h>
+	#include <avr/pgmspace.h>
+	#include <util/delay.h>
+	
+	#include "Main.h"
+	#include "LCD_Driver.h"
+	#include "SPI.h"
+	#include "ISPChipComm.h"
+	#include "V2Protocol.h"
+	#include "AVRISPCommandBytes.h"
+	
+	// EXTERNAL VARIABLES:
+	extern const uint8_t AVRISPModeMessage[] PROGMEM;
+	
+	// PROTOTYPES:
+	void AICI_InterpretPacket(void);
 #endif

@@ -23,29 +23,27 @@
 
 #ifndef ISRMACRO_H
 #define ISRMACRO_H
-
-// If present, kill the current ISR macro:
-#ifdef ISR
-   #undef ISR
-#endif
-
-// The default vector is given a more descriptive alias here:
-#define BADISR_vect __vector_default
-
-// The three attributes are defined here:
-#if defined(__GNUC__) && (__GNUC__ > 3)
-   #define ISR_NOBLOCK __attribute__((interrupt, used, externally_visible))
-   #define ISR_BLOCK   __attribute__((signal, used, externally_visible))
-   #define ISR_NAKED   __attribute__((signal, naked, used, externally_visible))
-#else
-   #define ISR_NOBLOCK __attribute__((interrupt))
-   #define ISR_BLOCK   __attribute__((signal))
-   #define ISR_NAKED   __attribute__((signal, naked))
-#endif
-
-// Define the new ISR macro:
-#define ISR(vector, attributes)  \
- void vector (void) attributes; \
- void vector (void)
-
+	// If present, kill the current ISR macro:
+	#ifdef ISR
+	   #undef ISR
+	#endif
+	
+	// The default vector is given a more descriptive alias here:
+	#define BADISR_vect __vector_default
+	
+	// The three attributes are defined here:
+	#if defined(__GNUC__) && (__GNUC__ > 3)
+	   #define ISR_NOBLOCK __attribute__((interrupt, used, externally_visible))
+	   #define ISR_BLOCK   __attribute__((signal, used, externally_visible))
+	   #define ISR_NAKED   __attribute__((signal, naked, used, externally_visible))
+	#else
+	   #define ISR_NOBLOCK __attribute__((interrupt))
+	   #define ISR_BLOCK   __attribute__((signal))
+	   #define ISR_NAKED   __attribute__((signal, naked))
+	#endif
+	
+	// Define the new ISR macro:
+	#define ISR(vector, attributes)  \
+	 void vector (void) attributes; \
+	 void vector (void)
 #endif

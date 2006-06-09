@@ -162,7 +162,7 @@ void AICI_InterpretPacket(void)
 			break;
 		case AICB_CMD_PROGRAM_FLASH_ISP:
 		case AICB_CMD_PROGRAM_EEPROM_ISP:
-			ISPCC_ProgramChip();                          // Program the bytes into the chip
+			ISPCC_ProgramChip();                         // Program the bytes into the chip
 			
 			MessageSize = 2;
 
@@ -175,5 +175,5 @@ void AICI_InterpretPacket(void)
 			PacketBytes[1] = AICB_STATUS_CMD_UNKNOWN;
 	}
 
-	V2P_SendPacket();                                   // Send the response packet
+	V2P_SendPacket();                                    // Send the response packet
 }

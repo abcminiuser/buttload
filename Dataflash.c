@@ -28,10 +28,7 @@ const uint16_t DF_Pages[]    PROGMEM = {256, 512, 1024, 2048, 4096, 4096, 8192, 
 const uint8_t DataFlashError[] PROGMEM = "DATAFLASH ERROR";
 
 SPIFuncPtr DFSPIRoutinePointer = SPI_SPITransmit;
-uint16_t   CurrPageAddress     = 0;
-uint16_t   CurrBuffByte        = 0;
-uint8_t    UseExernalDF        = FALSE;
-DFinfo     DataflashInfo       = {0,0,0};
+DFinfo     DataflashInfo       = {0,0,0,0,0,0};
 
 // ======================================================================================
 
@@ -170,14 +167,14 @@ void DF_EnableDataflash(const uint8_t Enabled)
 {
 	if (Enabled == TRUE)
 	{
-		if (UseExernalDF == TRUE)
+		if (DataflashInfo.UseExernalDF == TRUE)
 		  MAIN_ResetCSLine(MAIN_RESETCS_EXTDFACTIVE);
 		else
 		  PORTB &= ~(1 << 0);
 	}
 	else
 	{
-		if (UseExernalDF == TRUE)
+		if (DataflashInfo.UseExernalDF == TRUE)
 		  MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE);
 		else
 		  PORTB |= (1 << 0);

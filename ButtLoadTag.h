@@ -16,17 +16,18 @@
 
 #ifndef BLTAG_H
 #define BLTAG_H
-
-#include <avr/io.h>
-#include <avr/pgmspace.h>
-
-struct ButtLoadData
-{
-	uint8_t MagicString[4];
-	uint8_t TagData[];
-};
-
-#define BT_TAGHEADER          {'@','(','#',')'}
-#define BUTTLOADTAG(id, data) const struct ButtLoadData BUTTTAG_##id PROGMEM = {BT_TAGHEADER, data}
-
+	// INCLUDES:
+	#include <avr/io.h>
+	#include <avr/pgmspace.h>
+	
+	// STRUCTS:
+	struct ButtLoadData
+	{
+		uint8_t MagicString[4];
+		uint8_t TagData[];
+	};
+	
+	// DEFINES:
+	#define BT_TAGHEADER          {'@','(','#',')'}
+	#define BUTTLOADTAG(id, data) const struct ButtLoadData BUTTTAG_##id PROGMEM = {BT_TAGHEADER, data}
 #endif

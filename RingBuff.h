@@ -6,20 +6,17 @@
 */
 
 #ifndef RINGBUFF_H
-	#define RINGBUFF_H
-
-	// Includes:
+#define RINGBUFF_H
+	// INCLUDES:
 	#include "Main.h"
    
-	// Configuration:
+	// DEFINES:
 	#define BUFF_BUFFLEN  64
-	typedef uint8_t BuffType; // Replace "uint8_t" with desired buffer storage type
-	typedef uint8_t ElemType; // Replace "uint8_t" with the smallest datatype that can hold BuffLen
 
-	// Extern Variables:
-	extern volatile ElemType BuffElements; // Holds the number of elements in the buffer
+	// EXTERN VARIABLES:
+	extern volatile uint8_t BuffElements; // Holds the number of elements in the buffer
 
-	// Prototypes:
+	// PROTOTYPES:
 	void     BUFF_InitialiseBuffer(void);
-	BuffType BUFF_GetBuffByte(void);
+	uint8_t  BUFF_GetBuffByte(void);
 #endif

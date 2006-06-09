@@ -102,8 +102,8 @@ void PD_InterpretAVRISPPacket(void)
 		case AICB_CMD_PROGRAM_EEPROM_ISP:
 			PD_SetupDFAddressCounters();
 			
-			DF_CopyFlashPageToBuffer(CurrPageAddress);
-			DF_BufferWriteEnable(CurrBuffByte);
+			DF_CopyFlashPageToBuffer(DataflashInfo.CurrPageAddress);
+			DF_BufferWriteEnable(DataflashInfo.CurrBuffByte);
 			
 			uint16_t BytesToWrite = ((uint16_t)PacketBytes[1] << 8)
 			                      | PacketBytes[2];
@@ -111,7 +111,7 @@ void PD_InterpretAVRISPPacket(void)
 			for (uint16_t WriteByte = 0; WriteByte < BytesToWrite; WriteByte++)
 			{
 				PD_StoreDataflashByte(PacketBytes[10 + WriteByte]);
-				CurrBuffByte++;
+				DataflashInfo.CurrBuffByte++;
 				V2P_IncrementCurrAddress();
 			}
 
@@ -120,20 +120,20 @@ void PD_InterpretAVRISPPacket(void)
 			break;
 		case AICB_CMD_READ_EEPROM_ISP:
 			PD_SetupDFAddressCounters();
-			DF_CopyFlashPageToBuffer(CurrPageAddress);
+			DF_CopyFlashPageToBuffer(DataflashInfo.CurrPageAddress);
 			
 			uint16_t BytesToRead = ((uint16_t)PacketBytes[1] << 8)
 			                     | PacketBytes[2];
 			
 			for (uint16_t ReadByte = 0; ReadByte < BytesToRead; ReadByte++)
 			{
-				if (CurrBuffByte == DataflashInfo.PageSize)
+				if (DataflashInfo.CurrBuffByte == DataflashInfo.PageSize)
 				{
 					PD_SetupDFAddressCounters();
-					DF_CopyFlashPageToBuffer(CurrPageAddress);
+					DF_CopyFlashPageToBuffer(DataflashInfo.CurrPageAddress);
 				}
 				
-				PacketBytes[2 + ReadByte] = DF_ReadBufferByte(CurrBuffByte++); // Read in the next dataflash byte if present
+				PacketBytes[2 + ReadByte] = DF_ReadBufferByte(DataflashInfo.CurrBuffByte++); // Read in the next dataflash byte if present
 				V2P_IncrementCurrAddress();
 			}
 			
@@ -166,26 +166,26 @@ void PD_SetupDFAddressCounters(void)
 {
 	uint32_t StartAddress = CurrAddress;
 
-	CurrPageAddress = 0;
+	DataflashInfo.CurrPageAddress = 0;
 
 	while (StartAddress > DataflashInfo.PageSize)      // This loop is the equivalent of a DIV and a MOD
 	{
 		StartAddress -= DataflashInfo.PageSize;         // Subtract one page's worth of bytes from the desired address
-		CurrPageAddress++;
+		DataflashInfo.CurrPageAddress++;
 	}
 	
-	CurrBuffByte = (uint16_t)StartAddress;              // The buffer byte is the remainder
+	DataflashInfo.CurrBuffByte = (uint16_t)StartAddress; // The buffer byte is the remainder
 }
 
 void PD_StoreDataflashByte(const uint8_t Data)
 {
-	if (CurrBuffByte == DataflashInfo.PageSize)
+	if (DataflashInfo.CurrBuffByte == DataflashInfo.PageSize)
 	{
-		DF_CopyBufferToFlashPage(CurrPageAddress++);
+		DF_CopyBufferToFlashPage(DataflashInfo.CurrPageAddress++);
 		DF_BufferWriteEnable(0);
-		CurrBuffByte = 0;
+		DataflashInfo.CurrBuffByte = 0;
 	}
 	
 	USI_SPITransmit(Data);                                 // Store the byte, dataflash is in write mode due to DF_BufferWriteEnable
-	CurrBuffByte++;
+	DataflashInfo.CurrBuffByte++;
 }

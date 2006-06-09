@@ -7,34 +7,32 @@
 
 #ifndef EEVARS_H
 #define EEVARS_H
-
-// INCLUDES:
-#include <avr/eeprom.h>
-
-// TYPE DEFINITIONS:
-typedef struct
-{
-	uint8_t  JUNKVAR;           // Unused location 0 to guard against EEPROM corruption
-
-	uint8_t  ResetPolarity;
-	uint8_t  SCKDuration;
-	uint8_t  WriteProgram[9];
-	uint8_t  WriteEEPROM[9];
-	uint8_t  EraseCmdStored;
-	uint8_t  EraseChip[6];
-	uint8_t  DataSize[4];
-	uint8_t  EEPROMSize[4];
-	uint8_t  EnterProgMode[12];
-	uint8_t  TotalFuseBytes;
-	uint8_t  TotalLockBytes;
-	uint8_t  FuseBytes[40];
-	uint8_t  LockBytes[40];
-	uint16_t PageLength;
-	uint16_t EPageLength;
-	uint8_t  LCDContrast;
-	uint8_t  FirmVerMinor;
-	uint8_t  AutoSleepValIndex;
-	uint8_t  MagicNumber;	
-} EEPROMVarsType;
-
+	// INCLUDES:
+	#include <avr/eeprom.h>
+	
+	// TYPE DEFINITIONS:
+	typedef struct
+	{
+		uint8_t  JUNKVAR;           // Unused location 0 to guard against EEPROM corruption
+	
+		uint8_t  ResetPolarity;
+		uint8_t  SCKDuration;
+		uint8_t  WriteProgram[9];
+		uint8_t  WriteEEPROM[9];
+		uint8_t  EraseCmdStored;
+		uint8_t  EraseChip[6];
+		uint8_t  DataSize[4];
+		uint8_t  EEPROMSize[4];
+		uint8_t  EnterProgMode[12];
+		uint8_t  TotalFuseBytes;
+		uint8_t  TotalLockBytes;
+		uint8_t  FuseBytes[40];
+		uint8_t  LockBytes[40];
+		uint16_t PageLength;
+		uint16_t EPageLength;
+		uint8_t  LCDContrast;
+		uint8_t  FirmVerMinor;
+		uint8_t  AutoSleepValIndex;
+		uint8_t  MagicNumber;	
+	} EEPROMVarsType;
 #endif
