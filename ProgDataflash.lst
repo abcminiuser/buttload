@@ -8,24 +8,560 @@
    8               		.global __do_copy_data
    9               		.global __do_clear_bss
   17               	.Ltext0:
-  18               		.section	.progmem.data,"a",@progbits
-  21               	DataFlashProgMode:
-  22 0000 2A44 4154 		.string	"*DATAFLASH MODE*"
-  22      4146 4C41 
-  22      5348 204D 
-  22      4F44 452A 
-  22      00
-  23               		.text
-  24               	.Letext0:
+  18               	.global	PD_SetupDFAddressCounters
+  20               	PD_SetupDFAddressCounters:
+  21               	.LFB15:
+  22               	.LM1:
+  23               	/* prologue: frame size=0 */
+  24 0000 EF92      		push r14
+  25 0002 FF92      		push r15
+  26 0004 0F93      		push r16
+  27 0006 1F93      		push r17
+  28               	/* prologue end (size=4) */
+  29               	.LM2:
+  30 0008 2091 0000 		lds r18,CurrAddress
+  31 000c 3091 0000 		lds r19,(CurrAddress)+1
+  32 0010 4091 0000 		lds r20,(CurrAddress)+2
+  33 0014 5091 0000 		lds r21,(CurrAddress)+3
+  34               	.LVL0:
+  35               	.LM3:
+  36 0018 1092 0000 		sts (DataflashInfo+6)+1,__zero_reg__
+  37 001c 1092 0000 		sts DataflashInfo+6,__zero_reg__
+  38               	.LM4:
+  39 0020 8091 0000 		lds r24,DataflashInfo+2
+  40 0024 9091 0000 		lds r25,(DataflashInfo+2)+1
+  41 0028 AA27      		clr r26
+  42 002a BB27      		clr r27
+  43 002c 60E0      		ldi r22,lo8(0)
+  44 002e 70E0      		ldi r23,hi8(0)
+  45 0030 EE24      		clr r14
+  46 0032 FF24      		clr r15
+  47 0034 8701      		movw r16,r14
+  48 0036 E81A      		sub r14,r24
+  49 0038 F90A      		sbc r15,r25
+  50 003a 0A0B      		sbc r16,r26
+  51 003c 1B0B      		sbc r17,r27
+  52 003e 00C0      		rjmp .L2
+  53               	.L3:
+  54               	.LM5:
+  55 0040 2E0D      		add r18,r14
+  56 0042 3F1D      		adc r19,r15
+  57 0044 401F      		adc r20,r16
+  58 0046 511F      		adc r21,r17
+  59 0048 6F5F      		subi r22,lo8(-(1))
+  60 004a 7F4F      		sbci r23,hi8(-(1))
+  61               	.L2:
+  62 004c 8217      		cp r24,r18
+  63 004e 9307      		cpc r25,r19
+  64 0050 A407      		cpc r26,r20
+  65 0052 B507      		cpc r27,r21
+  66 0054 00F0      		brlo .L3
+  67 0056 7093 0000 		sts (DataflashInfo+6)+1,r23
+  68 005a 6093 0000 		sts DataflashInfo+6,r22
+  69               	.LM6:
+  70 005e 3093 0000 		sts (DataflashInfo+8)+1,r19
+  71 0062 2093 0000 		sts DataflashInfo+8,r18
+  72               	/* epilogue: frame size=0 */
+  73 0066 1F91      		pop r17
+  74 0068 0F91      		pop r16
+  75 006a FF90      		pop r15
+  76 006c EF90      		pop r14
+  77 006e 0895      		ret
+  78               	/* epilogue end (size=5) */
+  79               	/* function PD_SetupDFAddressCounters size 56 (47) */
+  80               	.LFE15:
+  82               	.global	PD_StoreDataflashByte
+  84               	PD_StoreDataflashByte:
+  85               	.LFB16:
+  86               	.LM7:
+  87               	/* prologue: frame size=0 */
+  88 0070 1F93      		push r17
+  89               	/* prologue end (size=1) */
+  90               	.LVL1:
+  91 0072 182F      		mov r17,r24
+  92               	.LM8:
+  93 0074 2091 0000 		lds r18,DataflashInfo+8
+  94 0078 3091 0000 		lds r19,(DataflashInfo+8)+1
+  95 007c 8091 0000 		lds r24,DataflashInfo+2
+  96 0080 9091 0000 		lds r25,(DataflashInfo+2)+1
+  97               	.LVL2:
+  98 0084 2817      		cp r18,r24
+  99 0086 3907      		cpc r19,r25
+ 100 0088 01F4      		brne .L7
+ 101               	.LM9:
+ 102 008a 8091 0000 		lds r24,DataflashInfo+6
+ 103 008e 9091 0000 		lds r25,(DataflashInfo+6)+1
+ 104 0092 0196      		adiw r24,1
+ 105 0094 9093 0000 		sts (DataflashInfo+6)+1,r25
+ 106 0098 8093 0000 		sts DataflashInfo+6,r24
+ 107 009c 0197      		sbiw r24,1
+ 108 009e 0E94 0000 		call DF_CopyBufferToFlashPage
+ 109               	.LM10:
+ 110 00a2 80E0      		ldi r24,lo8(0)
+ 111 00a4 90E0      		ldi r25,hi8(0)
+ 112 00a6 0E94 0000 		call DF_BufferWriteEnable
+ 113               	.LM11:
+ 114 00aa 1092 0000 		sts (DataflashInfo+8)+1,__zero_reg__
+ 115 00ae 1092 0000 		sts DataflashInfo+8,__zero_reg__
+ 116               	.L7:
+ 117               	.LM12:
+ 118 00b2 812F      		mov r24,r17
+ 119 00b4 0E94 0000 		call USI_SPITransmit
+ 120               	.LM13:
+ 121 00b8 8091 0000 		lds r24,DataflashInfo+8
+ 122 00bc 9091 0000 		lds r25,(DataflashInfo+8)+1
+ 123 00c0 0196      		adiw r24,1
+ 124 00c2 9093 0000 		sts (DataflashInfo+8)+1,r25
+ 125 00c6 8093 0000 		sts DataflashInfo+8,r24
+ 126               	/* epilogue: frame size=0 */
+ 127 00ca 1F91      		pop r17
+ 128 00cc 0895      		ret
+ 129               	/* epilogue end (size=2) */
+ 130               	/* function PD_StoreDataflashByte size 47 (44) */
+ 131               	.LFE16:
+ 133               	.global	PD_InterpretAVRISPPacket
+ 135               	PD_InterpretAVRISPPacket:
+ 136               	.LFB14:
+ 137               	.LM14:
+ 138               	/* prologue: frame size=0 */
+ 139 00ce 0F93      		push r16
+ 140 00d0 1F93      		push r17
+ 141 00d2 CF93      		push r28
+ 142 00d4 DF93      		push r29
+ 143               	/* prologue end (size=4) */
+ 144               	.LM15:
+ 145 00d6 8091 0000 		lds r24,PacketBytes
+ 146 00da 8631      		cpi r24,lo8(22)
+ 147 00dc 01F4      		brne .+2
+ 148 00de 00C0      		rjmp .L18
+ 149               	.LM16:
+ 150 00e0 8731      		cpi r24,lo8(23)
+ 151 00e2 00F4      		brsh .L22
+ 152 00e4 8231      		cpi r24,lo8(18)
+ 153 00e6 01F4      		brne .+2
+ 154 00e8 00C0      		rjmp .L14
+ 155 00ea 8331      		cpi r24,lo8(19)
+ 156 00ec 00F4      		brsh .L23
+ 157 00ee 8031      		cpi r24,lo8(16)
+ 158 00f0 01F0      		breq .L12
+ 159 00f2 8131      		cpi r24,lo8(17)
+ 160 00f4 01F0      		breq .+2
+ 161 00f6 00C0      		rjmp .L11
+ 162 00f8 00C0      		rjmp .L13
+ 163               	.L23:
+ 164 00fa 8431      		cpi r24,lo8(20)
+ 165 00fc 01F4      		brne .+2
+ 166 00fe 00C0      		rjmp .L16
+ 167 0100 8531      		cpi r24,lo8(21)
+ 168 0102 00F0      		brlo .+2
+ 169 0104 00C0      		rjmp .L17
+ 170 0106 00C0      		rjmp .L44
+ 171               	.L22:
+ 172 0108 8931      		cpi r24,lo8(25)
+ 173 010a 01F4      		brne .+2
+ 174 010c 00C0      		rjmp .L19
+ 175 010e 8A31      		cpi r24,lo8(26)
+ 176 0110 00F4      		brsh .L24
+ 177 0112 8731      		cpi r24,lo8(23)
+ 178 0114 01F4      		brne .+2
+ 179 0116 00C0      		rjmp .L19
+ 180 0118 8831      		cpi r24,lo8(24)
+ 181 011a 01F0      		breq .+2
+ 182 011c 00C0      		rjmp .L11
+ 183 011e 00C0      		rjmp .L20
+ 184               	.L24:
+ 185 0120 8B31      		cpi r24,lo8(27)
+ 186 0122 01F0      		breq .L21
+ 187 0124 8B31      		cpi r24,lo8(27)
+ 188 0126 00F4      		brsh .+2
+ 189 0128 00C0      		rjmp .L20
+ 190 012a 8C31      		cpi r24,lo8(28)
+ 191 012c 01F0      		breq .+2
+ 192 012e 00C0      		rjmp .L11
+ 193 0130 00C0      		rjmp .L20
+ 194               	.L12:
+ 195               	.LBB2:
+ 196               	.LM17:
+ 197 0132 82E0      		ldi r24,lo8(2)
+ 198 0134 90E0      		ldi r25,hi8(2)
+ 199 0136 9093 0000 		sts (MessageSize)+1,r25
+ 200 013a 8093 0000 		sts MessageSize,r24
+ 201               	.LM18:
+ 202 013e 81E0      		ldi r24,lo8(1)
+ 203 0140 0E94 0000 		call DF_EnableDataflash
+ 204               	.LM19:
+ 205 0144 0E94 0000 		call DF_GetChipCharacteristics
+ 206               	.LM20:
+ 207 0148 8091 0000 		lds r24,DataflashInfo
+ 208 014c 9091 0000 		lds r25,(DataflashInfo)+1
+ 209 0150 892B      		or r24,r25
+ 210 0152 01F0      		breq .L25
+ 211               	.LM21:
+ 212 0154 80E0      		ldi r24,lo8(DataFlashProgMode)
+ 213 0156 90E0      		ldi r25,hi8(DataFlashProgMode)
+ 214 0158 0E94 0000 		call LCD_puts_f
+ 215               	.LM22:
+ 216 015c 81E0      		ldi r24,lo8(1)
+ 217 015e 8093 0000 		sts InProgrammingMode,r24
+ 218               	.LM23:
+ 219 0162 81B3      		in r24,49-0x20
+ 220 0164 8F7C      		andi r24,lo8(-49)
+ 221 0166 8062      		ori r24,lo8(32)
+ 222 0168 00C0      		rjmp .L45
+ 223               	.L25:
+ 224               	.LM24:
+ 225 016a 80E0      		ldi r24,lo8(DataFlashError)
+ 226 016c 90E0      		ldi r25,hi8(DataFlashError)
+ 227 016e 0E94 0000 		call LCD_puts_f
+ 228               	.LM25:
+ 229 0172 80E0      		ldi r24,lo8(0)
+ 230 0174 0E94 0000 		call DF_EnableDataflash
+ 231               	.LM26:
+ 232 0178 80EC      		ldi r24,lo8(-64)
+ 233 017a 00C0      		rjmp .L46
+ 234               	.L13:
+ 235               	.LM27:
+ 236 017c 82E0      		ldi r24,lo8(2)
+ 237 017e 90E0      		ldi r25,hi8(2)
+ 238 0180 9093 0000 		sts (MessageSize)+1,r25
+ 239 0184 8093 0000 		sts MessageSize,r24
+ 240               	.LM28:
+ 241 0188 1092 0000 		sts InProgrammingMode,__zero_reg__
+ 242               	.LM29:
+ 243 018c 80E0      		ldi r24,lo8(0)
+ 244 018e 0E94 0000 		call DF_EnableDataflash
+ 245               	.LM30:
+ 246 0192 81B3      		in r24,49-0x20
+ 247 0194 8F7C      		andi r24,lo8(-49)
+ 248 0196 8061      		ori r24,lo8(16)
+ 249               	.L45:
+ 250 0198 81BB      		out 49-0x20,r24
+ 251               	.LVL3:
+ 252               	.L47:
+ 253               	.LM31:
+ 254 019a 1092 0000 		sts PacketBytes+1,__zero_reg__
+ 255 019e 00C0      		rjmp .L27
+ 256               	.LVL4:
+ 257               	.L21:
+ 258               	.LM32:
+ 259 01a0 84E0      		ldi r24,lo8(4)
+ 260 01a2 90E0      		ldi r25,hi8(4)
+ 261 01a4 9093 0000 		sts (MessageSize)+1,r25
+ 262 01a8 8093 0000 		sts MessageSize,r24
+ 263               	.LM33:
+ 264 01ac 1092 0000 		sts PacketBytes+1,__zero_reg__
+ 265               	.LM34:
+ 266 01b0 82E0      		ldi r24,lo8(2)
+ 267 01b2 00C0      		rjmp .L48
+ 268               	.L14:
+ 269               	.LM35:
+ 270 01b4 82E0      		ldi r24,lo8(2)
+ 271 01b6 90E0      		ldi r25,hi8(2)
+ 272 01b8 9093 0000 		sts (MessageSize)+1,r25
+ 273 01bc 8093 0000 		sts MessageSize,r24
+ 274               	.LM36:
+ 275 01c0 1092 0000 		sts PacketBytes+1,__zero_reg__
+ 276               	.LBE2:
+ 277               	.LM37:
+ 278 01c4 0E94 0000 		call V2P_SendPacket
+ 279               	.LM38:
+ 280 01c8 80E0      		ldi r24,lo8(WaitText)
+ 281 01ca 90E0      		ldi r25,hi8(WaitText)
+ 282 01cc 0E94 0000 		call LCD_puts_f
+ 283 01d0 C0E0      		ldi r28,lo8(0)
+ 284 01d2 D0E0      		ldi r29,hi8(0)
+ 285               	.LVL5:
+ 286 01d4 00C0      		rjmp .L28
+ 287               	.LVL6:
+ 288               	.L20:
+ 289               	.LBB3:
+ 290               	.LM39:
+ 291 01d6 84E0      		ldi r24,lo8(4)
+ 292 01d8 90E0      		ldi r25,hi8(4)
+ 293 01da 9093 0000 		sts (MessageSize)+1,r25
+ 294 01de 8093 0000 		sts MessageSize,r24
+ 295               	.LM40:
+ 296 01e2 1092 0000 		sts PacketBytes+1,__zero_reg__
+ 297               	.LM41:
+ 298 01e6 8FEF      		ldi r24,lo8(-1)
+ 299               	.L48:
+ 300 01e8 8093 0000 		sts PacketBytes+2,r24
+ 301               	.LM42:
+ 302 01ec 1092 0000 		sts PacketBytes+3,__zero_reg__
+ 303 01f0 00C0      		rjmp .L27
+ 304               	.L19:
+ 305               	.LM43:
+ 306 01f2 83E0      		ldi r24,lo8(3)
+ 307 01f4 90E0      		ldi r25,hi8(3)
+ 308 01f6 9093 0000 		sts (MessageSize)+1,r25
+ 309 01fa 8093 0000 		sts MessageSize,r24
+ 310               	.LM44:
+ 311 01fe 1092 0000 		sts PacketBytes+1,__zero_reg__
+ 312               	.LM45:
+ 313 0202 1092 0000 		sts PacketBytes+2,__zero_reg__
+ 314 0206 00C0      		rjmp .L27
+ 315               	.L44:
+ 316               	.LM46:
+ 317 0208 82E0      		ldi r24,lo8(2)
+ 318 020a 90E0      		ldi r25,hi8(2)
+ 319 020c 9093 0000 		sts (MessageSize)+1,r25
+ 320 0210 8093 0000 		sts MessageSize,r24
+ 321 0214 00C0      		rjmp .L47
+ 322               	.L16:
+ 323               	.LM47:
+ 324 0216 2091 0000 		lds r18,PacketBytes+1
+ 325 021a 3327      		clr r19
+ 326 021c 322F      		mov r19,r18
+ 327 021e 2227      		clr r18
+ 328 0220 8091 0000 		lds r24,PacketBytes+2
+ 329 0224 9927      		clr r25
+ 330 0226 282B      		or r18,r24
+ 331 0228 392B      		or r19,r25
+ 332 022a F901      		movw r30,r18
+ 333 022c 3396      		adiw r30,3
+ 334 022e F093 0000 		sts (MessageSize)+1,r31
+ 335 0232 E093 0000 		sts MessageSize,r30
+ 336 0236 81E0      		ldi r24,lo8(1)
+ 337 0238 90E0      		ldi r25,hi8(1)
+ 338               	.LVL7:
+ 339 023a A0E0      		ldi r26,lo8(PacketBytes+1)
+ 340 023c B0E0      		ldi r27,hi8(PacketBytes+1)
+ 341 023e 2F5F      		subi r18,lo8(-(1))
+ 342 0240 3F4F      		sbci r19,hi8(-(1))
+ 343 0242 4FEF      		ldi r20,lo8(-1)
+ 344 0244 00C0      		rjmp .L29
+ 345               	.L30:
+ 346               	.LBB4:
+ 347               	.LM48:
+ 348 0246 4D93      		st X+,r20
+ 349               	.LM49:
+ 350 0248 0196      		adiw r24,1
+ 351               	.L29:
+ 352 024a 8217      		cp r24,r18
+ 353 024c 9307      		cpc r25,r19
+ 354 024e 00F0      		brlo .L30
+ 355               	.LBE4:
+ 356               	.LM50:
+ 357 0250 1092 0000 		sts PacketBytes+1,__zero_reg__
+ 358               	.LM51:
+ 359 0254 E050      		subi r30,lo8(-(PacketBytes-1))
+ 360 0256 F040      		sbci r31,hi8(-(PacketBytes-1))
+ 361 0258 1082      		st Z,__zero_reg__
+ 362 025a 00C0      		rjmp .L27
+ 363               	.LVL8:
+ 364               	.L17:
+ 365               	.LM52:
+ 366 025c 0E94 0000 		call PD_SetupDFAddressCounters
+ 367               	.LM53:
+ 368 0260 8091 0000 		lds r24,DataflashInfo+6
+ 369 0264 9091 0000 		lds r25,(DataflashInfo+6)+1
+ 370 0268 0E94 0000 		call DF_CopyFlashPageToBuffer
+ 371               	.LM54:
+ 372 026c 8091 0000 		lds r24,DataflashInfo+8
+ 373 0270 9091 0000 		lds r25,(DataflashInfo+8)+1
+ 374 0274 0E94 0000 		call DF_BufferWriteEnable
+ 375               	.LM55:
+ 376 0278 8091 0000 		lds r24,PacketBytes+1
+ 377 027c 9927      		clr r25
+ 378 027e D82F      		mov r29,r24
+ 379 0280 CC27      		clr r28
+ 380               	.LVL9:
+ 381 0282 8091 0000 		lds r24,PacketBytes+2
+ 382 0286 9927      		clr r25
+ 383 0288 C82B      		or r28,r24
+ 384 028a D92B      		or r29,r25
+ 385 028c 00E0      		ldi r16,lo8(PacketBytes)
+ 386 028e 10E0      		ldi r17,hi8(PacketBytes)
+ 387 0290 00C0      		rjmp .L32
+ 388               	.L33:
+ 389               	.LBB5:
+ 390               	.LM56:
+ 391 0292 F801      		movw r30,r16
+ 392 0294 8285      		ldd r24,Z+10
+ 393 0296 0E94 0000 		call PD_StoreDataflashByte
+ 394               	.LM57:
+ 395 029a 8091 0000 		lds r24,DataflashInfo+8
+ 396 029e 9091 0000 		lds r25,(DataflashInfo+8)+1
+ 397 02a2 0196      		adiw r24,1
+ 398 02a4 9093 0000 		sts (DataflashInfo+8)+1,r25
+ 399 02a8 8093 0000 		sts DataflashInfo+8,r24
+ 400               	.LM58:
+ 401 02ac 0E94 0000 		call V2P_IncrementCurrAddress
+ 402 02b0 0F5F      		subi r16,lo8(-(1))
+ 403 02b2 1F4F      		sbci r17,hi8(-(1))
+ 404               	.L32:
+ 405               	.LM59:
+ 406 02b4 CE01      		movw r24,r28
+ 407 02b6 8050      		subi r24,lo8(-(PacketBytes))
+ 408 02b8 9040      		sbci r25,hi8(-(PacketBytes))
+ 409 02ba 0817      		cp r16,r24
+ 410 02bc 1907      		cpc r17,r25
+ 411 02be 01F4      		brne .L33
+ 412 02c0 00C0      		rjmp .L47
+ 413               	.LVL10:
+ 414               	.L18:
+ 415               	.LBE5:
+ 416               	.LM60:
+ 417 02c2 0E94 0000 		call PD_SetupDFAddressCounters
+ 418               	.LM61:
+ 419 02c6 8091 0000 		lds r24,DataflashInfo+6
+ 420 02ca 9091 0000 		lds r25,(DataflashInfo+6)+1
+ 421 02ce 0E94 0000 		call DF_CopyFlashPageToBuffer
+ 422               	.LM62:
+ 423 02d2 8091 0000 		lds r24,PacketBytes+1
+ 424 02d6 9927      		clr r25
+ 425 02d8 D82F      		mov r29,r24
+ 426 02da CC27      		clr r28
+ 427               	.LVL11:
+ 428 02dc 8091 0000 		lds r24,PacketBytes+2
+ 429 02e0 9927      		clr r25
+ 430 02e2 C82B      		or r28,r24
+ 431 02e4 D92B      		or r29,r25
+ 432 02e6 00E0      		ldi r16,lo8(PacketBytes)
+ 433 02e8 10E0      		ldi r17,hi8(PacketBytes)
+ 434 02ea 00C0      		rjmp .L35
+ 435               	.L36:
+ 436               	.LBB6:
+ 437               	.LM63:
+ 438 02ec 2091 0000 		lds r18,DataflashInfo+8
+ 439 02f0 3091 0000 		lds r19,(DataflashInfo+8)+1
+ 440 02f4 8091 0000 		lds r24,DataflashInfo+2
+ 441 02f8 9091 0000 		lds r25,(DataflashInfo+2)+1
+ 442 02fc 2817      		cp r18,r24
+ 443 02fe 3907      		cpc r19,r25
+ 444 0300 01F4      		brne .L37
+ 445               	.LM64:
+ 446 0302 0E94 0000 		call PD_SetupDFAddressCounters
+ 447               	.LM65:
+ 448 0306 8091 0000 		lds r24,DataflashInfo+6
+ 449 030a 9091 0000 		lds r25,(DataflashInfo+6)+1
+ 450 030e 0E94 0000 		call DF_CopyFlashPageToBuffer
+ 451               	.L37:
+ 452               	.LM66:
+ 453 0312 8091 0000 		lds r24,DataflashInfo+8
+ 454 0316 9091 0000 		lds r25,(DataflashInfo+8)+1
+ 455 031a 0196      		adiw r24,1
+ 456 031c 9093 0000 		sts (DataflashInfo+8)+1,r25
+ 457 0320 8093 0000 		sts DataflashInfo+8,r24
+ 458 0324 0197      		sbiw r24,1
+ 459 0326 0E94 0000 		call DF_ReadBufferByte
+ 460 032a F801      		movw r30,r16
+ 461 032c 8283      		std Z+2,r24
+ 462               	.LM67:
+ 463 032e 0E94 0000 		call V2P_IncrementCurrAddress
+ 464 0332 0F5F      		subi r16,lo8(-(1))
+ 465 0334 1F4F      		sbci r17,hi8(-(1))
+ 466               	.L35:
+ 467               	.LM68:
+ 468 0336 CE01      		movw r24,r28
+ 469 0338 8050      		subi r24,lo8(-(PacketBytes))
+ 470 033a 9040      		sbci r25,hi8(-(PacketBytes))
+ 471 033c 0817      		cp r16,r24
+ 472 033e 1907      		cpc r17,r25
+ 473 0340 01F4      		brne .L36
+ 474               	.LBE6:
+ 475               	.LM69:
+ 476 0342 2396      		adiw r28,3
+ 477 0344 D093 0000 		sts (MessageSize)+1,r29
+ 478 0348 C093 0000 		sts MessageSize,r28
+ 479               	.LM70:
+ 480 034c 1092 0000 		sts PacketBytes+1,__zero_reg__
+ 481               	.LM71:
+ 482 0350 F801      		movw r30,r16
+ 483 0352 1282      		std Z+2,__zero_reg__
+ 484 0354 00C0      		rjmp .L27
+ 485               	.LVL12:
+ 486               	.L11:
+ 487               	.LM72:
+ 488 0356 81E0      		ldi r24,lo8(1)
+ 489 0358 90E0      		ldi r25,hi8(1)
+ 490 035a 9093 0000 		sts (MessageSize)+1,r25
+ 491 035e 8093 0000 		sts MessageSize,r24
+ 492               	.LM73:
+ 493 0362 89EC      		ldi r24,lo8(-55)
+ 494               	.L46:
+ 495 0364 8093 0000 		sts PacketBytes+1,r24
+ 496               	.LVL13:
+ 497               	.L27:
+ 498               	.LBE3:
+ 499               	.LM74:
+ 500 0368 0E94 0000 		call V2P_SendPacket
+ 501               	.LVL14:
+ 502 036c 00C0      		rjmp .L43
+ 503               	.LVL15:
+ 504               	.L41:
+ 505               	.LBB7:
+ 506               	.LM75:
+ 507 036e CE01      		movw r24,r28
+ 508 0370 0E94 0000 		call DF_EraseBlock
+ 509               	.LM76:
+ 510 0374 2196      		adiw r28,1
+ 511               	.L28:
+ 512 0376 8091 0000 		lds r24,DataflashInfo+4
+ 513 037a 9091 0000 		lds r25,(DataflashInfo+4)+1
+ 514 037e 23E0      		ldi r18,3
+ 515 0380 9695      	1:	lsr r25
+ 516 0382 8795      		ror r24
+ 517 0384 2A95      		dec r18
+ 518 0386 01F4      		brne 1b
+ 519 0388 C817      		cp r28,r24
+ 520 038a D907      		cpc r29,r25
+ 521 038c 00F0      		brlo .L41
+ 522               	.LBE7:
+ 523               	.LM77:
+ 524 038e 80E0      		ldi r24,lo8(DataFlashProgMode)
+ 525 0390 90E0      		ldi r25,hi8(DataFlashProgMode)
+ 526 0392 0E94 0000 		call LCD_puts_f
+ 527               	.LVL16:
+ 528               	.L43:
+ 529               	/* epilogue: frame size=0 */
+ 530 0396 DF91      		pop r29
+ 531 0398 CF91      		pop r28
+ 532 039a 1F91      		pop r17
+ 533 039c 0F91      		pop r16
+ 534 039e 0895      		ret
+ 535               	/* epilogue end (size=5) */
+ 536               	/* function PD_InterpretAVRISPPacket size 361 (352) */
+ 537               	.LFE14:
+ 539               	.global	DataFlashProgMode
+ 540               		.section	.progmem.data,"a",@progbits
+ 543               	DataFlashProgMode:
+ 544 0000 2A44 4154 		.string	"*DATAFLASH MODE*"
+ 544      4146 4C41 
+ 544      5348 204D 
+ 544      4F44 452A 
+ 544      00
+ 581               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 ProgDataflash.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cci4aaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cci4aaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cci4aaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cci4aaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cci4aaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cci4aaaa.s:21     .progmem.data:00000000 DataFlashProgMode
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoNaaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoNaaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoNaaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoNaaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoNaaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoNaaaa.s:20     .text:00000000 PD_SetupDFAddressCounters
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoNaaaa.s:84     .text:00000070 PD_StoreDataflashByte
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoNaaaa.s:135    .text:000000ce PD_InterpretAVRISPPacket
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccoNaaaa.s:543    .progmem.data:00000000 DataFlashProgMode
 
 UNDEFINED SYMBOLS
 __do_copy_data
 __do_clear_bss
+CurrAddress
+DataflashInfo
+DF_CopyBufferToFlashPage
+DF_BufferWriteEnable
+USI_SPITransmit
+PacketBytes
+MessageSize
+DF_EnableDataflash
+DF_GetChipCharacteristics
+LCD_puts_f
+InProgrammingMode
+DataFlashError
+V2P_SendPacket
+WaitText
+DF_CopyFlashPageToBuffer
+V2P_IncrementCurrAddress
+DF_ReadBufferByte
+DF_EraseBlock

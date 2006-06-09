@@ -153,13 +153,14 @@ const FuncPtr    MainFunctionPtrs[]      PROGMEM = {FUNCAVRISPMode, FUNCStorePro
 
 const uint8_t    SFunc_SETCONTRAST[]     PROGMEM = "SET CONTRAST";
 const uint8_t    SFunc_SETSPISPEED[]     PROGMEM = "SET SPI SPEED";
+const uint8_t    SFunc_SETRESETMODE[]    PROGMEM = "SET RESET MODE";
 const uint8_t    SFunc_SETFIRMMINOR[]    PROGMEM = "SET FIRM VERSION";
 const uint8_t    SFunc_SETAUTOSLEEPTO[]  PROGMEM = "SET SLEEP TIMEOUT";
 const uint8_t    SFunc_CLEARMEM[]        PROGMEM = "CLEAR MEMORY";
 const uint8_t    SFunc_GOBOOTLOADER[]    PROGMEM = "JUMP TO BOOTLOADER";
 
-const uint8_t*   SettingFunctionNames[]  PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_SETFIRMMINOR , SFunc_SETAUTOSLEEPTO   , SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
-const FuncPtr    SettingFunctionPtrs[]   PROGMEM = {FUNCSetContrast  , FUNCSetISPSpeed  , FUNCSetFirmMinorVer, FUNCSetAutoSleepTimeOut, FUNCClearMem  , FUNCGoBootloader};
+const uint8_t*   SettingFunctionNames[]  PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_SETRESETMODE, SFunc_SETFIRMMINOR , SFunc_SETAUTOSLEEPTO   , SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
+const FuncPtr    SettingFunctionPtrs[]   PROGMEM = {FUNCSetContrast  , FUNCSetISPSpeed  , FUNCSetResetMode  , FUNCSetFirmMinorVer, FUNCSetAutoSleepTimeOut, FUNCClearMem  , FUNCGoBootloader};
 
 const uint8_t    PRG_A[]                 PROGMEM = "PRGM ALL";
 const uint8_t    PRG_D[]                 PROGMEM = "DATA ONLY";
@@ -173,6 +174,7 @@ const uint8_t    PRG_C[]                 PROGMEM = "ERASE ONLY";
 const uint8_t*   ProgOptions[]           PROGMEM = {PRG_A, PRG_D, PRG_E, PRG_DE, PRG_F, PRG_L, PRG_FL, PRG_C};
 
 const uint8_t    USISpeeds[USI_PRESET_SPEEDS][10]  PROGMEM = {" 57153 HZ", " 86738 HZ", "113427 HZ", "210651 HZ"};
+const uint8_t    SPIResetModes[2][6]               PROGMEM = {"LOGIC", "FLOAT"};
 const uint8_t    SIFONames[2][15]                  PROGMEM = {"STORAGE SIZES", "VIEW DATA TAGS"};
 
 // GLOBAL EEPROM VARIABLE STRUCT:
@@ -204,7 +206,8 @@ int main(void)
 	EIFR    = ((1<<PCIF0) | (1<<PCIF1));         // /
 
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);      // Set status LEDs to orange (busy)
-
+	MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE);     // Set target reset line to inactive
+	
 	LCD_Init();
 	LCD_CONTRAST_LEVEL(0x0F);
 	LCD_puts_f(WaitText);
@@ -288,10 +291,10 @@ void MAIN_ResetCSLine(const uint8_t ActiveInactive)
 		case MAIN_RESETCS_ACTIVE:      // The target RESET line may be either active high or low.
 			DDRF |= (1 << 6);
 		
-			if (!(eeprom_read_byte(&EEPROMVars.ResetPolarity))) // Translate to correct logic level for target device type
-			  PORTF |=  (1 << 6);
-			else
+			if (eeprom_read_byte(&EEPROMVars.ResetPolarity)) // Translate to correct active logic level for target device type
 			  PORTF &= ~(1 << 6);
+			else
+			  PORTF |= (1 << 6);
 		
 			break;
 		case MAIN_RESETCS_EXTDFACTIVE: // Dataflashes are always active low.
@@ -299,9 +302,19 @@ void MAIN_ResetCSLine(const uint8_t ActiveInactive)
 			PORTF &= ~(1 << 6);
 			
 			break;
-		case MAIN_RESETCS_INACTIVE:    // Both modes tristate the pins when inactive.
-			DDRF  &= ~(1 << 6);
-			PORTF &= ~(1 << 6);
+		case MAIN_RESETCS_INACTIVE:    // Must determine what to do for inactive RESET.
+			if (eeprom_read_byte(&EEPROMVars.SPIResetMode)) // FLOAT mode SPI
+			{
+				DDRF  &= ~(1 << 6);
+				PORTF &= ~(1 << 6);
+			}
+			else                                       // ACTIVE type SPI
+			{
+				if (eeprom_read_byte(&EEPROMVars.ResetPolarity)) // Translate to correct inactive logic level for target device type
+				  PORTF |= (1 << 6);
+				else
+				  PORTF &= ~(1 << 6);			
+			}
 	}
 }
 
@@ -751,6 +764,34 @@ void FUNCSetISPSpeed(void)
 			
 			// Show selected USI speed value onto the LCD:
 			LCD_puts_f(USISpeeds[CurrSpeed]);
+
+			MAIN_WaitForJoyRelease();
+		}
+	}
+}
+
+void FUNCSetResetMode(void)
+{
+	uint8_t CurrMode = (eeprom_read_byte(&EEPROMVars.SPIResetMode) & 0x01);
+
+	JoyStatus = 1;                        // Invalid value to force the LCD to update
+
+	while (1)
+	{
+		if (JoyStatus)
+		{
+			if ((JoyStatus & JOY_UP) || (JoyStatus & JOY_DOWN))
+			{
+				CurrMode ^= 1;
+			}
+			else if (JoyStatus & JOY_LEFT)
+			{
+				eeprom_write_byte(&EEPROMVars.SPIResetMode, CurrMode);
+				return;
+			}
+			
+			// Show selected USI speed value onto the LCD:
+			LCD_puts_f(SPIResetModes[CurrMode]);
 
 			MAIN_WaitForJoyRelease();
 		}

@@ -33,6 +33,7 @@
 		uint8_t  LCDContrast;
 		uint8_t  FirmVerMinor;
 		uint8_t  AutoSleepValIndex;
+		uint8_t  SPIResetMode;
 		uint8_t  MagicNumber;	
 	} EEPROMVarsType;
 #endif

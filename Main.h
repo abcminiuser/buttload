@@ -113,6 +113,7 @@
 	void FUNCClearMem(void);
 	void FUNCSetContrast(void);
 	void FUNCSetISPSpeed(void);
+	void FUNCSetResetMode(void);
 	void FUNCSetFirmMinorVer(void);
 	void FUNCSetAutoSleepTimeOut(void);
 	void FUNCSleepMode(void);
