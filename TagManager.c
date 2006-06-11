@@ -25,7 +25,7 @@ void TM_ShowTags(void)
 		return;
 	}
 
-	while (1)
+	for(;;)
 	{
 		if (JoyStatus)                         // Joystick is in the non-center position
 		{

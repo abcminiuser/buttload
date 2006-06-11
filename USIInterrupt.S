@@ -8,7 +8,7 @@
 #include <avr/io.h>
 #include "USI.h"
 
-; This interrupt handler is my ASM version of the Atmel C handler,
+; This interrupt handler is my ASM version of the Atmel USI C handler,
 ; rewritten for speed. It clocks the USI shift register on each
 ; compare match interrupt of the Timer0 timer.
 
@@ -22,6 +22,6 @@
 TIMER0_COMP_vect:
   push r24
   ldi r24, (USI_CONTROL_REG_FLAGS | (1<<USITC))
-  sts _SFR_IO_ADDR(USICR), r24
+  sts _SFR_MEM_ADDR(USICR), r24
   pop r24
   reti

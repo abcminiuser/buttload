@@ -41,7 +41,7 @@
 	
 	#define USART_ENABLE(Tx,Rx)   MACROS{                                                       \
 								  if (Tx || Rx) { LCD_puts_f(WaitText); OSCCAL_Calibrate(); }   \
-								  else { OSCCAL_SETSYSCLOCKSPEED(OSCCAL_CLOCKSPEED_1MHZ); }     \
+								  else { OSCCAL_SETSYSCLOCKSPEED(OSCCAL_BASECLOCKSPEED_1MHZ); } \
 								  UCSRB = (((Rx<<RXEN) | (Tx<<TXEN)) | (UCSRB & (1 << RXCIE))); \
 								  }MACROE
 	

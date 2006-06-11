@@ -24,7 +24,7 @@ void OSCCAL_Calibrate(void)
 	ActualCount = 0;
    
 	// Make sure all clock division is turned off (8Mhz RC clock)
-	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_CLOCKSPEED_8MHZ);
+	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_BASECLOCKSPEED_8MHZ);
 
 	// Inital OSCCAL of half its maximum
 	OSCCAL = (0x7F / 2);

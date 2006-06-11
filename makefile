@@ -43,7 +43,7 @@
 MCU = atmega169
 
 # GCC version
-GCCV = 4
+GCCV = 3
 
 # Processor frequency.
 #     This will define a symbol, F_CPU, in all source code files equal to the 

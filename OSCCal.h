@@ -11,8 +11,8 @@
 	#define OSCCAL_TARGETCOUNT         (uint16_t)(7372800UL / 128) // (Target Freq / Reference Freq)
 	
 	#define OSCCAL_SETSYSCLOCKSPEED(x) 	MACROS{ CLKPR = (1 << CLKPCE); CLKPR = x; }MACROE
-	#define OSCCAL_CLOCKSPEED_8MHZ      0
-	#define OSCCAL_CLOCKSPEED_1MHZ      ((1 << CLKPS0) | (1 << CLKPS1))
+	#define OSCCAL_BASECLOCKSPEED_8MHZ 0
+	#define OSCCAL_BASECLOCKSPEED_1MHZ ((1 << CLKPS0) | (1 << CLKPS1))
 	
 	// INCLUDES:
 	#include <avr/io.h>

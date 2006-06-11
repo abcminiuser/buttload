@@ -33,12 +33,12 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 	InProgrammingMode = FALSE;
 	CurrAddress       = 0;
 
-	while (1)
+	for(;;)
 	{
-		if (PacketTimeOut == TRUE)  // Packet has timed out waiting for data
+		if (PacketTimeOut == TRUE)                // Packet has timed out waiting for data
 		  V2PState = V2P_STATE_TIMEOUT;
 		else if (V2PState != V2P_STATE_IDLE)
-		  TIMEOUT_PACKET_TIMER_ON();      // Reset the timer on each loop if not in idle mode
+		  TIMEOUT_PACKET_TIMER_ON();               // Reset the timer on each loop if not in idle mode
 		
 		switch (V2PState)
 		{
@@ -63,13 +63,12 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 				break;
 			case V2P_STATE_GETSEQUENCENUM:
 				SequenceNum = USART_Rx();
-
-				V2PState  = V2P_STATE_GETMESSAGESIZE1;
+				V2PState    = V2P_STATE_GETMESSAGESIZE1;
 
 				break;
 			case V2P_STATE_GETMESSAGESIZE1:
-				MessageSize = ((uint16_t)USART_Rx() << 8);  // Message size is MSB first
-				V2PState = V2P_STATE_GETMESSAGESIZE2;
+				MessageSize = ((uint16_t)USART_Rx() << 8);  // Message size is MSB first				
+				V2PState    = V2P_STATE_GETMESSAGESIZE2;
 				
 				break;
 			case V2P_STATE_GETMESSAGESIZE2:
@@ -203,7 +202,7 @@ uint8_t V2P_GetChecksum()
 	CheckSumByte  = AICB_MESSAGE_START;
 	CheckSumByte ^= SequenceNum;
 	CheckSumByte ^= (uint8_t)(MessageSize >> 8);
-	CheckSumByte ^= (uint8_t)(MessageSize);
+	CheckSumByte ^= (uint8_t)(MessageSize & 0xFF);
 	CheckSumByte ^= AICB_TOKEN;
 	
 	for (uint16_t CByteIndex = 0; CByteIndex < MessageSize; CByteIndex++)

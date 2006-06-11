@@ -63,8 +63,6 @@ ISR(USI_OVERFLOW_vect, ISR_BLOCK)
 	storedUSIDR = USIDR;
 }
 
-
-
 /*! \brief  Initialize USI as SPI master.
  *
  *  This function sets up all pin directions and module configurations.

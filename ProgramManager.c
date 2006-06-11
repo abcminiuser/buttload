@@ -455,7 +455,7 @@ void PM_ShowStoredItemSizes(void)
 	
 	JoyStatus = 1;
 	
-	while (1)
+	for(;;)
 	{
 		if (JoyStatus)                           // Joystick is in the non-center position
 		{

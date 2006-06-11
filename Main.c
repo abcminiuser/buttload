@@ -232,9 +232,9 @@ int main(void)
 	JoyStatus = 1;                               // Use an invalid joystick value to force the program to write the
 	                                             // name of the default command onto the LCD
 	
-	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_CLOCKSPEED_1MHZ); // Use slow clock speed in the main menu to save power
+	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_BASECLOCKSPEED_1MHZ); // Use slow clock speed in the main menu to save power
 	
-	while (1)
+	for(;;)
 	{
 		if (JoyStatus)                           // Joystick is in the non-center position
 		{
@@ -320,7 +320,7 @@ void MAIN_ResetCSLine(const uint8_t ActiveInactive)
 
 void MAIN_WaitForJoyRelease(void)
 {
-	while (1)
+	for(;;)
 	{
 		while (JoyStatus) {};                   // Wait until joystick released
 
@@ -419,7 +419,7 @@ void FUNCChangeSettings(void)
 	
 	JoyStatus = 1;
 
-	while (1)
+	for(;;)
 	{
 		if (JoyStatus)                         // Joystick is in the non-center position
 		{
@@ -446,7 +446,7 @@ void FUNCShowAbout(void)
 	
 	JoyStatus = 1;
 			
-	while (1)
+	for(;;)
 	{
 		if (JoyStatus)
 		{
@@ -504,7 +504,7 @@ void FUNCProgramAVR(void)
 	
 	JoyStatus = 1;                              // Use an invalid joystick value to force the program to write the
 	                                            // name of the default command onto the LCD
-	while (1)
+	for(;;)
 	{
 		if (JoyStatus)
 		{
@@ -523,7 +523,7 @@ void FUNCProgramAVR(void)
 		}
 	}
 
-	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_CLOCKSPEED_8MHZ);
+	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_BASECLOCKSPEED_8MHZ);
 	LCD_puts_f(WaitText);
 
 	USI_SPIInitMaster(eeprom_read_byte(&EEPROMVars.SCKDuration));
@@ -636,7 +636,7 @@ void FUNCProgramAVR(void)
 		MAIN_ShowError(SyncErrorMessage);
 	}
 	
-	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_CLOCKSPEED_1MHZ);
+	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_BASECLOCKSPEED_1MHZ);
 	MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE); // Release the RESET line and allow the slave AVR to run	
 	USI_SPIOff();
 	DF_EnableDataflash(FALSE);
@@ -670,7 +670,7 @@ void FUNCClearMem(void)
 
 	LCD_puts_f(PSTR("<N Y>"));
 
-	while (1)
+	for(;;)
 	{
 		if (JoyStatus)
 		{
@@ -701,7 +701,7 @@ void FUNCSetContrast(void)
 	
 	JoyStatus = 1;                          // Invalid value to force the LCD to update
 	
-	while (1)
+	for(;;)
 	{
 		if (JoyStatus)
 		{
@@ -744,7 +744,7 @@ void FUNCSetISPSpeed(void)
 
 	JoyStatus = 1;                        // Invalid value to force the LCD to update
 
-	while (1)
+	for(;;)
 	{
 		if (JoyStatus)
 		{
@@ -776,7 +776,7 @@ void FUNCSetResetMode(void)
 
 	JoyStatus = 1;                        // Invalid value to force the LCD to update
 
-	while (1)
+	for(;;)
 	{
 		if (JoyStatus)
 		{
@@ -810,7 +810,7 @@ void FUNCSetFirmMinorVer(void)
 
 	JoyStatus = 1;                        // Invalid value to force the LCD to update
 
-	while (1)
+	for(;;)
 	{
 		if (JoyStatus)
 		{
@@ -850,7 +850,7 @@ void FUNCSetAutoSleepTimeOut(void)
 	
 	JoyStatus = 1;                        // Invalid value to force the LCD to update
 
-	while (1)
+	for(;;)
 	{
 		if (JoyStatus)
 		{
@@ -910,7 +910,7 @@ void FUNCStorageInfo(void)
 
 	JoyStatus = 1;                        // Invalid value to force the LCD to update
 
-	while (1)
+	for(;;)
 	{
 		if (JoyStatus)
 		{
@@ -970,6 +970,6 @@ void FUNCGoBootloader(void)
 	MAIN_WaitForJoyRelease();
 	
 	WDTCR = ((1<<WDCE) | (1<<WDE));       // Enable Watchdog Timer to give reset after minimum timeout
-	while (1) {};                        // Eternal loop - when watchdog resets the AVR it will enter the bootloader
+	for(;;) {};                           // Eternal loop - when watchdog resets the AVR it will enter the bootloader
 	                                      // assuming the BOOTRST fuse is programmed
 }
