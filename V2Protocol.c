@@ -33,7 +33,7 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 	InProgrammingMode = FALSE;
 	CurrAddress       = 0;
 
-	for(;;)
+	for (;;)
 	{
 		if (PacketTimeOut == TRUE)                // Packet has timed out waiting for data
 		  V2PState = V2P_STATE_TIMEOUT;
@@ -218,7 +218,7 @@ void V2P_GetSetParamater(void)
 	MessageSize = 3;                        // Set the default response message size to 3 bytes     
 	PacketBytes[1] = AICB_STATUS_CMD_OK;    // Set the default response to OK
 
-	switch (Param_Name)                    // Switch based on the recieved parameter byte
+	switch (Param_Name)                     // Switch based on the recieved parameter byte
 	{
 		case AICB_PARAM_BUILD_NUMBER_LOW:
 			PacketBytes[2] = VERSION_MINOR;
@@ -261,7 +261,7 @@ void V2P_GetSetParamater(void)
 			{
 				MessageSize = 2;
 				eeprom_write_byte(&EEPROMVars.SCKDuration, PacketBytes[2]);
-				USI_SPISetSpeed(PacketBytes[2]); // Re-Initialise the USI system with the new frequency
+				USI_SPISetSpeed();          // Re-Initialise the USI system with the new frequency
 			}
 					
 			break;

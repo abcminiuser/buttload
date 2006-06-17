@@ -235,662 +235,658 @@
  251 016e 00C0      		rjmp .L44
  252               	.L30:
  253 0170 2E39      		cpi r18,lo8(-98)
- 254 0172 01F4      		brne .+2
- 255 0174 00C0      		rjmp .L26
- 256 0176 2F39      		cpi r18,lo8(-97)
- 257 0178 01F0      		breq .+2
- 258 017a 00C0      		rjmp .L18
- 259 017c 00C0      		rjmp .L27
- 260               	.L20:
- 261               	.LM34:
- 262 017e 81E0      		ldi r24,lo8(1)
- 263               	.LVL4:
- 264               	.L45:
- 265               	.LVL5:
- 266 0180 8093 0000 		sts PacketBytes+2,r24
- 267 0184 00C0      		rjmp .L31
- 268               	.LVL6:
- 269               	.L22:
- 270               	.LM35:
- 271 0186 82E0      		ldi r24,lo8(2)
- 272 0188 00C0      		rjmp .L45
- 273               	.L23:
- 274               	.LBB16:
- 275               	.LBB17:
- 276               	.LM36:
- 277 018a 20E0      		ldi r18,lo8(EEPROMVars+135)
- 278 018c 30E0      		ldi r19,hi8(EEPROMVars+135)
- 279               	.LVL7:
- 280 018e D901      		movw r26,r18
- 281               	.LVL8:
- 282               	/* #APP */
- 283 0190 0E94 0000 		call __eeprom_read_byte_1F2021
- 284 0194 802D      		mov r24,__tmp_reg__
- 285               	.LVL9:
- 286               	/* #NOAPP */
- 287               	.LBE17:
- 288               	.LBE16:
- 289               	.LM37:
- 290 0196 8F3F      		cpi r24,lo8(-1)
- 291 0198 01F4      		brne .L32
- 292               	.LVL10:
- 293               	.L47:
- 294 019a 84E0      		ldi r24,lo8(4)
- 295               	.LVL11:
- 296 019c 00C0      		rjmp .L45
- 297               	.LVL12:
- 298               	.L32:
- 299               	.LBB18:
- 300               	.LBB19:
- 301               	.LM38:
- 302 019e D901      		movw r26,r18
- 303               	.LVL13:
- 304 01a0 00C0      		rjmp .L46
- 305               	.LVL14:
- 306               	.L27:
- 307               	.LBE19:
- 308               	.LBE18:
- 309               	.LM39:
- 310 01a2 8091 0000 		lds r24,PacketBytes
- 311 01a6 8330      		cpi r24,lo8(3)
- 312 01a8 01F4      		brne .L35
- 313               	.LM40:
- 314 01aa 8091 0000 		lds r24,Param_ControllerInit
- 315 01ae 00C0      		rjmp .L45
- 316               	.L35:
- 317               	.LM41:
- 318 01b0 82E0      		ldi r24,lo8(2)
- 319 01b2 90E0      		ldi r25,hi8(2)
- 320 01b4 9093 0000 		sts (MessageSize)+1,r25
- 321 01b8 8093 0000 		sts MessageSize,r24
- 322               	.LM42:
- 323 01bc 8091 0000 		lds r24,PacketBytes+2
- 324 01c0 8093 0000 		sts Param_ControllerInit,r24
- 325 01c4 00C0      		rjmp .L31
- 326               	.L25:
- 327               	.LM43:
- 328 01c6 8091 0000 		lds r24,PacketBytes
- 329 01ca A0E0      		ldi r26,lo8(EEPROMVars+2)
- 330 01cc B0E0      		ldi r27,hi8(EEPROMVars+2)
- 331 01ce 8330      		cpi r24,lo8(3)
- 332 01d0 01F0      		breq .L46
- 333               	.LM44:
- 334 01d2 82E0      		ldi r24,lo8(2)
- 335 01d4 90E0      		ldi r25,hi8(2)
- 336 01d6 9093 0000 		sts (MessageSize)+1,r25
- 337 01da 8093 0000 		sts MessageSize,r24
- 338               	.LBB20:
- 339               	.LBB21:
- 340               	.LM45:
- 341 01de 8091 0000 		lds r24,PacketBytes+2
- 342               	/* #APP */
- 343 01e2 082E      		mov __tmp_reg__,r24
- 344 01e4 0E94 0000 		call __eeprom_write_byte_1F2021
- 345               	.LVL15:
- 346               	/* #NOAPP */
- 347               	.LBE21:
- 348               	.LBE20:
- 349               	.LM46:
- 350 01e8 8091 0000 		lds r24,PacketBytes+2
- 351 01ec 0E94 0000 		call USI_SPISetSpeed
- 352               	.LVL16:
- 353 01f0 00C0      		rjmp .L31
- 354               	.LVL17:
- 355               	.L26:
- 356               	.LM47:
- 357 01f2 8091 0000 		lds r24,PacketBytes
- 358 01f6 A0E0      		ldi r26,lo8(EEPROMVars+1)
- 359 01f8 B0E0      		ldi r27,hi8(EEPROMVars+1)
- 360 01fa 8330      		cpi r24,lo8(3)
- 361 01fc 01F4      		brne .L39
- 362               	.LVL18:
- 363               	.L46:
- 364               	.LVL19:
- 365               	.LBB22:
- 366               	.LBB23:
- 367               	.LM48:
- 368               	/* #APP */
- 369 01fe 0E94 0000 		call __eeprom_read_byte_1F2021
- 370 0202 802D      		mov r24,__tmp_reg__
- 371               	.LVL20:
- 372               	/* #NOAPP */
- 373 0204 00C0      		rjmp .L45
- 374               	.LVL21:
- 375               	.L39:
- 376               	.LBE23:
- 377               	.LBE22:
- 378               	.LM49:
- 379 0206 82E0      		ldi r24,lo8(2)
- 380 0208 90E0      		ldi r25,hi8(2)
- 381 020a 9093 0000 		sts (MessageSize)+1,r25
- 382 020e 8093 0000 		sts MessageSize,r24
- 383               	.LBB24:
- 384               	.LBB25:
- 385               	.LM50:
- 386 0212 8091 0000 		lds r24,PacketBytes+2
- 387               	/* #APP */
- 388 0216 082E      		mov __tmp_reg__,r24
- 389 0218 0E94 0000 		call __eeprom_write_byte_1F2021
- 390               	.LVL22:
- 391               	/* #NOAPP */
- 392               	.LBE25:
- 393               	.LBE24:
- 394               	.LM51:
- 395 021c 81E0      		ldi r24,lo8(1)
- 396 021e 0E94 0000 		call MAIN_ResetCSLine
- 397               	.LVL23:
- 398 0222 00C0      		rjmp .L31
- 399               	.LVL24:
- 400               	.L44:
- 401               	.LM52:
- 402 0224 8091 0000 		lds r24,PacketBytes
- 403 0228 8330      		cpi r24,lo8(3)
- 404 022a 01F4      		brne .L41
- 405               	.LM53:
- 406 022c 1092 0000 		sts PacketBytes+2,__zero_reg__
- 407 0230 00C0      		rjmp .L31
- 408               	.L41:
- 409               	.LM54:
- 410 0232 82E0      		ldi r24,lo8(2)
- 411 0234 90E0      		ldi r25,hi8(2)
- 412 0236 9093 0000 		sts (MessageSize)+1,r25
- 413 023a 8093 0000 		sts MessageSize,r24
- 414 023e 00C0      		rjmp .L31
- 415               	.L18:
- 416               	.LM55:
- 417 0240 82E0      		ldi r24,lo8(2)
- 418 0242 90E0      		ldi r25,hi8(2)
- 419 0244 9093 0000 		sts (MessageSize)+1,r25
- 420 0248 8093 0000 		sts MessageSize,r24
- 421               	.LM56:
- 422 024c 80EC      		ldi r24,lo8(-64)
- 423 024e 8093 0000 		sts PacketBytes+1,r24
- 424               	.LVL25:
- 425               	.L31:
- 426               	.LM57:
- 427 0252 0E94 0000 		call V2P_SendPacket
- 428               	.LVL26:
- 429               	/* epilogue: frame size=0 */
- 430 0256 0895      		ret
- 431               	/* epilogue end (size=1) */
- 432               	/* function V2P_GetSetParamater size 156 (155) */
- 433               	.LFE17:
- 435               	.global	V2P_RunStateMachine
- 437               	V2P_RunStateMachine:
- 438               	.LFB14:
- 439               	.LM58:
- 440               	/* prologue: frame size=0 */
- 441 0258 CF92      		push r12
- 442 025a DF92      		push r13
- 443 025c EF92      		push r14
- 444 025e FF92      		push r15
- 445 0260 0F93      		push r16
- 446 0262 1F93      		push r17
- 447 0264 CF93      		push r28
- 448 0266 DF93      		push r29
- 449               	/* prologue end (size=8) */
- 450               	.LVL27:
- 451 0268 6C01      		movw r12,r24
- 452               	.LM59:
- 453 026a 0E94 0000 		call BUFF_InitialiseBuffer
- 454               	.LVL28:
- 455               	.LM60:
- 456 026e 1092 8100 		sts 129,__zero_reg__
- 457               	.LM61:
- 458 0272 1092 0000 		sts InProgrammingMode,__zero_reg__
- 459               	.LM62:
- 460 0276 1092 0000 		sts CurrAddress,__zero_reg__
- 461 027a 1092 0000 		sts (CurrAddress)+1,__zero_reg__
- 462 027e 1092 0000 		sts (CurrAddress)+2,__zero_reg__
- 463 0282 1092 0000 		sts (CurrAddress)+3,__zero_reg__
- 464 0286 10E0      		ldi r17,lo8(0)
- 465               	.LVL29:
- 466 0288 00C0      		rjmp .L107
- 467               	.LVL30:
- 468               	.L104:
- 469               	.LM63:
- 470 028a 12E0      		ldi r17,lo8(2)
- 471 028c 00C0      		rjmp .L111
- 472               	.L51:
- 473 028e 19E0      		ldi r17,lo8(9)
- 474               	.L111:
- 475               	.LM64:
- 476 0290 8091 0000 		lds r24,PacketTimeOut
- 477 0294 8130      		cpi r24,lo8(1)
- 478 0296 01F4      		brne .+2
- 479 0298 00C0      		rjmp .L52
- 480               	.LM65:
- 481 029a 1123      		tst r17
- 482 029c 01F0      		breq .L54
- 483               	.LM66:
- 484 029e 1092 0000 		sts PacketTimeOut,__zero_reg__
- 485 02a2 1092 0000 		sts PacketTimeOutTicks,__zero_reg__
- 486 02a6 1092 B200 		sts 178,__zero_reg__
- 487 02aa 80EF      		ldi r24,lo8(-16)
- 488 02ac 8093 B300 		sts 179,r24
- 489 02b0 82E0      		ldi r24,lo8(2)
- 490 02b2 8093 7000 		sts 112,r24
- 491 02b6 8FE0      		ldi r24,lo8(15)
- 492 02b8 8093 B000 		sts 176,r24
- 493               	.LM67:
- 494 02bc 1530      		cpi r17,lo8(5)
- 495 02be 01F4      		brne .+2
- 496 02c0 00C0      		rjmp .L60
- 497 02c2 1630      		cpi r17,lo8(6)
- 498 02c4 00F4      		brsh .L65
- 499 02c6 1230      		cpi r17,lo8(2)
- 500 02c8 01F0      		breq .L57
- 501 02ca 1330      		cpi r17,lo8(3)
- 502 02cc 00F4      		brsh .L66
- 503 02ce 1123      		tst r17
- 504 02d0 01F0      		breq .L54
- 505 02d2 1130      		cpi r17,lo8(1)
- 506 02d4 01F4      		brne .L111
- 507 02d6 00C0      		rjmp .L99
- 508               	.L66:
- 509 02d8 1330      		cpi r17,lo8(3)
- 510 02da 01F0      		breq .L58
- 511 02dc 1430      		cpi r17,lo8(4)
- 512 02de 01F4      		brne .L111
- 513 02e0 00C0      		rjmp .L100
- 514               	.L65:
- 515 02e2 1830      		cpi r17,lo8(8)
- 516 02e4 01F4      		brne .+2
- 517 02e6 00C0      		rjmp .L63
- 518 02e8 1930      		cpi r17,lo8(9)
- 519 02ea 00F4      		brsh .L67
- 520 02ec 1630      		cpi r17,lo8(6)
- 521 02ee 01F4      		brne .+2
- 522 02f0 00C0      		rjmp .L61
- 523 02f2 1730      		cpi r17,lo8(7)
- 524 02f4 01F4      		brne .L111
- 525 02f6 00C0      		rjmp .L101
- 526               	.L67:
- 527 02f8 1C30      		cpi r17,lo8(12)
- 528 02fa 00F4      		brsh .L111
- 529 02fc 00C0      		rjmp .L102
- 530               	.L54:
- 531               	.LM68:
- 532 02fe 8091 0000 		lds r24,BuffElements
- 533 0302 8111      		cpse r24,__zero_reg__
- 534 0304 81E0      		ldi r24,lo8(1)
- 535               	.L68:
- 536 0306 182F      		mov r17,r24
- 537               	.LM69:
- 538 0308 F29B      		sbis 62-0x20,2
- 539 030a 00C0      		rjmp .L111
- 540 030c 8091 0000 		lds r24,InProgrammingMode
- 541 0310 8823      		tst r24
- 542 0312 01F0      		breq .+2
- 543 0314 00C0      		rjmp .L111
- 544 0316 00C0      		rjmp .L103
- 545               	.L99:
- 546               	.LM70:
- 547 0318 0E94 0000 		call USART_Rx
- 548 031c 8B31      		cpi r24,lo8(27)
- 549 031e 01F0      		breq .+2
- 550 0320 00C0      		rjmp .L51
- 551 0322 00C0      		rjmp .L104
- 552               	.L57:
- 553               	.LM71:
- 554 0324 0E94 0000 		call USART_Rx
- 555 0328 9927      		clr r25
- 556 032a 9093 0000 		sts (SequenceNum)+1,r25
- 557 032e 8093 0000 		sts SequenceNum,r24
- 558 0332 13E0      		ldi r17,lo8(3)
- 559 0334 00C0      		rjmp .L111
- 560               	.L58:
- 561               	.LM72:
- 562 0336 0E94 0000 		call USART_Rx
- 563 033a 9927      		clr r25
- 564 033c 982F      		mov r25,r24
- 565 033e 8827      		clr r24
- 566 0340 9093 0000 		sts (MessageSize)+1,r25
- 567 0344 8093 0000 		sts MessageSize,r24
- 568 0348 14E0      		ldi r17,lo8(4)
- 569 034a 00C0      		rjmp .L111
- 570               	.L100:
- 571               	.LM73:
- 572 034c 0091 0000 		lds r16,MessageSize
- 573 0350 1091 0000 		lds r17,(MessageSize)+1
- 574 0354 0E94 0000 		call USART_Rx
- 575 0358 9927      		clr r25
- 576 035a 802B      		or r24,r16
- 577 035c 912B      		or r25,r17
- 578 035e 9093 0000 		sts (MessageSize)+1,r25
- 579 0362 8093 0000 		sts MessageSize,r24
- 580               	.LM74:
- 581 0366 8351      		subi r24,lo8(275)
- 582 0368 9140      		sbci r25,hi8(275)
- 583 036a 00F0      		brlo .+2
- 584 036c 00C0      		rjmp .L51
- 585 036e 15E0      		ldi r17,lo8(5)
- 586               	.L107:
- 587 0370 C0E0      		ldi r28,lo8(0)
- 588 0372 D0E0      		ldi r29,hi8(0)
- 589 0374 00C0      		rjmp .L111
- 590               	.L60:
- 591               	.LM75:
- 592 0376 0E94 0000 		call USART_Rx
- 593 037a 8E30      		cpi r24,lo8(14)
- 594 037c 01F0      		breq .+2
- 595 037e 00C0      		rjmp .L51
- 596 0380 16E0      		ldi r17,lo8(6)
- 597 0382 00C0      		rjmp .L111
- 598               	.L61:
- 599               	.LM76:
- 600 0384 8091 0000 		lds r24,MessageSize
- 601 0388 9091 0000 		lds r25,(MessageSize)+1
- 602 038c C817      		cp r28,r24
- 603 038e D907      		cpc r29,r25
- 604 0390 01F4      		brne .L73
- 605 0392 17E0      		ldi r17,lo8(7)
- 606 0394 00C0      		rjmp .L111
- 607               	.L73:
- 608               	.LM77:
- 609 0396 0E94 0000 		call USART_Rx
- 610 039a FE01      		movw r30,r28
- 611 039c E050      		subi r30,lo8(-(PacketBytes))
- 612 039e F040      		sbci r31,hi8(-(PacketBytes))
- 613 03a0 8083      		st Z,r24
- 614 03a2 2196      		adiw r28,1
- 615 03a4 00C0      		rjmp .L111
- 616               	.L101:
- 617               	.LM78:
- 618 03a6 8091 0000 		lds r24,PacketTimeOut
- 619 03aa 8823      		tst r24
- 620 03ac 01F0      		breq .+2
- 621 03ae 00C0      		rjmp .L111
- 622               	.LM79:
- 623 03b0 0E94 0000 		call V2P_GetChecksum
- 624 03b4 182F      		mov r17,r24
- 625               	.LVL31:
- 626 03b6 0E94 0000 		call USART_Rx
- 627 03ba 1817      		cp r17,r24
- 628 03bc 01F0      		breq .L76
- 629 03be 1BE0      		ldi r17,lo8(11)
- 630               	.LVL32:
- 631 03c0 00C0      		rjmp .L111
- 632               	.LVL33:
- 633               	.L76:
- 634               	.LM80:
- 635 03c2 8091 0000 		lds r24,PacketBytes
- 636 03c6 8430      		cpi r24,lo8(4)
- 637 03c8 00F4      		brsh .L83
- 638 03ca 8230      		cpi r24,lo8(2)
- 639 03cc 00F0      		brlo .+2
- 640 03ce 00C0      		rjmp .L80
- 641 03d0 8130      		cpi r24,lo8(1)
- 642 03d2 01F0      		breq .+2
- 643 03d4 00C0      		rjmp .L78
- 644 03d6 00C0      		rjmp .L105
- 645               	.L83:
- 646 03d8 8630      		cpi r24,lo8(6)
- 647 03da 01F0      		breq .L81
- 648 03dc 8730      		cpi r24,lo8(7)
- 649 03de 01F0      		breq .+2
- 650 03e0 00C0      		rjmp .L78
- 651 03e2 00C0      		rjmp .L106
- 652               	.L105:
- 653               	.LM81:
- 654 03e4 8BE0      		ldi r24,lo8(11)
- 655 03e6 90E0      		ldi r25,hi8(11)
- 656 03e8 9093 0000 		sts (MessageSize)+1,r25
- 657 03ec 8093 0000 		sts MessageSize,r24
- 658 03f0 E0E0      		ldi r30,lo8(SignonResponse)
- 659 03f2 F0E0      		ldi r31,hi8(SignonResponse)
- 660 03f4 A0E0      		ldi r26,lo8(PacketBytes)
- 661 03f6 B0E0      		ldi r27,hi8(PacketBytes)
- 662               	.L84:
- 663               	.LBB26:
- 664               	.LBB27:
- 665               	.LM82:
- 666               	/* #APP */
- 667 03f8 8491      		lpm r24, Z
- 668               		
- 669               	.LVL34:
- 670               	/* #NOAPP */
- 671               	.LBE27:
- 672 03fa 8D93      		st X+,r24
- 673 03fc 3196      		adiw r30,1
- 674               	.LM83:
- 675 03fe 80E0      		ldi r24,hi8(PacketBytes+11)
- 676 0400 A030      		cpi r26,lo8(PacketBytes+11)
- 677 0402 B807      		cpc r27,r24
- 678               	.LVL35:
- 679 0404 01F4      		brne .L84
- 680 0406 00C0      		rjmp .L109
- 681               	.L106:
- 682               	.LBE26:
- 683               	.LM84:
- 684 0408 82E0      		ldi r24,lo8(2)
- 685 040a 90E0      		ldi r25,hi8(2)
- 686 040c 9093 0000 		sts (MessageSize)+1,r25
- 687 0410 8093 0000 		sts MessageSize,r24
- 688               	.LM85:
- 689 0414 80EC      		ldi r24,lo8(-64)
- 690 0416 8093 0000 		sts PacketBytes+1,r24
- 691 041a 00C0      		rjmp .L109
- 692               	.L81:
- 693               	.LM86:
- 694 041c 82E0      		ldi r24,lo8(2)
- 695 041e 90E0      		ldi r25,hi8(2)
- 696 0420 9093 0000 		sts (MessageSize)+1,r25
- 697 0424 8093 0000 		sts MessageSize,r24
- 698               	.LM87:
- 699 0428 0E94 0000 		call V2P_CheckForExtendedAddress
- 700               	.LM88:
- 701 042c E090 0000 		lds r14,PacketBytes+3
- 702 0430 FF24      		clr r15
- 703 0432 0027      		clr r16
- 704 0434 1127      		clr r17
- 705 0436 102F      		mov r17,r16
- 706 0438 0F2D      		mov r16,r15
- 707 043a FE2C      		mov r15,r14
- 708 043c EE24      		clr r14
- 709 043e 2091 0000 		lds r18,PacketBytes+1
- 710 0442 3327      		clr r19
- 711 0444 4427      		clr r20
- 712 0446 5527      		clr r21
- 713 0448 522F      		mov r21,r18
- 714 044a 4427      		clr r20
- 715 044c 3327      		clr r19
- 716 044e 2227      		clr r18
- 717 0450 8091 0000 		lds r24,PacketBytes+2
- 718 0454 9927      		clr r25
- 719 0456 AA27      		clr r26
- 720 0458 BB27      		clr r27
- 721 045a DC01      		movw r26,r24
- 722 045c 9927      		clr r25
- 723 045e 8827      		clr r24
- 724 0460 282B      		or r18,r24
- 725 0462 392B      		or r19,r25
- 726 0464 4A2B      		or r20,r26
- 727 0466 5B2B      		or r21,r27
- 728 0468 8091 0000 		lds r24,PacketBytes+4
- 729 046c 9927      		clr r25
- 730 046e AA27      		clr r26
- 731 0470 BB27      		clr r27
- 732 0472 282B      		or r18,r24
- 733 0474 392B      		or r19,r25
- 734 0476 4A2B      		or r20,r26
- 735 0478 5B2B      		or r21,r27
- 736 047a E22A      		or r14,r18
- 737 047c F32A      		or r15,r19
- 738 047e 042B      		or r16,r20
- 739 0480 152B      		or r17,r21
- 740 0482 E092 0000 		sts CurrAddress,r14
- 741 0486 F092 0000 		sts (CurrAddress)+1,r15
- 742 048a 0093 0000 		sts (CurrAddress)+2,r16
- 743 048e 1093 0000 		sts (CurrAddress)+3,r17
- 744               	.LM89:
- 745 0492 1092 0000 		sts PacketBytes+1,__zero_reg__
- 746               	.L109:
- 747               	.LM90:
- 748 0496 0E94 0000 		call V2P_SendPacket
- 749 049a 00C0      		rjmp .L108
- 750               	.L80:
- 751               	.LM91:
- 752 049c 0E94 0000 		call V2P_GetSetParamater
- 753 04a0 00C0      		rjmp .L108
- 754               	.L78:
- 755               	.LM92:
- 756 04a2 F601      		movw r30,r12
- 757 04a4 0995      		icall
- 758               	.L108:
- 759 04a6 18E0      		ldi r17,lo8(8)
- 760               	.LVL36:
- 761 04a8 00C0      		rjmp .L111
- 762               	.L102:
- 763               	.LM93:
- 764 04aa 1B30      		cpi r17,lo8(11)
- 765 04ac 01F4      		brne .L86
- 766               	.LM94:
- 767 04ae 81EC      		ldi r24,lo8(-63)
- 768 04b0 00C0      		rjmp .L110
- 769               	.L86:
- 770               	.LM95:
- 771 04b2 1A30      		cpi r17,lo8(10)
- 772 04b4 01F4      		brne .L89
- 773               	.L52:
- 774               	.LM96:
- 775 04b6 80E8      		ldi r24,lo8(-128)
- 776 04b8 00C0      		rjmp .L110
- 777               	.L89:
- 778               	.LM97:
- 779 04ba 80EC      		ldi r24,lo8(-64)
- 780               	.L110:
- 781 04bc 8093 0000 		sts PacketBytes+1,r24
- 782               	.LM98:
- 783 04c0 82E0      		ldi r24,lo8(2)
- 784 04c2 90E0      		ldi r25,hi8(2)
- 785 04c4 9093 0000 		sts (MessageSize)+1,r25
- 786 04c8 8093 0000 		sts MessageSize,r24
- 787               	.LM99:
- 788 04cc 0E94 0000 		call V2P_SendPacket
- 789               	.L63:
- 790               	.LM100:
- 791 04d0 1092 0000 		sts PacketTimeOut,__zero_reg__
- 792               	.LM101:
- 793 04d4 0E94 0000 		call BUFF_InitialiseBuffer
- 794               	.LM102:
- 795 04d8 1092 B000 		sts 176,__zero_reg__
- 796 04dc 1092 7000 		sts 112,__zero_reg__
- 797 04e0 10E0      		ldi r17,lo8(0)
- 798 04e2 00C0      		rjmp .L111
- 799               	.L103:
- 800               	.LM103:
- 801 04e4 80E8      		ldi r24,lo8(-128)
+ 254 0172 01F0      		breq .L26
+ 255 0174 2F39      		cpi r18,lo8(-97)
+ 256 0176 01F0      		breq .+2
+ 257 0178 00C0      		rjmp .L18
+ 258 017a 00C0      		rjmp .L27
+ 259               	.L20:
+ 260               	.LM34:
+ 261 017c 81E0      		ldi r24,lo8(1)
+ 262               	.LVL4:
+ 263               	.L45:
+ 264               	.LVL5:
+ 265 017e 8093 0000 		sts PacketBytes+2,r24
+ 266 0182 00C0      		rjmp .L31
+ 267               	.LVL6:
+ 268               	.L22:
+ 269               	.LM35:
+ 270 0184 82E0      		ldi r24,lo8(2)
+ 271 0186 00C0      		rjmp .L45
+ 272               	.L23:
+ 273               	.LBB16:
+ 274               	.LBB17:
+ 275               	.LM36:
+ 276 0188 20E0      		ldi r18,lo8(EEPROMVars+135)
+ 277 018a 30E0      		ldi r19,hi8(EEPROMVars+135)
+ 278               	.LVL7:
+ 279 018c D901      		movw r26,r18
+ 280               	.LVL8:
+ 281               	/* #APP */
+ 282 018e 0E94 0000 		call __eeprom_read_byte_1F2021
+ 283 0192 802D      		mov r24,__tmp_reg__
+ 284               	.LVL9:
+ 285               	/* #NOAPP */
+ 286               	.LBE17:
+ 287               	.LBE16:
+ 288               	.LM37:
+ 289 0194 8F3F      		cpi r24,lo8(-1)
+ 290 0196 01F4      		brne .L32
+ 291               	.LVL10:
+ 292               	.L47:
+ 293 0198 84E0      		ldi r24,lo8(4)
+ 294               	.LVL11:
+ 295 019a 00C0      		rjmp .L45
+ 296               	.LVL12:
+ 297               	.L32:
+ 298               	.LBB18:
+ 299               	.LBB19:
+ 300               	.LM38:
+ 301 019c D901      		movw r26,r18
+ 302               	.LVL13:
+ 303 019e 00C0      		rjmp .L46
+ 304               	.LVL14:
+ 305               	.L27:
+ 306               	.LBE19:
+ 307               	.LBE18:
+ 308               	.LM39:
+ 309 01a0 8091 0000 		lds r24,PacketBytes
+ 310 01a4 8330      		cpi r24,lo8(3)
+ 311 01a6 01F4      		brne .L35
+ 312               	.LM40:
+ 313 01a8 8091 0000 		lds r24,Param_ControllerInit
+ 314 01ac 00C0      		rjmp .L45
+ 315               	.L35:
+ 316               	.LM41:
+ 317 01ae 82E0      		ldi r24,lo8(2)
+ 318 01b0 90E0      		ldi r25,hi8(2)
+ 319 01b2 9093 0000 		sts (MessageSize)+1,r25
+ 320 01b6 8093 0000 		sts MessageSize,r24
+ 321               	.LM42:
+ 322 01ba 8091 0000 		lds r24,PacketBytes+2
+ 323 01be 8093 0000 		sts Param_ControllerInit,r24
+ 324 01c2 00C0      		rjmp .L31
+ 325               	.L25:
+ 326               	.LM43:
+ 327 01c4 8091 0000 		lds r24,PacketBytes
+ 328 01c8 A0E0      		ldi r26,lo8(EEPROMVars+2)
+ 329 01ca B0E0      		ldi r27,hi8(EEPROMVars+2)
+ 330 01cc 8330      		cpi r24,lo8(3)
+ 331 01ce 01F0      		breq .L46
+ 332               	.LM44:
+ 333 01d0 82E0      		ldi r24,lo8(2)
+ 334 01d2 90E0      		ldi r25,hi8(2)
+ 335 01d4 9093 0000 		sts (MessageSize)+1,r25
+ 336 01d8 8093 0000 		sts MessageSize,r24
+ 337               	.LBB20:
+ 338               	.LBB21:
+ 339               	.LM45:
+ 340 01dc 8091 0000 		lds r24,PacketBytes+2
+ 341               	/* #APP */
+ 342 01e0 082E      		mov __tmp_reg__,r24
+ 343 01e2 0E94 0000 		call __eeprom_write_byte_1F2021
+ 344               	.LVL15:
+ 345               	/* #NOAPP */
+ 346               	.LBE21:
+ 347               	.LBE20:
+ 348               	.LM46:
+ 349 01e6 0E94 0000 		call USI_SPISetSpeed
+ 350               	.LVL16:
+ 351 01ea 00C0      		rjmp .L31
+ 352               	.LVL17:
+ 353               	.L26:
+ 354               	.LM47:
+ 355 01ec 8091 0000 		lds r24,PacketBytes
+ 356 01f0 A0E0      		ldi r26,lo8(EEPROMVars+1)
+ 357 01f2 B0E0      		ldi r27,hi8(EEPROMVars+1)
+ 358 01f4 8330      		cpi r24,lo8(3)
+ 359 01f6 01F4      		brne .L39
+ 360               	.LVL18:
+ 361               	.L46:
+ 362               	.LVL19:
+ 363               	.LBB22:
+ 364               	.LBB23:
+ 365               	.LM48:
+ 366               	/* #APP */
+ 367 01f8 0E94 0000 		call __eeprom_read_byte_1F2021
+ 368 01fc 802D      		mov r24,__tmp_reg__
+ 369               	.LVL20:
+ 370               	/* #NOAPP */
+ 371 01fe 00C0      		rjmp .L45
+ 372               	.LVL21:
+ 373               	.L39:
+ 374               	.LBE23:
+ 375               	.LBE22:
+ 376               	.LM49:
+ 377 0200 82E0      		ldi r24,lo8(2)
+ 378 0202 90E0      		ldi r25,hi8(2)
+ 379 0204 9093 0000 		sts (MessageSize)+1,r25
+ 380 0208 8093 0000 		sts MessageSize,r24
+ 381               	.LBB24:
+ 382               	.LBB25:
+ 383               	.LM50:
+ 384 020c 8091 0000 		lds r24,PacketBytes+2
+ 385               	/* #APP */
+ 386 0210 082E      		mov __tmp_reg__,r24
+ 387 0212 0E94 0000 		call __eeprom_write_byte_1F2021
+ 388               	.LVL22:
+ 389               	/* #NOAPP */
+ 390               	.LBE25:
+ 391               	.LBE24:
+ 392               	.LM51:
+ 393 0216 81E0      		ldi r24,lo8(1)
+ 394 0218 0E94 0000 		call MAIN_ResetCSLine
+ 395               	.LVL23:
+ 396 021c 00C0      		rjmp .L31
+ 397               	.LVL24:
+ 398               	.L44:
+ 399               	.LM52:
+ 400 021e 8091 0000 		lds r24,PacketBytes
+ 401 0222 8330      		cpi r24,lo8(3)
+ 402 0224 01F4      		brne .L41
+ 403               	.LM53:
+ 404 0226 1092 0000 		sts PacketBytes+2,__zero_reg__
+ 405 022a 00C0      		rjmp .L31
+ 406               	.L41:
+ 407               	.LM54:
+ 408 022c 82E0      		ldi r24,lo8(2)
+ 409 022e 90E0      		ldi r25,hi8(2)
+ 410 0230 9093 0000 		sts (MessageSize)+1,r25
+ 411 0234 8093 0000 		sts MessageSize,r24
+ 412 0238 00C0      		rjmp .L31
+ 413               	.L18:
+ 414               	.LM55:
+ 415 023a 82E0      		ldi r24,lo8(2)
+ 416 023c 90E0      		ldi r25,hi8(2)
+ 417 023e 9093 0000 		sts (MessageSize)+1,r25
+ 418 0242 8093 0000 		sts MessageSize,r24
+ 419               	.LM56:
+ 420 0246 80EC      		ldi r24,lo8(-64)
+ 421 0248 8093 0000 		sts PacketBytes+1,r24
+ 422               	.LVL25:
+ 423               	.L31:
+ 424               	.LM57:
+ 425 024c 0E94 0000 		call V2P_SendPacket
+ 426               	.LVL26:
+ 427               	/* epilogue: frame size=0 */
+ 428 0250 0895      		ret
+ 429               	/* epilogue end (size=1) */
+ 430               	/* function V2P_GetSetParamater size 153 (152) */
+ 431               	.LFE17:
+ 433               	.global	V2P_RunStateMachine
+ 435               	V2P_RunStateMachine:
+ 436               	.LFB14:
+ 437               	.LM58:
+ 438               	/* prologue: frame size=0 */
+ 439 0252 CF92      		push r12
+ 440 0254 DF92      		push r13
+ 441 0256 EF92      		push r14
+ 442 0258 FF92      		push r15
+ 443 025a 0F93      		push r16
+ 444 025c 1F93      		push r17
+ 445 025e CF93      		push r28
+ 446 0260 DF93      		push r29
+ 447               	/* prologue end (size=8) */
+ 448               	.LVL27:
+ 449 0262 6C01      		movw r12,r24
+ 450               	.LM59:
+ 451 0264 0E94 0000 		call BUFF_InitialiseBuffer
+ 452               	.LVL28:
+ 453               	.LM60:
+ 454 0268 1092 8100 		sts 129,__zero_reg__
+ 455               	.LM61:
+ 456 026c 1092 0000 		sts InProgrammingMode,__zero_reg__
+ 457               	.LM62:
+ 458 0270 1092 0000 		sts CurrAddress,__zero_reg__
+ 459 0274 1092 0000 		sts (CurrAddress)+1,__zero_reg__
+ 460 0278 1092 0000 		sts (CurrAddress)+2,__zero_reg__
+ 461 027c 1092 0000 		sts (CurrAddress)+3,__zero_reg__
+ 462 0280 10E0      		ldi r17,lo8(0)
+ 463               	.LVL29:
+ 464 0282 00C0      		rjmp .L107
+ 465               	.LVL30:
+ 466               	.L104:
+ 467               	.LM63:
+ 468 0284 12E0      		ldi r17,lo8(2)
+ 469 0286 00C0      		rjmp .L111
+ 470               	.L51:
+ 471 0288 19E0      		ldi r17,lo8(9)
+ 472               	.L111:
+ 473               	.LM64:
+ 474 028a 8091 0000 		lds r24,PacketTimeOut
+ 475 028e 8130      		cpi r24,lo8(1)
+ 476 0290 01F4      		brne .+2
+ 477 0292 00C0      		rjmp .L52
+ 478               	.LM65:
+ 479 0294 1123      		tst r17
+ 480 0296 01F0      		breq .L54
+ 481               	.LM66:
+ 482 0298 1092 0000 		sts PacketTimeOut,__zero_reg__
+ 483 029c 1092 0000 		sts PacketTimeOutTicks,__zero_reg__
+ 484 02a0 1092 B200 		sts 178,__zero_reg__
+ 485 02a4 80EF      		ldi r24,lo8(-16)
+ 486 02a6 8093 B300 		sts 179,r24
+ 487 02aa 82E0      		ldi r24,lo8(2)
+ 488 02ac 8093 7000 		sts 112,r24
+ 489 02b0 8FE0      		ldi r24,lo8(15)
+ 490 02b2 8093 B000 		sts 176,r24
+ 491               	.LM67:
+ 492 02b6 1530      		cpi r17,lo8(5)
+ 493 02b8 01F4      		brne .+2
+ 494 02ba 00C0      		rjmp .L60
+ 495 02bc 1630      		cpi r17,lo8(6)
+ 496 02be 00F4      		brsh .L65
+ 497 02c0 1230      		cpi r17,lo8(2)
+ 498 02c2 01F0      		breq .L57
+ 499 02c4 1330      		cpi r17,lo8(3)
+ 500 02c6 00F4      		brsh .L66
+ 501 02c8 1123      		tst r17
+ 502 02ca 01F0      		breq .L54
+ 503 02cc 1130      		cpi r17,lo8(1)
+ 504 02ce 01F4      		brne .L111
+ 505 02d0 00C0      		rjmp .L99
+ 506               	.L66:
+ 507 02d2 1330      		cpi r17,lo8(3)
+ 508 02d4 01F0      		breq .L58
+ 509 02d6 1430      		cpi r17,lo8(4)
+ 510 02d8 01F4      		brne .L111
+ 511 02da 00C0      		rjmp .L100
+ 512               	.L65:
+ 513 02dc 1830      		cpi r17,lo8(8)
+ 514 02de 01F4      		brne .+2
+ 515 02e0 00C0      		rjmp .L63
+ 516 02e2 1930      		cpi r17,lo8(9)
+ 517 02e4 00F4      		brsh .L67
+ 518 02e6 1630      		cpi r17,lo8(6)
+ 519 02e8 01F4      		brne .+2
+ 520 02ea 00C0      		rjmp .L61
+ 521 02ec 1730      		cpi r17,lo8(7)
+ 522 02ee 01F4      		brne .L111
+ 523 02f0 00C0      		rjmp .L101
+ 524               	.L67:
+ 525 02f2 1C30      		cpi r17,lo8(12)
+ 526 02f4 00F4      		brsh .L111
+ 527 02f6 00C0      		rjmp .L102
+ 528               	.L54:
+ 529               	.LM68:
+ 530 02f8 8091 0000 		lds r24,BuffElements
+ 531 02fc 8111      		cpse r24,__zero_reg__
+ 532 02fe 81E0      		ldi r24,lo8(1)
+ 533               	.L68:
+ 534 0300 182F      		mov r17,r24
+ 535               	.LM69:
+ 536 0302 F29B      		sbis 62-0x20,2
+ 537 0304 00C0      		rjmp .L111
+ 538 0306 8091 0000 		lds r24,InProgrammingMode
+ 539 030a 8823      		tst r24
+ 540 030c 01F0      		breq .+2
+ 541 030e 00C0      		rjmp .L111
+ 542 0310 00C0      		rjmp .L103
+ 543               	.L99:
+ 544               	.LM70:
+ 545 0312 0E94 0000 		call USART_Rx
+ 546 0316 8B31      		cpi r24,lo8(27)
+ 547 0318 01F0      		breq .+2
+ 548 031a 00C0      		rjmp .L51
+ 549 031c 00C0      		rjmp .L104
+ 550               	.L57:
+ 551               	.LM71:
+ 552 031e 0E94 0000 		call USART_Rx
+ 553 0322 9927      		clr r25
+ 554 0324 9093 0000 		sts (SequenceNum)+1,r25
+ 555 0328 8093 0000 		sts SequenceNum,r24
+ 556 032c 13E0      		ldi r17,lo8(3)
+ 557 032e 00C0      		rjmp .L111
+ 558               	.L58:
+ 559               	.LM72:
+ 560 0330 0E94 0000 		call USART_Rx
+ 561 0334 9927      		clr r25
+ 562 0336 982F      		mov r25,r24
+ 563 0338 8827      		clr r24
+ 564 033a 9093 0000 		sts (MessageSize)+1,r25
+ 565 033e 8093 0000 		sts MessageSize,r24
+ 566 0342 14E0      		ldi r17,lo8(4)
+ 567 0344 00C0      		rjmp .L111
+ 568               	.L100:
+ 569               	.LM73:
+ 570 0346 0091 0000 		lds r16,MessageSize
+ 571 034a 1091 0000 		lds r17,(MessageSize)+1
+ 572 034e 0E94 0000 		call USART_Rx
+ 573 0352 9927      		clr r25
+ 574 0354 802B      		or r24,r16
+ 575 0356 912B      		or r25,r17
+ 576 0358 9093 0000 		sts (MessageSize)+1,r25
+ 577 035c 8093 0000 		sts MessageSize,r24
+ 578               	.LM74:
+ 579 0360 8351      		subi r24,lo8(275)
+ 580 0362 9140      		sbci r25,hi8(275)
+ 581 0364 00F0      		brlo .+2
+ 582 0366 00C0      		rjmp .L51
+ 583 0368 15E0      		ldi r17,lo8(5)
+ 584               	.L107:
+ 585 036a C0E0      		ldi r28,lo8(0)
+ 586 036c D0E0      		ldi r29,hi8(0)
+ 587 036e 00C0      		rjmp .L111
+ 588               	.L60:
+ 589               	.LM75:
+ 590 0370 0E94 0000 		call USART_Rx
+ 591 0374 8E30      		cpi r24,lo8(14)
+ 592 0376 01F0      		breq .+2
+ 593 0378 00C0      		rjmp .L51
+ 594 037a 16E0      		ldi r17,lo8(6)
+ 595 037c 00C0      		rjmp .L111
+ 596               	.L61:
+ 597               	.LM76:
+ 598 037e 8091 0000 		lds r24,MessageSize
+ 599 0382 9091 0000 		lds r25,(MessageSize)+1
+ 600 0386 C817      		cp r28,r24
+ 601 0388 D907      		cpc r29,r25
+ 602 038a 01F4      		brne .L73
+ 603 038c 17E0      		ldi r17,lo8(7)
+ 604 038e 00C0      		rjmp .L111
+ 605               	.L73:
+ 606               	.LM77:
+ 607 0390 0E94 0000 		call USART_Rx
+ 608 0394 FE01      		movw r30,r28
+ 609 0396 E050      		subi r30,lo8(-(PacketBytes))
+ 610 0398 F040      		sbci r31,hi8(-(PacketBytes))
+ 611 039a 8083      		st Z,r24
+ 612 039c 2196      		adiw r28,1
+ 613 039e 00C0      		rjmp .L111
+ 614               	.L101:
+ 615               	.LM78:
+ 616 03a0 8091 0000 		lds r24,PacketTimeOut
+ 617 03a4 8823      		tst r24
+ 618 03a6 01F0      		breq .+2
+ 619 03a8 00C0      		rjmp .L111
+ 620               	.LM79:
+ 621 03aa 0E94 0000 		call V2P_GetChecksum
+ 622 03ae 182F      		mov r17,r24
+ 623               	.LVL31:
+ 624 03b0 0E94 0000 		call USART_Rx
+ 625 03b4 1817      		cp r17,r24
+ 626 03b6 01F0      		breq .L76
+ 627 03b8 1BE0      		ldi r17,lo8(11)
+ 628               	.LVL32:
+ 629 03ba 00C0      		rjmp .L111
+ 630               	.LVL33:
+ 631               	.L76:
+ 632               	.LM80:
+ 633 03bc 8091 0000 		lds r24,PacketBytes
+ 634 03c0 8430      		cpi r24,lo8(4)
+ 635 03c2 00F4      		brsh .L83
+ 636 03c4 8230      		cpi r24,lo8(2)
+ 637 03c6 00F0      		brlo .+2
+ 638 03c8 00C0      		rjmp .L80
+ 639 03ca 8130      		cpi r24,lo8(1)
+ 640 03cc 01F0      		breq .+2
+ 641 03ce 00C0      		rjmp .L78
+ 642 03d0 00C0      		rjmp .L105
+ 643               	.L83:
+ 644 03d2 8630      		cpi r24,lo8(6)
+ 645 03d4 01F0      		breq .L81
+ 646 03d6 8730      		cpi r24,lo8(7)
+ 647 03d8 01F0      		breq .+2
+ 648 03da 00C0      		rjmp .L78
+ 649 03dc 00C0      		rjmp .L106
+ 650               	.L105:
+ 651               	.LM81:
+ 652 03de 8BE0      		ldi r24,lo8(11)
+ 653 03e0 90E0      		ldi r25,hi8(11)
+ 654 03e2 9093 0000 		sts (MessageSize)+1,r25
+ 655 03e6 8093 0000 		sts MessageSize,r24
+ 656 03ea E0E0      		ldi r30,lo8(SignonResponse)
+ 657 03ec F0E0      		ldi r31,hi8(SignonResponse)
+ 658 03ee A0E0      		ldi r26,lo8(PacketBytes)
+ 659 03f0 B0E0      		ldi r27,hi8(PacketBytes)
+ 660               	.L84:
+ 661               	.LBB26:
+ 662               	.LBB27:
+ 663               	.LM82:
+ 664               	/* #APP */
+ 665 03f2 8491      		lpm r24, Z
+ 666               		
+ 667               	.LVL34:
+ 668               	/* #NOAPP */
+ 669               	.LBE27:
+ 670 03f4 8D93      		st X+,r24
+ 671 03f6 3196      		adiw r30,1
+ 672               	.LM83:
+ 673 03f8 80E0      		ldi r24,hi8(PacketBytes+11)
+ 674 03fa A030      		cpi r26,lo8(PacketBytes+11)
+ 675 03fc B807      		cpc r27,r24
+ 676               	.LVL35:
+ 677 03fe 01F4      		brne .L84
+ 678 0400 00C0      		rjmp .L109
+ 679               	.L106:
+ 680               	.LBE26:
+ 681               	.LM84:
+ 682 0402 82E0      		ldi r24,lo8(2)
+ 683 0404 90E0      		ldi r25,hi8(2)
+ 684 0406 9093 0000 		sts (MessageSize)+1,r25
+ 685 040a 8093 0000 		sts MessageSize,r24
+ 686               	.LM85:
+ 687 040e 80EC      		ldi r24,lo8(-64)
+ 688 0410 8093 0000 		sts PacketBytes+1,r24
+ 689 0414 00C0      		rjmp .L109
+ 690               	.L81:
+ 691               	.LM86:
+ 692 0416 82E0      		ldi r24,lo8(2)
+ 693 0418 90E0      		ldi r25,hi8(2)
+ 694 041a 9093 0000 		sts (MessageSize)+1,r25
+ 695 041e 8093 0000 		sts MessageSize,r24
+ 696               	.LM87:
+ 697 0422 0E94 0000 		call V2P_CheckForExtendedAddress
+ 698               	.LM88:
+ 699 0426 E090 0000 		lds r14,PacketBytes+3
+ 700 042a FF24      		clr r15
+ 701 042c 0027      		clr r16
+ 702 042e 1127      		clr r17
+ 703 0430 102F      		mov r17,r16
+ 704 0432 0F2D      		mov r16,r15
+ 705 0434 FE2C      		mov r15,r14
+ 706 0436 EE24      		clr r14
+ 707 0438 2091 0000 		lds r18,PacketBytes+1
+ 708 043c 3327      		clr r19
+ 709 043e 4427      		clr r20
+ 710 0440 5527      		clr r21
+ 711 0442 522F      		mov r21,r18
+ 712 0444 4427      		clr r20
+ 713 0446 3327      		clr r19
+ 714 0448 2227      		clr r18
+ 715 044a 8091 0000 		lds r24,PacketBytes+2
+ 716 044e 9927      		clr r25
+ 717 0450 AA27      		clr r26
+ 718 0452 BB27      		clr r27
+ 719 0454 DC01      		movw r26,r24
+ 720 0456 9927      		clr r25
+ 721 0458 8827      		clr r24
+ 722 045a 282B      		or r18,r24
+ 723 045c 392B      		or r19,r25
+ 724 045e 4A2B      		or r20,r26
+ 725 0460 5B2B      		or r21,r27
+ 726 0462 8091 0000 		lds r24,PacketBytes+4
+ 727 0466 9927      		clr r25
+ 728 0468 AA27      		clr r26
+ 729 046a BB27      		clr r27
+ 730 046c 282B      		or r18,r24
+ 731 046e 392B      		or r19,r25
+ 732 0470 4A2B      		or r20,r26
+ 733 0472 5B2B      		or r21,r27
+ 734 0474 E22A      		or r14,r18
+ 735 0476 F32A      		or r15,r19
+ 736 0478 042B      		or r16,r20
+ 737 047a 152B      		or r17,r21
+ 738 047c E092 0000 		sts CurrAddress,r14
+ 739 0480 F092 0000 		sts (CurrAddress)+1,r15
+ 740 0484 0093 0000 		sts (CurrAddress)+2,r16
+ 741 0488 1093 0000 		sts (CurrAddress)+3,r17
+ 742               	.LM89:
+ 743 048c 1092 0000 		sts PacketBytes+1,__zero_reg__
+ 744               	.L109:
+ 745               	.LM90:
+ 746 0490 0E94 0000 		call V2P_SendPacket
+ 747 0494 00C0      		rjmp .L108
+ 748               	.L80:
+ 749               	.LM91:
+ 750 0496 0E94 0000 		call V2P_GetSetParamater
+ 751 049a 00C0      		rjmp .L108
+ 752               	.L78:
+ 753               	.LM92:
+ 754 049c F601      		movw r30,r12
+ 755 049e 0995      		icall
+ 756               	.L108:
+ 757 04a0 18E0      		ldi r17,lo8(8)
+ 758               	.LVL36:
+ 759 04a2 00C0      		rjmp .L111
+ 760               	.L102:
+ 761               	.LM93:
+ 762 04a4 1B30      		cpi r17,lo8(11)
+ 763 04a6 01F4      		brne .L86
+ 764               	.LM94:
+ 765 04a8 81EC      		ldi r24,lo8(-63)
+ 766 04aa 00C0      		rjmp .L110
+ 767               	.L86:
+ 768               	.LM95:
+ 769 04ac 1A30      		cpi r17,lo8(10)
+ 770 04ae 01F4      		brne .L89
+ 771               	.L52:
+ 772               	.LM96:
+ 773 04b0 80E8      		ldi r24,lo8(-128)
+ 774 04b2 00C0      		rjmp .L110
+ 775               	.L89:
+ 776               	.LM97:
+ 777 04b4 80EC      		ldi r24,lo8(-64)
+ 778               	.L110:
+ 779 04b6 8093 0000 		sts PacketBytes+1,r24
+ 780               	.LM98:
+ 781 04ba 82E0      		ldi r24,lo8(2)
+ 782 04bc 90E0      		ldi r25,hi8(2)
+ 783 04be 9093 0000 		sts (MessageSize)+1,r25
+ 784 04c2 8093 0000 		sts MessageSize,r24
+ 785               	.LM99:
+ 786 04c6 0E94 0000 		call V2P_SendPacket
+ 787               	.L63:
+ 788               	.LM100:
+ 789 04ca 1092 0000 		sts PacketTimeOut,__zero_reg__
+ 790               	.LM101:
+ 791 04ce 0E94 0000 		call BUFF_InitialiseBuffer
+ 792               	.LM102:
+ 793 04d2 1092 B000 		sts 176,__zero_reg__
+ 794 04d6 1092 7000 		sts 112,__zero_reg__
+ 795 04da 10E0      		ldi r17,lo8(0)
+ 796 04dc 00C0      		rjmp .L111
+ 797               	.L103:
+ 798               	.LM103:
+ 799 04de 80E8      		ldi r24,lo8(-128)
+ 800 04e0 8093 6100 		sts 97,r24
+ 801 04e4 83E0      		ldi r24,lo8(3)
  802 04e6 8093 6100 		sts 97,r24
- 803 04ea 83E0      		ldi r24,lo8(3)
- 804 04ec 8093 6100 		sts 97,r24
- 805 04f0 8091 C100 		lds r24,193
- 806 04f4 8078      		andi r24,lo8(-128)
- 807 04f6 8093 C100 		sts 193,r24
- 808               	.LM104:
- 809 04fa 0E94 0000 		call TOUT_SetupSleepTimer
- 810               	/* epilogue: frame size=0 */
- 811 04fe DF91      		pop r29
- 812 0500 CF91      		pop r28
- 813 0502 1F91      		pop r17
- 814 0504 0F91      		pop r16
- 815 0506 FF90      		pop r15
- 816 0508 EF90      		pop r14
- 817 050a DF90      		pop r13
- 818 050c CF90      		pop r12
- 819 050e 0895      		ret
- 820               	/* epilogue end (size=9) */
- 821               	/* function V2P_RunStateMachine size 353 (336) */
- 822               	.LFE14:
- 824               	.global	SignonResponse
- 825               		.section	.progmem.data,"a",@progbits
- 828               	SignonResponse:
- 829 0000 01        		.byte	1
- 830 0001 00        		.byte	0
- 831 0002 08        		.byte	8
- 832 0003 41        		.byte	65
- 833 0004 56        		.byte	86
- 834 0005 52        		.byte	82
- 835 0006 49        		.byte	73
- 836 0007 53        		.byte	83
- 837 0008 50        		.byte	80
- 838 0009 5F        		.byte	95
- 839 000a 32        		.byte	50
- 840 000b 00        		.byte	0
- 841               	.global	ButtLoadData
- 844               	ButtLoadData:
- 845 000c 40        		.byte	64
- 846 000d 28        		.byte	40
- 847 000e 23        		.byte	35
- 848 000f 29        		.byte	41
- 849 0010 2A        		.byte	42
- 850 0011 53        		.byte	83
- 851 0012 43        		.byte	67
- 852 0013 52        		.byte	82
- 853 0014 45        		.byte	69
- 854 0015 57        		.byte	87
- 855 0016 20        		.byte	32
- 856 0017 52        		.byte	82
- 857 0018 45        		.byte	69
- 858 0019 54        		.byte	84
- 859 001a 52        		.byte	82
- 860 001b 4F        		.byte	79
- 861 001c 44        		.byte	68
- 862 001d 41        		.byte	65
- 863 001e 4E        		.byte	78
- 864 001f 00        		.byte	0
- 865 0020 2A        		.byte	42
- 866               	.global	PacketBytes
- 867               	.global	PacketBytes
- 868               		.section .bss
- 871               	PacketBytes:
- 872 0000 0000 0000 		.skip 275,0
- 872      0000 0000 
- 872      0000 0000 
- 872      0000 0000 
- 872      0000 0000 
- 873               	.global	SequenceNum
- 874               	.global	SequenceNum
- 877               	SequenceNum:
- 878 0113 0000      		.skip 2,0
- 879               	.global	MessageSize
- 880               	.global	MessageSize
- 883               	MessageSize:
- 884 0115 0000      		.skip 2,0
- 885               	.global	InProgrammingMode
- 886               	.global	InProgrammingMode
- 889               	InProgrammingMode:
- 890 0117 00        		.skip 1,0
- 891               	.global	CurrAddress
- 892               	.global	CurrAddress
- 895               	CurrAddress:
- 896 0118 0000 0000 		.skip 4,0
- 897               	.global	Param_ControllerInit
- 898               	.global	Param_ControllerInit
- 901               	Param_ControllerInit:
- 902 011c 00        		.skip 1,0
- 960               	.Letext0:
+ 803 04ea 1092 C100 		sts 193,__zero_reg__
+ 804               	.LM104:
+ 805 04ee 0E94 0000 		call TOUT_SetupSleepTimer
+ 806               	/* epilogue: frame size=0 */
+ 807 04f2 DF91      		pop r29
+ 808 04f4 CF91      		pop r28
+ 809 04f6 1F91      		pop r17
+ 810 04f8 0F91      		pop r16
+ 811 04fa FF90      		pop r15
+ 812 04fc EF90      		pop r14
+ 813 04fe DF90      		pop r13
+ 814 0500 CF90      		pop r12
+ 815 0502 0895      		ret
+ 816               	/* epilogue end (size=9) */
+ 817               	/* function V2P_RunStateMachine size 350 (333) */
+ 818               	.LFE14:
+ 820               	.global	SignonResponse
+ 821               		.section	.progmem.data,"a",@progbits
+ 824               	SignonResponse:
+ 825 0000 01        		.byte	1
+ 826 0001 00        		.byte	0
+ 827 0002 08        		.byte	8
+ 828 0003 41        		.byte	65
+ 829 0004 56        		.byte	86
+ 830 0005 52        		.byte	82
+ 831 0006 49        		.byte	73
+ 832 0007 53        		.byte	83
+ 833 0008 50        		.byte	80
+ 834 0009 5F        		.byte	95
+ 835 000a 32        		.byte	50
+ 836 000b 00        		.byte	0
+ 837               	.global	ButtLoadData
+ 840               	ButtLoadData:
+ 841 000c 40        		.byte	64
+ 842 000d 28        		.byte	40
+ 843 000e 23        		.byte	35
+ 844 000f 29        		.byte	41
+ 845 0010 2A        		.byte	42
+ 846 0011 53        		.byte	83
+ 847 0012 43        		.byte	67
+ 848 0013 52        		.byte	82
+ 849 0014 45        		.byte	69
+ 850 0015 57        		.byte	87
+ 851 0016 20        		.byte	32
+ 852 0017 52        		.byte	82
+ 853 0018 45        		.byte	69
+ 854 0019 54        		.byte	84
+ 855 001a 52        		.byte	82
+ 856 001b 4F        		.byte	79
+ 857 001c 44        		.byte	68
+ 858 001d 41        		.byte	65
+ 859 001e 4E        		.byte	78
+ 860 001f 00        		.byte	0
+ 861 0020 2A        		.byte	42
+ 862               	.global	PacketBytes
+ 863               	.global	PacketBytes
+ 864               		.section .bss
+ 867               	PacketBytes:
+ 868 0000 0000 0000 		.skip 275,0
+ 868      0000 0000 
+ 868      0000 0000 
+ 868      0000 0000 
+ 868      0000 0000 
+ 869               	.global	SequenceNum
+ 870               	.global	SequenceNum
+ 873               	SequenceNum:
+ 874 0113 0000      		.skip 2,0
+ 875               	.global	MessageSize
+ 876               	.global	MessageSize
+ 879               	MessageSize:
+ 880 0115 0000      		.skip 2,0
+ 881               	.global	InProgrammingMode
+ 882               	.global	InProgrammingMode
+ 885               	InProgrammingMode:
+ 886 0117 00        		.skip 1,0
+ 887               	.global	CurrAddress
+ 888               	.global	CurrAddress
+ 891               	CurrAddress:
+ 892 0118 0000 0000 		.skip 4,0
+ 893               	.global	Param_ControllerInit
+ 894               	.global	Param_ControllerInit
+ 897               	Param_ControllerInit:
+ 898 011c 00        		.skip 1,0
+ 956               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 V2Protocol.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm2aaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm2aaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm2aaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm2aaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm2aaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm2aaaa.s:20     .text:00000000 V2P_GetChecksum
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm2aaaa.s:877    .bss:00000113 SequenceNum
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm2aaaa.s:883    .bss:00000115 MessageSize
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm2aaaa.s:871    .bss:00000000 PacketBytes
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm2aaaa.s:71     .text:0000003a V2P_IncrementCurrAddress
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm2aaaa.s:895    .bss:00000118 CurrAddress
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm2aaaa.s:96     .text:00000062 V2P_CheckForExtendedAddress
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm2aaaa.s:140    .text:000000b4 V2P_SendPacket
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm2aaaa.s:207    .text:00000128 V2P_GetSetParamater
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm2aaaa.s:901    .bss:0000011c Param_ControllerInit
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm2aaaa.s:437    .text:00000258 V2P_RunStateMachine
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm2aaaa.s:889    .bss:00000117 InProgrammingMode
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm2aaaa.s:828    .progmem.data:00000000 SignonResponse
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccm2aaaa.s:844    .progmem.data:0000000c ButtLoadData
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYLaaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYLaaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYLaaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYLaaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYLaaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYLaaaa.s:20     .text:00000000 V2P_GetChecksum
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYLaaaa.s:873    .bss:00000113 SequenceNum
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYLaaaa.s:879    .bss:00000115 MessageSize
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYLaaaa.s:867    .bss:00000000 PacketBytes
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYLaaaa.s:71     .text:0000003a V2P_IncrementCurrAddress
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYLaaaa.s:891    .bss:00000118 CurrAddress
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYLaaaa.s:96     .text:00000062 V2P_CheckForExtendedAddress
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYLaaaa.s:140    .text:000000b4 V2P_SendPacket
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYLaaaa.s:207    .text:00000128 V2P_GetSetParamater
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYLaaaa.s:897    .bss:0000011c Param_ControllerInit
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYLaaaa.s:435    .text:00000252 V2P_RunStateMachine
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYLaaaa.s:885    .bss:00000117 InProgrammingMode
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYLaaaa.s:824    .progmem.data:00000000 SignonResponse
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccYLaaaa.s:840    .progmem.data:0000000c ButtLoadData
 
 UNDEFINED SYMBOLS
 __do_copy_data

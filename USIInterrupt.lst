@@ -1124,18 +1124,18 @@
   91               	...
  343               	f
    9               	#include "USI.h"
-   1               	#if (!defined(USI_H))
-   2               		/* Assember and C Code Defines. */
-   3               		#define USI_CONTROL_REG_FLAGS ((1<<USIOIE) | (1<<USIWM0) | (1<<USICS1) | (1<<USICLK))
-   4               	#endif
-   5               	
-   6               	#if (!defined(USI_H) && !(defined(__ASSEMBLER__)))
-   7               	#define USI_H
-   8               		/* Includes */
-   9               		#include <avr/io.h>
-  10               		#include <avr/interrupt.h>
+   1               	#ifndef USI_H
+   2               		#define USI_H
+   3               		
+   4               		/* Assember and C Code Header Data: */
+   5               		#define USI_CONTROL_REG_FLAGS ((1<<USIOIE) | (1<<USIWM0) | (1<<USICS1) | (1<<USICLK))
+   6               		
+   7               		/* C Code only Header Data: */
+   8               		#ifndef __ASSEMBLER__
+   9               			/* Includes */
+  10               			#include <avr/io.h>
   10               	
-  11               	; This interrupt handler is my ASM version of the Atmel C handler,
+  11               	; This interrupt handler is my ASM version of the Atmel USI C handler,
   12               	; rewritten for speed. It clocks the USI shift register on each
   13               	; compare match interrupt of the Timer0 timer.
   14               	
@@ -1149,7 +1149,7 @@
   22               	TIMER0_COMP_vect:
   23:USIInterrupt.S ****   push r24
   24:USIInterrupt.S ****   ldi r24, (USI_CONTROL_REG_FLAGS | (1<<USITC))
-  25:USIInterrupt.S ****   sts _SFR_IO_ADDR(USICR), r24
+  25:USIInterrupt.S ****   sts _SFR_MEM_ADDR(USICR), r24
   26:USIInterrupt.S ****   pop r24
   27:USIInterrupt.S ****   reti
 DEFINED SYMBOLS

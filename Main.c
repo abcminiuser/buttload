@@ -96,27 +96,27 @@
 
 		FILE                                     |  AUTHOR
 		-----------------------------------------+---------------------------------------------
-		USART.c + Header file                    | By Atmel, ported to GCC by Martin Thomas and
-		                                         | modified by Dean Camera
+		AVRISPCommandBytes.h                     | By Dean Camera
+		AVRISPCommandInterpreter.c + Header file | By Dean Camera
 		Dataflash.c + Header file                | By Dean Camera, re-coded from the generic dataflash
 		                                         | code by Atmel (ported to GCC by Martin Thomas)
 		DataflashCommandBytes.h                  | By Atmel, modified by Martin Thomas
-		USI.c + Header file                      | By Atmel, ported to GCC and modified by Dean Camera
-		OSCCal.c + Header file                   | By Colin Oflynn, modified by Dean Camera
+		EEPROMVariables.h                        | By Dean Camera		
+		ISPChipComm.c + Header file              | By Dean Camera
+		ISRMacro.h                               | By Dean Camera
+		JoystickInterrupt.S                      | By Dean Camera
 		LCD_Driver.c + Header file               | By Dean Camera
 		Main.c + Header file                     | By Dean Camera
-		SPI.c + Header file                      | By Dean Camera
-		V2Protocol.c + Header file               | By Dean Camera
-		AVRISPCommandBytes.h                     | By Dean Camera
-		ISPChipComm.c + Header file              | By Dean Camera
-		AVRISPCommandInterpreter.c + Header file | By Dean Camera
+		OSCCal.c + Header file                   | By Colin Oflynn, modified by Dean Camera
 		ProgramManager.c + Header file           | By Dean Camera
-		EEPROMVariables.h                        | By Dean Camera		
-		JoystickInterrupt.S                      | By Dean Camera
-		USIInterrupt.S                           | By Dean Camera
 		RingBuff.c + Header file                 | By Dean Camera
-		ISRMacro.h                               | By Dean Camera
+		SPI.c + Header file                      | By Dean Camera
 		Timeout.c + Header file                  | By Dean Camera
+		USART.c + Header file                    | By Atmel, ported to GCC by Martin Thomas and
+		                                         | modified by Dean Camera
+		USI.c + Header file                      | By Atmel, ported to GCC and modified by Dean Camera
+		USIInterrupt.S                           | By Dean Camera
+		V2Protocol.c + Header file               | By Dean Camera
 -------------------------------------------------+---------------------------------------------
 
    Special thanks to Barry (BPar) of AVRFreaks, for without his equipment and wisdom in debugging this
@@ -194,7 +194,7 @@ int main(void)
 	ACSR    = (1 << ACD);                        // Disable the unused Analogue Comparitor to save power
 	PRR     = ((1 << PRADC) | (1 << PRSPI));     // Disable the ADC and SPI (for now) to save power
 	
-	DDRF    = ((1 << 4) | (1 << 5)); // Set status LEDs as outputs
+	DDRF    = ((1 << 4) | (1 << 5));             // Set status LEDs as outputs
 	DDRB    = ((1 << 0) | (1 << 1) | (1 << 2) | (1 << 5)); // On-board dataflash /CS, ISP MOSI/SCK and beeper as outputs
 	PORTB   = ((1 << 0) | (1 << 1) | (1 << 2) | (1 << 3)   // Set SPI pins to high/pullups, and disable dataflash (send /CS high)
 	        | JOY_BMASK);                        // \ Turn joystick
@@ -234,19 +234,19 @@ int main(void)
 	
 	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_BASECLOCKSPEED_1MHZ); // Use slow clock speed in the main menu to save power
 	
-	for(;;)
+	for (;;)
 	{
 		if (JoyStatus)                           // Joystick is in the non-center position
 		{
 			if (JoyStatus & JOY_UP)              // Previous function
 			  (CurrFunc == 0)? CurrFunc = ARRAY_UPPERBOUND(MainFunctionPtrs): CurrFunc--;
-			else if (JoyStatus & JOY_DOWN)      // Next function
+			else if (JoyStatus & JOY_DOWN)       // Next function
 			  (CurrFunc == ARRAY_UPPERBOUND(MainFunctionPtrs))? CurrFunc = 0 : CurrFunc++;
-			else if (JoyStatus & JOY_PRESS)     // Select current function
+			else if (JoyStatus & JOY_PRESS)      // Select current function
 			  ((FuncPtr)pgm_read_word(&MainFunctionPtrs[CurrFunc]))(); // Run associated function
 			else if (JoyStatus & JOY_RIGHT)
 			  FUNCShowAbout();
-		
+
 			// Show current setting function onto the LCD:
 			LCD_puts_f((uint8_t*)pgm_read_word(&MainFunctionNames[CurrFunc]));
 
@@ -288,7 +288,7 @@ void MAIN_ResetCSLine(const uint8_t ActiveInactive)
 	
 	switch (ActiveInactive)
 	{
-		case MAIN_RESETCS_ACTIVE:      // The target RESET line may be either active high or low.
+		case MAIN_RESETCS_ACTIVE:                // The target RESET line may be either active high or low.
 			DDRF |= (1 << 6);
 		
 			if (eeprom_read_byte(&EEPROMVars.ResetPolarity)) // Translate to correct active logic level for target device type
@@ -297,18 +297,18 @@ void MAIN_ResetCSLine(const uint8_t ActiveInactive)
 			  PORTF |= (1 << 6);
 		
 			break;
-		case MAIN_RESETCS_EXTDFACTIVE: // Dataflashes are always active low.
+		case MAIN_RESETCS_EXTDFACTIVE:           // Dataflashes are always active low.
 			DDRF  |=  (1 << 6);
 			PORTF &= ~(1 << 6);
 			
 			break;
-		case MAIN_RESETCS_INACTIVE:    // Must determine what to do for inactive RESET.
-			if (eeprom_read_byte(&EEPROMVars.SPIResetMode)) // FLOAT mode SPI
+		case MAIN_RESETCS_INACTIVE:              // Must determine what to do for inactive RESET.
+			if (eeprom_read_byte(&EEPROMVars.SPIResetMode)) // FLOAT mode reset
 			{
 				DDRF  &= ~(1 << 6);
 				PORTF &= ~(1 << 6);
 			}
-			else                                       // ACTIVE type SPI
+			else                                 // ACTIVE mode reset
 			{
 				if (eeprom_read_byte(&EEPROMVars.ResetPolarity)) // Translate to correct inactive logic level for target device type
 				  PORTF |= (1 << 6);
@@ -320,13 +320,13 @@ void MAIN_ResetCSLine(const uint8_t ActiveInactive)
 
 void MAIN_WaitForJoyRelease(void)
 {
-	for(;;)
+	for (;;)
 	{
-		while (JoyStatus) {};                   // Wait until joystick released
+		while (JoyStatus) {};                    // Wait until joystick released
 
 		MAIN_Delay10MS(2);
 
-		if (!(JoyStatus))                       // Joystick still released (not bouncing), return
+		if (!(JoyStatus))                        // Joystick still released (not bouncing), return
 		  return;
 	}
 }
@@ -370,13 +370,13 @@ void MAIN_ShowProgType(const uint8_t Letter)
 
 void MAIN_ShowError(const uint8_t *pFlashStr)
 {
-	uint8_t ErrorBuff[LCD_TEXTBUFFER_SIZE];   // New buffer, LCD text buffer size
+	uint8_t ErrorBuff[LCD_TEXTBUFFER_SIZE];      // New buffer, LCD text buffer size
 	
 	ErrorBuff[0] = 'E';
 	ErrorBuff[1] = '>';
 
-	strcpy_P(&ErrorBuff[2], pFlashStr);       // WARNING: If error text is larger than (TEXTBUFFER_SIZE - 2),
-	                                          // this will overflow the buffer and probably crash the micro!
+	strcpy_P(&ErrorBuff[2], pFlashStr);          // WARNING: If flash error text is larger than (TEXTBUFFER_SIZE - 1),
+	                                             // this will overflow the buffer and crash the program!
 	LCD_puts(ErrorBuff);
 	
 	MAIN_WaitForJoyRelease();
@@ -386,19 +386,26 @@ void MAIN_ShowError(const uint8_t *pFlashStr)
 
 void MAIN_CrashProgram(uint8_t *ErrTxtPtr)
 {
-	LCD_puts(ErrTxtPtr);
-	
 	SPI_SPIOFF();
 	USI_SPIOff();
 	TIMEOUT_PACKET_TIMER_OFF();
 	TIMEOUT_SLEEP_TIMER_OFF();
+	USART_ENABLE(USART_TX_OFF, USART_RX_OFF);
+
+	LCD_puts(ErrTxtPtr);	
 	
-	abort();                                  // Infinite loop (part of LibC)
+	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);	
+
+	for (;;)
+	{
+		MAIN_Delay10MS(50);
+		PORTF ^= MAIN_STATLED_RED;               // Loop forever, blinking the status LED from orange to red and back
+	}
 }
 
 // ======================================================================================
 
-ISR(PCINT1_vect, ISR_NOBLOCK)                 // Joystick routine; PCINT0_vect is bound to this also via JoystickInterrupt.S
+ISR(PCINT1_vect, ISR_NOBLOCK)                    // Joystick routine; PCINT0_vect is bound to this also via JoystickInterrupt.S
 {
 	JoyStatus = (~PINB & JOY_BMASK)
 	          | (~PINE & JOY_EMASK);
@@ -406,7 +413,7 @@ ISR(PCINT1_vect, ISR_NOBLOCK)                 // Joystick routine; PCINT0_vect i
 	TIMEOUT_SLEEP_TIMEOUT_RESET();
 }
 
-ISR(BADISR_vect, ISR_NAKED)                   // Bad ISR routine; should never be called, here for safety
+ISR(BADISR_vect, ISR_NAKED)                      // Bad ISR routine; should never be called, here for safety
 {
 	MAIN_CrashProgram(PSTR("BADISR"));
 }
@@ -419,15 +426,15 @@ void FUNCChangeSettings(void)
 	
 	JoyStatus = 1;
 
-	for(;;)
+	for (;;)
 	{
-		if (JoyStatus)                         // Joystick is in the non-center position
+		if (JoyStatus)                           // Joystick is in the non-center position
 		{
-			if (JoyStatus & JOY_UP)            // Previous function
+			if (JoyStatus & JOY_UP)              // Previous function
 			  (CurrSFunc == 0)? CurrSFunc = ARRAY_UPPERBOUND(SettingFunctionPtrs) : CurrSFunc--;
-			else if (JoyStatus & JOY_DOWN)     // Next function
+			else if (JoyStatus & JOY_DOWN)       // Next function
 			  (CurrSFunc == ARRAY_UPPERBOUND(SettingFunctionPtrs))? CurrSFunc = 0 : CurrSFunc++;
-			else if (JoyStatus & JOY_PRESS)    // Select current function
+			else if (JoyStatus & JOY_PRESS)      // Select current function
 			  ((FuncPtr)pgm_read_word(&SettingFunctionPtrs[CurrSFunc]))(); // Run associated function
 			else if (JoyStatus & JOY_LEFT)
 			  return;
@@ -446,7 +453,7 @@ void FUNCShowAbout(void)
 	
 	JoyStatus = 1;
 			
-	for(;;)
+	for (;;)
 	{
 		if (JoyStatus)
 		{
@@ -474,7 +481,7 @@ void FUNCAVRISPMode(void)
 
 void FUNCProgramDataflash(void)
 {
-	USI_SPIInitMaster(eeprom_read_byte(&EEPROMVars.SCKDuration));
+	USI_SPIInitMaster();
 	DataflashInfo.UseExernalDF = TRUE;
 	DFSPIRoutinePointer = USI_SPITransmit;
 	
@@ -502,9 +509,9 @@ void FUNCProgramAVR(void)
 
 	MAIN_WaitForJoyRelease();
 	
-	JoyStatus = 1;                              // Use an invalid joystick value to force the program to write the
-	                                            // name of the default command onto the LCD
-	for(;;)
+	JoyStatus = 1;                               // Use an invalid joystick value to force the program to write the
+	                                             // name of the default command onto the LCD
+	for (;;)
 	{
 		if (JoyStatus)
 		{
@@ -526,17 +533,19 @@ void FUNCProgramAVR(void)
 	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_BASECLOCKSPEED_8MHZ);
 	LCD_puts_f(WaitText);
 
-	USI_SPIInitMaster(eeprom_read_byte(&EEPROMVars.SCKDuration));
-	MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE); // Capture the RESET line of the slave AVR
+	TIMEOUT_SLEEP_TIMER_OFF();
+
+	USI_SPIInitMaster();
+	MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE);       // Capture the RESET line of the slave AVR
 			
 	for (uint8_t PacketB = 0; PacketB < 12; PacketB++) // Read the enter programming mode command bytes
 	  PacketBytes[PacketB] = eeprom_read_byte(&EEPROMVars.EnterProgMode[PacketB]);
 	
-	ISPCC_EnterChipProgrammingMode();      // Try to sync with the slave AVR
+	ISPCC_EnterChipProgrammingMode();            // Try to sync with the slave AVR
 
 	CurrAddress = 0;
 
-	if (PacketBytes[1] == AICB_STATUS_CMD_OK) // ISPCC_EnterChipProgrammingMode alters the PacketBytes buffer rather than returning a value
+	if (PacketBytes[1] == AICB_STATUS_CMD_OK)    // ISPCC_EnterChipProgrammingMode alters the PacketBytes buffer rather than returning a value
 	{						
 		if (!(ProgMode) || (ProgMode == 7) || (ProgMode == 1) || (ProgMode == 3)) // All, erase chip, flash and eeprom, or program flash mode
 		{
@@ -600,12 +609,12 @@ void FUNCProgramAVR(void)
 
 		if (!(ProgMode) || (ProgMode == 5) || (ProgMode == 6)) // All, fuse and lock bytes, or program lock bytes mode
 		{
-			if (ProgMode == 6)                    // If fusebytes have already been written, we need to reenter programming mode to latch them
+			if (ProgMode == 6)                           // If fusebytes have already been written, we need to reenter programming mode to latch them
 			{
 				MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE); // Release the RESET line of the slave AVR
 				MAIN_Delay10MS(1);
 				MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE);   // Capture the RESET line of the slave AVR
-				ISPCC_EnterChipProgrammingMode(); // Try to sync with the slave AVR
+				ISPCC_EnterChipProgrammingMode();        // Try to sync with the slave AVR
 			}
 
 			MAIN_ShowProgType('L');
@@ -623,25 +632,26 @@ void FUNCProgramAVR(void)
 
 		strcpy_P(DoneFailMessageBuff, PSTR("PROGRAMMING DONE"));
 
-		if (Fault != ISPCC_NO_FAULT)         // Takes less code to just overwrite part of the string on fail
+		if (Fault != ISPCC_NO_FAULT)             // Takes less code to just overwrite part of the string on fail
 		  strcpy_P(&DoneFailMessageBuff[12], PSTR("FAILED"));
 
 		LCD_puts(DoneFailMessageBuff);
 
-		MAIN_Delay10MS(255);
-		MAIN_Delay10MS(100);
+		MAIN_Delay10MS(250);
+		MAIN_Delay10MS(200);
 	}
 	else
 	{
 		MAIN_ShowError(SyncErrorMessage);
 	}
 	
+	TOUT_SetupSleepTimer();
 	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_BASECLOCKSPEED_1MHZ);
-	MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE); // Release the RESET line and allow the slave AVR to run	
+	MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE);     // Release the RESET line and allow the slave AVR to run	
 	USI_SPIOff();
 	DF_EnableDataflash(FALSE);
 	SPI_SPIOFF();
-	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);   // Set status LEDs to green (ready)
+	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Set status LEDs to green (ready)
 }
 
 void FUNCStoreProgram(void)
@@ -670,7 +680,7 @@ void FUNCClearMem(void)
 
 	LCD_puts_f(PSTR("<N Y>"));
 
-	for(;;)
+	for (;;)
 	{
 		if (JoyStatus)
 		{
@@ -691,7 +701,7 @@ void FUNCClearMem(void)
 
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Set status LEDs to green (ready)
 	LCD_puts_f(PSTR("MEM CLEARED"));
-	MAIN_Delay10MS(255);
+	MAIN_Delay10MS(250);
 }
 
 void FUNCSetContrast(void)
@@ -699,9 +709,9 @@ void FUNCSetContrast(void)
 	uint8_t Buffer[6];
 	uint8_t Contrast = (eeprom_read_byte(&EEPROMVars.LCDContrast) & 0x0F); // Ranges from 0-15 so mask retuns 15 on blank EEPROM (0xFF)
 	
-	JoyStatus = 1;                          // Invalid value to force the LCD to update
+	JoyStatus = 1;                               // Invalid value to force the LCD to update
 	
-	for(;;)
+	for (;;)
 	{
 		if (JoyStatus)
 		{
@@ -712,7 +722,7 @@ void FUNCSetContrast(void)
 			}
 			else if (JoyStatus & JOY_DOWN)
 			{
-				if (Contrast > 1)          // Zero is non-visible, so 1 is the minimum
+				if (Contrast > 1)                // Zero is non-visible, so 1 is the minimum
 				  Contrast--;
 			}
 			else if (JoyStatus & JOY_LEFT)
@@ -740,11 +750,11 @@ void FUNCSetISPSpeed(void)
 	uint8_t CurrSpeed = eeprom_read_byte(&EEPROMVars.SCKDuration);
 
 	if (CurrSpeed > ARRAY_UPPERBOUND(USISpeeds))
-	  CurrSpeed = ARRAY_UPPERBOUND(USISpeeds); // Protection against blank EEPROM
+	  CurrSpeed = ARRAY_UPPERBOUND(USISpeeds);   // Protection against blank EEPROM
 
-	JoyStatus = 1;                        // Invalid value to force the LCD to update
+	JoyStatus = 1;                               // Invalid value to force the LCD to update
 
-	for(;;)
+	for (;;)
 	{
 		if (JoyStatus)
 		{
@@ -774,9 +784,9 @@ void FUNCSetResetMode(void)
 {
 	uint8_t CurrMode = (eeprom_read_byte(&EEPROMVars.SPIResetMode) & 0x01);
 
-	JoyStatus = 1;                        // Invalid value to force the LCD to update
+	JoyStatus = 1;                               // Invalid value to force the LCD to update
 
-	for(;;)
+	for (;;)
 	{
 		if (JoyStatus)
 		{
@@ -808,9 +818,9 @@ void FUNCSetFirmMinorVer(void)
 	
 	strcpy_P(VerBuffer, PSTR("V2- "));
 
-	JoyStatus = 1;                        // Invalid value to force the LCD to update
+	JoyStatus = 1;                               // Invalid value to force the LCD to update
 
-	for(;;)
+	for (;;)
 	{
 		if (JoyStatus)
 		{
@@ -843,14 +853,14 @@ void FUNCSetAutoSleepTimeOut(void)
 	uint8_t SleepTxtBuffer[8];
 	uint8_t SleepVal = eeprom_read_byte(&EEPROMVars.AutoSleepValIndex);
 
-	if (SleepVal > 4)
-	  SleepVal = 4;
+	if (SleepVal > ARRAY_UPPERBOUND(AutoSleepTOValues))
+	  SleepVal = ARRAY_UPPERBOUND(AutoSleepTOValues);
 
 	strcpy_P(SleepTxtBuffer, PSTR("    SEC"));
 	
-	JoyStatus = 1;                        // Invalid value to force the LCD to update
+	JoyStatus = 1;                               // Invalid value to force the LCD to update
 
-	for(;;)
+	for (;;)
 	{
 		if (JoyStatus)
 		{
@@ -876,7 +886,7 @@ void FUNCSetAutoSleepTimeOut(void)
 			else
 			{
 				MAIN_IntToStr(pgm_read_byte(&AutoSleepTOValues[SleepVal]), &SleepTxtBuffer[0]);
-				SleepTxtBuffer[3] = ' '; // Remove the auto-string termination from the buffer
+				SleepTxtBuffer[3] = ' ';         // Remove the auto-string termination from the buffer
 				LCD_puts(SleepTxtBuffer);
 			}
 
@@ -887,15 +897,15 @@ void FUNCSetAutoSleepTimeOut(void)
 
 void FUNCSleepMode(void)
 {
-	SMCR    = ((1 << SM1) | (1 << SE));    // Power down sleep mode
+	SMCR    = ((1 << SM1) | (1 << SE));          // Power down sleep mode
 	LCDCRA &= ~(1 << LCDEN); 
 	
-	MAIN_SETSTATUSLED(MAIN_STATLED_OFF);   // Save battery power - turn off status LED
+	MAIN_SETSTATUSLED(MAIN_STATLED_OFF);         // Save battery power - turn off status LED
 
-	while (!(JoyStatus & JOY_UP))         // Joystick interrupt wakes the micro
+	while (!(JoyStatus & JOY_UP))                // Joystick interrupt wakes the micro
 	  SLEEP();
 	   
-	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN); // Turn status LED back on
+	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Turn status LED back on
 
 	LCDCRA |= (1 << LCDEN);
 	
@@ -908,9 +918,9 @@ void FUNCStorageInfo(void)
 
 	MAIN_WaitForJoyRelease();
 
-	JoyStatus = 1;                        // Invalid value to force the LCD to update
+	JoyStatus = 1;                               // Invalid value to force the LCD to update
 
-	for(;;)
+	for (;;)
 	{
 		if (JoyStatus)
 		{
@@ -924,7 +934,7 @@ void FUNCStorageInfo(void)
 			}
 			else if (JoyStatus & JOY_PRESS)
 			{
-				if (SelectedItem == 1)    // View storage tags
+				if (SelectedItem == 1)           // View storage tags
 				{
 					DFSPIRoutinePointer = (SPIFuncPtr)SPI_SPITransmit;
 					SPI_SPIInit();
@@ -944,7 +954,7 @@ void FUNCStorageInfo(void)
 						MAIN_ShowError(PSTR("NO STORED PRGM"));
 					}	
 				}
-				else                      // View stored data sizes
+				else                             // View stored data sizes
 				{
 					PM_ShowStoredItemSizes();
 				}
@@ -959,9 +969,9 @@ void FUNCStorageInfo(void)
 
 void FUNCGoBootloader(void)
 {
-	uint8_t MD = (MCUCR & ~(1 << JTD));   // Forces compiler to use IN, AND plus two OUTs rather than two lots of IN/AND/OUTs
-	MCUCR = MD;                           // Turn on JTAG via code
-	MCUCR = MD;                           // Set bit twice as specified in datasheet        
+	uint8_t MD = (MCUCR & ~(1 << JTD));         // Forces compiler to use IN, AND plus two OUTs rather than two lots of IN/AND/OUTs
+	MCUCR = MD;                                 // Turn on JTAG via code
+	MCUCR = MD;                                 // Set bit twice as specified in datasheet        
 
 	TIMEOUT_SLEEP_TIMER_OFF();
 	
@@ -969,7 +979,7 @@ void FUNCGoBootloader(void)
 	
 	MAIN_WaitForJoyRelease();
 	
-	WDTCR = ((1<<WDCE) | (1<<WDE));       // Enable Watchdog Timer to give reset after minimum timeout
-	for(;;) {};                           // Eternal loop - when watchdog resets the AVR it will enter the bootloader
-	                                      // assuming the BOOTRST fuse is programmed
+	WDTCR = ((1<<WDCE) | (1<<WDE));             // Enable Watchdog Timer to give reset after minimum timeout
+	for (;;) {};                                // Eternal loop - when watchdog resets the AVR it will enter the bootloader
+	                                            // assuming the BOOTRST fuse is programmed
 }

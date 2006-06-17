@@ -6,7 +6,7 @@ volatile uint8_t  PacketTimeOut        = FALSE;
 volatile uint16_t SleepTimeOutTicks    = 0;
 volatile uint16_t TicksBeforeAutoSleep = 0;
 
-const uint8_t   AutoSleepTOValues[5] PROGMEM = {   0,   15,  30,  60,  120};
+const uint8_t AutoSleepTOValues[5] PROGMEM = {   0,   15,  30,  60,  120};
 
 // ======================================================================================
 
@@ -15,9 +15,15 @@ ISR(TIMER2_COMP_vect, ISR_NOBLOCK)
 {
 	if (PacketTimeOutTicks++ == TIMEOUT_PACKET_TIMEOUTTICKS)
 	{
-		PacketTimeOutTicks   = 0;
-		PacketTimeOut        = TRUE;
+		PacketTimeOutTicks = 0;
+		PacketTimeOut      = TRUE;
 	}
+	
+	// Check for serial communication problems:
+	if (UCSRA & (1 << DOR))
+	  MAIN_CrashProgram(PSTR("DATA OVR"));
+	else if (UCSRA & (1 << FE))
+	  MAIN_CrashProgram(PSTR("FRAME ERR"));
 }
 
 // Autosleep Timeout = (TicksBeforeAutoSleep / 10) secs between timeouts

@@ -18,7 +18,7 @@ void AICI_InterpretPacket(void)
 		case AICB_CMD_ENTER_PROGMODE_ISP:
 			MessageSize = 2;
 			
-			USI_SPIInitMaster(eeprom_read_byte(&EEPROMVars.SCKDuration));
+			USI_SPIInitMaster();
 
 			MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE);  // Pull the slave AVR's RESET line to active
 			ISPCC_EnterChipProgrammingMode();       // Run the Enter Programming Mode routine

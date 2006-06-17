@@ -24,7 +24,7 @@ static uint8_t  StrEnd                              = 0;
 static uint8_t  ScrollMode                          = 0;
 static uint8_t  ScrollCount                         = 0;
 static uint8_t  DelayCount                          = 0;
-static uint8_t  UpdateLCD                           = 0;
+static uint8_t  UpdateLCD                           = FALSE;
 
 static uint16_t LCD_SegTable[] PROGMEM =
 {

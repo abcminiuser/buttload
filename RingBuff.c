@@ -9,10 +9,10 @@
 #include "RingBuff.h"
 
 // Global Variables:
-volatile uint8_t RingBuffer[BUFF_BUFFLEN];
-volatile uint8_t BuffElements;
-volatile uint8_t InPos;
-volatile uint8_t OutPos;
+volatile uint8_t RingBuffer[BUFF_BUFFLEN] = {};
+volatile uint8_t BuffElements             = 0;
+volatile uint8_t InPos                    = 0;
+volatile uint8_t OutPos                   = 0;
 
 // ======================================================================================
 

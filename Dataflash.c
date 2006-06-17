@@ -14,16 +14,17 @@
 	routine for sending the SPI bytes is kept in DFSPIRoutinePointer which may be changed
 	by the program to redirect the output (in ButtLoad this is changed between the SPI bus
 	and the USI bus which is set to SPI mode. This global pointer is then copied to a local
-	pointer by DF_MAKELOCALSPIFUNCPTR() to prevent it from being copied before every use and
-	this macro must be in all routines using the DF_SENDSPIBYTE macro.
+	pointer by DF_MAKELOCALSPIFUNCPTR() to prevent it from being re-copied before every use
+	of SPI_SENDBYTE. As a consequence this macro must be in all routines which make use of
+	the DF_SENDSPIBYTE macro.
 */
 
 #include "Dataflash.h"
 
-//                  DataFlash Size:     512k,  1M,  2M,    4M,   8M,  16M,  32M,  64M
-const uint8_t  DF_PageBits[] PROGMEM = {  9,   9,    9,    9,    9,   10,   10,   11}; // Index of internal page address bits
-const uint16_t DF_PageSize[] PROGMEM = {264, 264,  264,  264,  264,  528,  528, 1056}; // Index of page sizes
-const uint16_t DF_Pages[]    PROGMEM = {256, 512, 1024, 2048, 4096, 4096, 8192, 8192}; // Index of total pages
+//                   DataFlash Size:       512k,   1M,   2M,   4M,   8M,  16M,  32M,  64M
+const uint8_t  DF_PageBits[]   PROGMEM = {    9,    9,    9,    9,    9,   10,   10,   11}; // Index of internal page address bits
+const uint16_t DF_PageSize[]   PROGMEM = {  264,  264,  264,  264,  264,  528,  528, 1056}; // Index of page sizes
+const uint16_t DF_Pages[]      PROGMEM = {  256,  512, 1024, 2048, 4096, 4096, 8192, 8192}; // Index of total pages
 
 const uint8_t DataFlashError[] PROGMEM = "DATAFLASH ERROR";
 
@@ -59,7 +60,7 @@ void DF_GetChipCharacteristics(void)
 	
 	DF_SENDSPIBYTE(DFCB_STATUSREG);               // Send the get status register command
 	
-	DataIndex  = ((DF_SENDSPIBYTE(0x00) & 0x38) >> 3);
+	DataIndex  = ((DF_SENDSPIBYTE(0x00) & 0x38) >> 3); // Bits 3, 4 and 5 contain the lookup table index
 
 	DataflashInfo.PageBits   = pgm_read_byte(&DF_PageBits[DataIndex]);	// Get number of internal page address bits from look-up table
 	DataflashInfo.PageSize   = pgm_read_word(&DF_PageSize[DataIndex]);  // Get the size of the page (in bytes)

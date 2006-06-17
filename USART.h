@@ -39,10 +39,10 @@
 	
 	#define USART_BAUDVALUE       (((F_CPU * ((USART_DOUBLESPEED == TRUE)? 2 : 1)) / (USART_BAUDRATE * 16UL)) - 1)
 	
-	#define USART_ENABLE(Tx,Rx)   MACROS{                                                       \
-								  if (Tx || Rx) { LCD_puts_f(WaitText); OSCCAL_Calibrate(); }   \
-								  else { OSCCAL_SETSYSCLOCKSPEED(OSCCAL_BASECLOCKSPEED_1MHZ); } \
-								  UCSRB = (((Rx<<RXEN) | (Tx<<TXEN)) | (UCSRB & (1 << RXCIE))); \
+	#define USART_ENABLE(Tx,Rx)   MACROS{                                                                              \
+								  if (Tx || Rx) { LCD_puts_f(WaitText); OSCCAL_Calibrate();                            \
+								                  UCSRB = (((Rx<<RXEN) | (Tx<<TXEN)) | (UCSRB & (1 << RXCIE))); }      \
+								  else          { OSCCAL_SETSYSCLOCKSPEED(OSCCAL_BASECLOCKSPEED_1MHZ); UCSRB = 0x00; } \
 								  }MACROE
 	
 	// PROTOTYPES:

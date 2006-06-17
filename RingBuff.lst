@@ -145,31 +145,48 @@
  157               	/* epilogue end (size=17) */
  158               	/* function __vector_13 size 65 (31) */
  159               	.LFE14:
- 161               		.section	.progmem.data,"a",@progbits
- 164               	__c.1865:
- 165 0000 4255 4646 		.string	"BUFF OVF"
- 165      204F 5646 
- 165      00
- 166               		.comm BuffElements,1,1
- 167               		.comm RingBuffer,64,1
- 168               		.comm InPos,1,1
- 169               		.comm OutPos,1,1
- 206               	.Letext0:
+ 161               	.global	RingBuffer
+ 162               	.global	RingBuffer
+ 163               		.section .bss
+ 166               	RingBuffer:
+ 167 0000 0000 0000 		.skip 64,0
+ 167      0000 0000 
+ 167      0000 0000 
+ 167      0000 0000 
+ 167      0000 0000 
+ 168               	.global	BuffElements
+ 169               	.global	BuffElements
+ 172               	BuffElements:
+ 173 0040 00        		.skip 1,0
+ 174               	.global	InPos
+ 175               	.global	InPos
+ 178               	InPos:
+ 179 0041 00        		.skip 1,0
+ 180               	.global	OutPos
+ 181               	.global	OutPos
+ 184               	OutPos:
+ 185 0042 00        		.skip 1,0
+ 186               		.section	.progmem.data,"a",@progbits
+ 189               	__c.1865:
+ 190 0000 4255 4646 		.string	"BUFF OVF"
+ 190      204F 5646 
+ 190      00
+ 227               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 RingBuff.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8kaaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8kaaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8kaaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8kaaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8kaaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8kaaaa.s:20     .text:00000000 BUFF_InitialiseBuffer
-                            *COM*:00000001 InPos
-                            *COM*:00000001 OutPos
-                            *COM*:00000001 BuffElements
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8kaaaa.s:39     .text:0000000e BUFF_GetBuffByte
-                            *COM*:00000040 RingBuffer
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8kaaaa.s:87     .text:0000004c __vector_13
-C:\DOCUME~1\Dean\LOCALS~1\Temp/cc8kaaaa.s:164    .progmem.data:00000000 __c.1865
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccuiaaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccuiaaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccuiaaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccuiaaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccuiaaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccuiaaaa.s:20     .text:00000000 BUFF_InitialiseBuffer
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccuiaaaa.s:178    .bss:00000041 InPos
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccuiaaaa.s:184    .bss:00000042 OutPos
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccuiaaaa.s:172    .bss:00000040 BuffElements
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccuiaaaa.s:39     .text:0000000e BUFF_GetBuffByte
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccuiaaaa.s:166    .bss:00000000 RingBuffer
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccuiaaaa.s:87     .text:0000004c __vector_13
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccuiaaaa.s:189    .progmem.data:00000000 __c.1865
 
 UNDEFINED SYMBOLS
 __do_copy_data

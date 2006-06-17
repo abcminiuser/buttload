@@ -8,7 +8,7 @@
 #include "ProgramManager.h"
 
 // Global Variables:
-uint8_t  MemoryType          = 0;
+uint8_t  MemoryType          = TYPE_FLASH;
 uint8_t  CurrentMode         = PM_NO_SETUP;
 uint16_t GPageLength         = 0;
 
@@ -455,7 +455,7 @@ void PM_ShowStoredItemSizes(void)
 	
 	JoyStatus = 1;
 	
-	for(;;)
+	for (;;)
 	{
 		if (JoyStatus)                           // Joystick is in the non-center position
 		{
@@ -479,12 +479,12 @@ void PM_ShowStoredItemSizes(void)
 				case 2:
 					strcpy_P(Buffer, PSTR("FUSE-"));
 					TempB = eeprom_read_byte(&EEPROMVars.TotalFuseBytes);
-					MAIN_IntToStr(((TempB == 0xFF)? 0x00 : TempB), &Buffer[5]);
+					ultoa(((TempB == 0xFF)? 0x00 : TempB), &Buffer[5], 10);
 					break;
 				case 3:
 					strcpy_P(Buffer, PSTR("LOCK-"));
 					TempB = eeprom_read_byte(&EEPROMVars.TotalLockBytes);
-					MAIN_IntToStr(((TempB == 0xFF)? 0x00 : TempB), &Buffer[5]);		
+					ultoa(((TempB == 0xFF)? 0x00 : TempB), &Buffer[5], 10);
 			}
 	
 			LCD_puts(Buffer);

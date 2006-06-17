@@ -32,8 +32,8 @@
 
 #include "USI.h"
 
-volatile uint8_t storedUSIDR;
-volatile uint8_t TransferComplete;
+volatile uint8_t StoredUSIDR      = 0;
+volatile uint8_t TransferComplete = FALSE;
 
                                                           // SPI Clock Duration Value    , Compare Value
 const uint8_t USIPSValues[USI_PRESET_SPEEDS][2] PROGMEM = {{USI_SPI_SPEED_28800Hz       , 128          },  // Actual speed = 57,153Hz
@@ -60,7 +60,7 @@ ISR(USI_OVERFLOW_vect, ISR_BLOCK)
 	TransferComplete = 1;
 
 	// Copy USIDR to buffer to prevent overwrite on next transfer.
-	storedUSIDR = USIDR;
+	StoredUSIDR = USIDR;
 }
 
 /*! \brief  Initialize USI as SPI master.
@@ -70,7 +70,7 @@ ISR(USI_OVERFLOW_vect, ISR_BLOCK)
  *  Note that the stored USIDR value is cleared.
  *
  */
-void USI_SPIInitMaster(const uint8_t Freq)
+void USI_SPIInitMaster()
 {
 	// Configure port directions.
  	USI_DIR_REG |= (1<<USI_DATAOUT_PIN) | (1<<USI_CLOCK_PIN);  // Outputs.
@@ -82,12 +82,12 @@ void USI_SPIInitMaster(const uint8_t Freq)
 	USICR = USI_CONTROL_REG_FLAGS;
 
 	// Set the compare and prescaler for the requested frequency:
-	USI_SPISetSpeed(Freq);
+	USI_SPISetSpeed();
 	
 	// Init driver status register.
 	TransferComplete = 0;
 	
-	storedUSIDR = 0;
+	StoredUSIDR = 0;
 }
 
 void USI_SPIOff(void)
@@ -126,7 +126,7 @@ uint8_t USI_SPITransmit(uint8_t val)
 
 	while (!(TransferComplete));
 
-	return storedUSIDR;
+	return StoredUSIDR;
 }
 
 uint8_t USI_SPITransmitWord(const uint16_t val )
@@ -144,11 +144,11 @@ void USI_SPIToggleClock(void)
 	MAIN_Delay1MS(1);	
 }
 
-void USI_SPISetSpeed(const uint8_t Freq)
+void USI_SPISetSpeed()
 {
 	for (uint8_t MatchIndex = 0; MatchIndex < USI_PRESET_SPEEDS; MatchIndex++)
 	{
-		if ((pgm_read_byte(&USIPSValues[MatchIndex][0]) == Freq) || (MatchIndex == (USI_PRESET_SPEEDS - 1)))
+		if ((pgm_read_byte(&USIPSValues[MatchIndex][0]) == eeprom_read_byte(&EEPROMVars.SCKDuration)) || (MatchIndex == (USI_PRESET_SPEEDS - 1)))
 		{
 			// Init Output Compare Register.
 			OCR0A = pgm_read_byte(&USIPSValues[MatchIndex][1]);
