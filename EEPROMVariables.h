@@ -17,10 +17,10 @@
 	
 		uint8_t  ResetPolarity;
 		uint8_t  SCKDuration;
-		uint8_t  WriteProgram[9];
-		uint8_t  WriteEEPROM[9];
+		uint8_t  WriteProgram[10];
+		uint8_t  WriteEEPROM[10];
 		uint8_t  EraseCmdStored;
-		uint8_t  EraseChip[6];
+		uint8_t  EraseChip[7];
 		uint8_t  DataSize[4];
 		uint8_t  EEPROMSize[4];
 		uint8_t  EnterProgMode[12];

@@ -109,10 +109,10 @@ void PM_InterpretAVRISPPacket(void)
 		case AICB_CMD_CHIP_ERASE_ISP:
 			MessageSize = 2;
 
-			for (uint8_t PacketB = 1; PacketB <= 6; PacketB++)          // Save the erase chip command bytes to EEPROM
+			for (uint8_t PacketB = 1; PacketB < 7; PacketB++)             // Save the erase chip command bytes to EEPROM
 			  eeprom_write_byte(&EEPROMVars.EraseChip[PacketB], PacketBytes[PacketB]);
 
-			for (uint8_t Byte = 0; Byte < 8; Byte++)                    // Clear the program and EEPROM size counters
+			for (uint8_t Byte = 0; Byte < 4; Byte++)                      // Clear the program and EEPROM size counters
 			{
 				eeprom_write_byte(&EEPROMVars.DataSize[Byte], 0x00);
 				eeprom_write_byte(&EEPROMVars.EEPROMSize[Byte], 0x00);
@@ -206,7 +206,7 @@ void PM_InterpretAVRISPPacket(void)
 					EEPROMAddress = (uint8_t*)&EEPROMVars.WriteProgram; // Set the eeprom address to the Program command bytes location
 					PM_SetupDFAddressCounters(TYPE_FLASH);
 				}
-				else                                                   // EEPROM programming mode
+				else                                                    // EEPROM programming mode
 				{
 					EEPROMAddress = (uint8_t*)&EEPROMVars.WriteEEPROM;  // Set the eeprom address to the EEPROM command bytes location
 					PM_SetupDFAddressCounters(TYPE_EEPROM);
@@ -215,7 +215,7 @@ void PM_InterpretAVRISPPacket(void)
 				DF_BufferWriteEnable(DataflashInfo.CurrBuffByte);
 				CurrentMode = PM_DATAFLASH_WRITE;
 				
-				for (uint8_t B = 1; B <= 9; B++)                       // Save the command bytes
+				for (uint8_t B = 1; B < 10; B++)                        // Save the command bytes
 				  eeprom_write_byte(EEPROMAddress, PacketBytes[B]);
 			}
 
@@ -332,10 +332,10 @@ void PM_SendFuseLockBytes(const uint8_t Type)
 
 void PM_SendEraseCommand(void)
 {			
-	for (uint8_t B = 2; B < 6 ; B++)                  // Read out the erase chip command bytes
+	for (uint8_t B = 3; B < 7 ; B++)                  // Read out the erase chip command bytes
 	  USI_SPITransmit(eeprom_read_byte(&EEPROMVars.EraseChip[B])); // Send the erase chip commands
 			
-	if (eeprom_read_byte(&EEPROMVars.EraseChip[1]))   // Value of 1 indicates a busy flag test
+	if (eeprom_read_byte(&EEPROMVars.EraseChip[2]))   // Value of 1 indicates a busy flag test
 	{
 		do
 			USI_SPITransmitWord(0xF000);
@@ -343,7 +343,7 @@ void PM_SendEraseCommand(void)
 	}
 	else                                              // Cleared flag means use a predefined delay
 	{		
-		MAIN_Delay1MS(eeprom_read_byte(&EEPROMVars.EraseChip[0])); // Wait the erase delay
+		MAIN_Delay1MS(eeprom_read_byte(&EEPROMVars.EraseChip[1])); // Wait the erase delay
 	}
 }
 
@@ -372,7 +372,7 @@ void PM_CreateProgrammingPackets(const uint8_t Type)
 		PacketBytes[0] = AICB_CMD_PROGRAM_EEPROM_ISP;
 	}
 
-	for (uint8_t B = 1; B <= 9 ; B++)                 // Load in the write data command bytes
+	for (uint8_t B = 0; B < 9 ; B++)                  // Load in the write data command bytes
 	{
 		PacketBytes[B] = eeprom_read_byte(EEPROMAddress); // Synthesise a write packet header
 		EEPROMAddress++;                               // Increment the EEPROM location counter

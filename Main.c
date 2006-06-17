@@ -152,7 +152,7 @@ const uint8_t*   MainFunctionNames[]     PROGMEM = {Func_ISPPRGM  , Func_STOREPR
 const FuncPtr    MainFunctionPtrs[]      PROGMEM = {FUNCAVRISPMode, FUNCStoreProgram, FUNCProgramAVR, FUNCProgramDataflash, FUNCStorageInfo   , FUNCChangeSettings , FUNCSleepMode};
 
 const uint8_t    SFunc_SETCONTRAST[]     PROGMEM = "SET CONTRAST";
-const uint8_t    SFunc_SETSPISPEED[]     PROGMEM = "SET SPI SPEED";
+const uint8_t    SFunc_SETSPISPEED[]     PROGMEM = "SET ISP SPEED";
 const uint8_t    SFunc_SETRESETMODE[]    PROGMEM = "SET RESET MODE";
 const uint8_t    SFunc_SETFIRMMINOR[]    PROGMEM = "SET FIRM VERSION";
 const uint8_t    SFunc_SETAUTOSLEEPTO[]  PROGMEM = "SET SLEEP TIMEOUT";
