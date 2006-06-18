@@ -136,397 +136,388 @@
  146               	/* epilogue end (size=1) */
  147               	/* function LCD_puts size 63 (62) */
  148               	.LFE16:
- 150               	.global	LCD_WriteChar
- 152               	LCD_WriteChar:
- 153               	.LFB17:
+ 150               	.global	__vector_22
+ 152               	__vector_22:
+ 153               	.LFB18:
  154               	.LM23:
  155               	/* prologue: frame size=0 */
- 156               	/* prologue end (size=0) */
- 157               	.LVL13:
- 158               	.LM24:
- 159 0098 8F3F      		cpi r24,lo8(-1)
- 160 009a 01F4      		brne .L18
- 161               	.LM25:
- 162 009c 40E0      		ldi r20,lo8(0)
- 163 009e 50E0      		ldi r21,hi8(0)
- 164               	.LVL14:
- 165 00a0 00C0      		rjmp .L20
- 166               	.LVL15:
- 167               	.L18:
- 168               	.LBB4:
- 169               	.LM26:
- 170 00a2 E82F      		mov r30,r24
- 171 00a4 FF27      		clr r31
- 172               	.LVL16:
- 173 00a6 EE0F      		lsl r30
- 174 00a8 FF1F      		rol r31
- 175 00aa E050      		subi r30,lo8(-(LCD_SegTable))
- 176 00ac F040      		sbci r31,hi8(-(LCD_SegTable))
- 177               	/* #APP */
- 178 00ae 4591      		lpm r20, Z+
- 179 00b0 5491      		lpm r21, Z
- 180               		
- 181               	.LVL17:
- 182               	/* #NOAPP */
- 183               	.L20:
- 184               	.LBE4:
- 185               	.LM27:
- 186 00b2 862F      		mov r24,r22
- 187               	.LVL18:
- 188 00b4 8695      		lsr r24
- 189 00b6 E82F      		mov r30,r24
- 190 00b8 FF27      		clr r31
- 191               	.LVL19:
- 192 00ba E050      		subi r30,lo8(-(SegBuffer))
- 193 00bc F040      		sbci r31,hi8(-(SegBuffer))
- 194 00be 30E0      		ldi r19,lo8(0)
- 195               	.LVL20:
- 196 00c0 7727      		clr r23
- 197               	.LVL21:
- 198 00c2 6170      		andi r22,lo8(1)
- 199 00c4 7070      		andi r23,hi8(1)
- 200               	.LVL22:
- 201               	.L21:
- 202               	.LVL23:
- 203               	.LBB5:
- 204               	.LBB6:
- 205               	.LM28:
- 206 00c6 242F      		mov r18,r20
- 207 00c8 2F70      		andi r18,lo8(15)
- 208               	.LM29:
- 209 00ca 6115      		cp r22,__zero_reg__
- 210 00cc 7105      		cpc r23,__zero_reg__
- 211 00ce 01F4      		brne .L22
- 212 00d0 90EF      		ldi r25,lo8(-16)
- 213 00d2 00C0      		rjmp .L24
- 214               	.L22:
- 215               	.LM30:
- 216 00d4 2295      		swap r18
- 217 00d6 207F      		andi r18,0xf0
- 218 00d8 9FE0      		ldi r25,lo8(15)
- 219               	.L24:
- 220               	.LM31:
- 221 00da 8081      		ld r24,Z
- 222 00dc 9823      		and r25,r24
- 223 00de 922B      		or r25,r18
- 224 00e0 9083      		st Z,r25
- 225               	.LBE6:
- 226               	.LM32:
- 227 00e2 3F5F      		subi r19,lo8(-(1))
- 228 00e4 3430      		cpi r19,lo8(4)
- 229 00e6 01F0      		breq .L27
- 230               	.LVL24:
- 231               	.LBB7:
- 232               	.LM33:
- 233 00e8 84E0      		ldi r24,4
- 234 00ea 5695      	1:	lsr r21
- 235 00ec 4795      		ror r20
- 236 00ee 8A95      		dec r24
- 237 00f0 01F4      		brne 1b
- 238               	.LM34:
- 239 00f2 3596      		adiw r30,5
- 240 00f4 00C0      		rjmp .L21
- 241               	.LVL25:
- 242               	.L27:
- 243 00f6 0895      		ret
- 244               	.LBE7:
- 245               	.LBE5:
- 246               	/* epilogue: frame size=0 */
- 247               	/* epilogue: noreturn */
- 248               	/* epilogue end (size=0) */
- 249               	/* function LCD_WriteChar size 52 (52) */
- 250               	.LFE17:
- 252               	.global	__vector_22
- 254               	__vector_22:
- 255               	.LFB18:
- 256               	.LM35:
- 257               	/* prologue: frame size=0 */
- 258 00f8 7894      		sei
- 259 00fa 1F92      		push __zero_reg__
- 260 00fc 0F92      		push __tmp_reg__
- 261 00fe 0FB6      		in __tmp_reg__,__SREG__
- 262 0100 0F92      		push __tmp_reg__
- 263 0102 1124      		clr __zero_reg__
- 264 0104 CF92      		push r12
- 265 0106 DF92      		push r13
- 266 0108 FF92      		push r15
- 267 010a 0F93      		push r16
- 268 010c 1F93      		push r17
- 269 010e 2F93      		push r18
- 270 0110 3F93      		push r19
- 271 0112 4F93      		push r20
- 272 0114 5F93      		push r21
- 273 0116 6F93      		push r22
- 274 0118 7F93      		push r23
- 275 011a 8F93      		push r24
- 276 011c 9F93      		push r25
- 277 011e AF93      		push r26
- 278 0120 BF93      		push r27
- 279 0122 CF93      		push r28
- 280 0124 DF93      		push r29
- 281 0126 EF93      		push r30
- 282 0128 FF93      		push r31
- 283               	/* prologue end (size=25) */
- 284               	.LM36:
- 285 012a 8091 0000 		lds r24,ScrollMode
- 286 012e 8823      		tst r24
- 287 0130 01F0      		breq .L29
- 288               	.LM37:
- 289 0132 8091 0000 		lds r24,DelayCount
- 290 0136 8823      		tst r24
- 291 0138 01F0      		breq .L31
- 292               	.LM38:
- 293 013a 8150      		subi r24,lo8(-(-1))
- 294 013c 8093 0000 		sts DelayCount,r24
- 295 0140 00C0      		rjmp .L29
- 296               	.L31:
- 297               	.LM39:
- 298 0142 8091 0000 		lds r24,ScrollCount
- 299 0146 8150      		subi r24,lo8(-(-1))
- 300 0148 8093 0000 		sts ScrollCount,r24
- 301 014c 8F3F      		cpi r24,lo8(-1)
- 302 014e 01F4      		brne .L29
- 303               	.LM40:
- 304 0150 81E0      		ldi r24,lo8(1)
- 305 0152 8093 0000 		sts UpdateLCD,r24
- 306 0156 00C0      		rjmp .L34
- 307               	.L29:
- 308               	.LM41:
- 309 0158 8091 0000 		lds r24,UpdateLCD
- 310 015c 8823      		tst r24
- 311 015e 01F0      		breq .L35
- 312               	.L34:
- 313               	.LBB8:
- 314               	.LBB9:
- 315               	.LM42:
- 316 0160 1091 0000 		lds r17,StrStart
- 317               	.LM43:
- 318 0164 F090 0000 		lds r15,StrEnd
- 319               	.LM44:
- 320 0168 CF2C      		mov r12,r15
- 321 016a DD24      		clr r13
- 322 016c 012F      		mov r16,r17
- 323 016e C0E0      		ldi r28,lo8(0)
- 324 0170 D0E0      		ldi r29,hi8(0)
- 325               	.L36:
- 326 0172 6C2F      		mov r22,r28
- 327               	.LVL26:
- 328 0174 E02F      		mov r30,r16
- 329 0176 FF27      		clr r31
- 330               	.LM45:
- 331 0178 0F15      		cp r16,r15
- 332 017a 00F0      		brlo .L37
- 333               	.LM46:
- 334 017c EC19      		sub r30,r12
- 335 017e FD09      		sbc r31,r13
- 336               	.L37:
- 337               	.LM47:
- 338 0180 E050      		subi r30,lo8(-(TextBuffer))
- 339 0182 F040      		sbci r31,hi8(-(TextBuffer))
- 340 0184 8081      		ld r24,Z
- 341               	.LVL27:
- 342               	.LM48:
- 343 0186 0E94 0000 		call LCD_WriteChar
- 344               	.LVL28:
- 345 018a 2196      		adiw r28,1
- 346 018c 0F5F      		subi r16,lo8(-(1))
- 347               	.LBE9:
- 348               	.LM49:
- 349 018e C630      		cpi r28,6
- 350 0190 D105      		cpc r29,__zero_reg__
- 351 0192 01F4      		brne .L36
- 352               	.LBE8:
- 353               	.LM50:
- 354 0194 1F5F      		subi r17,lo8(-(1))
- 355 0196 1093 0000 		sts StrStart,r17
- 356 019a 1150      		subi r17,lo8(-(-1))
- 357 019c 1F15      		cp r17,r15
- 358 019e 01F4      		brne .L41
- 359               	.LM51:
- 360 01a0 81E0      		ldi r24,lo8(1)
- 361 01a2 8093 0000 		sts StrStart,r24
- 362               	.L41:
- 363               	.LM52:
- 364 01a6 83E0      		ldi r24,lo8(3)
- 365 01a8 8093 0000 		sts ScrollCount,r24
- 366               	.LM53:
- 367 01ac 1092 0000 		sts UpdateLCD,__zero_reg__
- 368               	.L35:
- 369 01b0 A0E0      		ldi r26,lo8(SegBuffer)
- 370 01b2 B0E0      		ldi r27,hi8(SegBuffer)
- 371 01b4 ECEE      		ldi r30,lo8(236)
- 372 01b6 F0E0      		ldi r31,hi8(236)
- 373               	.L43:
- 374               	.LBB10:
- 375               	.LM54:
- 376 01b8 8D91      		ld r24,X+
- 377 01ba 8193      		st Z+,r24
- 378               	.LM55:
- 379 01bc 81E0      		ldi r24,hi8(256)
- 380 01be E030      		cpi r30,lo8(256)
- 381 01c0 F807      		cpc r31,r24
- 382 01c2 01F4      		brne .L43
- 383               	.LBE10:
- 384               	/* epilogue: frame size=0 */
- 385 01c4 FF91      		pop r31
- 386 01c6 EF91      		pop r30
- 387 01c8 DF91      		pop r29
- 388 01ca CF91      		pop r28
- 389 01cc BF91      		pop r27
- 390 01ce AF91      		pop r26
- 391 01d0 9F91      		pop r25
- 392 01d2 8F91      		pop r24
- 393 01d4 7F91      		pop r23
- 394 01d6 6F91      		pop r22
- 395 01d8 5F91      		pop r21
- 396 01da 4F91      		pop r20
- 397 01dc 3F91      		pop r19
- 398 01de 2F91      		pop r18
- 399 01e0 1F91      		pop r17
- 400 01e2 0F91      		pop r16
- 401 01e4 FF90      		pop r15
- 402 01e6 DF90      		pop r13
- 403 01e8 CF90      		pop r12
- 404 01ea 0F90      		pop __tmp_reg__
- 405 01ec 0FBE      		out __SREG__,__tmp_reg__
- 406 01ee 0F90      		pop __tmp_reg__
- 407 01f0 1F90      		pop __zero_reg__
- 408 01f2 1895      		reti
- 409               	/* epilogue end (size=24) */
- 410               	/* function __vector_22 size 126 (77) */
- 411               	.LFE18:
- 413               	.global	LCD_puts_f
- 415               	LCD_puts_f:
- 416               	.LFB15:
- 417               	.LM56:
- 418               	/* prologue: frame size=20 */
- 419 01f4 0F93      		push r16
- 420 01f6 1F93      		push r17
- 421 01f8 CF93      		push r28
- 422 01fa DF93      		push r29
- 423 01fc CDB7      		in r28,__SP_L__
- 424 01fe DEB7      		in r29,__SP_H__
- 425 0200 6497      		sbiw r28,20
- 426 0202 0FB6      		in __tmp_reg__,__SREG__
- 427 0204 F894      		cli
- 428 0206 DEBF      		out __SP_H__,r29
- 429 0208 0FBE      		out __SREG__,__tmp_reg__
- 430 020a CDBF      		out __SP_L__,r28
- 431               	/* prologue end (size=12) */
- 432               	.LVL29:
- 433               	.LM57:
- 434 020c 8E01      		movw r16,r28
- 435 020e 0F5F      		subi r16,lo8(-(1))
- 436 0210 1F4F      		sbci r17,hi8(-(1))
- 437 0212 BC01      		movw r22,r24
- 438 0214 C801      		movw r24,r16
- 439               	.LVL30:
- 440 0216 0E94 0000 		call strcpy_P
- 441               	.LVL31:
- 442               	.LM58:
- 443 021a C801      		movw r24,r16
- 444 021c 0E94 0000 		call LCD_puts
- 445               	/* epilogue: frame size=20 */
- 446 0220 6496      		adiw r28,20
- 447 0222 0FB6      		in __tmp_reg__,__SREG__
- 448 0224 F894      		cli
- 449 0226 DEBF      		out __SP_H__,r29
- 450 0228 0FBE      		out __SREG__,__tmp_reg__
- 451 022a CDBF      		out __SP_L__,r28
- 452 022c DF91      		pop r29
- 453 022e CF91      		pop r28
- 454 0230 1F91      		pop r17
- 455 0232 0F91      		pop r16
- 456 0234 0895      		ret
- 457               	/* epilogue end (size=11) */
- 458               	/* function LCD_puts_f size 33 (10) */
- 459               	.LFE15:
- 461               		.lcomm ScrollMode,1
- 462               		.lcomm DelayCount,1
- 463               		.lcomm ScrollCount,1
- 464               		.lcomm UpdateLCD,1
- 465               		.lcomm StrStart,1
- 466               		.lcomm StrEnd,1
- 467               		.lcomm TextBuffer,27
- 468               		.lcomm SegBuffer,20
- 469               		.section	.progmem.data,"a",@progbits
- 472               	LCD_SegTable:
- 473 0000 A8EA      		.word	-5464
- 474 0002 802A      		.word	10880
- 475 0004 0040      		.word	16384
- 476 0006 000A      		.word	2560
- 477 0008 510A      		.word	2641
- 478 000a 0840      		.word	16392
- 479 000c 5955      		.word	21849
- 480 000e 1801      		.word	280
- 481 0010 111E      		.word	7697
- 482 0012 111B      		.word	6929
- 483 0014 500B      		.word	2896
- 484 0016 411B      		.word	6977
- 485 0018 411F      		.word	8001
- 486 001a 1101      		.word	273
- 487 001c 511F      		.word	8017
- 488 001e 511B      		.word	6993
- 489 0020 0000      		.word	0
- 490 0022 0000      		.word	0
- 491 0024 0880      		.word	-32760
- 492 0026 001A      		.word	6656
- 493 0028 2040      		.word	16416
- 494 002a 0000      		.word	0
- 495 002c 0000      		.word	0
- 496 002e 510F      		.word	3921
- 497 0030 9139      		.word	14737
- 498 0032 4114      		.word	5185
- 499 0034 9131      		.word	12689
- 500 0036 411E      		.word	7745
- 501 0038 410E      		.word	3649
- 502 003a 411D      		.word	7489
- 503 003c 500F      		.word	3920
- 504 003e 8020      		.word	8320
- 505 0040 1015      		.word	5392
- 506 0042 4886      		.word	-31160
- 507 0044 4014      		.word	5184
- 508 0046 7805      		.word	1400
- 509 0048 7085      		.word	-31376
- 510 004a 5115      		.word	5457
- 511 004c 510E      		.word	3665
- 512 004e 5195      		.word	-27311
- 513 0050 518E      		.word	-29103
- 514 0052 2190      		.word	-28639
- 515 0054 8120      		.word	8321
- 516 0056 5015      		.word	5456
- 517 0058 4844      		.word	17480
- 518 005a 50C5      		.word	-15024
- 519 005c 28C0      		.word	-16344
- 520 005e 2820      		.word	8232
- 521 0060 0950      		.word	20489
- 522 0062 4114      		.word	5185
- 523 0064 2080      		.word	-32736
- 524 0066 1111      		.word	4369
- 525 0068 0000      		.word	0
- 526 006a 0010      		.word	4096
- 577               	.Letext0:
+ 156 0098 7894      		sei
+ 157 009a 1F92      		push __zero_reg__
+ 158 009c 0F92      		push __tmp_reg__
+ 159 009e 0FB6      		in __tmp_reg__,__SREG__
+ 160 00a0 0F92      		push __tmp_reg__
+ 161 00a2 1124      		clr __zero_reg__
+ 162 00a4 EF92      		push r14
+ 163 00a6 FF92      		push r15
+ 164 00a8 0F93      		push r16
+ 165 00aa 1F93      		push r17
+ 166 00ac 2F93      		push r18
+ 167 00ae 3F93      		push r19
+ 168 00b0 4F93      		push r20
+ 169 00b2 5F93      		push r21
+ 170 00b4 6F93      		push r22
+ 171 00b6 7F93      		push r23
+ 172 00b8 8F93      		push r24
+ 173 00ba 9F93      		push r25
+ 174 00bc AF93      		push r26
+ 175 00be BF93      		push r27
+ 176 00c0 EF93      		push r30
+ 177 00c2 FF93      		push r31
+ 178               	/* prologue end (size=22) */
+ 179               	.LM24:
+ 180 00c4 8091 0000 		lds r24,ScrollMode
+ 181 00c8 8823      		tst r24
+ 182 00ca 01F0      		breq .L18
+ 183               	.LM25:
+ 184 00cc 8091 0000 		lds r24,DelayCount
+ 185 00d0 8823      		tst r24
+ 186 00d2 01F0      		breq .L20
+ 187               	.LM26:
+ 188 00d4 8150      		subi r24,lo8(-(-1))
+ 189 00d6 8093 0000 		sts DelayCount,r24
+ 190 00da 00C0      		rjmp .L18
+ 191               	.L20:
+ 192               	.LM27:
+ 193 00dc 8091 0000 		lds r24,ScrollCount
+ 194 00e0 8150      		subi r24,lo8(-(-1))
+ 195 00e2 8093 0000 		sts ScrollCount,r24
+ 196 00e6 8F3F      		cpi r24,lo8(-1)
+ 197 00e8 01F4      		brne .L18
+ 198               	.LM28:
+ 199 00ea 81E0      		ldi r24,lo8(1)
+ 200 00ec 8093 0000 		sts UpdateLCD,r24
+ 201 00f0 00C0      		rjmp .L23
+ 202               	.L18:
+ 203               	.LM29:
+ 204 00f2 8091 0000 		lds r24,UpdateLCD
+ 205 00f6 8823      		tst r24
+ 206 00f8 01F4      		brne .+2
+ 207 00fa 00C0      		rjmp .L24
+ 208               	.L23:
+ 209               	.LBB12:
+ 210               	.LBB13:
+ 211               	.LM30:
+ 212 00fc 3091 0000 		lds r19,StrStart
+ 213               	.LVL13:
+ 214               	.LM31:
+ 215 0100 E090 0000 		lds r14,StrEnd
+ 216 0104 F32E      		mov r15,r19
+ 217               	.LVL14:
+ 218 0106 FE18      		sub r15,r14
+ 219 0108 132F      		mov r17,r19
+ 220               	.LVL15:
+ 221 010a 60E0      		ldi r22,lo8(0)
+ 222 010c 70E0      		ldi r23,hi8(0)
+ 223               	.LVL16:
+ 224               	.L25:
+ 225 010e 862F      		mov r24,r22
+ 226               	.LVL17:
+ 227 0110 1E15      		cp r17,r14
+ 228 0112 00F4      		brsh .L26
+ 229 0114 E12F      		mov r30,r17
+ 230               	.LVL18:
+ 231 0116 00C0      		rjmp .L28
+ 232               	.LVL19:
+ 233               	.L26:
+ 234 0118 EF2D      		mov r30,r15
+ 235               	.LVL20:
+ 236               	.L28:
+ 237               	.LM32:
+ 238 011a FF27      		clr r31
+ 239 011c E050      		subi r30,lo8(-(TextBuffer))
+ 240 011e F040      		sbci r31,hi8(-(TextBuffer))
+ 241 0120 E081      		ld r30,Z
+ 242               	.LVL21:
+ 243               	.LBB14:
+ 244               	.LBB15:
+ 245               	.LM33:
+ 246 0122 EF3F      		cpi r30,lo8(-1)
+ 247 0124 01F4      		brne .L29
+ 248 0126 40E0      		ldi r20,lo8(0)
+ 249 0128 50E0      		ldi r21,hi8(0)
+ 250               	.LVL22:
+ 251 012a 00C0      		rjmp .L31
+ 252               	.LVL23:
+ 253               	.L29:
+ 254               	.LBB16:
+ 255               	.LM34:
+ 256 012c FF27      		clr r31
+ 257               	.LVL24:
+ 258 012e EE0F      		lsl r30
+ 259 0130 FF1F      		rol r31
+ 260               	.LVL25:
+ 261 0132 E050      		subi r30,lo8(-(LCD_SegTable))
+ 262 0134 F040      		sbci r31,hi8(-(LCD_SegTable))
+ 263               	/* #APP */
+ 264 0136 4591      		lpm r20, Z+
+ 265 0138 5491      		lpm r21, Z
+ 266               		
+ 267               	.LVL26:
+ 268               	/* #NOAPP */
+ 269               	.L31:
+ 270               	.LBE16:
+ 271               	.LM35:
+ 272 013a 8695      		lsr r24
+ 273 013c E82F      		mov r30,r24
+ 274 013e FF27      		clr r31
+ 275               	.LVL27:
+ 276 0140 E050      		subi r30,lo8(-(SegBuffer))
+ 277 0142 F040      		sbci r31,hi8(-(SegBuffer))
+ 278 0144 00E0      		ldi r16,lo8(0)
+ 279 0146 DB01      		movw r26,r22
+ 280 0148 A170      		andi r26,lo8(1)
+ 281 014a B070      		andi r27,hi8(1)
+ 282               	.L32:
+ 283               	.LVL28:
+ 284               	.LBB17:
+ 285               	.LBB18:
+ 286               	.LM36:
+ 287 014c 242F      		mov r18,r20
+ 288 014e 2F70      		andi r18,lo8(15)
+ 289               	.LBE18:
+ 290               	.LBE17:
+ 291               	.LBE15:
+ 292               	.LM37:
+ 293 0150 1097      		sbiw r26,0
+ 294 0152 01F4      		brne .L33
+ 295 0154 90EF      		ldi r25,lo8(-16)
+ 296 0156 00C0      		rjmp .L35
+ 297               	.L33:
+ 298               	.LBB19:
+ 299               	.LBB20:
+ 300               	.LBB21:
+ 301               	.LM38:
+ 302 0158 2295      		swap r18
+ 303 015a 207F      		andi r18,0xf0
+ 304 015c 9FE0      		ldi r25,lo8(15)
+ 305               	.L35:
+ 306               	.LM39:
+ 307 015e 8081      		ld r24,Z
+ 308               	.LVL29:
+ 309 0160 9823      		and r25,r24
+ 310 0162 922B      		or r25,r18
+ 311 0164 9083      		st Z,r25
+ 312               	.LBE21:
+ 313               	.LM40:
+ 314 0166 0F5F      		subi r16,lo8(-(1))
+ 315 0168 0430      		cpi r16,lo8(4)
+ 316 016a 01F0      		breq .L36
+ 317               	.LVL30:
+ 318               	.LBB22:
+ 319               	.LM41:
+ 320 016c 84E0      		ldi r24,4
+ 321 016e 5695      	1:	lsr r21
+ 322 0170 4795      		ror r20
+ 323 0172 8A95      		dec r24
+ 324 0174 01F4      		brne 1b
+ 325               	.LM42:
+ 326 0176 3596      		adiw r30,5
+ 327 0178 00C0      		rjmp .L32
+ 328               	.LVL31:
+ 329               	.L36:
+ 330 017a 6F5F      		subi r22,lo8(-(1))
+ 331 017c 7F4F      		sbci r23,hi8(-(1))
+ 332 017e 1F5F      		subi r17,lo8(-(1))
+ 333 0180 F394      		inc r15
+ 334               	.LBE22:
+ 335               	.LBE20:
+ 336               	.LBE19:
+ 337               	.LBE14:
+ 338               	.LBE13:
+ 339               	.LM43:
+ 340 0182 6630      		cpi r22,6
+ 341 0184 7105      		cpc r23,__zero_reg__
+ 342 0186 01F0      		breq .+2
+ 343 0188 00C0      		rjmp .L25
+ 344               	.LBE12:
+ 345               	.LM44:
+ 346 018a 3F5F      		subi r19,lo8(-(1))
+ 347 018c 3093 0000 		sts StrStart,r19
+ 348 0190 3150      		subi r19,lo8(-(-1))
+ 349 0192 3E15      		cp r19,r14
+ 350 0194 01F4      		brne .L39
+ 351               	.LM45:
+ 352 0196 81E0      		ldi r24,lo8(1)
+ 353 0198 8093 0000 		sts StrStart,r24
+ 354               	.L39:
+ 355               	.LM46:
+ 356 019c 83E0      		ldi r24,lo8(3)
+ 357 019e 8093 0000 		sts ScrollCount,r24
+ 358               	.LM47:
+ 359 01a2 1092 0000 		sts UpdateLCD,__zero_reg__
+ 360               	.L24:
+ 361 01a6 A0E0      		ldi r26,lo8(SegBuffer)
+ 362 01a8 B0E0      		ldi r27,hi8(SegBuffer)
+ 363 01aa ECEE      		ldi r30,lo8(236)
+ 364 01ac F0E0      		ldi r31,hi8(236)
+ 365               	.LVL32:
+ 366               	.L41:
+ 367               	.LBB23:
+ 368               	.LM48:
+ 369 01ae 8D91      		ld r24,X+
+ 370 01b0 8193      		st Z+,r24
+ 371               	.LM49:
+ 372 01b2 81E0      		ldi r24,hi8(256)
+ 373 01b4 E030      		cpi r30,lo8(256)
+ 374 01b6 F807      		cpc r31,r24
+ 375 01b8 01F4      		brne .L41
+ 376               	.LBE23:
+ 377               	/* epilogue: frame size=0 */
+ 378 01ba FF91      		pop r31
+ 379 01bc EF91      		pop r30
+ 380 01be BF91      		pop r27
+ 381 01c0 AF91      		pop r26
+ 382 01c2 9F91      		pop r25
+ 383 01c4 8F91      		pop r24
+ 384 01c6 7F91      		pop r23
+ 385 01c8 6F91      		pop r22
+ 386 01ca 5F91      		pop r21
+ 387 01cc 4F91      		pop r20
+ 388 01ce 3F91      		pop r19
+ 389 01d0 2F91      		pop r18
+ 390 01d2 1F91      		pop r17
+ 391 01d4 0F91      		pop r16
+ 392 01d6 FF90      		pop r15
+ 393 01d8 EF90      		pop r14
+ 394 01da 0F90      		pop __tmp_reg__
+ 395 01dc 0FBE      		out __SREG__,__tmp_reg__
+ 396 01de 0F90      		pop __tmp_reg__
+ 397 01e0 1F90      		pop __zero_reg__
+ 398 01e2 1895      		reti
+ 399               	/* epilogue end (size=21) */
+ 400               	/* function __vector_22 size 170 (127) */
+ 401               	.LFE18:
+ 403               	.global	LCD_puts_f
+ 405               	LCD_puts_f:
+ 406               	.LFB15:
+ 407               	.LM50:
+ 408               	/* prologue: frame size=20 */
+ 409 01e4 0F93      		push r16
+ 410 01e6 1F93      		push r17
+ 411 01e8 CF93      		push r28
+ 412 01ea DF93      		push r29
+ 413 01ec CDB7      		in r28,__SP_L__
+ 414 01ee DEB7      		in r29,__SP_H__
+ 415 01f0 6497      		sbiw r28,20
+ 416 01f2 0FB6      		in __tmp_reg__,__SREG__
+ 417 01f4 F894      		cli
+ 418 01f6 DEBF      		out __SP_H__,r29
+ 419 01f8 0FBE      		out __SREG__,__tmp_reg__
+ 420 01fa CDBF      		out __SP_L__,r28
+ 421               	/* prologue end (size=12) */
+ 422               	.LVL33:
+ 423               	.LM51:
+ 424 01fc 8E01      		movw r16,r28
+ 425 01fe 0F5F      		subi r16,lo8(-(1))
+ 426 0200 1F4F      		sbci r17,hi8(-(1))
+ 427 0202 BC01      		movw r22,r24
+ 428 0204 C801      		movw r24,r16
+ 429               	.LVL34:
+ 430 0206 0E94 0000 		call strcpy_P
+ 431               	.LVL35:
+ 432               	.LM52:
+ 433 020a C801      		movw r24,r16
+ 434 020c 0E94 0000 		call LCD_puts
+ 435               	/* epilogue: frame size=20 */
+ 436 0210 6496      		adiw r28,20
+ 437 0212 0FB6      		in __tmp_reg__,__SREG__
+ 438 0214 F894      		cli
+ 439 0216 DEBF      		out __SP_H__,r29
+ 440 0218 0FBE      		out __SREG__,__tmp_reg__
+ 441 021a CDBF      		out __SP_L__,r28
+ 442 021c DF91      		pop r29
+ 443 021e CF91      		pop r28
+ 444 0220 1F91      		pop r17
+ 445 0222 0F91      		pop r16
+ 446 0224 0895      		ret
+ 447               	/* epilogue end (size=11) */
+ 448               	/* function LCD_puts_f size 33 (10) */
+ 449               	.LFE15:
+ 451               		.lcomm ScrollMode,1
+ 452               		.lcomm DelayCount,1
+ 453               		.lcomm ScrollCount,1
+ 454               		.lcomm UpdateLCD,1
+ 455               		.lcomm StrStart,1
+ 456               		.lcomm StrEnd,1
+ 457               		.lcomm TextBuffer,27
+ 458               		.lcomm SegBuffer,20
+ 459               		.section	.progmem.data,"a",@progbits
+ 462               	LCD_SegTable:
+ 463 0000 A8EA      		.word	-5464
+ 464 0002 802A      		.word	10880
+ 465 0004 0040      		.word	16384
+ 466 0006 000A      		.word	2560
+ 467 0008 510A      		.word	2641
+ 468 000a 0840      		.word	16392
+ 469 000c 5955      		.word	21849
+ 470 000e 1801      		.word	280
+ 471 0010 111E      		.word	7697
+ 472 0012 111B      		.word	6929
+ 473 0014 500B      		.word	2896
+ 474 0016 411B      		.word	6977
+ 475 0018 411F      		.word	8001
+ 476 001a 1101      		.word	273
+ 477 001c 511F      		.word	8017
+ 478 001e 511B      		.word	6993
+ 479 0020 0000      		.word	0
+ 480 0022 0000      		.word	0
+ 481 0024 0880      		.word	-32760
+ 482 0026 001A      		.word	6656
+ 483 0028 2040      		.word	16416
+ 484 002a 0000      		.word	0
+ 485 002c 0000      		.word	0
+ 486 002e 510F      		.word	3921
+ 487 0030 9139      		.word	14737
+ 488 0032 4114      		.word	5185
+ 489 0034 9131      		.word	12689
+ 490 0036 411E      		.word	7745
+ 491 0038 410E      		.word	3649
+ 492 003a 411D      		.word	7489
+ 493 003c 500F      		.word	3920
+ 494 003e 8020      		.word	8320
+ 495 0040 1015      		.word	5392
+ 496 0042 4886      		.word	-31160
+ 497 0044 4014      		.word	5184
+ 498 0046 7805      		.word	1400
+ 499 0048 7085      		.word	-31376
+ 500 004a 5115      		.word	5457
+ 501 004c 510E      		.word	3665
+ 502 004e 5195      		.word	-27311
+ 503 0050 518E      		.word	-29103
+ 504 0052 2190      		.word	-28639
+ 505 0054 8120      		.word	8321
+ 506 0056 5015      		.word	5456
+ 507 0058 4844      		.word	17480
+ 508 005a 50C5      		.word	-15024
+ 509 005c 28C0      		.word	-16344
+ 510 005e 2820      		.word	8232
+ 511 0060 0950      		.word	20489
+ 512 0062 4114      		.word	5185
+ 513 0064 2080      		.word	-32736
+ 514 0066 1111      		.word	4369
+ 515 0068 0000      		.word	0
+ 516 006a 0010      		.word	4096
+ 560               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 LCD_Driver.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwtaaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwtaaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwtaaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwtaaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwtaaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwtaaaa.s:20     .text:00000000 LCD_Init
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwtaaaa.s:45     .text:0000001a LCD_puts
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwtaaaa.s:466    .bss:00000006 TextBuffer
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccOOaaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccOOaaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccOOaaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccOOaaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccOOaaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccOOaaaa.s:20     .text:00000000 LCD_Init
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccOOaaaa.s:45     .text:0000001a LCD_puts
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccOOaaaa.s:456    .bss:00000006 TextBuffer
                              .bss:00000000 ScrollMode
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwtaaaa.s:462    .bss:00000002 ScrollCount
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwtaaaa.s:464    .bss:00000004 StrStart
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwtaaaa.s:465    .bss:00000005 StrEnd
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwtaaaa.s:461    .bss:00000001 DelayCount
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwtaaaa.s:463    .bss:00000003 UpdateLCD
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwtaaaa.s:152    .text:00000098 LCD_WriteChar
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwtaaaa.s:472    .progmem.data:00000000 LCD_SegTable
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwtaaaa.s:467    .bss:00000021 SegBuffer
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwtaaaa.s:254    .text:000000f8 __vector_22
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccwtaaaa.s:415    .text:000001f4 LCD_puts_f
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccOOaaaa.s:452    .bss:00000002 ScrollCount
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccOOaaaa.s:454    .bss:00000004 StrStart
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccOOaaaa.s:455    .bss:00000005 StrEnd
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccOOaaaa.s:451    .bss:00000001 DelayCount
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccOOaaaa.s:453    .bss:00000003 UpdateLCD
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccOOaaaa.s:152    .text:00000098 __vector_22
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccOOaaaa.s:462    .progmem.data:00000000 LCD_SegTable
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccOOaaaa.s:457    .bss:00000021 SegBuffer
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccOOaaaa.s:405    .text:000001e4 LCD_puts_f
 
 UNDEFINED SYMBOLS
 __do_copy_data

@@ -8,7 +8,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 	// DEBUG SWITCH
-	//#define DEBUG
+	#define DEBUG
 	// END DEBUG SWITCH
 	
 	// INCLUDES:
@@ -102,7 +102,7 @@
 	
 	void MAIN_Delay10MS(uint8_t loops);
 	void MAIN_Delay1MS(uint8_t loops);
-	void MAIN_CrashProgram(uint8_t *ErrTxtPtr) __attribute__((noreturn));
+	void MAIN_CrashProgram(const uint8_t *ErrTxtPtr) __attribute__((noreturn));
 	
 	void FUNCChangeSettings(void);
 	void FUNCShowAbout(void);

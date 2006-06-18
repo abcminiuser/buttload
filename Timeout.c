@@ -47,7 +47,7 @@ void TOUT_SetupSleepTimer(void)
 	  NewTicksIndex = 4;
 
 	TIMSK1 = (1 << TOIE1);
-	TicksBeforeAutoSleep = (pgm_read_byte(&AutoSleepTOValues[NewTicksIndex]) * 10);
+	TicksBeforeAutoSleep = ((pgm_read_byte(&AutoSleepTOValues[NewTicksIndex]) << 1) * 5); // ((x << 1) * 5) == (x * 10)
 
 	TIMEOUT_SLEEP_TIMEOUT_RESET();
 	

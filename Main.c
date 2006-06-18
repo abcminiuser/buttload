@@ -37,7 +37,7 @@
 		   non-volatile memory and be able to retrieve said program on user request and
 		   thus program AVRs via ISP in the field
 		
-		3) Devices with large, 32-bit addresses (such as the MEGA2560) are supported.
+		3) Devices with large, 24-bit flash addresses (such as the MEGA2560) are supported.
 		
 		4) Ability to read and program external AVR dataflash memory chips directly
 					
@@ -229,11 +229,11 @@ int main(void)
 	OSCCAL_Calibrate();                          // Calibrate the internal RC occilator
 	TOUT_SetupSleepTimer();                      // Set up and start the auto-sleep timer
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);	     // Set status LEDs to green (ready)	
-	JoyStatus = 1;                               // Use an invalid joystick value to force the program to write the
-	                                             // name of the default command onto the LCD
 	
 	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_BASECLOCKSPEED_1MHZ); // Use slow clock speed in the main menu to save power
 	
+	JoyStatus = 1;                               // Use an invalid joystick value to force the program to write the
+	                                             // name of the default command onto the LCD
 	for (;;)
 	{
 		if (JoyStatus)                           // Joystick is in the non-center position
@@ -320,6 +320,12 @@ void MAIN_ResetCSLine(const uint8_t ActiveInactive)
 
 void MAIN_WaitForJoyRelease(void)
 {
+	if (JoyStatus == 1)                          // If invalid value used to force menu drawing, reset value and exit
+	{
+		JoyStatus = 0;
+		return;
+	}
+
 	for (;;)
 	{
 		while (JoyStatus) {};                    // Wait until joystick released
@@ -384,7 +390,7 @@ void MAIN_ShowError(const uint8_t *pFlashStr)
 	MAIN_WaitForJoyRelease();
 }
 
-void MAIN_CrashProgram(uint8_t *ErrTxtPtr)
+void MAIN_CrashProgram(const uint8_t *ErrTxtPtr)
 {
 	SPI_SPIOFF();
 	USI_SPIOff();
@@ -392,7 +398,7 @@ void MAIN_CrashProgram(uint8_t *ErrTxtPtr)
 	TIMEOUT_SLEEP_TIMER_OFF();
 	USART_ENABLE(USART_TX_OFF, USART_RX_OFF);
 
-	LCD_puts(ErrTxtPtr);	
+	LCD_puts_f(ErrTxtPtr);
 	
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);	
 

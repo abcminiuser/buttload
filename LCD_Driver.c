@@ -15,6 +15,7 @@
 	rather than the interrupt so that the interrupt executes as fast as possible.
 */
 
+#define INC_FROM_DRIVER
 #include "LCD_Driver.h"
 
 static uint8_t  TextBuffer[LCD_TEXTBUFFER_SIZE + 7] = {};
@@ -139,7 +140,7 @@ void LCD_puts(const uint8_t *Data)
 	UpdateLCD  = TRUE;
 }
 
-void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit)
+static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit)
 {
 	uint16_t SegData  = 0x00;
 	uint8_t  *BuffPtr = (&SegBuffer[0] + (Digit >> 1));
@@ -187,11 +188,9 @@ ISR(LCD_vect, ISR_NOBLOCK)
 			uint8_t Byte = (StrStart + Character);
 
 			if (Byte >= StrEnd)
-			  Byte = TextBuffer[Byte - StrEnd];
-			else
-			  Byte = TextBuffer[Byte];
+			  Byte -= StrEnd;
 			
-			LCD_WriteChar(Byte, Character);
+			LCD_WriteChar(TextBuffer[Byte], Character);
 		}
 		
 		if (StrStart++ == StrEnd)

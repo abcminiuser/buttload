@@ -18,7 +18,7 @@ void OSCCAL_Calibrate(void)
 {
 	uint8_t SREG_Backup;
 	uint8_t LoopCount = (0x7F / 2); // Maximum range is 128, and starts from the middle, so 64 is the max number of iterations required
-	uint8_t PrevOSCALValues[2];
+	uint8_t PrevOSCALValues[4] = {0,0,0,0};
    
 	// Reset ActualCount
 	ActualCount = 0;
@@ -60,9 +60,11 @@ void OSCCAL_Calibrate(void)
     
 	while (LoopCount--)
 	{
-		// Let it take a few readings (14ms, approx 2 readings)
-		_delay_ms(14);
+		// Let it take a few readings (28ms, approx 4 readings)
+		_delay_ms(28);
 
+		PrevOSCALValues[3] = PrevOSCALValues[2];
+		PrevOSCALValues[2] = PrevOSCALValues[1];
 		PrevOSCALValues[1] = PrevOSCALValues[0];
 		PrevOSCALValues[0] = OSCCAL;
         
@@ -73,9 +75,9 @@ void OSCCAL_Calibrate(void)
 		
 		// When the routine finds the closest value for the given target count,
 		// it will cause the OSCCAL to hover around the closest two values.
-		// If the current value is the same as two loops previous, exit the
+		// If the current value is the same as several loops previous, exit the
 		// routine as the best value has been found.
-		if (OSCCAL == PrevOSCALValues[1])
+		if ((OSCCAL == PrevOSCALValues[1]) && (OSCCAL == PrevOSCALValues[3]))
 		  break;
 	}
 

@@ -27,280 +27,259 @@
   35               	.LBE6:
   36               	.LBE5:
   37               	.LM3:
-  38 000a 282F      		mov r18,r24
-  39 000c 3327      		clr r19
-  40 000e E22F      		mov r30,r18
-  41               	.LVL1:
-  42               	.LM4:
-  43 0010 2F3F      		cpi r18,lo8(-1)
-  44 0012 01F0      		breq .L2
-  45               	.LVL2:
-  46               	.LM5:
-  47 0014 81E0      		ldi r24,lo8(1)
-  48               	.LVL3:
-  49 0016 8093 6F00 		sts 111,r24
-  50               	.LBB7:
-  51               	.LM6:
-  52 001a FF27      		clr r31
-  53 001c E050      		subi r30,lo8(-(AutoSleepTOValues))
-  54 001e F040      		sbci r31,hi8(-(AutoSleepTOValues))
-  55               	/* #APP */
-  56 0020 E491      		lpm r30, Z
-  57               		
-  58               	.LVL4:
-  59               	/* #NOAPP */
-  60               	.LBE7:
-  61 0022 8AE0      		ldi r24,lo8(10)
-  62 0024 E89F      		mul r30,r24
-  63 0026 C001      		movw r24,r0
-  64 0028 1124      		clr r1
-  65 002a 9093 0000 		sts (TicksBeforeAutoSleep)+1,r25
-  66 002e 8093 0000 		sts TicksBeforeAutoSleep,r24
-  67               	.LM7:
-  68 0032 1092 0000 		sts (SleepTimeOutTicks)+1,__zero_reg__
-  69 0036 1092 0000 		sts SleepTimeOutTicks,__zero_reg__
-  70 003a 1092 8500 		sts (132)+1,__zero_reg__
-  71 003e 1092 8400 		sts 132,__zero_reg__
-  72               	.LVL5:
-  73               	.LM8:
-  74 0042 2223      		tst r18
-  75 0044 01F0      		breq .L4
-  76               	.LVL6:
-  77               	.L5:
-  78               	.LM9:
-  79 0046 81E0      		ldi r24,lo8(1)
-  80 0048 8093 8100 		sts 129,r24
-  81 004c 0895      		ret
-  82               	.LVL7:
-  83               	.L4:
-  84               	.LM10:
-  85 004e 1092 8100 		sts 129,__zero_reg__
-  86 0052 0895      		ret
-  87               	.LVL8:
-  88               	.L2:
-  89               	.LM11:
-  90 0054 81E0      		ldi r24,lo8(1)
-  91               	.LVL9:
-  92 0056 8093 6F00 		sts 111,r24
-  93               	.LBB8:
-  94               	.LM12:
-  95 005a E0E0      		ldi r30,lo8(AutoSleepTOValues+4)
-  96 005c F0E0      		ldi r31,hi8(AutoSleepTOValues+4)
-  97               	/* #APP */
-  98 005e E491      		lpm r30, Z
-  99               		
- 100               	.LVL10:
- 101               	/* #NOAPP */
- 102               	.LBE8:
- 103 0060 8AE0      		ldi r24,lo8(10)
- 104 0062 E89F      		mul r30,r24
- 105 0064 C001      		movw r24,r0
- 106 0066 1124      		clr r1
- 107 0068 9093 0000 		sts (TicksBeforeAutoSleep)+1,r25
- 108 006c 8093 0000 		sts TicksBeforeAutoSleep,r24
- 109               	.LM13:
- 110 0070 1092 0000 		sts (SleepTimeOutTicks)+1,__zero_reg__
- 111 0074 1092 0000 		sts SleepTimeOutTicks,__zero_reg__
- 112 0078 1092 8500 		sts (132)+1,__zero_reg__
- 113 007c 1092 8400 		sts 132,__zero_reg__
- 114 0080 00C0      		rjmp .L5
- 115               	/* epilogue: frame size=0 */
- 116               	/* epilogue: noreturn */
- 117               	/* epilogue end (size=0) */
- 118               	/* function TOUT_SetupSleepTimer size 72 (72) */
- 119               	.LFE16:
- 121               	.global	__vector_9
- 123               	__vector_9:
- 124               	.LFB15:
- 125               	.LM14:
- 126               	/* prologue: frame size=0 */
- 127 0082 7894      		sei
- 128 0084 1F92      		push __zero_reg__
- 129 0086 0F92      		push __tmp_reg__
- 130 0088 0FB6      		in __tmp_reg__,__SREG__
- 131 008a 0F92      		push __tmp_reg__
- 132 008c 1124      		clr __zero_reg__
- 133 008e 2F93      		push r18
- 134 0090 3F93      		push r19
- 135 0092 4F93      		push r20
- 136 0094 5F93      		push r21
- 137 0096 6F93      		push r22
- 138 0098 7F93      		push r23
- 139 009a 8F93      		push r24
- 140 009c 9F93      		push r25
- 141 009e AF93      		push r26
- 142 00a0 BF93      		push r27
- 143 00a2 EF93      		push r30
- 144 00a4 FF93      		push r31
- 145               	/* prologue end (size=18) */
- 146               	.LM15:
- 147 00a6 8091 0000 		lds r24,SleepTimeOutTicks
- 148 00aa 9091 0000 		lds r25,(SleepTimeOutTicks)+1
- 149 00ae 2091 0000 		lds r18,TicksBeforeAutoSleep
- 150 00b2 3091 0000 		lds r19,(TicksBeforeAutoSleep)+1
- 151 00b6 0196      		adiw r24,1
- 152 00b8 9093 0000 		sts (SleepTimeOutTicks)+1,r25
- 153 00bc 8093 0000 		sts SleepTimeOutTicks,r24
- 154 00c0 0197      		sbiw r24,1
- 155 00c2 8217      		cp r24,r18
- 156 00c4 9307      		cpc r25,r19
- 157 00c6 01F4      		brne .L11
- 158               	.LM16:
- 159 00c8 1092 8100 		sts 129,__zero_reg__
- 160               	.LM17:
- 161 00cc 0E94 0000 		call FUNCSleepMode
- 162               	.LM18:
- 163 00d0 0E94 0000 		call TOUT_SetupSleepTimer
- 164               	.L11:
- 165               	/* epilogue: frame size=0 */
- 166 00d4 FF91      		pop r31
- 167 00d6 EF91      		pop r30
- 168 00d8 BF91      		pop r27
- 169 00da AF91      		pop r26
- 170 00dc 9F91      		pop r25
- 171 00de 8F91      		pop r24
- 172 00e0 7F91      		pop r23
- 173 00e2 6F91      		pop r22
- 174 00e4 5F91      		pop r21
- 175 00e6 4F91      		pop r20
- 176 00e8 3F91      		pop r19
- 177 00ea 2F91      		pop r18
- 178 00ec 0F90      		pop __tmp_reg__
- 179 00ee 0FBE      		out __SREG__,__tmp_reg__
- 180 00f0 0F90      		pop __tmp_reg__
- 181 00f2 1F90      		pop __zero_reg__
- 182 00f4 1895      		reti
- 183               	/* epilogue end (size=17) */
- 184               	/* function __vector_9 size 58 (23) */
- 185               	.LFE15:
- 187               	.global	__vector_4
- 189               	__vector_4:
- 190               	.LFB14:
- 191               	.LM19:
- 192               	/* prologue: frame size=0 */
- 193 00f6 7894      		sei
- 194 00f8 1F92      		push __zero_reg__
- 195 00fa 0F92      		push __tmp_reg__
- 196 00fc 0FB6      		in __tmp_reg__,__SREG__
- 197 00fe 0F92      		push __tmp_reg__
- 198 0100 1124      		clr __zero_reg__
- 199 0102 2F93      		push r18
- 200 0104 3F93      		push r19
- 201 0106 4F93      		push r20
- 202 0108 5F93      		push r21
- 203 010a 6F93      		push r22
- 204 010c 7F93      		push r23
- 205 010e 8F93      		push r24
- 206 0110 9F93      		push r25
- 207 0112 AF93      		push r26
- 208 0114 BF93      		push r27
- 209 0116 EF93      		push r30
- 210 0118 FF93      		push r31
- 211               	/* prologue end (size=18) */
- 212               	.LM20:
- 213 011a 8091 0000 		lds r24,PacketTimeOutTicks
- 214 011e 8F5F      		subi r24,lo8(-(1))
- 215 0120 8093 0000 		sts PacketTimeOutTicks,r24
- 216 0124 8091 0000 		lds r24,PacketTimeOutTicks
- 217 0128 8739      		cpi r24,lo8(-105)
- 218 012a 01F4      		brne .L13
- 219               	.LM21:
- 220 012c 1092 0000 		sts PacketTimeOutTicks,__zero_reg__
- 221               	.LM22:
- 222 0130 81E0      		ldi r24,lo8(1)
- 223 0132 8093 0000 		sts PacketTimeOut,r24
- 224               	.L13:
- 225               	.LM23:
- 226 0136 8091 C000 		lds r24,192
- 227 013a 83FF      		sbrs r24,3
- 228 013c 00C0      		rjmp .L15
- 229               	.LM24:
- 230 013e 80E0      		ldi r24,lo8(__c.1866)
- 231 0140 90E0      		ldi r25,hi8(__c.1866)
- 232 0142 00C0      		rjmp .L20
- 233               	.L15:
- 234               	.LM25:
- 235 0144 8091 C000 		lds r24,192
- 236 0148 84FF      		sbrs r24,4
- 237 014a 00C0      		rjmp .L19
- 238               	.LM26:
- 239 014c 80E0      		ldi r24,lo8(__c.1868)
- 240 014e 90E0      		ldi r25,hi8(__c.1868)
- 241               	.L20:
- 242 0150 0E94 0000 		call MAIN_CrashProgram
- 243               	.L19:
- 244               	/* epilogue: frame size=0 */
- 245 0154 FF91      		pop r31
- 246 0156 EF91      		pop r30
- 247 0158 BF91      		pop r27
- 248 015a AF91      		pop r26
- 249 015c 9F91      		pop r25
- 250 015e 8F91      		pop r24
- 251 0160 7F91      		pop r23
- 252 0162 6F91      		pop r22
- 253 0164 5F91      		pop r21
- 254 0166 4F91      		pop r20
- 255 0168 3F91      		pop r19
- 256 016a 2F91      		pop r18
- 257 016c 0F90      		pop __tmp_reg__
- 258 016e 0FBE      		out __SREG__,__tmp_reg__
- 259 0170 0F90      		pop __tmp_reg__
- 260 0172 1F90      		pop __zero_reg__
- 261 0174 1895      		reti
- 262               	/* epilogue end (size=17) */
- 263               	/* function __vector_4 size 64 (29) */
- 264               	.LFE14:
- 266               	.global	PacketTimeOutTicks
- 267               	.global	PacketTimeOutTicks
- 268               		.section .bss
- 271               	PacketTimeOutTicks:
- 272 0000 00        		.skip 1,0
- 273               	.global	PacketTimeOut
- 274               	.global	PacketTimeOut
- 277               	PacketTimeOut:
- 278 0001 00        		.skip 1,0
- 279               	.global	SleepTimeOutTicks
- 280               	.global	SleepTimeOutTicks
- 283               	SleepTimeOutTicks:
- 284 0002 0000      		.skip 2,0
- 285               	.global	TicksBeforeAutoSleep
- 286               	.global	TicksBeforeAutoSleep
- 289               	TicksBeforeAutoSleep:
- 290 0004 0000      		.skip 2,0
- 291               	.global	AutoSleepTOValues
- 292               		.section	.progmem.data,"a",@progbits
- 295               	AutoSleepTOValues:
- 296 0000 00        		.byte	0
- 297 0001 0F        		.byte	15
- 298 0002 1E        		.byte	30
- 299 0003 3C        		.byte	60
- 300 0004 78        		.byte	120
- 303               	__c.1868:
- 304 0005 4652 414D 		.string	"FRAME ERR"
- 304      4520 4552 
- 304      5200 
- 307               	__c.1866:
- 308 000f 4441 5441 		.string	"DATA OVR"
- 308      204F 5652 
- 308      00
- 345               	.Letext0:
+  38 000a 482F      		mov r20,r24
+  39               	.LVL1:
+  40               	.LVL2:
+  41               	.LM4:
+  42 000c 8F3F      		cpi r24,lo8(-1)
+  43 000e 01F4      		brne .L2
+  44               	.LVL3:
+  45               	.LM5:
+  46 0010 44E0      		ldi r20,lo8(4)
+  47               	.L2:
+  48               	.LM6:
+  49 0012 51E0      		ldi r21,lo8(1)
+  50 0014 5093 6F00 		sts 111,r21
+  51               	.LBB7:
+  52               	.LM7:
+  53 0018 E42F      		mov r30,r20
+  54 001a FF27      		clr r31
+  55 001c E050      		subi r30,lo8(-(AutoSleepTOValues))
+  56 001e F040      		sbci r31,hi8(-(AutoSleepTOValues))
+  57               	/* #APP */
+  58 0020 E491      		lpm r30, Z
+  59               		
+  60               	.LVL4:
+  61               	/* #NOAPP */
+  62               	.LBE7:
+  63 0022 8E2F      		mov r24,r30
+  64 0024 9927      		clr r25
+  65               	.LVL5:
+  66 0026 9C01      		movw r18,r24
+  67 0028 73E0      		ldi r23,3
+  68 002a 220F      	1:	lsl r18
+  69 002c 331F      		rol r19
+  70 002e 7A95      		dec r23
+  71 0030 01F4      		brne 1b
+  72 0032 880F      		lsl r24
+  73 0034 991F      		rol r25
+  74 0036 280F      		add r18,r24
+  75 0038 391F      		adc r19,r25
+  76 003a 3093 0000 		sts (TicksBeforeAutoSleep)+1,r19
+  77 003e 2093 0000 		sts TicksBeforeAutoSleep,r18
+  78               	.LM8:
+  79 0042 1092 0000 		sts (SleepTimeOutTicks)+1,__zero_reg__
+  80 0046 1092 0000 		sts SleepTimeOutTicks,__zero_reg__
+  81 004a 1092 8500 		sts (132)+1,__zero_reg__
+  82 004e 1092 8400 		sts 132,__zero_reg__
+  83               	.LM9:
+  84 0052 4423      		tst r20
+  85 0054 01F0      		breq .L4
+  86               	.LVL6:
+  87               	.LM10:
+  88 0056 5093 8100 		sts 129,r21
+  89 005a 0895      		ret
+  90               	.L4:
+  91               	.LM11:
+  92 005c 1092 8100 		sts 129,__zero_reg__
+  93 0060 0895      		ret
+  94               	/* epilogue: frame size=0 */
+  95               	/* epilogue: noreturn */
+  96               	/* epilogue end (size=0) */
+  97               	/* function TOUT_SetupSleepTimer size 53 (53) */
+  98               	.LFE16:
+ 100               	.global	__vector_9
+ 102               	__vector_9:
+ 103               	.LFB15:
+ 104               	.LM12:
+ 105               	/* prologue: frame size=0 */
+ 106 0062 7894      		sei
+ 107 0064 1F92      		push __zero_reg__
+ 108 0066 0F92      		push __tmp_reg__
+ 109 0068 0FB6      		in __tmp_reg__,__SREG__
+ 110 006a 0F92      		push __tmp_reg__
+ 111 006c 1124      		clr __zero_reg__
+ 112 006e 2F93      		push r18
+ 113 0070 3F93      		push r19
+ 114 0072 4F93      		push r20
+ 115 0074 5F93      		push r21
+ 116 0076 6F93      		push r22
+ 117 0078 7F93      		push r23
+ 118 007a 8F93      		push r24
+ 119 007c 9F93      		push r25
+ 120 007e AF93      		push r26
+ 121 0080 BF93      		push r27
+ 122 0082 EF93      		push r30
+ 123 0084 FF93      		push r31
+ 124               	/* prologue end (size=18) */
+ 125               	.LM13:
+ 126 0086 8091 0000 		lds r24,SleepTimeOutTicks
+ 127 008a 9091 0000 		lds r25,(SleepTimeOutTicks)+1
+ 128 008e 2091 0000 		lds r18,TicksBeforeAutoSleep
+ 129 0092 3091 0000 		lds r19,(TicksBeforeAutoSleep)+1
+ 130 0096 0196      		adiw r24,1
+ 131 0098 9093 0000 		sts (SleepTimeOutTicks)+1,r25
+ 132 009c 8093 0000 		sts SleepTimeOutTicks,r24
+ 133 00a0 0197      		sbiw r24,1
+ 134 00a2 8217      		cp r24,r18
+ 135 00a4 9307      		cpc r25,r19
+ 136 00a6 01F4      		brne .L11
+ 137               	.LM14:
+ 138 00a8 1092 8100 		sts 129,__zero_reg__
+ 139               	.LM15:
+ 140 00ac 0E94 0000 		call FUNCSleepMode
+ 141               	.LM16:
+ 142 00b0 0E94 0000 		call TOUT_SetupSleepTimer
+ 143               	.L11:
+ 144               	/* epilogue: frame size=0 */
+ 145 00b4 FF91      		pop r31
+ 146 00b6 EF91      		pop r30
+ 147 00b8 BF91      		pop r27
+ 148 00ba AF91      		pop r26
+ 149 00bc 9F91      		pop r25
+ 150 00be 8F91      		pop r24
+ 151 00c0 7F91      		pop r23
+ 152 00c2 6F91      		pop r22
+ 153 00c4 5F91      		pop r21
+ 154 00c6 4F91      		pop r20
+ 155 00c8 3F91      		pop r19
+ 156 00ca 2F91      		pop r18
+ 157 00cc 0F90      		pop __tmp_reg__
+ 158 00ce 0FBE      		out __SREG__,__tmp_reg__
+ 159 00d0 0F90      		pop __tmp_reg__
+ 160 00d2 1F90      		pop __zero_reg__
+ 161 00d4 1895      		reti
+ 162               	/* epilogue end (size=17) */
+ 163               	/* function __vector_9 size 58 (23) */
+ 164               	.LFE15:
+ 166               	.global	__vector_4
+ 168               	__vector_4:
+ 169               	.LFB14:
+ 170               	.LM17:
+ 171               	/* prologue: frame size=0 */
+ 172 00d6 7894      		sei
+ 173 00d8 1F92      		push __zero_reg__
+ 174 00da 0F92      		push __tmp_reg__
+ 175 00dc 0FB6      		in __tmp_reg__,__SREG__
+ 176 00de 0F92      		push __tmp_reg__
+ 177 00e0 1124      		clr __zero_reg__
+ 178 00e2 2F93      		push r18
+ 179 00e4 3F93      		push r19
+ 180 00e6 4F93      		push r20
+ 181 00e8 5F93      		push r21
+ 182 00ea 6F93      		push r22
+ 183 00ec 7F93      		push r23
+ 184 00ee 8F93      		push r24
+ 185 00f0 9F93      		push r25
+ 186 00f2 AF93      		push r26
+ 187 00f4 BF93      		push r27
+ 188 00f6 EF93      		push r30
+ 189 00f8 FF93      		push r31
+ 190               	/* prologue end (size=18) */
+ 191               	.LM18:
+ 192 00fa 8091 0000 		lds r24,PacketTimeOutTicks
+ 193 00fe 8F5F      		subi r24,lo8(-(1))
+ 194 0100 8093 0000 		sts PacketTimeOutTicks,r24
+ 195 0104 8091 0000 		lds r24,PacketTimeOutTicks
+ 196 0108 8739      		cpi r24,lo8(-105)
+ 197 010a 01F4      		brne .L13
+ 198               	.LM19:
+ 199 010c 1092 0000 		sts PacketTimeOutTicks,__zero_reg__
+ 200               	.LM20:
+ 201 0110 81E0      		ldi r24,lo8(1)
+ 202 0112 8093 0000 		sts PacketTimeOut,r24
+ 203               	.L13:
+ 204               	.LM21:
+ 205 0116 8091 C000 		lds r24,192
+ 206 011a 83FF      		sbrs r24,3
+ 207 011c 00C0      		rjmp .L15
+ 208               	.LM22:
+ 209 011e 80E0      		ldi r24,lo8(__c.1863)
+ 210 0120 90E0      		ldi r25,hi8(__c.1863)
+ 211 0122 00C0      		rjmp .L20
+ 212               	.L15:
+ 213               	.LM23:
+ 214 0124 8091 C000 		lds r24,192
+ 215 0128 84FF      		sbrs r24,4
+ 216 012a 00C0      		rjmp .L19
+ 217               	.LM24:
+ 218 012c 80E0      		ldi r24,lo8(__c.1865)
+ 219 012e 90E0      		ldi r25,hi8(__c.1865)
+ 220               	.L20:
+ 221 0130 0E94 0000 		call MAIN_CrashProgram
+ 222               	.L19:
+ 223               	/* epilogue: frame size=0 */
+ 224 0134 FF91      		pop r31
+ 225 0136 EF91      		pop r30
+ 226 0138 BF91      		pop r27
+ 227 013a AF91      		pop r26
+ 228 013c 9F91      		pop r25
+ 229 013e 8F91      		pop r24
+ 230 0140 7F91      		pop r23
+ 231 0142 6F91      		pop r22
+ 232 0144 5F91      		pop r21
+ 233 0146 4F91      		pop r20
+ 234 0148 3F91      		pop r19
+ 235 014a 2F91      		pop r18
+ 236 014c 0F90      		pop __tmp_reg__
+ 237 014e 0FBE      		out __SREG__,__tmp_reg__
+ 238 0150 0F90      		pop __tmp_reg__
+ 239 0152 1F90      		pop __zero_reg__
+ 240 0154 1895      		reti
+ 241               	/* epilogue end (size=17) */
+ 242               	/* function __vector_4 size 64 (29) */
+ 243               	.LFE14:
+ 245               	.global	PacketTimeOutTicks
+ 246               	.global	PacketTimeOutTicks
+ 247               		.section .bss
+ 250               	PacketTimeOutTicks:
+ 251 0000 00        		.skip 1,0
+ 252               	.global	PacketTimeOut
+ 253               	.global	PacketTimeOut
+ 256               	PacketTimeOut:
+ 257 0001 00        		.skip 1,0
+ 258               	.global	SleepTimeOutTicks
+ 259               	.global	SleepTimeOutTicks
+ 262               	SleepTimeOutTicks:
+ 263 0002 0000      		.skip 2,0
+ 264               	.global	TicksBeforeAutoSleep
+ 265               	.global	TicksBeforeAutoSleep
+ 268               	TicksBeforeAutoSleep:
+ 269 0004 0000      		.skip 2,0
+ 270               	.global	AutoSleepTOValues
+ 271               		.section	.progmem.data,"a",@progbits
+ 274               	AutoSleepTOValues:
+ 275 0000 00        		.byte	0
+ 276 0001 0F        		.byte	15
+ 277 0002 1E        		.byte	30
+ 278 0003 3C        		.byte	60
+ 279 0004 78        		.byte	120
+ 282               	__c.1865:
+ 283 0005 4652 414D 		.string	"FRAME ERR"
+ 283      4520 4552 
+ 283      5200 
+ 286               	__c.1863:
+ 287 000f 4441 5441 		.string	"DATA OVR"
+ 287      204F 5652 
+ 287      00
+ 324               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 Timeout.c
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccs3aaaa.s:3      *ABS*:0000003f __SREG__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccs3aaaa.s:4      *ABS*:0000003e __SP_H__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccs3aaaa.s:5      *ABS*:0000003d __SP_L__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccs3aaaa.s:6      *ABS*:00000000 __tmp_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccs3aaaa.s:7      *ABS*:00000001 __zero_reg__
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccs3aaaa.s:20     .text:00000000 TOUT_SetupSleepTimer
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccs3aaaa.s:295    .progmem.data:00000000 AutoSleepTOValues
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccs3aaaa.s:289    .bss:00000004 TicksBeforeAutoSleep
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccs3aaaa.s:283    .bss:00000002 SleepTimeOutTicks
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccs3aaaa.s:123    .text:00000082 __vector_9
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccs3aaaa.s:189    .text:000000f6 __vector_4
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccs3aaaa.s:271    .bss:00000000 PacketTimeOutTicks
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccs3aaaa.s:277    .bss:00000001 PacketTimeOut
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccs3aaaa.s:307    .progmem.data:0000000f __c.1866
-C:\DOCUME~1\Dean\LOCALS~1\Temp/ccs3aaaa.s:303    .progmem.data:00000005 __c.1868
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccq2aaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccq2aaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccq2aaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccq2aaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccq2aaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccq2aaaa.s:20     .text:00000000 TOUT_SetupSleepTimer
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccq2aaaa.s:274    .progmem.data:00000000 AutoSleepTOValues
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccq2aaaa.s:268    .bss:00000004 TicksBeforeAutoSleep
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccq2aaaa.s:262    .bss:00000002 SleepTimeOutTicks
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccq2aaaa.s:102    .text:00000062 __vector_9
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccq2aaaa.s:168    .text:000000d6 __vector_4
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccq2aaaa.s:250    .bss:00000000 PacketTimeOutTicks
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccq2aaaa.s:256    .bss:00000001 PacketTimeOut
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccq2aaaa.s:286    .progmem.data:0000000f __c.1863
+C:\DOCUME~1\Dean\LOCALS~1\Temp/ccq2aaaa.s:282    .progmem.data:00000005 __c.1865
 
 UNDEFINED SYMBOLS
 __do_copy_data

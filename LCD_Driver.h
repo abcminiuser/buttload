@@ -27,5 +27,8 @@
 	void LCD_puts(const uint8_t *Data);
 	void LCD_puts_f(const uint8_t *FlashData);
 	void LCD_Init(void);
-	void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit);
+	#ifdef INC_FROM_DRIVER
+		static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit) __attribute__((always_inline));
+	#endif
+
 #endif

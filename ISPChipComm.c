@@ -71,7 +71,7 @@ void ISPCC_ProgramChip(void)
 	uint8_t  CmdMemType   = PacketBytes[0];  
 	uint8_t  PollType;
 	uint8_t  ByteToWrite;
-			
+
 	if (ProgMode & ISPCC_PROG_MODE_PAGE)                 // Page writing mode
 	{
 		for (uint16_t WriteByte = 0; WriteByte < BytesToWrite; WriteByte++) // Transmit the page bytes

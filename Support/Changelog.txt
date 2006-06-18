@@ -1,5 +1,14 @@
 Current Version: Public Release 1.4
 
+***** TODO *****
+WISHLIST - Add in some sort of progressbar in PROGRAM AVR mode - upper LCD number segments?
+WISHLIST - Add in non-consecutive HEX support
+BUG      - Cannot store EEPROM
+BUG      - Cannot program anything from PROGRAM AVR mode
+CODE ENH - Convert fuse and lock byte storage into a 2D array
+****************
+
+
 	IN PUBLIC RELEASE 1.4:
 	=======================================
 	  * OSCCAL is now calibrated before any function involving the USART
@@ -32,6 +41,8 @@ Current Version: Public Release 1.4
 	  * Added in serial reception errors, added in a crash routine for fatal errors
 	  * SPI speed massivly reduced to prevent noise error - this has no impact on storage time since it is the write delay that takes the longest time
 	  * Fixed STORAGE MODE erase command saving routine
+	  * LCD Driver now uses a forced inlined LCD_WriteChar routine (only called once) to allow for better optimisation
+	  * Fixed main menu double push required on startup to change current item bug
 
 	IN PUBLIC RELEASE 1.3:
 	=======================================

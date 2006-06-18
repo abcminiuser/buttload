@@ -301,9 +301,9 @@ void V2P_GetSetParamater(void)
 void V2P_IncrementCurrAddress(void)
 {
 	// Incrementing a 32-bit unsigned variable takes a lot of code. Because much of the code is
-	// not very time critical (much of it is waiting for the hardware), i've chosen to waste
+	// not very time critical (much of it is waiting for the hardware), I've chosen to waste
 	// a few extra cycles per increment and save a good 60 bytes or so of code space by putting
-	// the incrmement inside a function.
+	// the increment inside a function.
 
 	CurrAddress++;
 }
