@@ -105,7 +105,7 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 					if (V2P_GetChecksum() == USART_Rx()) // If checksum is ok, process the packet
 					{
 						switch (PacketBytes[0])            // \/ Look for generic commands which can be interpreted here, 
-						{                                   //  \ otherwise run the custom interpret routine
+						{                                  //  \ otherwise run the custom interpret routine
 							case AICB_CMD_SIGN_ON:
 								MessageSize = 11;
 
@@ -122,7 +122,7 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 								V2P_SendPacket();
 								break;				
 							case AICB_CMD_LOAD_ADDRESS:
-								MessageSize  = 2;
+								MessageSize = 2;
 			
 								V2P_CheckForExtendedAddress();
 
@@ -281,8 +281,7 @@ void V2P_GetSetParamater(void)
 		case AICB_PARAM_OSC_PSCALE:
 		case AICB_PARAM_OSC_CMATCH:
 			/* Despite not supporting these parameters (STK500 only), the AVR Studio programmer
-			   sends them along with the SCK duration. A OK must be returned or the sequence will fail
-			   and the SCK duration byte will not be sent.                                             */
+			   sends them occasionally. A OK must be returned or the sequence will fail.        */
 		
 			if (PacketBytes[0] == AICB_CMD_GET_PARAMETER)
 			  PacketBytes[2] = 0;             // If the command is a read, return a 0 for both parameters

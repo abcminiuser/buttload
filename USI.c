@@ -146,9 +146,14 @@ void USI_SPIToggleClock(void)
 
 void USI_SPISetSpeed()
 {
+	uint8_t StoredIndex = eeprom_read_byte(&EEPROMVars.SCKDuration);
+
+	if (StoredIndex = 0xFF) // Blank EEPROM protection
+	  StoredIndex = (USI_PRESET_SPEEDS - 1);
+
 	for (uint8_t MatchIndex = 0; MatchIndex < USI_PRESET_SPEEDS; MatchIndex++)
 	{
-		if ((pgm_read_byte(&USIPSValues[MatchIndex][0]) == eeprom_read_byte(&EEPROMVars.SCKDuration)) || (MatchIndex == (USI_PRESET_SPEEDS - 1)))
+		if ((pgm_read_byte(&USIPSValues[MatchIndex][0]) == StoredIndex))
 		{
 			// Init Output Compare Register.
 			OCR0A = pgm_read_byte(&USIPSValues[MatchIndex][1]);

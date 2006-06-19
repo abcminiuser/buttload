@@ -405,7 +405,7 @@ void MAIN_CrashProgram(const uint8_t *ErrTxtPtr)
 	for (;;)
 	{
 		MAIN_Delay10MS(50);
-		PORTF ^= MAIN_STATLED_RED;               // Loop forever, blinking the status LED from orange to red and back
+		PORTF ^= MAIN_STATLED_GREEN;               // Loop forever, blinking the status LED from orange to red and back
 	}
 }
 
