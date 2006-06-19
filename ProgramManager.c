@@ -143,12 +143,12 @@ void PM_InterpretAVRISPPacket(void)
 
 			if (PacketBytes[0] == AICB_CMD_PROGRAM_FUSE_ISP)
 			{
-				EEPROMAddress = (uint8_t*)(&EEPROMVars.FuseBytes + (DataflashInfo.CurrBuffByte << 2));
+				EEPROMAddress = &EEPROMVars.FuseBytes[DataflashInfo.CurrBuffByte][0];
 				MemoryType    = TYPE_FUSE;
 			}
 			else
 			{
-				EEPROMAddress = (uint8_t*)(&EEPROMVars.LockBytes + (DataflashInfo.CurrBuffByte << 2));
+				EEPROMAddress = &EEPROMVars.LockBytes[DataflashInfo.CurrBuffByte][0];
 				MemoryType    = TYPE_LOCK;
 			}				
 			
@@ -185,8 +185,10 @@ void PM_InterpretAVRISPPacket(void)
 			}
 			else
 			{
-				PacketBytes[2] = eeprom_read_byte((uint8_t*)(((PacketBytes[0] == AICB_CMD_READ_FUSE_ISP)? &EEPROMVars.FuseBytes : &EEPROMVars.LockBytes) // Starting location
-									                         + (DataflashInfo.CurrBuffByte << 2) + (PacketBytes[1] - 1)));                               // The start position of the actual fuse/lock byte to read (4 bytes each));
+				uint8_t FuseLockNum  = DataflashInfo.CurrBuffByte;
+				uint8_t FuseLockByte = (PacketBytes[1] - 1);
+				
+				PacketBytes[2] = eeprom_read_byte((uint8_t*)(((PacketBytes[0] == AICB_CMD_READ_FUSE_ISP)? &EEPROMVars.FuseBytes[FuseLockNum][FuseLockByte] : &EEPROMVars.LockBytes[FuseLockNum][FuseLockByte])));
 			}
 
 			DataflashInfo.CurrBuffByte++;
@@ -311,12 +313,12 @@ void PM_SendFuseLockBytes(const uint8_t Type)
 	if (Type == TYPE_FUSE)
 	{
 		TotalBytes    = eeprom_read_byte(&EEPROMVars.TotalFuseBytes);
-		EEPROMAddress = EEPROMVars.FuseBytes;
+		EEPROMAddress = &EEPROMVars.FuseBytes[0][0];
 	}
 	else
 	{
 		TotalBytes    = eeprom_read_byte(&EEPROMVars.TotalLockBytes);
-		EEPROMAddress = EEPROMVars.LockBytes;	
+		EEPROMAddress = &EEPROMVars.LockBytes[0][0];	
 	}
 
 	while (TotalBytes--)                                                // Write each of the fuse/lock bytes stored in memory to the slave AVR

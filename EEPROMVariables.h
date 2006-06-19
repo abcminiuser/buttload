@@ -26,8 +26,8 @@
 		uint8_t  EnterProgMode[12];
 		uint8_t  TotalFuseBytes;
 		uint8_t  TotalLockBytes;
-		uint8_t  FuseBytes[40];
-		uint8_t  LockBytes[40];
+		uint8_t  FuseBytes[10][4];
+		uint8_t  LockBytes[10][4];
 		uint16_t PageLength;
 		uint16_t EPageLength;
 		uint8_t  LCDContrast;
