@@ -376,15 +376,10 @@ void PM_CreateProgrammingPackets(const uint8_t Type)
 		PacketBytes[0] = AICB_CMD_PROGRAM_EEPROM_ISP;
 	}
 
-	// DEBUG:
-	USART_ENABLE(1,0);
-
 	for (uint8_t B = 0; B < 9 ; B++)                                    // Load in the write data command bytes
 	{
 		EEPROMAddress++;                                                // Increment the EEPROM location counter
 		PacketBytes[B] = eeprom_read_byte(EEPROMAddress);               // Synthesise a write packet header
-
-		USART_Tx(PacketBytes[B]);
 	}
 	
 	BytesPerProgram = ((uint16_t)PacketBytes[1] << 8)
@@ -434,8 +429,8 @@ void PM_CreateProgrammingPackets(const uint8_t Type)
 			if ((BytesRead + BytesPerProgram) > BytesToRead)            // Less than a whole BytesPerProgram left of data to write
 			{
 				BytesPerProgram = BytesToRead - BytesRead;              // Next lot of bytes will be the remaining data length
-				PacketBytes[1]  = (uint8_t)(BytesPerProgram >> 8);       // \. Save the new length
-				PacketBytes[2]  = (uint8_t)(BytesPerProgram);            // /  into the data packet
+				PacketBytes[1]  = (uint8_t)(BytesPerProgram >> 8);      // \. Save the new length
+				PacketBytes[2]  = (uint8_t)(BytesPerProgram);           // /  into the data packet
 			}
 
 			for (uint16_t LoadB = 0; LoadB < BytesPerProgram; LoadB++)
@@ -462,8 +457,8 @@ void PM_ShowStoredItemSizes(void)
 	uint8_t ItemInfoIndex = 0;
 	uint8_t TempB;
 	
-	JoyStatus = 1;
-	
+	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
+	                                             // name of the default command onto the LCD
 	for (;;)
 	{
 		if (JoyStatus)

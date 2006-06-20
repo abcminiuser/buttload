@@ -75,6 +75,7 @@
 	#define JOY_UP                   (1 << 6)
 	#define JOY_DOWN                 (1 << 7)
 	#define JOY_PRESS                (1 << 4)
+	#define JOY_INVALID              (1 << 0)
 	#define JOY_BMASK                ((1 << 4) | (1 << 6) | (1 << 7))
 	#define JOY_EMASK                ((1 << 2) | (1 << 3))
 	
