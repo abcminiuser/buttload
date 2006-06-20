@@ -232,7 +232,7 @@ int main(void)
 	
 	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_BASECLOCKSPEED_1MHZ); // Use slow clock speed in the main menu to save power
 	
-	JoyStatus = 1;                               // Use an invalid joystick value to force the program to write the
+	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
 	                                             // name of the default command onto the LCD
 	for (;;)
 	{
@@ -320,7 +320,7 @@ void MAIN_ResetCSLine(const uint8_t ActiveInactive)
 
 void MAIN_WaitForJoyRelease(void)
 {
-	if (JoyStatus == 1)                          // If invalid value used to force menu drawing, reset value and exit
+	if (JoyStatus == JOY_INVALID)                // If invalid value used to force menu drawing, reset value and exit
 	{
 		JoyStatus = 0;
 		return;
@@ -430,7 +430,7 @@ void FUNCChangeSettings(void)
 {
 	uint8_t CurrSFunc = 0;
 	
-	JoyStatus = 1;
+	JoyStatus = JOY_INVALID;
 
 	for (;;)
 	{
@@ -457,8 +457,8 @@ void FUNCShowAbout(void)
 {
 	uint8_t InfoNum = 0;
 	
-	JoyStatus = 1;
-			
+	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
+	                                             // name of the default command onto the LCD			
 	for (;;)
 	{
 		if (JoyStatus)
@@ -515,7 +515,7 @@ void FUNCProgramAVR(void)
 
 	MAIN_WaitForJoyRelease();
 	
-	JoyStatus = 1;                               // Use an invalid joystick value to force the program to write the
+	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
 	                                             // name of the default command onto the LCD
 	for (;;)
 	{
@@ -715,8 +715,8 @@ void FUNCSetContrast(void)
 	uint8_t Buffer[6];
 	uint8_t Contrast = (eeprom_read_byte(&EEPROMVars.LCDContrast) & 0x0F); // Ranges from 0-15 so mask retuns 15 on blank EEPROM (0xFF)
 	
-	JoyStatus = 1;                               // Invalid value to force the LCD to update
-	
+	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
+	                                             // name of the default command onto the LCD
 	for (;;)
 	{
 		if (JoyStatus)
@@ -758,8 +758,8 @@ void FUNCSetISPSpeed(void)
 	if (CurrSpeed > ARRAY_UPPERBOUND(USISpeeds))
 	  CurrSpeed = ARRAY_UPPERBOUND(USISpeeds);   // Protection against blank EEPROM
 
-	JoyStatus = 1;                               // Invalid value to force the LCD to update
-
+	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
+	                                             // name of the default command onto the LCD
 	for (;;)
 	{
 		if (JoyStatus)
@@ -790,8 +790,8 @@ void FUNCSetResetMode(void)
 {
 	uint8_t CurrMode = (eeprom_read_byte(&EEPROMVars.SPIResetMode) & 0x01);
 
-	JoyStatus = 1;                               // Invalid value to force the LCD to update
-
+	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
+	                                             // name of the default command onto the LCD
 	for (;;)
 	{
 		if (JoyStatus)
@@ -824,8 +824,8 @@ void FUNCSetFirmMinorVer(void)
 	
 	strcpy_P(VerBuffer, PSTR("V2- "));
 
-	JoyStatus = 1;                               // Invalid value to force the LCD to update
-
+	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
+	                                             // name of the default command onto the LCD
 	for (;;)
 	{
 		if (JoyStatus)
@@ -864,8 +864,8 @@ void FUNCSetAutoSleepTimeOut(void)
 
 	strcpy_P(SleepTxtBuffer, PSTR("    SEC"));
 	
-	JoyStatus = 1;                               // Invalid value to force the LCD to update
-
+	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
+	                                             // name of the default command onto the LCD
 	for (;;)
 	{
 		if (JoyStatus)
@@ -924,8 +924,8 @@ void FUNCStorageInfo(void)
 
 	MAIN_WaitForJoyRelease();
 
-	JoyStatus = 1;                               // Invalid value to force the LCD to update
-
+	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
+	                                             // name of the default command onto the LCD
 	for (;;)
 	{
 		if (JoyStatus)
@@ -947,18 +947,13 @@ void FUNCStorageInfo(void)
 					DataflashInfo.UseExernalDF = FALSE;
 					DF_EnableDataflash(TRUE);
 
-					if (DF_CheckCorrectOnboardChip())
-					{
-						TM_ShowTags();
-						SPI_SPIOFF();
-					}
-					else if (!(PM_GetStoredDataSize(TYPE_FLASH)))
-					{
-						DF_EnableDataflash(FALSE);
-						SPI_SPIOFF();
+					if (!(PM_GetStoredDataSize(TYPE_FLASH)))
+					  MAIN_ShowError(PSTR("NO STORED PRGM"));
+					else if (DF_CheckCorrectOnboardChip())
+					  TM_ShowTags();
 
-						MAIN_ShowError(PSTR("NO STORED PRGM"));
-					}	
+					DF_EnableDataflash(FALSE);
+					SPI_SPIOFF();
 				}
 				else                             // View stored data sizes
 				{
