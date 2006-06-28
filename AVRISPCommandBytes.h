@@ -41,6 +41,11 @@
 	#define AICB_PARAM_SCK_DURATION        0x98
 	#define AICB_PARAM_RESET_POLARITY      0x9E
 	#define AICB_PARAM_CONTROLLER_INIT     0x9F
+	#define AICB_PARAM_TOPCARD_DETECT      0x9A
+	#define AICB_PARAM_STATUS              0x9C
+	#define AICB_PARAM_VTARGET             0x94
+	#define AICB_PARAM_VADJUST             0x95
+	#define AICB_PARAM_DATA                0x9D
 	
 	#define AICB_STATUS_CMD_OK             0x00
 	#define AICB_STATUS_CMD_FAILED         0xC0

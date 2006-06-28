@@ -164,17 +164,10 @@ void PD_InterpretAVRISPPacket(void)
 
 void PD_SetupDFAddressCounters(void)
 {
-	uint32_t StartAddress = CurrAddress;
-
-	DataflashInfo.CurrPageAddress = 0;
-
-	while (StartAddress > DataflashInfo.PageSize)      // This loop is the equivalent of a DIV and a MOD
-	{
-		StartAddress -= DataflashInfo.PageSize;         // Subtract one page's worth of bytes from the desired address
-		DataflashInfo.CurrPageAddress++;
-	}
+	ldiv_t DataflashPos = ldiv(CurrAddress, DataflashInfo.PageSize);
 	
-	DataflashInfo.CurrBuffByte = (uint16_t)StartAddress; // The buffer byte is the remainder
+	DataflashInfo.CurrPageAddress = (uint16_t)DataflashPos.quot;
+	DataflashInfo.CurrBuffByte    = (uint16_t)DataflashPos.rem;
 }
 
 void PD_StoreDataflashByte(const uint8_t Data)

@@ -10,15 +10,16 @@
 /* Code taken from Colin Oflynn from AVRFreaks and modified. His code originally used an externally
    divided 32768Hz clock on an external interrupt pin, but I changed that to use the timer 2 async
    mode with an overflow interrupt (clock source is the external 32768Hz crystal on the Butterfly.
-   Code will calibrate to 7372800Hz for correct serial transmission at 115200 baud.                 */
+   Code will calibrate to 7372800Hz for correct serial transmission at high baud rates.
+
+   This module assumes that interrupts have *already* been enabled before being called.             */
 
 volatile uint16_t ActualCount = 0;
 
 void OSCCAL_Calibrate(void)
 {
-	uint8_t SREG_Backup;
 	uint8_t LoopCount = (0x7F / 2); // Maximum range is 128, and starts from the middle, so 64 is the max number of iterations required
-	uint8_t PrevOSCALValues[4] = {0,0,0,0};
+	uint8_t PrevOSCALValues[2] = {0,0};
    
 	// Reset ActualCount
 	ActualCount = 0;
@@ -28,9 +29,6 @@ void OSCCAL_Calibrate(void)
 
 	// Inital OSCCAL of half its maximum
 	OSCCAL = (0x7F / 2);
-
-	// Save the SREG
-	SREG_Backup = SREG;
     
 	// Disable all timer 1 interrupts
 	TIMSK1 = 0;
@@ -40,9 +38,6 @@ void OSCCAL_Calibrate(void)
         
 	// Timer 2 overflow interrupt enable
 	TIMSK2 = (1 << TOIE2);
-
-	// Enable interrupts
-	sei();
 
 	// Start both counters with no prescaling
 	TCCR1B = (1 << CS10);
@@ -57,18 +52,16 @@ void OSCCAL_Calibrate(void)
 	// Clear the timer values
 	TCNT1  = 0;
 	TCNT2  = 0;
+
+	// Get some readings and ensure stability before entering the calibration loop
+	MAIN_Delay10MS(10);
     
 	while (LoopCount--)
 	{
-		// Let it take a few readings (28ms, approx 4 readings)
-		_delay_ms(28);
-
-		PrevOSCALValues[3] = PrevOSCALValues[2];
-		PrevOSCALValues[2] = PrevOSCALValues[1];
 		PrevOSCALValues[1] = PrevOSCALValues[0];
 		PrevOSCALValues[0] = OSCCAL;
         
-		if (ActualCount > OSCCAL_TARGETCOUNT)       // Clock is running too fast
+		if (ActualCount > OSCCAL_TARGETCOUNT)      // Clock is running too fast
 			OSCCAL--;
 		else if (ActualCount < OSCCAL_TARGETCOUNT) // Clock is running too slow
 			OSCCAL++;
@@ -77,8 +70,11 @@ void OSCCAL_Calibrate(void)
 		// it will cause the OSCCAL to hover around the closest two values.
 		// If the current value is the same as several loops previous, exit the
 		// routine as the best value has been found.
-		if ((OSCCAL == PrevOSCALValues[1]) && (OSCCAL == PrevOSCALValues[3]))
+		if (OSCCAL == PrevOSCALValues[1])
 		  break;
+
+		// Let it take a few readings (14ms, approx 2 readings)
+		_delay_ms(14);
 	}
 
 	// Disable all timer interrupts
@@ -91,9 +87,6 @@ void OSCCAL_Calibrate(void)
 
 	// Turn off timer 2 asynchronous mode
 	ASSR  &= ~(1 << AS2);
-
-	// Restore SREG
-	SREG = SREG_Backup;
         
 	return;
 }

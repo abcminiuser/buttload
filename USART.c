@@ -27,64 +27,32 @@
 	other tasks such as updating the LCD.
 */
 
-/*****************************************************************************
-*
-*   Function name : USART_Init
-*
-*   Returns :       None
-*
-*   Parameters :    unsigned int baudrate
-*
-*   Purpose :       Initialize the USART
-*
-*****************************************************************************/
 void USART_Init(void)
 {
+	// Calibrate the internal RC oscilator
+	LCD_puts_f(WaitText);
+	OSCCAL_Calibrate();
+
     // Set baud rate
     UBRRH = (uint8_t)(USART_BAUDVALUE >> 8);
     UBRRL = (uint8_t)(USART_BAUDVALUE);
 
-    // Double speed
-	UCSRA = (USART_DOUBLESPEED << U2X);
-
     // Enable recieve complete interrupt
-	UCSRB = (1 << RXCIE);
+	UCSRB = ((1<<TXEN) | (1<<RXEN) | (1 << RXCIE));
 	 
     // Async. mode, 8N1
     UCSRC = (3 << UCSZ0);
 	 
-	 // Initalise ringbuffer
+	// Initalise ringbuffer
 	BUFF_InitialiseBuffer();
 }
 
-/*****************************************************************************
-*
-*   Function name : Usart_Tx
-*
-*   Returns :       None
-*
-*   Parameters :    char data: byte to send
-*
-*   Purpose :       Send one byte through the USART
-*
-*****************************************************************************/
 void USART_Tx(const char data)
 {
     while (!(UCSRA & (1 << UDRE)));
     UDR = data;
 }
 
-/*****************************************************************************
-*
-*   Function name : Usart_Rx
-*
-*   Returns :       char: byte received
-*
-*   Parameters :    None
-*
-*   Purpose :       Receives one byte from the USART
-*
-*****************************************************************************/
 char USART_Rx(void)
 {
     while (!(BuffElements) && !(PacketTimeOut)) {};

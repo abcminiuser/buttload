@@ -32,6 +32,7 @@ uint32_t PM_GetStoredDataSize(const uint8_t Type)
 void PM_SetupDFAddressCounters(const uint8_t Type)
 {
 	uint32_t StartAddress;
+	ldiv_t   DataflashPos;
 	
 	MemoryType  = Type;
 	GPageLength = 0;
@@ -41,15 +42,10 @@ void PM_SetupDFAddressCounters(const uint8_t Type)
 	else
 	  StartAddress = CurrAddress + PM_EEPROM_OFFSET;                    // EEPROM uses byte addresses, and starts at the 257th kilobyte in Dataflash
 	
-	DataflashInfo.CurrPageAddress = 0;
-
-	while (StartAddress >= DF_INTERNALDF_BUFFBYTES)                     // This loop is the equivalent of a DIV and a MOD
-	{
-		StartAddress -= DF_INTERNALDF_BUFFBYTES;                        // Subtract one page's worth of bytes from the desired address
-		DataflashInfo.CurrPageAddress++;
-	}
+	DataflashPos = ldiv(StartAddress, DF_INTERNALDF_BUFFBYTES);         // Perform a fast division
 	
-	DataflashInfo.CurrBuffByte = (uint16_t)StartAddress;                // The buffer byte is the remainder
+	DataflashInfo.CurrPageAddress = (uint16_t)DataflashPos.quot;
+	DataflashInfo.CurrBuffByte    = (uint16_t)DataflashPos.rem;
 }
 
 void PM_StoreProgramByte(const uint8_t Data)
@@ -112,12 +108,12 @@ void PM_InterpretAVRISPPacket(void)
 			for (uint8_t PacketB = 1; PacketB < 7; PacketB++)           // Save the erase chip command bytes to EEPROM
 			  eeprom_write_byte(&EEPROMVars.EraseChip[PacketB], PacketBytes[PacketB]);
 
-			for (uint8_t Byte = 0; Byte < 4; Byte++)                    // Clear the program and EEPROM size counters
-			{
-				eeprom_write_byte(&EEPROMVars.DataSize[Byte], 0x00);
-				eeprom_write_byte(&EEPROMVars.EEPROMSize[Byte], 0x00);
-			}
-						
+			uint32_t NewSize = 0;
+
+			// Clear the stored size counters
+			eeprom_write_block((const void*)&EEPROMVars.DataSize,   (void*)&NewSize, sizeof(uint32_t));
+			eeprom_write_block((const void*)&EEPROMVars.EEPROMSize, (void*)&NewSize, sizeof(uint32_t));
+			
 			eeprom_write_byte(&EEPROMVars.EraseCmdStored, TRUE);
 			
 			PacketBytes[1] = AICB_STATUS_CMD_OK;
@@ -217,7 +213,7 @@ void PM_InterpretAVRISPPacket(void)
 				DF_BufferWriteEnable(DataflashInfo.CurrBuffByte);
 				CurrentMode = PM_DATAFLASH_WRITE;
 				
-				for (uint8_t B = 1; B < 10; B++)                        // Save the command bytes
+				for (uint8_t B = 0; B < 10; B++)                        // Save the command bytes
 				{
 					eeprom_write_byte(EEPROMAddress, PacketBytes[B]);
 					EEPROMAddress++;
@@ -376,10 +372,10 @@ void PM_CreateProgrammingPackets(const uint8_t Type)
 		PacketBytes[0] = AICB_CMD_PROGRAM_EEPROM_ISP;
 	}
 
-	for (uint8_t B = 0; B < 9 ; B++)                                    // Load in the write data command bytes
+	for (uint8_t B = 0; B < 10; B++)                                    // Load in the write data command bytes
 	{
-		EEPROMAddress++;                                                // Increment the EEPROM location counter
 		PacketBytes[B] = eeprom_read_byte(EEPROMAddress);               // Synthesise a write packet header
+		EEPROMAddress++;                                                // Increment the EEPROM location counter
 	}
 	
 	BytesPerProgram = ((uint16_t)PacketBytes[1] << 8)
@@ -405,7 +401,7 @@ void PM_CreateProgrammingPackets(const uint8_t Type)
 				}
 				
 				for (uint16_t LoadB = 0; LoadB < BytesPerProgram; LoadB++)
-				  PacketBytes[10 + LoadB] = SPI_SPITransmit(0x00);    // Load in the page				
+				  PacketBytes[10 + LoadB] = SPI_SPITransmit(0x00);      // Load in the page				
 
 				PacketBytes[1] = (uint8_t)(BytesPerProgram >> 8);
 				PacketBytes[2] = (uint8_t)(BytesPerProgram);
@@ -415,7 +411,7 @@ void PM_CreateProgrammingPackets(const uint8_t Type)
 			else
 			{
 				for (uint16_t LoadB = 0; LoadB < PageLength; LoadB++)
-				  PacketBytes[10 + LoadB] = SPI_SPITransmit(0x00);    // Load in the page
+				  PacketBytes[10 + LoadB] = SPI_SPITransmit(0x00);      // Load in the page
 			
 				PacketBytes[1]  = (uint8_t)(PageLength >> 8);
 				PacketBytes[2]  = (uint8_t)(PageLength);
@@ -457,8 +453,8 @@ void PM_ShowStoredItemSizes(void)
 	uint8_t ItemInfoIndex = 0;
 	uint8_t TempB;
 	
-	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
-	                                             // name of the default command onto the LCD
+	JoyStatus = JOY_INVALID;                                            // Use an invalid joystick value to force the program to write the
+	                                                                    // name of the default command onto the LCD
 	for (;;)
 	{
 		if (JoyStatus)

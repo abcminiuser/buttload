@@ -51,6 +51,7 @@
 	extern const uint8_t VersionInfo[];
 	
 	extern EEPROMVarsType EEPROMVars EEMEM;
+	extern uint8_t* CrashProgramErrorPtr;
 	#define JoyStatus GPIOR0 // Pseudo-variable; "JoyStatus" becomes an alias for the General Purpose IO Storage Register 0
 	
 	// DEFINES AND MACROS:
@@ -69,7 +70,7 @@
 	#define MAIN_RESETCS_ACTIVE      0
 	#define MAIN_RESETCS_INACTIVE    1
 	#define MAIN_RESETCS_EXTDFACTIVE 2
-	
+		
 	#define JOY_LEFT                 (1 << 2)
 	#define JOY_RIGHT                (1 << 3)
 	#define JOY_UP                   (1 << 6)
@@ -92,7 +93,10 @@
 	#define MACROS                   do
 	#define MACROE                   while (0)
 		
+	#define CRASHPROGRAM(errtxt)     MACROS{ CrashProgramErrorPtr = errtxt; JMP(MAIN_CrashProgram); }MACROE
+
 	#define SLEEP()                  MACROS{ asm volatile ("sleep"::); }MACROE
+	#define JMP(addr)                MACROS{ asm volatile ("jmp " #addr ::); }MACROE
 	
 	// PROTOTYPES:
 	void MAIN_ResetCSLine(const uint8_t ActiveInactive);
@@ -103,7 +107,7 @@
 	
 	void MAIN_Delay10MS(uint8_t loops);
 	void MAIN_Delay1MS(uint8_t loops);
-	void MAIN_CrashProgram(const uint8_t *ErrTxtPtr) __attribute__((noreturn));
+	void MAIN_CrashProgram(void) __attribute__((noreturn));
 	
 	void FUNCChangeSettings(void);
 	void FUNCShowAbout(void);
@@ -119,5 +123,5 @@
 	void FUNCSetAutoSleepTimeOut(void);
 	void FUNCSleepMode(void);
 	void FUNCStorageInfo(void);
-	void FUNCGoBootloader(void);
+	void FUNCGoBootloader(void) __attribute__((noreturn));
 #endif

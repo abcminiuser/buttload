@@ -136,7 +136,14 @@ BUTTLOADTAG(Version,   VERSION_VSTRING);
 BUTTLOADTAG(Author,    "BY DEAN CAMERA");
 BUTTLOADTAG(Copyright, "<C> 2006 - GPL");
 
-const uint8_t*   AboutTextPtrs[]         PROGMEM = {BUTTTAG_Title.TagData, BUTTTAG_Version.TagData, BUTTTAG_Author.TagData, BUTTTAG_Copyright.TagData};
+#ifdef DEBUG
+  BUTTLOADTAG(DebugMode, "DEBUG MODE ON");
+  #define DEBUGABOUT , BUTTTAG_DebugMode.TagData
+#else
+  #define DEBUGABOUT
+#endif
+
+const uint8_t*   AboutTextPtrs[]         PROGMEM = {BUTTTAG_Title.TagData, BUTTTAG_Version.TagData, BUTTTAG_Author.TagData, BUTTTAG_Copyright.TagData    DEBUGABOUT};
 
 const uint8_t    WaitText[]              PROGMEM = "*WAIT*";
 
@@ -179,6 +186,9 @@ const uint8_t    SIFONames[2][15]                  PROGMEM = {"STORAGE SIZES", "
 
 // GLOBAL EEPROM VARIABLE STRUCT:
 EEPROMVarsType EEPROMVars EEMEM;
+
+// GLOBAL VARIABLES:
+uint8_t* CrashProgramErrorPtr;
 
 // ======================================================================================
 
@@ -225,11 +235,20 @@ int main(void)
 	
 	LCD_CONTRAST_LEVEL(eeprom_read_byte(&EEPROMVars.LCDContrast));
 	DF_EnableDataflash(FALSE);                   // Pull internal Dataflash /CS high to disable it and thus save power
-	USART_Init();                                // UART at 115200 baud (7.3MHz clock, double USART speed)
 	OSCCAL_Calibrate();                          // Calibrate the internal RC occilator
 	TOUT_SetupSleepTimer();                      // Set up and start the auto-sleep timer
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);	     // Set status LEDs to green (ready)	
 	
+	// DEBUG:
+	USART_Tx('B');
+	USART_Tx('U');
+	USART_Tx('T');
+	USART_Tx('T');
+	USART_Tx('L');
+	USART_Tx('O');
+	USART_Tx('A');
+	USART_Tx('D');
+
 	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_BASECLOCKSPEED_1MHZ); // Use slow clock speed in the main menu to save power
 	
 	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
@@ -390,22 +409,22 @@ void MAIN_ShowError(const uint8_t *pFlashStr)
 	MAIN_WaitForJoyRelease();
 }
 
-void MAIN_CrashProgram(const uint8_t *ErrTxtPtr)
+void MAIN_CrashProgram(void)
 {
 	SPI_SPIOFF();
 	USI_SPIOff();
 	TIMEOUT_PACKET_TIMER_OFF();
 	TIMEOUT_SLEEP_TIMER_OFF();
-	USART_ENABLE(USART_TX_OFF, USART_RX_OFF);
+	USART_OFF();
 
-	LCD_puts_f(ErrTxtPtr);
+	LCD_puts_f(CrashProgramErrorPtr);
 	
-	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);	
+	MAIN_SETSTATUSLED(MAIN_STATLED_RED);	
 
 	for (;;)
 	{
 		MAIN_Delay10MS(50);
-		PORTF ^= MAIN_STATLED_GREEN;               // Loop forever, blinking the status LED from orange to red and back
+		PORTF ^= MAIN_STATLED_ORANGE;            // Loop forever, blinking the status LEDs from red to green and back
 	}
 }
 
@@ -421,7 +440,7 @@ ISR(PCINT1_vect, ISR_NOBLOCK)                    // Joystick routine; PCINT0_vec
 
 ISR(BADISR_vect, ISR_NAKED)                      // Bad ISR routine; should never be called, here for safety
 {
-	MAIN_CrashProgram(PSTR("BADISR"));
+	CRASHPROGRAM(PSTR("BADISR"));
 }
 
 // ======================================================================================
@@ -479,7 +498,7 @@ void FUNCShowAbout(void)
 
 void FUNCAVRISPMode(void)
 {
-	USART_ENABLE(USART_TX_ON, USART_RX_ON);
+	USART_Init();
 	LCD_puts_f(AVRISPModeMessage);
 	
 	V2P_RunStateMachine(AICI_InterpretPacket);
@@ -491,7 +510,7 @@ void FUNCProgramDataflash(void)
 	DataflashInfo.UseExernalDF = TRUE;
 	DFSPIRoutinePointer = USI_SPITransmit;
 	
-	USART_ENABLE(USART_TX_ON, USART_RX_ON);
+	USART_Init();
 	LCD_puts_f(DataFlashProgMode);
 
 	V2P_RunStateMachine(PD_InterpretAVRISPPacket);
@@ -670,7 +689,7 @@ void FUNCStoreProgram(void)
 	if (!(DF_CheckCorrectOnboardChip()))
 	  return;
 			
-	USART_ENABLE(USART_TX_ON, USART_RX_ON);
+	USART_Init();
 	LCD_puts_f(PSTR("*STORAGE MODE*"));
 
 	V2P_RunStateMachine(PM_InterpretAVRISPPacket);

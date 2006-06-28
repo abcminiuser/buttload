@@ -9,7 +9,6 @@
 
 // PROGMEM CONSTANTS:
 const uint8_t SignonResponse[]   PROGMEM = {AICB_CMD_SIGN_ON, AICB_STATUS_CMD_OK, 8, 'A', 'V', 'R', 'I', 'S', 'P', '_', '2', 0x00};
-const uint8_t ButtLoadData[]     PROGMEM = {0x40, 0x28, 0x23, 0x29, 0x2A, 0x53, 0x43, 0x52, 0x45, 0x57, 0x20, 0x52, 0x45, 0x54, 0x52, 0x4f, 0x44, 0x41, 0x4e, 0x00, 0x2A};
 
 // GLOBAL VARIABLES:
 uint8_t  PacketBytes[V2P_MAXBUFFSIZE]   = {};
@@ -48,7 +47,7 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 				
 				if ((JoyStatus & JOY_LEFT) && !(InProgrammingMode))
 				{
-					USART_ENABLE(USART_TX_OFF, USART_RX_OFF);
+					USART_OFF();
 					TOUT_SetupSleepTimer();       // Re-setup and start the auto-sleep timer
 					return;
 				}
@@ -278,10 +277,16 @@ void V2P_GetSetParamater(void)
 			}
 			
 			break;
+		case AICB_PARAM_STATUS:
 		case AICB_PARAM_OSC_PSCALE:
 		case AICB_PARAM_OSC_CMATCH:
+		case AICB_PARAM_TOPCARD_DETECT:
+		case AICB_PARAM_VTARGET:
+		case AICB_PARAM_VADJUST:
+		case AICB_PARAM_DATA:
+		
 			/* Despite not supporting these parameters (STK500 only), the AVR Studio programmer
-			   sends them occasionally. A OK must be returned or the sequence will fail.        */
+			   seems to send them occasionally. A OK must be returned or the sequence will fail. */
 		
 			if (PacketBytes[0] == AICB_CMD_GET_PARAMETER)
 			  PacketBytes[2] = 0;             // If the command is a read, return a 0 for both parameters

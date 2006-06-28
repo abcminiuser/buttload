@@ -13,7 +13,8 @@
 	// TYPE DEFINITIONS:
 	typedef struct
 	{
-		uint8_t  JUNKVAR;           // Unused location 0 to guard against EEPROM corruption
+		uint8_t  JUNKVAR1;          // Unused location to guard against EEPROM corruption - this is mainly a
+		                            // problem because the Butterflies come shipped with the BOD fuse unprogrammed
 	
 		uint8_t  ResetPolarity;
 		uint8_t  SCKDuration;
@@ -21,8 +22,8 @@
 		uint8_t  WriteEEPROM[10];
 		uint8_t  EraseCmdStored;
 		uint8_t  EraseChip[7];
-		uint8_t  DataSize[4];
-		uint8_t  EEPROMSize[4];
+		uint32_t DataSize;
+		uint32_t EEPROMSize;
 		uint8_t  EnterProgMode[12];
 		uint8_t  TotalFuseBytes;
 		uint8_t  TotalLockBytes;
@@ -35,5 +36,8 @@
 		uint8_t  AutoSleepValIndex;
 		uint8_t  SPIResetMode;
 		uint8_t  MagicNumber;	
+
+		uint8_t  JUNKVAR2;          // Unused location to guard against EEPROM corruption - this is mainly a
+		                            // problem because the Butterflies come shipped with the BOD fuse unprogrammed
 	} EEPROMVarsType;
 #endif

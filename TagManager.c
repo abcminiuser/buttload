@@ -51,6 +51,7 @@ void TM_FindNextTag(void)
 	uint8_t  BytesRead;
 	
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);    // Orange = busy
+	LCD_puts_f(WaitText);
 
 	while (DFPos < ProgDataSize)
 	{
@@ -103,7 +104,7 @@ void TM_FindNextTag(void)
 		/* The following line _is_ recursion, but the function will only ever call itself
 		   a maximum of one time. The function will call itself upon skipping from the last
 		   tag stored in the program data to the first; to guard against infinite recursion
-		   if no tags are present, the system will error out if the TagExists flag is empty
+		   if no tags are present the system will error out if the TagExists flag is empty
 		   after a full data read. Once a tag has been read and displayed onto the LCD, the
            function returns to the main tag handling routine.                               */
 		TM_FindNextTag();

@@ -1,29 +1,36 @@
 #include "Timeout.h"
 
+const uint8_t AutoSleepTOValues[5] PROGMEM = {   0,   15,  30,  60,  120};
+
 volatile uint8_t  PacketTimeOutTicks   = 0;
 volatile uint8_t  PacketTimeOut        = FALSE;
 
 volatile uint16_t SleepTimeOutTicks    = 0;
 volatile uint16_t TicksBeforeAutoSleep = 0;
 
-const uint8_t AutoSleepTOValues[5] PROGMEM = {   0,   15,  30,  60,  120};
-
 // ======================================================================================
 
 // Packet Timeout = ((F_CPU / 1024) / (240 * TIMEOUT_TICKSBEFORETIMEOUT)) per second
 ISR(TIMER2_COMP_vect, ISR_NOBLOCK)
 {
+	uint8_t* ErrStrPtr = 0x0000;
+
 	if (PacketTimeOutTicks++ == TIMEOUT_PACKET_TIMEOUTTICKS)
 	{
 		PacketTimeOutTicks = 0;
 		PacketTimeOut      = TRUE;
 	}
-	
-	// Check for serial communication problems:
+
+	// Packet Timeout is used to check for internal faults:
 	if (UCSRA & (1 << DOR))
-	  MAIN_CrashProgram(PSTR("DATA OVR"));
+	  ErrStrPtr = PSTR("DATA OVR");
 	else if (UCSRA & (1 << FE))
-	  MAIN_CrashProgram(PSTR("FRAME ERR"));
+	  ErrStrPtr = PSTR("FRAME ERR");
+	else if (BuffElements == BUFF_BUFFLEN)
+	  ErrStrPtr = PSTR("BUFF OVF");
+
+	if (ErrStrPtr)
+	  CRASHPROGRAM(ErrStrPtr);
 }
 
 // Autosleep Timeout = (TicksBeforeAutoSleep / 10) secs between timeouts
