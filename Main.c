@@ -200,7 +200,7 @@ int main(void)
 	    MCUCR   = (1 << JTD);                    // Turn off JTAG via code
 	    MCUCR   = (1 << JTD);                    // Twice as specified in datasheet
 	#endif
-	
+		
 	ACSR    = (1 << ACD);                        // Disable the unused Analogue Comparitor to save power
 	PRR     = ((1 << PRADC) | (1 << PRSPI));     // Disable the ADC and SPI (for now) to save power
 	
@@ -226,7 +226,6 @@ int main(void)
 
 	if (eeprom_read_byte(&EEPROMVars.MagicNumber) != MAGIC_NUM) // Check if first ButtLoad run
 	{
-
 		for (uint16_t EAddr = 0; EAddr < sizeof(EEPROMVars); EAddr++) // Clear the EEPROM if first run
 		   eeprom_write_byte((uint8_t*)EAddr, 0xFF);
 
@@ -238,16 +237,6 @@ int main(void)
 	OSCCAL_Calibrate();                          // Calibrate the internal RC occilator
 	TOUT_SetupSleepTimer();                      // Set up and start the auto-sleep timer
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);	     // Set status LEDs to green (ready)	
-	
-	// DEBUG:
-	USART_Tx('B');
-	USART_Tx('U');
-	USART_Tx('T');
-	USART_Tx('T');
-	USART_Tx('L');
-	USART_Tx('O');
-	USART_Tx('A');
-	USART_Tx('D');
 
 	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_BASECLOCKSPEED_1MHZ); // Use slow clock speed in the main menu to save power
 	
@@ -302,8 +291,9 @@ void MAIN_Delay1MS(uint8_t loops)
 void MAIN_ResetCSLine(const uint8_t ActiveInactive)
 {
 	/* ActiveInactive controls the /Reset line to an AVR device or external dataflash
-	/CS line. If the reset polarity parameter is a 0 then interfacing with AT89
-	devices which has an active high reset. Pins are tristated when inactive.         */
+	   /CS line. If the reset polarity parameter is a 0 then interfacing with AT89
+	   devices which has an active high reset. Pins are tristated when inactive unless
+	   the SPIResetMode option is changed in the OPTIONS mode.                         */
 	
 	switch (ActiveInactive)
 	{
@@ -359,6 +349,7 @@ void MAIN_WaitForJoyRelease(void)
 void MAIN_IntToStr(uint16_t IntV, uint8_t* Buff)
 {
 	// Shows leading zeros, unlike itoa.
+	// Maximum value which can be converted is 999.
 
 	uint8_t Temp = 0;
 	
@@ -411,6 +402,7 @@ void MAIN_ShowError(const uint8_t *pFlashStr)
 
 void MAIN_CrashProgram(void)
 {
+	// Turn off active subsystems:
 	SPI_SPIOFF();
 	USI_SPIOff();
 	TIMEOUT_PACKET_TIMER_OFF();
@@ -424,7 +416,7 @@ void MAIN_CrashProgram(void)
 	for (;;)
 	{
 		MAIN_Delay10MS(50);
-		PORTF ^= MAIN_STATLED_ORANGE;            // Loop forever, blinking the status LEDs from red to green and back
+		PORTF ^= MAIN_STATLED_RED;               // Loop forever, blinking the status LED from off to red and back
 	}
 }
 
@@ -525,13 +517,6 @@ void FUNCProgramAVR(void)
 	uint8_t  Fault    = ISPCC_NO_FAULT;
 	uint8_t  ProgMode = 0;
 
-	DFSPIRoutinePointer = (SPIFuncPtr)SPI_SPITransmit;
-	SPI_SPIInit();
-	DataflashInfo.UseExernalDF = FALSE;
-	
-	if (!(DF_CheckCorrectOnboardChip()))
-	  return;
-
 	MAIN_WaitForJoyRelease();
 	
 	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
@@ -557,6 +542,12 @@ void FUNCProgramAVR(void)
 
 	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_BASECLOCKSPEED_8MHZ);
 	LCD_puts_f(WaitText);
+	DFSPIRoutinePointer = (SPIFuncPtr)SPI_SPITransmit;
+	SPI_SPIInit();
+	DataflashInfo.UseExernalDF = FALSE;
+	
+	if (!(DF_CheckCorrectOnboardChip()))
+	  return;
 
 	TIMEOUT_SLEEP_TIMER_OFF();
 
@@ -634,7 +625,7 @@ void FUNCProgramAVR(void)
 
 		if (!(ProgMode) || (ProgMode == 5) || (ProgMode == 6)) // All, fuse and lock bytes, or program lock bytes mode
 		{
-			if (ProgMode == 6)                           // If fusebytes have already been written, we need to reenter programming mode to latch them
+			if (ProgMode == 6)                           // If fusebytes have already been written, we need to re-enter programming mode to latch them
 			{
 				MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE); // Release the RESET line of the slave AVR
 				MAIN_Delay10MS(1);
@@ -662,8 +653,8 @@ void FUNCProgramAVR(void)
 
 		LCD_puts(DoneFailMessageBuff);
 
-		MAIN_Delay10MS(250);
-		MAIN_Delay10MS(200);
+		MAIN_Delay10MS(225);
+		MAIN_Delay10MS(225);
 	}
 	else
 	{

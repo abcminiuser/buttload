@@ -95,7 +95,7 @@
 		
 	#define CRASHPROGRAM(errtxt)     MACROS{ CrashProgramErrorPtr = errtxt; JMP(MAIN_CrashProgram); }MACROE
 
-	#define SLEEP()                  MACROS{ asm volatile ("sleep"::); }MACROE
+	#define SLEEP()                  MACROS{ asm volatile ("sleep" ::); }MACROE
 	#define JMP(addr)                MACROS{ asm volatile ("jmp " #addr ::); }MACROE
 	
 	// PROTOTYPES:

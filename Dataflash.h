@@ -41,7 +41,7 @@
 	// GLOBAL VARIABLES:
 	extern SPIFuncPtr     DFSPIRoutinePointer;
 	extern DFinfo         DataflashInfo;
-	extern const uint8_t DataFlashError[] PROGMEM;
+	extern const uint8_t  DataFlashError[] PROGMEM;
 	
 	// PROTOTYPES:
 	uint8_t DF_CheckCorrectOnboardChip(void);

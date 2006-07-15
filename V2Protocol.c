@@ -8,7 +8,7 @@
 #include "V2Protocol.h"
 
 // PROGMEM CONSTANTS:
-const uint8_t SignonResponse[]   PROGMEM = {AICB_CMD_SIGN_ON, AICB_STATUS_CMD_OK, 8, 'A', 'V', 'R', 'I', 'S', 'P', '_', '2', 0x00};
+const uint8_t SignonResponse[]  PROGMEM = {AICB_CMD_SIGN_ON, AICB_STATUS_CMD_OK, 8, 'A', 'V', 'R', 'I', 'S', 'P', '_', '2', 0x00};
 
 // GLOBAL VARIABLES:
 uint8_t  PacketBytes[V2P_MAXBUFFSIZE]   = {};
@@ -37,7 +37,7 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 		if (PacketTimeOut == TRUE)                // Packet has timed out waiting for data
 		  V2PState = V2P_STATE_TIMEOUT;
 		else if (V2PState != V2P_STATE_IDLE)
-		  TIMEOUT_PACKET_TIMER_ON();               // Reset the timer on each loop if not in idle mode
+		  TIMEOUT_PACKET_TIMER_ON();              // Reset the timer on each loop if not in idle mode
 		
 		switch (V2PState)
 		{
@@ -82,7 +82,7 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 				{
 					V2PState = V2P_STATE_PACKERR;
 				}
-	
+
 				break;
 			case V2P_STATE_GETTOKEN:
 				if (USART_Rx() == AICB_TOKEN)      // Token bit is always 0x0E
@@ -99,12 +99,12 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 	
 				break;
 			case V2P_STATE_GETCHECKSUM:
-				if  (!(PacketTimeOut))              // Only try to process the packet if there is no timeout
+				if  (!(PacketTimeOut))             // Only try to process the packet if there is no timeout
 				{
 					if (V2P_GetChecksum() == USART_Rx()) // If checksum is ok, process the packet
 					{
-						switch (PacketBytes[0])            // \/ Look for generic commands which can be interpreted here, 
-						{                                  //  \ otherwise run the custom interpret routine
+						switch (PacketBytes[0])    // \/ Look for generic commands which can be interpreted here, 
+						{                          //  \ otherwise run the custom interpret routine
 							case AICB_CMD_SIGN_ON:
 								MessageSize = 11;
 
@@ -167,7 +167,7 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 				// Fall through to V2P_STATE_PACKOK
 			case V2P_STATE_PACKOK:
 				PacketTimeOut = FALSE;
-				BUFF_InitialiseBuffer();          // Flush the ringbuffer
+				BUFF_InitialiseBuffer();           // Flush the ringbuffer
 				TIMEOUT_PACKET_TIMER_OFF();
 
 				V2PState = V2P_STATE_IDLE;

@@ -13,7 +13,7 @@ volatile uint16_t TicksBeforeAutoSleep = 0;
 // Packet Timeout = ((F_CPU / 1024) / (240 * TIMEOUT_TICKSBEFORETIMEOUT)) per second
 ISR(TIMER2_COMP_vect, ISR_NOBLOCK)
 {
-	uint8_t* ErrStrPtr = 0x0000;
+	uint8_t* ErrStrPtr = NULL;
 
 	if (PacketTimeOutTicks++ == TIMEOUT_PACKET_TIMEOUTTICKS)
 	{
@@ -29,7 +29,7 @@ ISR(TIMER2_COMP_vect, ISR_NOBLOCK)
 	else if (BuffElements == BUFF_BUFFLEN)
 	  ErrStrPtr = PSTR("BUFF OVF");
 
-	if (ErrStrPtr)
+	if (ErrStrPtr != NULL) // Local error string pointer non-null (an error has occured)
 	  CRASHPROGRAM(ErrStrPtr);
 }
 

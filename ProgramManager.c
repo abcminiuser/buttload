@@ -111,8 +111,8 @@ void PM_InterpretAVRISPPacket(void)
 			uint32_t NewSize = 0;
 
 			// Clear the stored size counters
-			eeprom_write_block((const void*)&EEPROMVars.DataSize,   (void*)&NewSize, sizeof(uint32_t));
-			eeprom_write_block((const void*)&EEPROMVars.EEPROMSize, (void*)&NewSize, sizeof(uint32_t));
+			eeprom_write_block((const void*)&NewSize, (void*)&EEPROMVars.DataSize,   sizeof(uint32_t));
+			eeprom_write_block((const void*)&NewSize, (void*)&EEPROMVars.EEPROMSize, sizeof(uint32_t));
 			
 			eeprom_write_byte(&EEPROMVars.EraseCmdStored, TRUE);
 			

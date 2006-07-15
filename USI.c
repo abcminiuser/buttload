@@ -26,7 +26,7 @@
 	Dean's Note: The USI port is *EXTREAMELY* temperemental. If the settings are
 	             not absolutely correct, the USI system will not function and the
 				 AVR will hang (eternal wait for the TransferComplete flag). Do
-				 not change any part of the USI code as even the simplest of changes
+				 not change ANY part of the USI code as even the simplest of changes
 				 will most likely cause the USI port to not function correctly.
 */
 
@@ -36,7 +36,7 @@ volatile uint8_t StoredUSIDR      = 0;
 volatile uint8_t TransferComplete = FALSE;
 
                                                           // SPI Clock Duration Value    , Compare Value
-const uint8_t USIPSValues[USI_PRESET_SPEEDS][2] PROGMEM = {{USI_SPI_SPEED_28800Hz       , 128          },  // Actual speed = 57,153Hz
+const uint8_t USIPSValues[USI_PRESET_SPEEDS][2] PROGMEM =  {{USI_SPI_SPEED_28800Hz       , 128          },  // Actual speed = 57,153Hz
                                                             {USI_SPI_SPEED_57600Hz       , 84           },  // Actual speed = 86,738Hz
                                                             {USI_SPI_SPEED_230400Hz      , 64           },  // Actual speed = 113,427Hz
                                                             {USI_SPI_SPEED_921600Hz      , 34           }}; // Actual speed = 210,651Hz

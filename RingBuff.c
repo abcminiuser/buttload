@@ -18,11 +18,11 @@ volatile uint8_t OutPos                   = 0;
 
 ISR(USART0_RX_vect, ISR_BLOCK)
 {
-	RingBuffer[InPos++] = UDR;             // Store the data, increment the buffer in position
+	RingBuffer[InPos] = UDR;               // Store the data
 	BuffElements++;                        // Increment the total elements variable
 
-	if (InPos == BUFF_BUFFLEN)
-	  InPos = 0;                           // Wrap counter if end of array reached
+	if (InPos++ == BUFF_BUFFLEN)
+	  InPos = 0;                           // Increment and wrap counter if end of array reached
 }	
 
 // ======================================================================================
@@ -38,13 +38,13 @@ void BUFF_InitialiseBuffer(void)
 uint8_t BUFF_GetBuffByte(void)
 {
 	if (!(BuffElements))                   // No elements in the buffer
-	  return 0;
+	  CRASHPROGRAM(PSTR("BUFF UNF"));
 
-	uint8_t RetrievedData = RingBuffer[OutPos++]; // Grab the stored byte into a temp variable
+	uint8_t RetrievedData = RingBuffer[OutPos]; // Grab the stored byte into a temp variable
 	BuffElements--;                        // Decrement the total elements variable
 	
-	if (OutPos == BUFF_BUFFLEN)
-	  OutPos = 0;                          // Wrap pointer if end of array reached
+	if (OutPos++ == BUFF_BUFFLEN)          // Increment and wrap pointer if end of array reached
+	  OutPos = 0;
 		
-	return RetrievedData;                 // Return the retrieved data
+	return RetrievedData;                  // Return the retrieved data
 }
