@@ -7,8 +7,8 @@
 
 #include "TagManager.h"
 
-uint8_t  TagExists  = FALSE;
-uint32_t DFPos      = 0;
+uint8_t  TagExists       = FALSE;
+uint32_t DFDataBytesLeft = 0x0000;
 
 // ======================================================================================
 
@@ -16,8 +16,8 @@ void TM_ShowTags(void)
 {
 	DF_ContinuousReadEnable(0, 0);
 	TagExists = FALSE;
-	DFPos = 0;
-		
+	DFDataBytesLeft = PM_GetStoredDataSize(TYPE_FLASH);
+
 	TM_FindNextTag();
 	if (!(TagExists))
 	{
@@ -45,29 +45,28 @@ void TM_FindNextTag(void)
 {
 	uint8_t  Buffer[21];
 	uint8_t  HeadBuff[4]      = BT_TAGHEADER;
-	uint32_t ProgDataSize     = PM_GetStoredDataSize(TYPE_FLASH);
 	uint8_t  TotalOkHeadBytes = 0;
 	uint8_t  TagByte;
-	uint8_t  BytesRead;
+	uint8_t  DFBytesRead;
 	
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);    // Orange = busy
 	LCD_puts_f(WaitText);
 
-	while (DFPos < ProgDataSize)
+	while (DFDataBytesLeft)
 	{
-		BytesRead = 1;
+		DFBytesRead = 1;
 		
 		TagByte = SPI_SPITransmit(0x00);       // Get next byte from dataflash
 		if (TagByte == HeadBuff[TotalOkHeadBytes++])
 		{
 			if (TotalOkHeadBytes == 4)
 			{
-				uint8_t HB;
+				uint8_t BuffPos;
 			
-				for (HB = 0; HB < 20; HB++)
+				for (BuffPos = 0; BuffPos < 20; BuffPos++)
 				{
 					TagByte = SPI_SPITransmit(0x00);
-					Buffer[HB] = TagByte;
+					Buffer[BuffPos] = TagByte;
 					
 					if (TagByte == 0x00)
 					  break;
@@ -75,8 +74,8 @@ void TM_FindNextTag(void)
 				
 				Buffer[20] = '\0';             // Make sure string is null-terminated
 
-				TagExists = TRUE;
-				BytesRead = (HB + 2);
+				TagExists   = TRUE;
+				DFBytesRead = (BuffPos + 2);
 
 				LCD_puts(Buffer);
 				MAIN_SETSTATUSLED(MAIN_STATLED_GREEN); // Green = ready
@@ -88,11 +87,11 @@ void TM_FindNextTag(void)
 			TotalOkHeadBytes = ((TagByte == HeadBuff[0])? 1 : 0);
 		}
 
-		DFPos += BytesRead;
+		DFDataBytesLeft -= DFBytesRead;
 	}
 	
+	DFDataBytesLeft = PM_GetStoredDataSize(TYPE_FLASH);
 	DF_ContinuousReadEnable(0, 0);
-	DFPos = 0;
 	
 	if (TagExists == FALSE)
 	{

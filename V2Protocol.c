@@ -109,7 +109,7 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 								MessageSize = 11;
 
 								for (uint8_t SOByte = 0; SOByte < 11; SOByte++) // Load the sign-on sequence from program memory
-								   PacketBytes[SOByte] = pgm_read_byte(&SignonResponse[SOByte]);
+								  PacketBytes[SOByte] = pgm_read_byte(&SignonResponse[SOByte]);
 
 								V2P_SendPacket();
 								break;
@@ -125,10 +125,13 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 			
 								V2P_CheckForExtendedAddress();
 
-								CurrAddress = ((uint32_t)PacketBytes[1] << 24)
-											| ((uint32_t)PacketBytes[2] << 16)
-											| ((uint32_t)PacketBytes[3] << 8)
-											| PacketBytes[4];
+								/*
+									NON PORTABLE!! The following line stores the PacketBytes variable bytes 1-4 (true index)
+									into the CurrAddress variable. This assumes that the compiler (GCC) uses the same endian
+									as the sending device - which it does. Using a more conventional method of shifting and
+									concanating the individual bytes wastes over 100 bytes of unessesary commands.
+								*/
+								CurrAddress = *((uint32_t*)&PacketBytes[1]);
 	
 								PacketBytes[1] = AICB_STATUS_CMD_OK;
 
@@ -294,7 +297,7 @@ void V2P_GetSetParamater(void)
 			  MessageSize = 2;                // Otherwise just send back an OK if the command is a set		
 			
 			break;
-		default:                             // Unrecognised parameter
+		default:                              // Unrecognised parameter
 			MessageSize = 2;
 			PacketBytes[1] = AICB_STATUS_CMD_FAILED;			
 	}
@@ -305,9 +308,9 @@ void V2P_GetSetParamater(void)
 void V2P_IncrementCurrAddress(void)
 {
 	// Incrementing a 32-bit unsigned variable takes a lot of code. Because much of the code is
-	// not very time critical (much of it is waiting for the hardware), I've chosen to waste
-	// a few extra cycles per increment and save a good 60 bytes or so of code space by putting
-	// the increment inside a function.
+	// not very time critical (much of it is waiting for the hardware), I've chosen to waste a
+	// few extra cycles per increment and save a good 60 bytes or so of code space by putting the
+	// increment inside its own function.
 
 	CurrAddress++;
 }
