@@ -1,6 +1,7 @@
 #include "Timeout.h"
 
-const uint8_t AutoSleepTOValues[5] PROGMEM = {   0,   15,  30,  60,  120};
+const uint8_t AutoSleepTOValues[5] PROGMEM = {  0,  15, 30,  60, 120};
+const uint8_t AutoSleepTOTicks[5]  PROGMEM = {  0,  26, 53, 105, 211};
 
 volatile uint8_t  PacketTimeOutTicks   = 0;
 volatile uint8_t  PacketTimeOut        = FALSE;
@@ -33,7 +34,7 @@ ISR(TIMER2_COMP_vect, ISR_NOBLOCK)
 	  CRASHPROGRAM(ErrStrPtr);
 }
 
-// Autosleep Timeout = (TicksBeforeAutoSleep / 10) secs between timeouts
+// Autosleep Timeout = ((F_CPU / 64) / (65536 * TIMEOUT_TICKSBEFORETIMEOUT)) per second
 ISR(TIMER1_OVF_vect, ISR_NOBLOCK)
 {
 	if (SleepTimeOutTicks++ == TicksBeforeAutoSleep)
@@ -54,7 +55,7 @@ void TOUT_SetupSleepTimer(void)
 	  NewTicksIndex = 4;
 
 	TIMSK1 = (1 << TOIE1);
-	TicksBeforeAutoSleep = ((pgm_read_byte(&AutoSleepTOValues[NewTicksIndex]) << 1) * 5); // ((x << 1) * 5) == (x * 10)
+	TicksBeforeAutoSleep = pgm_read_byte(&AutoSleepTOTicks[NewTicksIndex]);
 
 	TIMEOUT_SLEEP_TIMEOUT_RESET();
 	

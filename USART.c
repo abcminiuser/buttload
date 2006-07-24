@@ -37,7 +37,7 @@ void USART_Init(void)
     UBRRH = (uint8_t)(USART_BAUDVALUE >> 8);
     UBRRL = (uint8_t)(USART_BAUDVALUE);
 
-    // Enable recieve complete interrupt
+    // Enable Rx/Tx subsections and recieve complete interrupt
 	UCSRB = ((1<<TXEN) | (1<<RXEN) | (1 << RXCIE));
 	 
     // Async. mode, 8N1

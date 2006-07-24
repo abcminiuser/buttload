@@ -37,7 +37,7 @@
 	#include "ButtLoadTag.h"
 	
 	// LIB C VERSION CHECK:
-	#if (!defined(__AVR_LIBC_VERSION__) || (__AVR_LIBC_VERSION__ < 10401UL)) // In future requirements may be increased with changes
+	#if (!defined(__AVR_LIBC_VERSION__) || (__AVR_LIBC_VERSION__ < 10401UL)) // In future AVRLibC version requirements may be increased with changes
 		#error AVRLibC Version 1.4.1 or higher is required to compile this project.
 	#endif
 	
@@ -59,7 +59,7 @@
 	#define VERSION_MINOR            4
 	#define VERSION_VSTRING          {'V','0' + VERSION_MAJOR,'-','0' + VERSION_MINOR, '\0'}
 	
-	#define MAGIC_NUM                0b01111010 // Magic number, used for first-run detection or upgrade incompatibility checks
+	#define MAGIC_NUM                0b01101010 // Magic number, used for first-run detection or upgrade incompatibility checks
 	
 	#define MAIN_SETSTATUSLED(mask)  MACROS{ PORTF = ((PORTF & ~MAIN_STATLED_ORANGE) | (mask)); }MACROE
 	#define MAIN_STATLED_GREEN       (1 << 4)

@@ -48,6 +48,7 @@ BUG      - Serial connection instability
 	  * Turned off the USART U2X bit as it was not needed and reduced the reliability of the serial connection
 	  * TagManager now uses a single uint32_t variable to decrease code size and tag scanning time
 	  * Size and speed over portability chosen for the loading of CurrAddress from the new address in the V2P_RunStateMachine recieved packet
+	  * System clock prescaling removed; buggy and wouldn't reduce power consumption anyway
 
 	IN PUBLIC RELEASE 1.3:
 	=======================================

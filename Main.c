@@ -212,8 +212,8 @@ int main(void)
 	
 	PCMSK0  = JOY_EMASK;                         // \.
 	PCMSK1  = JOY_BMASK;                         // | Turn on joystick
-	EIMSK   = ((1<<PCIE0) | (1<<PCIE1));         // |  interrupts
-	EIFR    = ((1<<PCIF0) | (1<<PCIF1));         // /
+	EIMSK   = ((1 << PCIE0) | (1 << PCIE1));     // |  interrupts
+	EIFR    = ((1 << PCIF0) | (1 << PCIF1));     // /
 
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);      // Set status LEDs to orange (busy)
 	MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE);     // Set target reset line to inactive
@@ -222,7 +222,7 @@ int main(void)
 	LCD_CONTRAST_LEVEL(0x0F);
 	LCD_puts_f(WaitText);
 
-	sei();
+	sei();                                       // Enable interrupts
 
 	if (eeprom_read_byte(&EEPROMVars.MagicNumber) != MAGIC_NUM) // Check if first ButtLoad run
 	{
@@ -237,8 +237,6 @@ int main(void)
 	OSCCAL_Calibrate();                          // Calibrate the internal RC occilator
 	TOUT_SetupSleepTimer();                      // Set up and start the auto-sleep timer
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);	     // Set status LEDs to green (ready)	
-
-	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_BASECLOCKSPEED_1MHZ); // Use slow clock speed in the main menu to save power
 	
 	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
 	                                             // name of the default command onto the LCD
@@ -252,7 +250,7 @@ int main(void)
 			  (CurrFunc == ARRAY_UPPERBOUND(MainFunctionPtrs))? CurrFunc = 0 : CurrFunc++;
 			else if (JoyStatus & JOY_PRESS)      // Select current function
 			  ((FuncPtr)pgm_read_word(&MainFunctionPtrs[CurrFunc]))(); // Run associated function
-			else if (JoyStatus & JOY_RIGHT)
+			else if (JoyStatus & JOY_RIGHT)      // About ButtLoad list
 			  FUNCShowAbout();
 
 			// Show current setting function onto the LCD:
@@ -441,8 +439,8 @@ void FUNCChangeSettings(void)
 {
 	uint8_t CurrSFunc = 0;
 	
-	JoyStatus = JOY_INVALID;
-
+	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
+	                                             // name of the default command onto the LCD
 	for (;;)
 	{
 		if (JoyStatus)                           // Joystick is in the non-center position
@@ -540,7 +538,6 @@ void FUNCProgramAVR(void)
 		}
 	}
 
-	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_BASECLOCKSPEED_8MHZ);
 	LCD_puts_f(WaitText);
 	DFSPIRoutinePointer = (SPIFuncPtr)SPI_SPITransmit;
 	SPI_SPIInit();
@@ -662,7 +659,6 @@ void FUNCProgramAVR(void)
 	}
 	
 	TOUT_SetupSleepTimer();
-	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_BASECLOCKSPEED_1MHZ);
 	MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE);     // Release the RESET line and allow the slave AVR to run	
 	USI_SPIOff();
 	DF_EnableDataflash(FALSE);

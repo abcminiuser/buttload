@@ -25,7 +25,8 @@ void OSCCAL_Calibrate(void)
 	ActualCount = 0;
    
 	// Make sure all clock division is turned off (8Mhz RC clock)
-	OSCCAL_SETSYSCLOCKSPEED(OSCCAL_BASECLOCKSPEED_8MHZ);
+	CLKPR = (1 << CLKPCE);
+	CLKPR = 0x00;
 
 	// Inital OSCCAL of half its maximum
 	OSCCAL = (0x7F / 2);
@@ -53,28 +54,25 @@ void OSCCAL_Calibrate(void)
 	TCNT1  = 0;
 	TCNT2  = 0;
 
-	// Get some readings and ensure stability before entering the calibration loop
-	MAIN_Delay10MS(10);
-    
 	while (LoopCount--)
 	{
+		// Let it take a few readings (14ms, approx 3 readings)
+		_delay_ms(14);
+
 		PrevOSCALValues[1] = PrevOSCALValues[0];
 		PrevOSCALValues[0] = OSCCAL;
         
 		if (ActualCount > OSCCAL_TARGETCOUNT)      // Clock is running too fast
-			OSCCAL--;
+		  OSCCAL--;
 		else if (ActualCount < OSCCAL_TARGETCOUNT) // Clock is running too slow
-			OSCCAL++;
+		  OSCCAL++;
 		
 		// When the routine finds the closest value for the given target count,
 		// it will cause the OSCCAL to hover around the closest two values.
-		// If the current value is the same as several loops previous, exit the
+		// If the current value is the same as two loops previous, exit the
 		// routine as the best value has been found.
 		if (OSCCAL == PrevOSCALValues[1])
 		  break;
-
-		// Let it take a few readings (14ms, approx 2 readings)
-		_delay_ms(14);
 	}
 
 	// Disable all timer interrupts
@@ -91,7 +89,7 @@ void OSCCAL_Calibrate(void)
 	return;
 }
 
-ISR(TIMER2_OVF_vect, ISR_BLOCK) // Occurs 32768/256 timers per second, or 128Hz
+ISR(TIMER2_OVF_vect, ISR_BLOCK) // Occurs 32768/256 times per second, or 128Hz
 {
 	// Stop timer 1 so it can be read
 	TCCR1B = 0x00;
