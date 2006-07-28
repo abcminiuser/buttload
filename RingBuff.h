@@ -7,9 +7,13 @@
 
 #ifndef RINGBUFF_H
 #define RINGBUFF_H
+
 	// INCLUDES:
-	#include "Main.h"
-   
+	#include <avr/io.h>
+	#include <avr/interrupt.h>
+	
+	#include "ISRMacro.h"
+	
 	// DEFINES:
 	#define BUFF_BUFFLEN  64
 
@@ -19,4 +23,5 @@
 	// PROTOTYPES:
 	void     BUFF_InitialiseBuffer(void);
 	uint8_t  BUFF_GetBuffByte(void);
+	
 #endif

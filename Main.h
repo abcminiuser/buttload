@@ -18,9 +18,8 @@
 	#include <avr/interrupt.h>
 	#include <avr/version.h>
 	#include <util/delay.h>
-	#include <string.h>
-	#include <inttypes.h>
 	
+	#include "GlobalMacros.h"
 	#include "ISRMacro.h"
 	#include "OSCCal.h"
 	#include "LCD_Driver.h"
@@ -51,16 +50,9 @@
 	extern const uint8_t VersionInfo[];
 	
 	extern EEPROMVarsType EEPROMVars EEMEM;
-	extern uint8_t* CrashProgramErrorPtr;
 	#define JoyStatus GPIOR0 // Pseudo-variable; "JoyStatus" becomes an alias for the General Purpose IO Storage Register 0
 	
 	// DEFINES AND MACROS:
-	#define VERSION_MAJOR            1
-	#define VERSION_MINOR            4
-	#define VERSION_VSTRING          {'V','0' + VERSION_MAJOR,'-','0' + VERSION_MINOR, '\0'}
-	
-	#define MAGIC_NUM                0b01101010 // Magic number, used for first-run detection or upgrade incompatibility checks
-	
 	#define MAIN_SETSTATUSLED(mask)  MACROS{ PORTF = ((PORTF & ~MAIN_STATLED_ORANGE) | (mask)); }MACROE
 	#define MAIN_STATLED_GREEN       (1 << 4)
 	#define MAIN_STATLED_RED         (1 << 5)
@@ -70,33 +62,6 @@
 	#define MAIN_RESETCS_ACTIVE      0
 	#define MAIN_RESETCS_INACTIVE    1
 	#define MAIN_RESETCS_EXTDFACTIVE 2
-		
-	#define JOY_LEFT                 (1 << 2)
-	#define JOY_RIGHT                (1 << 3)
-	#define JOY_UP                   (1 << 6)
-	#define JOY_DOWN                 (1 << 7)
-	#define JOY_PRESS                (1 << 4)
-	#define JOY_INVALID              (1 << 0)
-	#define JOY_BMASK                ((1 << 4) | (1 << 6) | (1 << 7))
-	#define JOY_EMASK                ((1 << 2) | (1 << 3))
-	
-	#define TYPE_EEPROM              0
-	#define TYPE_FLASH               1
-	#define TYPE_FUSE                2
-	#define TYPE_LOCK                3
-	
-	#define TRUE                     1
-	#define FALSE                    0
-	
-	#define ARRAY_UPPERBOUND(array)  ((sizeof(array) / sizeof(array[0])) - 1)
-	
-	#define MACROS                   do
-	#define MACROE                   while (0)
-		
-	#define CRASHPROGRAM(errtxt)     MACROS{ CrashProgramErrorPtr = errtxt; JMP(MAIN_CrashProgram); }MACROE
-
-	#define SLEEP()                  MACROS{ asm volatile ("sleep" ::); }MACROE
-	#define JMP(addr)                MACROS{ asm volatile ("jmp " #addr ::); }MACROE
 	
 	// PROTOTYPES:
 	void MAIN_ResetCSLine(const uint8_t ActiveInactive);
@@ -107,7 +72,6 @@
 	
 	void MAIN_Delay10MS(uint8_t loops);
 	void MAIN_Delay1MS(uint8_t loops);
-	void MAIN_CrashProgram(void) __attribute__((noreturn));
 	
 	void FUNCChangeSettings(void);
 	void FUNCShowAbout(void);

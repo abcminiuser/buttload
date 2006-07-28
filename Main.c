@@ -143,7 +143,8 @@ BUTTLOADTAG(Copyright, "<C> 2006 - GPL");
   #define DEBUGABOUT
 #endif
 
-const uint8_t*   AboutTextPtrs[]         PROGMEM = {BUTTTAG_Title.TagData, BUTTTAG_Version.TagData, BUTTTAG_Author.TagData, BUTTTAG_Copyright.TagData    DEBUGABOUT};
+const uint8_t*   AboutTextPtrs[]         PROGMEM = {BUTTTAG_Title.TagData, BUTTTAG_Version.TagData, BUTTTAG_Author.TagData, BUTTTAG_Copyright.TagData
+                                                    DEBUGABOUT};
 
 const uint8_t    WaitText[]              PROGMEM = "*WAIT*";
 
@@ -186,9 +187,6 @@ const uint8_t    SIFONames[2][15]                  PROGMEM = {"STORAGE SIZES", "
 
 // GLOBAL EEPROM VARIABLE STRUCT:
 EEPROMVarsType EEPROMVars EEMEM;
-
-// GLOBAL VARIABLES:
-uint8_t* CrashProgramErrorPtr;
 
 // ======================================================================================
 
@@ -301,7 +299,7 @@ void MAIN_ResetCSLine(const uint8_t ActiveInactive)
 			if (eeprom_read_byte(&EEPROMVars.ResetPolarity)) // Translate to correct active logic level for target device type
 			  PORTF &= ~(1 << 6);
 			else
-			  PORTF |= (1 << 6);
+			  PORTF |=  (1 << 6);
 		
 			break;
 		case MAIN_RESETCS_EXTDFACTIVE:           // Dataflashes are always active low.
@@ -318,7 +316,7 @@ void MAIN_ResetCSLine(const uint8_t ActiveInactive)
 			else                                 // ACTIVE mode reset
 			{
 				if (eeprom_read_byte(&EEPROMVars.ResetPolarity)) // Translate to correct inactive logic level for target device type
-				  PORTF |= (1 << 6);
+				  PORTF |=  (1 << 6);
 				else
 				  PORTF &= ~(1 << 6);			
 			}
@@ -398,26 +396,6 @@ void MAIN_ShowError(const uint8_t *pFlashStr)
 	MAIN_WaitForJoyRelease();
 }
 
-void MAIN_CrashProgram(void)
-{
-	// Turn off active subsystems:
-	SPI_SPIOFF();
-	USI_SPIOff();
-	TIMEOUT_PACKET_TIMER_OFF();
-	TIMEOUT_SLEEP_TIMER_OFF();
-	USART_OFF();
-
-	LCD_puts_f(CrashProgramErrorPtr);
-	
-	MAIN_SETSTATUSLED(MAIN_STATLED_RED);	
-
-	for (;;)
-	{
-		MAIN_Delay10MS(50);
-		PORTF ^= MAIN_STATLED_RED;               // Loop forever, blinking the status LED from off to red and back
-	}
-}
-
 // ======================================================================================
 
 ISR(PCINT1_vect, ISR_NOBLOCK)                    // Joystick routine; PCINT0_vect is bound to this also via JoystickInterrupt.S
@@ -430,7 +408,15 @@ ISR(PCINT1_vect, ISR_NOBLOCK)                    // Joystick routine; PCINT0_vec
 
 ISR(BADISR_vect, ISR_NAKED)                      // Bad ISR routine; should never be called, here for safety
 {
-	CRASHPROGRAM(PSTR("BADISR"));
+	SPI_SPIOFF();
+	USI_SPIOff();
+	USART_OFF();
+	TIMEOUT_PACKET_TIMER_OFF();
+	TIMEOUT_SLEEP_TIMER_OFF();
+
+	LCD_puts_f(PSTR("BADISR"));
+	
+	MAIN_SETSTATUSLED(MAIN_STATLED_RED);	
 }
 
 // ======================================================================================
@@ -910,7 +896,7 @@ void FUNCSetAutoSleepTimeOut(void)
 void FUNCSleepMode(void)
 {
 	SMCR    = ((1 << SM1) | (1 << SE));          // Power down sleep mode
-	LCDCRA &= ~(1 << LCDEN); 
+	LCDCRA &= ~(1 << LCDEN);                     // Turn off LCD driver while sleeping
 	
 	MAIN_SETSTATUSLED(MAIN_STATLED_OFF);         // Save battery power - turn off status LED
 
@@ -919,7 +905,7 @@ void FUNCSleepMode(void)
 	   
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Turn status LED back on
 
-	LCDCRA |= (1 << LCDEN);
+	LCDCRA |= (1 << LCDEN);                      // Re-enable LCD driver
 	
 	MAIN_WaitForJoyRelease();
 }

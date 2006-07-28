@@ -7,10 +7,10 @@
 
 #ifndef PROGDATAFLASH_H
 #define PROGDATAFLASH_H
+
 	// INCLUDES:
 	#include <avr/io.h>
 	
-	#include "Main.h"
 	#include "V2Protocol.h"
 	#include "Dataflash.h"
 	#include "AVRISPCommandBytes.h"
@@ -22,4 +22,5 @@
 	void PD_InterpretAVRISPPacket(void);
 	void PD_SetupDFAddressCounters(void);
 	void PD_StoreDataflashByte(const uint8_t Data);
+	
 #endif

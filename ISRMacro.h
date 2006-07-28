@@ -23,6 +23,7 @@
 
 #ifndef ISRMACRO_H
 #define ISRMACRO_H
+
 	// If present, kill the current ISR macro:
 	#ifdef ISR
 	   #undef ISR
@@ -46,4 +47,5 @@
 	#define ISR(vector, attributes)  \
 	 void vector (void) attributes; \
 	 void vector (void)
+	 
 #endif

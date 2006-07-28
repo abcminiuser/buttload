@@ -24,7 +24,7 @@
 	#include <avr/io.h>
 	#include <avr/interrupt.h>
 	
-	#include "Main.h"
+	#include "LCD_Driver.h"
 	#include "RingBuff.h"
 	#include "Timeout.h"
 	

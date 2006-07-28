@@ -71,8 +71,8 @@ void OSCCAL_Calibrate(void)
 		// it will cause the OSCCAL to hover around the closest two values.
 		// If the current value is the same as two loops previous, exit the
 		// routine as the best value has been found.
-		if (OSCCAL == PrevOSCALValues[1])
-		  break;
+//		if (OSCCAL == PrevOSCALValues[1])
+//		  break;
 	}
 
 	// Disable all timer interrupts

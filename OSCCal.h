@@ -7,16 +7,18 @@
 
 #ifndef OSCCAL_H
 #define OSCCAL_H
-	// DEFINES:
-	#define OSCCAL_TARGETCOUNT         (uint16_t)(7372800UL / 128) // (Target Freq / Reference Freq)
-	
+
 	// INCLUDES:
 	#include <avr/io.h>
 	#include <avr/interrupt.h>
-	
-	#include "Main.h"
+	#include <util/delay.h>
+
 	#include "ISRMacro.h"
+
+	// DEFINES:
+	#define OSCCAL_TARGETCOUNT         (uint16_t)(F_CPU / 128) // (Target Freq / Reference Freq)	
 	
 	// PROTOTYPES:
 	void OSCCAL_Calibrate(void);
+	
 #endif

@@ -7,10 +7,12 @@
 
 #ifndef SPI_H
 #define SPI_H
+
 	// INCLUDES:
 	#include <avr/io.h>
 	
-	#include "V2Protocol.h"
+	#include "GlobalMacros.h"
+	#include "Main.h"
 	
 	// MACROS:
 	#define SPI_SPIOFF()	     MACROS{ PRR |= (1 << PRSPI); }MACROE
@@ -19,4 +21,5 @@
 	void    SPI_SPIInit(void);
 	uint8_t SPI_SPITransmit(const uint8_t Data);
 	uint8_t SPI_SPITransmitWord(const uint16_t Data);
+	
 #endif

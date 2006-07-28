@@ -47,7 +47,7 @@ void AICI_InterpretPacket(void)
 			MessageSize = 2;
 			
 			for (uint8_t PacketB = 3; PacketB <= 6; PacketB++) // Send the erase commands to the slave AVR
-				USI_SPITransmit(PacketBytes[PacketB]);
+			  USI_SPITransmit(PacketBytes[PacketB]);
 
 			if (PacketBytes[2])                       // Poll mode, value of 1 indicates a busy flag wait
 			{
@@ -81,7 +81,7 @@ void AICI_InterpretPacket(void)
 					   PacketBytes[2 + RxByteNum++] = RecievedByte;
 				}
 
-				while (RxByteNum++ < RxBytes)                         // Still more bytes to recieve
+				while (RxByteNum++ < RxBytes)                          // Still more bytes to recieve
 				   PacketBytes[2 + RxByteNum] = USI_SPITransmit(0x00); // its answer to be recorded (or more bytes than sent need responses), send dummy bytes to fetch the response(s)
 
 				PacketBytes[1]             = AICB_STATUS_CMD_OK; // Data should be encompassed
@@ -111,7 +111,7 @@ void AICI_InterpretPacket(void)
 			MessageSize = 3;
 			
 			for (uint8_t PacketB = 1; PacketB <= 4; PacketB++) // Send the lock-byte values to the slave AVR
-				USI_SPITransmit(PacketBytes[PacketB]);
+			  USI_SPITransmit(PacketBytes[PacketB]);
 
 			PacketBytes[1] = AICB_STATUS_CMD_OK;       // Two CMD_OKs are always returned
 			PacketBytes[2] = AICB_STATUS_CMD_OK;       // Two CMD_OKs are always returned

@@ -7,20 +7,20 @@
 
 #ifndef V2PROTOCOL_H
 #define V2PROTOCOL_H
+
 	// INCLUDES:
 	#include <avr/io.h>
 	#include <avr/pgmspace.h>
 	#include <util/delay.h>
 	
-	#include "Main.h"
+	#include "AVRISPCommandBytes.h"
+	#include "AVRISPCommandInterpreter.h"
 	#include "LCD_Driver.h"
 	#include "Timeout.h"
 	#include "USART.h"
 	#include "EEPROMVariables.h"
-	#include "AVRISPCommandBytes.h"
-	#include "AVRISPCommandInterpreter.h"
 	#include "ProgramManager.h"
-	
+
 	// TYPE DEFINITIONS:
 	typedef void (*FuncPtr)(void);
 	
@@ -63,4 +63,5 @@
 	void    V2P_GetSetParamater(void);
 	void    V2P_IncrementCurrAddress(void);
 	void    V2P_CheckForExtendedAddress(void);
+	
 #endif

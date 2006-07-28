@@ -9,6 +9,7 @@
 
 #ifndef DFCB_H
 #define DFCB_H
+
 	// DATAFLASH OPCODES:
 	#define DFCB_FLASHPAGEREAD       0x52  // Main memory page read
 	#define DFCB_FLASHTOBUF1TRANSFER 0x53  // Main memory page to buffer 1 transfer
@@ -31,4 +32,5 @@
 	#define DFCB_BUF2WRITE           0x87  // Buffer 2 write
 	#define DFCB_BUF1TOFLASH         0x88  // Buffer 1 to main memory page program without built-in erase
 	#define DFCB_BUF2TOFLASH         0x89  // Buffer 2 to main memory page program without built-in erase
+
 #endif

@@ -7,6 +7,7 @@
 
 #ifndef ISPCB_H
 #define ISPCB_H
+
 	// DEFINES:
 	#define AICB_MESSAGE_START             0x1B
 	#define AICB_TOKEN                     0x0E
@@ -52,4 +53,5 @@
 	#define AICB_STATUS_CMD_UNKNOWN        0xC9
 	#define AICB_STATUS_CMD_TOUT           0x80
 	#define AICB_STATUS_CKSUM_ERROR        0xC1
+	
 #endif

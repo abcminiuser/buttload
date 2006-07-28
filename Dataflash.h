@@ -7,10 +7,12 @@
 
 #ifndef DATAFLASH_H
 #define DATAFLASH_H
+
 	// INCLUDES:
 	#include <avr/io.h>
+	#include <avr/pgmspace.h>
 	
-	#include "Main.h"
+	#include "SPI.h"
 	#include "DataflashCommandBytes.h"
 	
 	// TYPE DEFINITIONS:
@@ -54,4 +56,5 @@
 	void    DF_BufferWriteEnable(const uint16_t BuffAddress);
 	void    DF_EraseBlock(const uint16_t BlockToErase);
 	void    DF_EnableDataflash(const uint8_t Enabled);
+	
 #endif

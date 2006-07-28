@@ -7,6 +7,7 @@
 
 #ifndef EEVARS_H
 #define EEVARS_H
+
 	// INCLUDES:
 	#include <avr/eeprom.h>
 	
@@ -40,4 +41,5 @@
 		uint8_t  JUNKVAR2;          // Unused location to guard against EEPROM corruption - this is mainly a
 		                            // problem because the Butterflies come shipped with the BOD fuse unprogrammed
 	} EEPROMVarsType;
+	
 #endif

@@ -7,16 +7,16 @@
 
 #ifndef ISPCHIPCOMM_H
 #define ISPCHIPCOMM_H
+
 	// INCLUDES:
 	#include <avr/io.h>
 	#include <avr/pgmspace.h>
 	#include <util/delay.h>
 	
+	#include "AVRISPCommandBytes.h"
 	#include "Main.h"
 	#include "LCD_Driver.h"
-	#include "SPI.h"
 	#include "USI.h"
-	#include "AVRISPCommandBytes.h"
 	
 	// MACROS AND DEFINES:
 	#define ISPCC_PROG_MODE_PAGE              0x01
@@ -56,4 +56,5 @@
 	void   ISPCC_EnterChipProgrammingMode(void);
 	void   ISPCC_ProgramChip(void);
 	void   ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr);
+
 #endif

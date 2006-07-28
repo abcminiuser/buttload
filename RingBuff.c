@@ -37,9 +37,6 @@ void BUFF_InitialiseBuffer(void)
 
 uint8_t BUFF_GetBuffByte(void)
 {
-	if (!(BuffElements))                   // No elements in the buffer
-	  CRASHPROGRAM(PSTR("BUFF UNF"));
-
 	uint8_t RetrievedData = RingBuffer[OutPos]; // Grab the stored byte into a temp variable
 	BuffElements--;                        // Decrement the total elements variable
 	

@@ -9,10 +9,13 @@
 		/* Includes */
 		#include <avr/io.h>
 		#include <avr/interrupt.h>
+		#include <avr/pgmspace.h>
 		#include <util/delay.h>
 		
-		#include "Main.h"
+		#include "GlobalMacros.h"
 		#include "AVRISPCommandBytes.h"
+		#include "ISRMacro.h"
+		#include "Main.h"
 		
 		/* USI port and pin definitions. */
 		#define USI_OUT_REG	           PORTE   //!< USI port output register.

@@ -16,6 +16,7 @@
 
 #ifndef BLTAG_H
 #define BLTAG_H
+
 	// INCLUDES:
 	#include <avr/io.h>
 	#include <avr/pgmspace.h>
@@ -30,4 +31,5 @@
 	// DEFINES:
 	#define BT_TAGHEADER          {'@','(','#',')'}
 	#define BUTTLOADTAG(id, data) const struct ButtLoadData BUTTTAG_##id PROGMEM = {BT_TAGHEADER, data}
+
 #endif

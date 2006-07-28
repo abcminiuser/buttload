@@ -7,11 +7,11 @@
 
 #ifndef PGMMGR_H
 #define PGMMGR_H
+
 	// INCLUDES:
 	#include <avr/io.h>
 	#include <stdlib.h>
 	
-	#include "Main.h"
 	#include "Dataflash.h"
 	#include "AVRISPCommandBytes.h"
 	#include "EEPROMVariables.h"
@@ -43,4 +43,5 @@
 	void     PM_SendEraseCommand(void);
 	void     PM_CreateProgrammingPackets(const uint8_t Type);
 	void     PM_ShowStoredItemSizes(void);
+	
 #endif

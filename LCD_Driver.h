@@ -12,7 +12,8 @@
 	#include <avr/pgmspace.h>
 	#include <avr/interrupt.h>
 	
-	#include "Main.h"
+	#include "ISRMacro.h"
+	#include "GlobalMacros.h"
 	
 	// DEFINES:
 	#define pLCDREG                   ((uint8_t*)&LCDDR0)

@@ -1,12 +1,12 @@
 Current Version: Public Release 1.4
 
-***** TODO *****
-WISHLIST - Add in some sort of progressbar in PROGRAM AVR mode - upper LCD number segments?
-WISHLIST - Add in non-consecutive HEX support (in 1.5, leave for 1.4)
-BUG      - Problems in PROGRAM AVR mode (flash/eeprom programming fails, instability)
-BUG      - Serial connection instability
-****************
-
+	PENDING CHANGES:
+	=======================================
+	  WISHLIST - Add in some sort of progressbar in PROGRAM AVR mode - upper LCD number segments?
+	  WISHLIST - Add in non-consecutive HEX support (in 1.5, leave for 1.4)
+	  WISHLIST - Add in Quantum Flux Capactor support
+	  BUG      - Problems in PROGRAM AVR mode (flash/eeprom programming fails, instability)
+	  BUG      - Serial connection instability
 
 	IN PUBLIC RELEASE 1.4:
 	=======================================
@@ -37,7 +37,6 @@ BUG      - Serial connection instability
 	  * Status LED is now turned off while in sleep mode to conserve power
 	  * RingBuffer code changed to use uint8_t indexes rather than pointers
 	  * Added in RESET MODE settings option
-	  * Added in serial reception errors, added in a crash routine for fatal errors
 	  * SPI speed massivly reduced to prevent noise errors - this has no impact on storage time since it is the write delay that takes the longest time
 	  * Fixed STORAGE MODE erase command saving routine
 	  * LCD Driver now uses a forced inlined LCD_WriteChar routine (only called once) to allow for better optimisation

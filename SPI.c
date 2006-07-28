@@ -20,7 +20,7 @@ void SPI_SPIInit(void)
 uint8_t SPI_SPITransmit(const uint8_t Data)
 {
 	SPDR = Data;                       // Loading a byte into the register starts the transmission
-	while (!(SPSR & (1 << SPIF)));    // Wait until transmission completed
+	while (!(SPSR & (1 << SPIF)));     // Wait until transmission completed
 	return SPDR;
 }
 
