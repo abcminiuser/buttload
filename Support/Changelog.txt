@@ -23,7 +23,6 @@ Current Version: Public Release 1.4
 	  * Added auto-powerdown with user settable timeout
 	  * Correct command timeout error is now returned via the packet state machine instead of a command error
 	  * Dataflash routines now make local copies of the SPI send routine pointer to save codespace and time
-	  * Fixed default USI speed of 210651Hz showing as 57153Hz in SET SPI SPEED function
 	  * EEPROM erasing changed so that only the used memory locations are cleared to minimise wear
 	  * Added a ARRAY_UPPERBOUND macro to provide automatic code adjustment to increased array sizes
 	  * Fixed include files capitolisation so that ButtLoad can be compiled on Unix systems (thanks to Bernd Trog)
@@ -48,6 +47,7 @@ Current Version: Public Release 1.4
 	  * TagManager now uses a single uint32_t variable to decrease code size and tag scanning time
 	  * Size and speed over portability chosen for the loading of CurrAddress from the new address in the V2P_RunStateMachine recieved packet
 	  * System clock prescaling removed; buggy and wouldn't reduce power consumption anyway
+	  * USI transfer routine re-written in ASM for maximum transfer speed
 
 	IN PUBLIC RELEASE 1.3:
 	=======================================

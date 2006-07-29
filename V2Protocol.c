@@ -258,12 +258,14 @@ void V2P_GetSetParamater(void)
 			if (PacketBytes[0] == AICB_CMD_GET_PARAMETER)
 			{
 				PacketBytes[2] = eeprom_read_byte(&EEPROMVars.SCKDuration);
+				if (PacketBytes[2] > USI_PRESET_SPEEDS)
+				  PacketBytes[2] = 0;
 			}
 			else
 			{
 				MessageSize = 2;
 				eeprom_write_byte(&EEPROMVars.SCKDuration, PacketBytes[2]);
-				USI_SPISetSpeed();          // Re-Initialise the USI system with the new frequency
+				USI_SPIInitMaster();          // Re-Initialise the USI system with the new frequency
 			}
 					
 			break;

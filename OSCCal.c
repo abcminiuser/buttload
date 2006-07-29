@@ -19,7 +19,6 @@ volatile uint16_t ActualCount = 0;
 void OSCCAL_Calibrate(void)
 {
 	uint8_t LoopCount = (0x7F / 2); // Maximum range is 128, and starts from the middle, so 64 is the max number of iterations required
-	uint8_t PrevOSCALValues[2] = {0,0};
    
 	// Reset ActualCount
 	ActualCount = 0;
@@ -44,9 +43,6 @@ void OSCCAL_Calibrate(void)
 	TCCR1B = (1 << CS10);
 	TCCR2A = (1 << CS20);
 	 	 
-	// Previous OSCCAL value of 0
-	PrevOSCALValues[0] = 0;
-
 	// Wait until timer 2's external 32.768KHz crystal is stable
 	while (ASSR & ((1 << TCN2UB) | (1 << TCR2UB) | (1 << OCR2UB)));
     
@@ -58,21 +54,11 @@ void OSCCAL_Calibrate(void)
 	{
 		// Let it take a few readings (14ms, approx 3 readings)
 		_delay_ms(14);
-
-		PrevOSCALValues[1] = PrevOSCALValues[0];
-		PrevOSCALValues[0] = OSCCAL;
         
 		if (ActualCount > OSCCAL_TARGETCOUNT)      // Clock is running too fast
 		  OSCCAL--;
 		else if (ActualCount < OSCCAL_TARGETCOUNT) // Clock is running too slow
 		  OSCCAL++;
-		
-		// When the routine finds the closest value for the given target count,
-		// it will cause the OSCCAL to hover around the closest two values.
-		// If the current value is the same as two loops previous, exit the
-		// routine as the best value has been found.
-//		if (OSCCAL == PrevOSCALValues[1])
-//		  break;
 	}
 
 	// Disable all timer interrupts

@@ -49,8 +49,9 @@
 	extern const uint8_t WaitText[];
 	extern const uint8_t VersionInfo[];
 	
+	extern volatile uint8_t JoyStatus;
+
 	extern EEPROMVarsType EEPROMVars EEMEM;
-	#define JoyStatus GPIOR0 // Pseudo-variable; "JoyStatus" becomes an alias for the General Purpose IO Storage Register 0
 	
 	// DEFINES AND MACROS:
 	#define MAIN_SETSTATUSLED(mask)  MACROS{ PORTF = ((PORTF & ~MAIN_STATLED_ORANGE) | (mask)); }MACROE

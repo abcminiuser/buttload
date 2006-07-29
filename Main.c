@@ -51,13 +51,11 @@
 /*
 	KNOWN ISSUES:
 
-		1) The maximum speed of ButtLoad's USI system in SPI mode is 210,651Hz.
-
-		2) A maximum of 10 fuse bytes and 10 lock bytes can be stored in memory at any one
+		1) A maximum of 10 fuse bytes and 10 lock bytes can be stored in memory at any one
 		   time (writing the same fuse overwrites the existing value). If it is attempted to
 		   write more than this maximum, the extra bytes will be ignored.
 
-		3) HEX files containing addresses which are non-consecutive (eg. use of .ORG command
+		2) HEX files containing addresses which are non-consecutive (eg. use of .ORG command
 		   in assembler other than .ORG 0) cannot be stored into ButtLoad's non-volatile memory.
 		   Normal AVRISP mode is not affected by this issue.
 */
@@ -114,8 +112,8 @@
 		Timeout.c + Header file                  | By Dean Camera
 		USART.c + Header file                    | By Atmel, ported to GCC by Martin Thomas and
 		                                         | modified by Dean Camera
-		USI.c + Header file                      | By Atmel, ported to GCC and modified by Dean Camera
-		USIInterrupt.S                           | By Dean Camera
+		USI.c + Header file                      | By Dean Camera
+		USITransfer.S                            | By Dean Camera
 		V2Protocol.c + Header file               | By Dean Camera
 -------------------------------------------------+---------------------------------------------
 
@@ -181,9 +179,12 @@ const uint8_t    PRG_C[]                 PROGMEM = "ERASE ONLY";
 
 const uint8_t*   ProgOptions[]           PROGMEM = {PRG_A, PRG_D, PRG_E, PRG_DE, PRG_F, PRG_L, PRG_FL, PRG_C};
 
-const uint8_t    USISpeeds[USI_PRESET_SPEEDS][10]  PROGMEM = {" 57153 HZ", " 86738 HZ", "113427 HZ", "210651 HZ"};
+const uint8_t    USISpeeds[USI_PRESET_SPEEDS][10]  PROGMEM = {"921600 HZ", "230400 HZ", " 57600 HZ", " 28800 HZ"};
 const uint8_t    SPIResetModes[2][6]               PROGMEM = {"LOGIC", "FLOAT"};
 const uint8_t    SIFONames[2][15]                  PROGMEM = {"STORAGE SIZES", "VIEW DATA TAGS"};
+
+// GLOBAL VARIABLES:
+volatile uint8_t JoyStatus;
 
 // GLOBAL EEPROM VARIABLE STRUCT:
 EEPROMVarsType EEPROMVars EEMEM;
@@ -215,7 +216,7 @@ int main(void)
 
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);      // Set status LEDs to orange (busy)
 	MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE);     // Set target reset line to inactive
-	
+
 	LCD_Init();
 	LCD_CONTRAST_LEVEL(0x0F);
 	LCD_puts_f(WaitText);
@@ -748,7 +749,7 @@ void FUNCSetISPSpeed(void)
 	uint8_t CurrSpeed = eeprom_read_byte(&EEPROMVars.SCKDuration);
 
 	if (CurrSpeed > ARRAY_UPPERBOUND(USISpeeds))
-	  CurrSpeed = ARRAY_UPPERBOUND(USISpeeds);   // Protection against blank EEPROM
+	  CurrSpeed = 0;                             // Protection against blank EEPROM
 
 	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
 	                                             // name of the default command onto the LCD
@@ -838,7 +839,7 @@ void FUNCSetFirmMinorVer(void)
 				return;
 			}
 			
-			VerBuffer[3] = ('0' + VerMinor);
+			VerBuffer[3] = '0' + VerMinor;
 			LCD_puts(VerBuffer);
 
 			MAIN_WaitForJoyRelease();
@@ -895,16 +896,15 @@ void FUNCSetAutoSleepTimeOut(void)
 
 void FUNCSleepMode(void)
 {
-	SMCR    = ((1 << SM1) | (1 << SE));          // Power down sleep mode
 	LCDCRA &= ~(1 << LCDEN);                     // Turn off LCD driver while sleeping
-	
 	MAIN_SETSTATUSLED(MAIN_STATLED_OFF);         // Save battery power - turn off status LED
+
+	SMCR    = ((1 << SM1) | (1 << SE));          // Power down sleep mode
 
 	while (!(JoyStatus & JOY_UP))                // Joystick interrupt wakes the micro
 	  SLEEP();
 	   
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Turn status LED back on
-
 	LCDCRA |= (1 << LCDEN);                      // Re-enable LCD driver
 	
 	MAIN_WaitForJoyRelease();
