@@ -105,7 +105,7 @@
 		JoystickInterrupt.S                      | By Dean Camera
 		LCD_Driver.c + Header file               | By Dean Camera
 		Main.c + Header file                     | By Dean Camera
-		OSCCal.c + Header file                   | By Colin Oflynn, modified by Dean Camera
+		OSCCal.c + Header file                   | By Dean Camera, based on sample code by Colin Oflynn
 		ProgramManager.c + Header file           | By Dean Camera
 		RingBuff.c + Header file                 | By Dean Camera
 		SPI.c + Header file                      | By Dean Camera
@@ -113,7 +113,7 @@
 		USART.c + Header file                    | By Atmel, ported to GCC by Martin Thomas and
 		                                         | modified by Dean Camera
 		USI.c + Header file                      | By Dean Camera
-		USITransfer.S                            | By Dean Camera
+		USITransfer.S                            | By Dean Camera with assistance from John Samperi 
 		V2Protocol.c + Header file               | By Dean Camera
 -------------------------------------------------+---------------------------------------------
 
@@ -485,7 +485,7 @@ void FUNCProgramDataflash(void)
 {
 	USI_SPIInitMaster();
 	DataflashInfo.UseExernalDF = TRUE;
-	DFSPIRoutinePointer = USI_SPITransmit;
+	DataflashInfo.DFSPIRoutinePointer = USI_SPITransmit;
 	
 	USART_Init();
 	LCD_puts_f(DataFlashProgMode);
@@ -526,9 +526,9 @@ void FUNCProgramAVR(void)
 	}
 
 	LCD_puts_f(WaitText);
-	DFSPIRoutinePointer = (SPIFuncPtr)SPI_SPITransmit;
 	SPI_SPIInit();
 	DataflashInfo.UseExernalDF = FALSE;
+	DataflashInfo.DFSPIRoutinePointer = SPI_SPITransmit;
 	
 	if (!(DF_CheckCorrectOnboardChip()))
 	  return;
@@ -655,9 +655,9 @@ void FUNCProgramAVR(void)
 
 void FUNCStoreProgram(void)
 {
-	DFSPIRoutinePointer = (SPIFuncPtr)SPI_SPITransmit;
 	SPI_SPIInit();
 	DataflashInfo.UseExernalDF = FALSE;
+	DataflashInfo.DFSPIRoutinePointer = SPI_SPITransmit;
 	DF_EnableDataflash(TRUE);
 
 	if (!(DF_CheckCorrectOnboardChip()))
@@ -934,9 +934,9 @@ void FUNCStorageInfo(void)
 			{
 				if (SelectedItem == 1)           // View storage tags
 				{
-					DFSPIRoutinePointer = (SPIFuncPtr)SPI_SPITransmit;
 					SPI_SPIInit();
 					DataflashInfo.UseExernalDF = FALSE;
+					DataflashInfo.DFSPIRoutinePointer = (SPIFuncPtr)SPI_SPITransmit;
 					DF_EnableDataflash(TRUE);
 
 					if (!(PM_GetStoredDataSize(TYPE_FLASH)))

@@ -22,7 +22,6 @@
 	
 	// INCLUDES:
 	#include <avr/io.h>
-	#include <avr/interrupt.h>
 	
 	#include "LCD_Driver.h"
 	#include "RingBuff.h"

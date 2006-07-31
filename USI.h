@@ -8,13 +8,16 @@
 #ifndef USI_H
 	#define USI_H
 	
+	// INCLUDES:
+	#include <avr/io.h>
+
+	// DEFINES:
 	#define USIDelay              GPIOR0 // Psudo-variable, GPIO register for speed
-	#define USI_CONTROL_REG_FLAGS ((1 << USIWM0) | (1 << USICS0) | (1 << USITC))
+	#define USICONTROLREGS        ((1 << USIWM0) | (1 << USICS0) | (1 << USITC))
 
 	#ifndef __ASSEMBLER__
 	
 		// INCLUDES:
-		#include <avr/io.h>
 		#include <avr/interrupt.h>
 		#include <avr/pgmspace.h>
 		#include <util/delay.h>

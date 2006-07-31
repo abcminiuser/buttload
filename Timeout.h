@@ -21,8 +21,8 @@
 	#define TIMEOUT_PACKET_TIMER_OFF()    MACROS{ TCCR2A = 0; TIMSK2 = 0; }MACROE
 	#define TIMEOUT_PACKET_TIMER_ON()     MACROS{ PacketTimeOut = FALSE;  \
 												  PacketTimeOutTicks = 0; \
-												  TCNT2 = 0;              \
-												  OCR2A = 240;            \
+												  TCNT2  = 0;             \
+												  OCR2A  = 240;           \
 												  TIMSK2 = (1 << OCIE2A); \
 												  TCCR2A = ((1 << WGM21) | (1 << CS22) | (1 << CS21) | (1 << CS20)); }MACROE
 	

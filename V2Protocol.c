@@ -23,8 +23,8 @@ uint8_t  Param_ControllerInit           = 0; // This is set to zero on reset, an
 
 void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 {
-	uint8_t  V2PState               = V2P_STATE_IDLE;
-	uint16_t CurrentMessageByte     = 0;
+	uint8_t  V2PState           = V2P_STATE_IDLE;
+	uint16_t CurrentMessageByte = 0;
 
 	BUFF_InitialiseBuffer();	
 	TIMEOUT_SLEEP_TIMER_OFF();

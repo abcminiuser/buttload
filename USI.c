@@ -15,7 +15,7 @@ void USI_SPIInitMaster()
 	PORTE &= ~(1 << USI_DATAOUT_PIN) | (1 << USI_CLOCK_PIN);
 	
 	// Configure USI to 3-wire master mode:
-	USICR = USI_CONTROL_REG_FLAGS;
+	USICR = (1 << USIWM0);
 
 	// Get the clock delay value:
 	USIDelay = eeprom_read_byte(&EEPROMVars.SCKDuration);
@@ -33,8 +33,7 @@ void USI_SPIOff(void)
 void USI_SPIToggleClock(void)
 {
 	MAIN_Delay1MS(1);
-	USICR = (USI_CONTROL_REG_FLAGS);
-	USICR = (USI_CONTROL_REG_FLAGS | (1 << USICLK));
+	USICR = ((1 << USIWM0) | (1 << USICS1) | (1 << USICLK));
 	MAIN_Delay1MS(1);	
 }
 
