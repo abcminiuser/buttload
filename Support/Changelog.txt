@@ -6,7 +6,6 @@ Current Version: Public Release 1.4
 	  WISHLIST - Add in non-consecutive HEX support (in 1.5, leave for 1.4)
 	  WISHLIST - Add in Quantum Flux Capactor support
 	  BUG      - Problems in PROGRAM AVR mode (flash/eeprom programming fails, instability)
-	  BUG      - Serial connection instability
 
 	IN PUBLIC RELEASE 1.4:
 	=======================================
@@ -15,7 +14,7 @@ Current Version: Public Release 1.4
 	  * Removed unused USART_TxString function
 	  * EEPROM handling changed over to the (now M169 compatible) AVRLibC routines
 	  * USART Rx interrupt moved to RingBuff.c and changed to the contents of the ringbuffer store routine for size/speed
-	  * Fixed a few more dataflash glitches
+	  * Fixed a few more dataflash programming-related glitches
 	  * Moved the timeout setup function code to the TIMEOUT_TIMER_ON() macro
 	  * Timeout system now uses Timer2, freeing up Timer1 for auto sleep
 	  * Function parameters changed to const (where possible) for robustness
@@ -27,7 +26,6 @@ Current Version: Public Release 1.4
 	  * Added a ARRAY_UPPERBOUND macro to provide automatic code adjustment to increased array sizes
 	  * Fixed include files capitolisation so that ButtLoad can be compiled on Unix systems (thanks to Bernd Trog)
 	  * Added extra ISR attributes for smaller codesize/deletion protection on GCC4.x (also thanks to Bernd Trog)
-	  * Simplified OSCCAL calibration code a little more
 	  * Status LED now turns orange while a target sync is attempted
 	  * Timeout before checksum check no longer returns a bad checksum error
 	  * Added an "PRGM ALL" option for PROGRAM AVR mode

@@ -28,7 +28,7 @@ const uint16_t DF_Pages[]      PROGMEM = {  256,  512, 1024, 2048, 4096, 4096, 8
 
 const uint8_t DataFlashError[] PROGMEM = "DATAFLASH ERROR";
 
-DFinfo     DataflashInfo       = {0,0,0,0,0,0,SPI_SPITransmit};
+DFinfo     DataflashInfo               = {0,0,0,0,0,0,SPI_SPITransmit};
 
 // ======================================================================================
 

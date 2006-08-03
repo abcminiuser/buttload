@@ -21,8 +21,10 @@ ISR(USART0_RX_vect, ISR_BLOCK)
 	RingBuffer[InPos] = UDR;               // Store the data
 	BuffElements++;                        // Increment the total elements variable
 
-	if (InPos++ == BUFF_BUFFLEN)
-	  InPos = 0;                           // Increment and wrap counter if end of array reached
+	InPos++;
+
+	if (InPos == BUFF_BUFFLEN)             // Wrap counter if end of array reached
+	  InPos = 0;
 }	
 
 // ======================================================================================
@@ -40,7 +42,9 @@ uint8_t BUFF_GetBuffByte(void)
 	uint8_t RetrievedData = RingBuffer[OutPos]; // Grab the stored byte into a temp variable
 	BuffElements--;                        // Decrement the total elements variable
 	
-	if (OutPos++ == BUFF_BUFFLEN)          // Increment and wrap pointer if end of array reached
+	OutPos++;
+	
+	if (OutPos == BUFF_BUFFLEN)            // Increment and wrap pointer if end of array reached
 	  OutPos = 0;
 		
 	return RetrievedData;                  // Return the retrieved data
