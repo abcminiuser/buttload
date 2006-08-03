@@ -111,7 +111,6 @@ void PD_InterpretAVRISPPacket(void)
 			for (uint16_t WriteByte = 0; WriteByte < BytesToWrite; WriteByte++)
 			{
 				PD_StoreDataflashByte(PacketBytes[10 + WriteByte]);
-				DataflashInfo.CurrBuffByte++;
 				V2P_IncrementCurrAddress();
 			}
 

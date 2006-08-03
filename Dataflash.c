@@ -59,7 +59,7 @@ void DF_GetChipCharacteristics(void)
 	
 	DF_SENDSPIBYTE(DFCB_STATUSREG);               // Send the get status register command
 	
-	DataIndex  = ((DF_SENDSPIBYTE(0x00) & 0x38) >> 3); // Bits 3, 4 and 5 contain the lookup table index
+	DataIndex     = ((DF_SENDSPIBYTE(0x00) & 0x38) >> 3); // Bits 3, 4 and 5 contain the lookup table index
 
 	DataflashInfo.PageBits   = pgm_read_byte(&DF_PageBits[DataIndex]);	// Get number of internal page address bits from look-up table
 	DataflashInfo.PageSize   = pgm_read_word(&DF_PageSize[DataIndex]);  // Get the size of the page (in bytes)

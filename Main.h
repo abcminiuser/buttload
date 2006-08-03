@@ -7,8 +7,9 @@
 
 #ifndef MAIN_H
 #define MAIN_H
+
 	// DEBUG SWITCH
-//	#define DEBUG
+	#define DEBUG
 	// END DEBUG SWITCH
 	
 	// INCLUDES:
@@ -40,7 +41,7 @@
 	#endif
 	
 	// DEBUG MODE CHECK:
-	#if defined(DEBUG)
+	#if defined(DEBUG) && defined(INC_FROM_MAIN)
 		#warning DEBUG mode is activated - JTAG system is enabled. Remove before releasing.
 	#endif
 	
@@ -88,4 +89,8 @@
 	void FUNCSleepMode(void);
 	void FUNCStorageInfo(void);
 	void FUNCGoBootloader(void) __attribute__((noreturn));
+	
+	#ifdef DEBUG
+	  void DFUNCManCalib(void);
+	#endif
 #endif

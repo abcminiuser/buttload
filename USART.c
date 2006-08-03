@@ -31,8 +31,11 @@ void USART_Init(void)
 {
 	// Calibrate the internal RC oscilator
 	LCD_puts_f(WaitText);
-	OSCCAL_Calibrate();
 
+	#ifndef DEBUG
+	  OSCCAL_Calibrate();
+	#endif
+	
     // Set baud rate
     UBRRH = (uint8_t)(USART_BAUDVALUE >> 8);
     UBRRL = (uint8_t)(USART_BAUDVALUE);

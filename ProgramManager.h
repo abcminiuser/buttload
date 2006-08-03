@@ -29,10 +29,6 @@
 	
 	#define PM_EEPROM_OFFSET       (1024UL * 257UL)
 	
-	// EXTERNAL VARIABLES:
-	extern uint8_t  MemoryType;
-	extern uint8_t  CurrentMode;
-	
 	// PROTOTYPES:
 	uint32_t PM_GetStoredDataSize(const uint8_t Type);
 	void     PM_SetupDFAddressCounters(const uint8_t Type);

@@ -126,6 +126,7 @@
 	original code for each file if you intend to use any of the 3rd party code in you own project.
 */
 
+#define INC_FROM_MAIN
 #include "Main.h"
 
 // PROGMEM CONSTANTS:
@@ -136,9 +137,16 @@ BUTTLOADTAG(Copyright, "<C> 2006 - GPL");
 
 #ifdef DEBUG
   BUTTLOADTAG(DebugMode, "DEBUG MODE ON");
-  #define DEBUGABOUT , BUTTTAG_DebugMode.TagData
+  
+  const uint8_t Func_ManualCalib[]       PROGMEM = "MAN OSCCAL SET";  
+  
+  #define DEBUGABOUT       , BUTTTAG_DebugMode.TagData
+  #define DEBUGFUNCTIONS   , Func_ManualCalib
+  #define DEBUGFUNCPTRS    , DFUNCManCalib
 #else
   #define DEBUGABOUT
+  #define DEBUGFUNCTIONS
+  #define DEBUGFUNCPTRS
 #endif
 
 const uint8_t*   AboutTextPtrs[]         PROGMEM = {BUTTTAG_Title.TagData, BUTTTAG_Version.TagData, BUTTTAG_Author.TagData, BUTTTAG_Copyright.TagData
@@ -154,8 +162,10 @@ const uint8_t    Func_PRGMSTOREINFO[]    PROGMEM = "DATASTORE INFO";
 const uint8_t    Func_SETTINGS[]         PROGMEM = "SETTINGS";
 const uint8_t    Func_SLEEP[]            PROGMEM = "SLEEP MODE";
 	
-const uint8_t*   MainFunctionNames[]     PROGMEM = {Func_ISPPRGM  , Func_STOREPRGM  , Func_PRGMAVR  , Func_PRGMDATAFLASH  , Func_PRGMSTOREINFO, Func_SETTINGS      , Func_SLEEP};
-const FuncPtr    MainFunctionPtrs[]      PROGMEM = {FUNCAVRISPMode, FUNCStoreProgram, FUNCProgramAVR, FUNCProgramDataflash, FUNCStorageInfo   , FUNCChangeSettings , FUNCSleepMode};
+const uint8_t*   MainFunctionNames[]     PROGMEM = {Func_ISPPRGM  , Func_STOREPRGM  , Func_PRGMAVR  , Func_PRGMDATAFLASH  , Func_PRGMSTOREINFO, Func_SETTINGS      , Func_SLEEP
+                                                    DEBUGFUNCTIONS};
+const FuncPtr    MainFunctionPtrs[]      PROGMEM = {FUNCAVRISPMode, FUNCStoreProgram, FUNCProgramAVR, FUNCProgramDataflash, FUNCStorageInfo   , FUNCChangeSettings , FUNCSleepMode
+                                                    DEBUGFUNCPTRS};
 
 const uint8_t    SFunc_SETCONTRAST[]     PROGMEM = "SET CONTRAST";
 const uint8_t    SFunc_SETSPISPEED[]     PROGMEM = "SET ISP SPEED";
@@ -217,16 +227,16 @@ int main(void)
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);      // Set status LEDs to orange (busy)
 	MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE);     // Set target reset line to inactive
 
+	sei();                                       // Enable interrupts
+
 	LCD_Init();
 	LCD_CONTRAST_LEVEL(0x0F);
 	LCD_puts_f(WaitText);
 
-	sei();                                       // Enable interrupts
-
 	if (eeprom_read_byte(&EEPROMVars.MagicNumber) != MAGIC_NUM) // Check if first ButtLoad run
 	{
 		for (uint16_t EAddr = 0; EAddr < sizeof(EEPROMVars); EAddr++) // Clear the EEPROM if first run
-		   eeprom_write_byte((uint8_t*)EAddr, 0xFF);
+		  eeprom_write_byte((uint8_t*)EAddr, 0xFF);
 
 		eeprom_write_byte(&EEPROMVars.MagicNumber, MAGIC_NUM);
 	}
@@ -303,7 +313,7 @@ void MAIN_ResetCSLine(const uint8_t ActiveInactive)
 			  PORTF |=  (1 << 6);
 		
 			break;
-		case MAIN_RESETCS_EXTDFACTIVE:           // Dataflashes are always active low.
+		case MAIN_RESETCS_EXTDFACTIVE:           // Dataflash chips are always active low.
 			DDRF  |=  (1 << 6);
 			PORTF &= ~(1 << 6);
 			
@@ -388,8 +398,8 @@ void MAIN_ShowError(const uint8_t *pFlashStr)
 	ErrorBuff[0] = 'E';
 	ErrorBuff[1] = '>';
 
-	strcpy_P(&ErrorBuff[2], pFlashStr);          // WARNING: If flash error text is larger than (TEXTBUFFER_SIZE - 1),
-	                                             // this will overflow the buffer and crash the program!
+	strcpy_P(&ErrorBuff[2], pFlashStr);          // WARNING: If flash error text is larger than (TEXTBUFFER_SIZE - 2),
+	                                             // this will overflow the buffer and crash the program.
 	LCD_puts(ErrorBuff);
 	
 	MAIN_WaitForJoyRelease();
@@ -962,9 +972,9 @@ void FUNCStorageInfo(void)
 
 void FUNCGoBootloader(void)
 {
-	uint8_t MD = (MCUCR & ~(1 << JTD));         // Forces compiler to use IN, AND plus two OUTs rather than two lots of IN/AND/OUTs
-	MCUCR = MD;                                 // Turn on JTAG via code
-	MCUCR = MD;                                 // Set bit twice as specified in datasheet        
+	volatile uint8_t MD = (MCUCR & ~(1 << JTD)); // Forces compiler to use IN, AND plus two OUTs rather than two lots of IN/AND/OUTs
+	MCUCR = MD;                                  // Turn on JTAG via code
+	MCUCR = MD;                                  // Set bit twice as specified in datasheet        
 
 	TIMEOUT_SLEEP_TIMER_OFF();
 	
@@ -972,7 +982,58 @@ void FUNCGoBootloader(void)
 	
 	MAIN_WaitForJoyRelease();
 	
-	WDTCR = ((1<<WDCE) | (1<<WDE));             // Enable Watchdog Timer to give reset after minimum timeout
-	for (;;) {};                                // Eternal loop - when watchdog resets the AVR it will enter the bootloader
-	                                            // assuming the BOOTRST fuse is programmed
+	WDTCR = ((1<<WDCE) | (1<<WDE));              // Enable Watchdog Timer to give reset after minimum timeout
+	for (;;) {};                                 // Eternal loop - when watchdog resets the AVR it will enter the bootloader,
+	                                             // assuming the BOOTRST fuse is programmed
 }
+
+#ifdef DEBUG
+void DFUNCManCalib(void)
+{
+	uint8_t Buffer[16];
+
+	JoyStatus = 1;                               // Invalid value to force the LCD to update
+	
+	USART_Init();
+
+	while (1)
+	{
+		if (BuffElements)                        // Routine will also echo send chars (directly accesses the ringbuffer count var)
+		  USART_Tx(BUFF_GetBuffByte());
+	
+		if (JoyStatus)
+		{
+			if (JoyStatus & JOY_UP)
+			  OSCCAL++;
+			else if (JoyStatus & JOY_DOWN)
+			  OSCCAL--;
+			else if (JoyStatus & JOY_LEFT)
+			  break;
+					
+			// Copy the programmer name out of memory and transmit it several times via the USART:
+			strcpy_P(Buffer, BUTTTAG_Title.TagData);
+			for (uint8_t SendLoop = 0; SendLoop < 18; SendLoop++)
+			{
+				for (uint8_t BByte = 0; BByte < 15; BByte++)
+				{
+					USART_Tx(Buffer[BByte]);
+				}
+
+				USART_Tx(' ');
+				USART_Tx(' ');
+			}
+
+			Buffer[0] = 'C';
+			Buffer[1] = 'V';
+			Buffer[2] = ' ';
+
+			MAIN_IntToStr(OSCCAL, &Buffer[3]);
+			LCD_puts(Buffer);
+
+			MAIN_WaitForJoyRelease();
+		}
+	}
+	
+	USART_OFF();
+}
+#endif

@@ -1,5 +1,6 @@
 #ifndef USART_H
 #define USART_H
+
 	//***************************************************************************
 	//
 	//  File........: usart.c
@@ -37,4 +38,5 @@
 	void USART_Init(void);
 	void USART_Tx(const char data);
 	char USART_Rx(void);
+	
 #endif
