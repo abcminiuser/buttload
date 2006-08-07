@@ -35,6 +35,9 @@ void USART_Init(void)
 	#ifndef DEBUG
 	  OSCCAL_Calibrate();
 	#endif
+
+	// Enable USART subsystem
+	PRR &= ~(1 << PRUSART0);
 	
     // Set baud rate
     UBRRH = (uint8_t)(USART_BAUDVALUE >> 8);

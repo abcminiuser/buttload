@@ -32,7 +32,7 @@
 	#define USART_BAUDRATE        115200
 	#define USART_BAUDVALUE       (((F_CPU / (USART_BAUDRATE * 16UL))) - 1)
 
-	#define USART_OFF()           MACROS{ UCSRB = 0x00; }MACROE
+	#define USART_OFF()           MACROS{ UCSRB = 0x00; PRR |= (1 << PRUSART0); }MACROE
 	
 	// PROTOTYPES:
 	void USART_Init(void);

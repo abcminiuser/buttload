@@ -211,7 +211,7 @@ int main(void)
 	#endif
 		
 	ACSR    = (1 << ACD);                        // Disable the unused Analogue Comparitor to save power
-	PRR     = ((1 << PRADC) | (1 << PRSPI));     // Disable the ADC and SPI (for now) to save power
+	PRR     = ((1 << PRADC) | (1 << PRSPI) | (1 << PRUSART0)); // Disable subsystems (for now) to save power
 	
 	DDRF    = ((1 << 4) | (1 << 5));             // Set status LEDs as outputs
 	DDRB    = ((1 << 0) | (1 << 1) | (1 << 2) | (1 << 5)); // On-board dataflash /CS, ISP MOSI/SCK and beeper as outputs
@@ -349,7 +349,10 @@ void MAIN_WaitForJoyRelease(void)
 		MAIN_Delay10MS(2);
 
 		if (!(JoyStatus))                        // Joystick still released (not bouncing), return
-		  return;
+		{
+			MAIN_Delay10MS(15);
+			return;
+		}
 	}
 }
 
@@ -511,6 +514,7 @@ void FUNCProgramAVR(void)
 	uint8_t  DoneFailMessageBuff[19];
 	uint8_t  Fault    = ISPCC_NO_FAULT;
 	uint8_t  ProgMode = 0;
+	uint8_t  StoredLocksFuses;
 
 	MAIN_WaitForJoyRelease();
 	
@@ -606,7 +610,8 @@ void FUNCProgramAVR(void)
 		{
 			MAIN_ShowProgType('F');
 			
-			if (!(eeprom_read_byte(&EEPROMVars.TotalFuseBytes)))
+			StoredLocksFuses = eeprom_read_byte(&EEPROMVars.TotalFuseBytes);
+			if (!(StoredLocksFuses) && (StoredLocksFuses != 0xFF))
 			{
 				Fault = ISPCC_FAULT_NODATATYPE;					
 				MAIN_ShowError(PSTR("NO FUSE BYTES"));
@@ -629,7 +634,8 @@ void FUNCProgramAVR(void)
 
 			MAIN_ShowProgType('L');
 		
-			if (!(eeprom_read_byte(&EEPROMVars.TotalLockBytes)))
+			StoredLocksFuses = eeprom_read_byte(&EEPROMVars.TotalLockBytes);
+			if (!(StoredLocksFuses) && (StoredLocksFuses != 0xFF))
 			{
 				Fault = ISPCC_FAULT_NODATATYPE;
 				MAIN_ShowError(PSTR("NO LOCK BYTES"));
@@ -707,6 +713,8 @@ void FUNCClearMem(void)
 
 	for (uint16_t EAddr = 0; EAddr < sizeof(EEPROMVars); EAddr++)
 	  eeprom_write_byte((uint8_t*)EAddr, 0xFF);
+	
+	eeprom_write_byte(&EEPROMVars.MagicNumber, MAGIC_NUM);
 
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Set status LEDs to green (ready)
 	LCD_puts_f(PSTR("MEM CLEARED"));
@@ -907,15 +915,20 @@ void FUNCSetAutoSleepTimeOut(void)
 void FUNCSleepMode(void)
 {
 	LCDCRA &= ~(1 << LCDEN);                     // Turn off LCD driver while sleeping
+	LCDCRA |=  (1 << LCDBL);                     // Blank LCD to discharge all segments
+	PRR    |=  (1 << PRLCD);                     // Enable LCD power reduction bit
+
 	MAIN_SETSTATUSLED(MAIN_STATLED_OFF);         // Save battery power - turn off status LED
 
 	SMCR    = ((1 << SM1) | (1 << SE));          // Power down sleep mode
-
 	while (!(JoyStatus & JOY_UP))                // Joystick interrupt wakes the micro
 	  SLEEP();
 	   
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Turn status LED back on
-	LCDCRA |= (1 << LCDEN);                      // Re-enable LCD driver
+
+	PRR    &= ~(1 << PRLCD);                     // Disable LCD power reduction bit
+	LCDCRA &= ~(1 << LCDBL);                     // Un-blank LCD to enable all segments
+	LCDCRA |=  (1 << LCDEN);                     // Re-enable LCD driver
 	
 	MAIN_WaitForJoyRelease();
 }

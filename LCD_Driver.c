@@ -24,7 +24,6 @@ static uint8_t  StrStart                            = 0;
 static uint8_t  StrEnd                              = 0;
 static uint8_t  ScrollMode                          = 0;
 static uint8_t  ScrollCount                         = 0;
-static uint8_t  DelayCount                          = 0;
 static uint8_t  UpdateLCD                           = FALSE;
 
 static uint16_t LCD_SegTable[] PROGMEM =
@@ -127,17 +126,16 @@ void LCD_puts(const uint8_t *Data)
 	}
 
 	ScrollMode  = ((LoadB > 6)? TRUE : FALSE);
-	ScrollCount = 0;
 
 	for (uint8_t Nulls = 0; Nulls < 7; Nulls++)
 		TextBuffer[LoadB++] = 0xFF;
 	
 	TextBuffer[LoadB] = 0x00;
-	StrStart   = 0;
-	StrEnd     = LoadB;	
-	DelayCount = LCD_DELAYCOUNT_DEFAULT;
+	StrStart    = 0;
+	StrEnd      = LoadB;	
+	ScrollCount = LCD_SCROLLCOUNT_DEFAULT + LCD_DELAYCOUNT_DEFAULT;
 
-	UpdateLCD  = TRUE;
+	UpdateLCD   = TRUE;
 }
 
 static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit)
@@ -170,14 +168,10 @@ ISR(LCD_vect, ISR_NOBLOCK)
 {
 	if (ScrollMode)
 	{
-		if (DelayCount)
+		if (!(ScrollCount--))
 		{
-			DelayCount--;
-		}
-		else
-		{
-			if (!(ScrollCount--))
-			  UpdateLCD = TRUE;
+			UpdateLCD   = TRUE;
+			ScrollCount = LCD_SCROLLCOUNT_DEFAULT;
 		}
 	}
 
@@ -195,11 +189,10 @@ ISR(LCD_vect, ISR_NOBLOCK)
 		
 		if (StrStart++ == StrEnd)
 		  StrStart = 1;
-		
-		ScrollCount = LCD_SCROLLCOUNT_DEFAULT;
+
+		for (uint8_t LCDChar = 0; LCDChar < LCD_SEGBUFFER_SIZE; LCDChar++)
+		   *(pLCDREG + LCDChar) = SegBuffer[LCDChar];
+
 		UpdateLCD = FALSE;
 	}
-
-	for (uint8_t LCDChar = 0; LCDChar < LCD_SEGBUFFER_SIZE; LCDChar++)
-	  *(pLCDREG + LCDChar) = SegBuffer[LCDChar];
 }

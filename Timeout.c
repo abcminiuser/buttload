@@ -1,6 +1,6 @@
 #include "Timeout.h"
 
-const uint8_t AutoSleepTOValues[5] PROGMEM = {  0,  15, 30,  60, 120};
+const uint8_t AutoSleepTOValues[5] PROGMEM = {   0,  15,  30,  60, 120};
 
 volatile uint8_t  PacketTimeOutTicks   = 0;
 volatile uint8_t  PacketTimeOut        = FALSE;

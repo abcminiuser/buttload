@@ -27,8 +27,8 @@
 												  TIMSK2 = (1 << OCIE2A); \
 												  TCCR2A = ((1 << WGM21) | (1 << CS22) | (1 << CS21) | (1 << CS20)); }MACROE
 	
-	#define TIMEOUT_SLEEP_TIMER_OFF()     MACROS{ TCCR1B &= ((1 << CS12) | (1 << CS10)); }MACROE
-	#define TIMEOUT_SLEEP_TIMER_ON()      MACROS{ TCCR1B |= ((1 << CS12) | (1 << CS10)); }MACROE
+	#define TIMEOUT_SLEEP_TIMER_OFF()     MACROS{ TCCR1B &= ~((1 << CS12) | (1 << CS10)); }MACROE
+	#define TIMEOUT_SLEEP_TIMER_ON()      MACROS{ TCCR1B |=  ((1 << CS12) | (1 << CS10)); }MACROE
 	#define TIMEOUT_SLEEP_TIMEOUT_RESET() MACROS{ SleepTimeOutTicks = 0; TCNT1 = 0; }MACROE
 	
 	// EXTERNAL VARIABLES:

@@ -9,7 +9,7 @@
 #define MAIN_H
 
 	// DEBUG SWITCH
-//	#define DEBUG
+	#define DEBUG
 	// END DEBUG SWITCH
 	
 	// INCLUDES:

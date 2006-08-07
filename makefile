@@ -383,6 +383,7 @@ sizeafter:
 # Display compiler version information.
 gccversion : 
 	@$(CC) --version
+	@echo --- MAKEFILE SET TO MAKE FOR GCC VERSION $(GCCV).x.x ---
 
 
 

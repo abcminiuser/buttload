@@ -30,17 +30,17 @@ CheckDelay0:
 CheckDelay1:
 	cpi  r23, 1	
 	brne CheckDelay2
-	ldi  r23, (32 - 9)
+	ldi  r23, ((32 - 9) / 2)
 	rjmp GoSlowLoop
 	
 CheckDelay2:
 	cpi  r23, 2
 	brne CheckDelay3
-	ldi  r23, (128 - 9)
+	ldi  r23, ((128 - 9) / 2)
 	rjmp GoSlowLoop
 
 CheckDelay3:
-	ldi  r23, (256 - 9)
+	ldi  r23, ((256 - 9) / 2)
 ; END DELAY CHECKS	
 	
 ; SLOW LOOP - (9 + r24) cycles per iteration
@@ -49,11 +49,16 @@ GoSlowLoop:
 	
 SlowLoopStart:
 	sts	 _SFR_MEM_ADDR(USICR), r24
-	sts	 _SFR_MEM_ADDR(USICR), r25
-	
 	mov  r27, r23
 
 TimeLoop:
+	dec  r27
+	brne TimeLoop
+
+	sts	 _SFR_MEM_ADDR(USICR), r25
+	mov  r27, r23
+
+TimeLoop2:
 	dec  r27
 	brne TimeLoop
 
@@ -69,9 +74,9 @@ GoFastLoop:
 	
 FastLoopStart: 
 	sts	 _SFR_MEM_ADDR(USICR), r24
-	sts	 _SFR_MEM_ADDR(USICR), r25
 	nop
 	dec  r26
+	sts	 _SFR_MEM_ADDR(USICR), r25
 	brne FastLoopStart	
 ; END FAST LOOP	
 
