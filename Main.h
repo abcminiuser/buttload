@@ -8,9 +8,10 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-	// DEBUG SWITCH
-	#define DEBUG
-	// END DEBUG SWITCH
+	// DEBUG SWITCHES
+	#define DEBUG_DBFUNCSON
+//	#define DEBUG_JTAGON
+	// END DEBUG SWITCHES
 	
 	// INCLUDES:
 	#include <avr/io.h>
@@ -40,9 +41,15 @@
 		#error AVRLibC Version 1.4.1 or higher is required to compile this project.
 	#endif
 	
-	// DEBUG MODE CHECK:
-	#if defined(DEBUG) && defined(INC_FROM_MAIN)
-		#warning DEBUG mode is activated - JTAG system is enabled. Remove before releasing.
+	// DEBUG MODE CHECKS:
+	#if defined(INC_FROM_MAIN)
+		#if defined(DEBUG_JTAGON)
+			#warning DEBUG_JTAGON option is activated - JTAG system is enabled. Remove before releasing.
+		#endif
+	
+		#if defined(DEBUG_DBFUNCSON)
+			#warning DEBUG_DBFUNCSON option is activated - Debug routines are enabled. Remove before releasing.
+		#endif
 	#endif
 	
 	// EXTERNAL VARIABLES:
@@ -90,7 +97,7 @@
 	void FUNCStorageInfo(void);
 	void FUNCGoBootloader(void) __attribute__((noreturn));
 	
-	#ifdef DEBUG
+	#ifdef DEBUG_DBFUNCSON
 	  void DFUNCManCalib(void);
 	#endif
 #endif

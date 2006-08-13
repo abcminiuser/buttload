@@ -33,6 +33,7 @@
 	#define DF_TOGGLEENABLE()        MACROS{ DF_EnableDataflash(FALSE); DF_EnableDataflash(TRUE); }MACROE
 	
 	#define DF_BUSYMASK              0x80
+	#define DF_DFINFOMASK            0x38
 	#define DF_INTERNALDF_BUFFBYTES  264
 	
 	#define DF_MAKELOCALSPIFUNCPTR() SPIFuncPtr LocalSPISendRoutinePtr = DataflashInfo.DFSPIRoutinePointer;

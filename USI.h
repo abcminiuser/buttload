@@ -13,7 +13,7 @@
 
 	// DEFINES:
 	#define USIDelay              GPIOR0 // Psudo-variable, GPIO register for speed
-	#define USICONTROLREGS        ((1 << USIWM0) | (1 << USICS0) | (1 << USITC))
+	#define USICONTROLREGS        ((1 << USIWM0) | (1 << USITC))
 
 	#ifndef __ASSEMBLER__
 	

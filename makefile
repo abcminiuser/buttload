@@ -383,9 +383,10 @@ sizeafter:
 # Display compiler version information.
 gccversion : 
 	@$(CC) --version
+	@echo --- --- --- --- --- --- -- --- --- --- --- --- ---
 	@echo --- MAKEFILE SET TO MAKE FOR GCC VERSION $(GCCV).x.x ---
-
-
+	@echo --- --- --- --- --- --- -- --- --- --- --- --- ---
+	
 
 # Program the device.  
 program: $(TARGET).hex $(TARGET).eep

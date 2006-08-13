@@ -8,48 +8,48 @@
 ; Routine sends a byte in the SPI format via the USI subsystem. Routine sets and returns the
 ; USI data according to the AVR-GCC ABI. The clock speed is configurable via a value preloaded
 ; into the GPIOR0 register. Interrupts are disabled during the transfer.
+;
+; No push/pops required; only the "Call-Saved" registers are used, which improves speed. For
+; infomation on how GCC handles register management, see the "FAQ" section of the AVRLIBC manual.
 
 #include "USI.h"
 
-.global  USI_SPITransmit
-.func    USI_SPITransmit
+.global  USI_SPITransmit                                ; \ Link the USI_SPITransmit label to the function
+.func    USI_SPITransmit                                ; / prototype declared in USI.h
 
 USI_SPITransmit:
 	sts  _SFR_MEM_ADDR(USIDR), r24                      ; Input uint8_t stored in R24, place in USI data register
 	
-	in   r23, _SFR_IO_ADDR(USIDelay)                    ; Grab the delay value from the GPIOR0 register
-	ldi	 r24, USICONTROLREGS                            ; Preload value to be set into a temp reg for speed
-	ldi	 r25, (USICONTROLREGS | (1 << USICLK))          ; Preload value to be set into a temp reg for speed
-	ldi  r26, 8                                         ; Transferred bits counter register
+	ldi	 r24, (USICONTROLREGS)                          ; Preload values to be set into a temp reg for speed
+	ldi	 r25, (USICONTROLREGS | (1 << USICLK))          ; Preload values to be set into a temp reg for speed
 	
-; DELAY CHECKS - convert delay index into the actual cycle delay
-CheckDelay0:
-	cpi  r23, 0
+	in   r27, _SFR_IO_ADDR(USIDelay)                    ; Grab the delay value from the GPIOR0 register
+
+; DELAY CHECKS - Convert delay index into the actual cycle delay
+	cpi  r27, 0                                         ; Test for 921600 Hz frequency
 	breq GoFastLoop
 
-CheckDelay1:
-	cpi  r23, 1	
-	brne CheckDelay2
-	ldi  r23, ((32 - 9) / 2)
-	rjmp GoSlowLoop
+	ldi  r23, (((32 - 4) / 4) / 3)
+	cpi  r27, 1                                         ; Test for 230400 Hz frequency
+	breq GoSlowLoop
 	
-CheckDelay2:
-	cpi  r23, 2
-	brne CheckDelay3
-	ldi  r23, ((128 - 9) / 2)
-	rjmp GoSlowLoop
+	ldi  r23, (((128 - 4) / 4) / 3)
+	cpi  r27, 2                                         ; Test for 57600 Hz frequency
+	breq GoSlowLoop
 
-CheckDelay3:
-	ldi  r23, ((256 - 9) / 2)
+	ldi  r23, (((256 - 4) / 4) / 3)                     ; Assume 28800 Hz frequency
 ; END DELAY CHECKS	
 	
-; SLOW LOOP - (9 + r24) cycles per iteration
+	
+; SLOW LOOP
 GoSlowLoop:
+	ldi  r26, 8                                         ; Transferred bits counter register
 	cli
 	
 SlowLoopStart:
 	sts	 _SFR_MEM_ADDR(USICR), r24
 	mov  r27, r23
+	nop
 
 TimeLoop:
 	dec  r27
@@ -60,25 +60,36 @@ TimeLoop:
 
 TimeLoop2:
 	dec  r27
-	brne TimeLoop
+	brne TimeLoop2
 
-LoopEnd:
 	dec  r26
 	brne SlowLoopStart
 	rjmp Epilogue
 ; END SLOW LOOP
 
-; FAST LOOP - 8 cycles per iteration
+
+; FAST LOOP
 GoFastLoop:
 	cli
-	
-FastLoopStart: 
+
 	sts	 _SFR_MEM_ADDR(USICR), r24
-	nop
-	dec  r26
 	sts	 _SFR_MEM_ADDR(USICR), r25
-	brne FastLoopStart	
+	sts	 _SFR_MEM_ADDR(USICR), r24
+	sts	 _SFR_MEM_ADDR(USICR), r25
+	sts	 _SFR_MEM_ADDR(USICR), r24
+	sts	 _SFR_MEM_ADDR(USICR), r25
+	sts	 _SFR_MEM_ADDR(USICR), r24
+	sts	 _SFR_MEM_ADDR(USICR), r25
+	sts	 _SFR_MEM_ADDR(USICR), r24
+	sts	 _SFR_MEM_ADDR(USICR), r25
+	sts	 _SFR_MEM_ADDR(USICR), r24
+	sts	 _SFR_MEM_ADDR(USICR), r25
+	sts	 _SFR_MEM_ADDR(USICR), r24
+	sts	 _SFR_MEM_ADDR(USICR), r25
+	sts	 _SFR_MEM_ADDR(USICR), r24
+	sts	 _SFR_MEM_ADDR(USICR), r25
 ; END FAST LOOP	
+
 
 Epilogue:
 	sei

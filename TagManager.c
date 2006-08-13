@@ -47,12 +47,12 @@ void TM_FindNextTag(void)
 	uint8_t  HeadBuff[4]      = BT_TAGHEADER;
 	uint8_t  TotalOkHeadBytes = 0;
 	uint8_t  TagByte;
-	uint8_t  DFBytesRead;
+	uint8_t  DFBytesRead      = 0;
 	
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);    // Orange = busy
 	LCD_puts_f(WaitText);
 
-	while (DFDataBytesLeft)
+	while ((DFDataBytesLeft - DFBytesRead) != 0)
 	{
 		DFBytesRead = 1;
 		
@@ -86,8 +86,6 @@ void TM_FindNextTag(void)
 		{
 			TotalOkHeadBytes = ((TagByte == HeadBuff[0])? 1 : 0);
 		}
-
-		DFDataBytesLeft -= DFBytesRead;
 	}
 	
 	DFDataBytesLeft = PM_GetStoredDataSize(TYPE_FLASH);

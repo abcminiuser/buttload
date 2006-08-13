@@ -9,22 +9,10 @@
 */
 
 /*
-    LICENCE:
-      
-      This program is free software; you can redistribute it and/or
-      modify it under the terms of the GNU General Public License
-      as published by the Free Software Foundation; either version 2
-      of the License, or (at your option) any later version.
-
-      This program is distributed in the hope that it will be useful,
-      but WITHOUT ANY WARRANTY; without even the implied warranty of
-      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-      GNU General Public License for more details.
-
-      You should have received a copy of the GNU General Public License
-      along with this program; if not, write to the Free Software
-      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-	  02110-1301, USA.
+	This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 */
 
 /*
@@ -115,10 +103,11 @@
 		USI.c + Header file                      | By Dean Camera
 		USITransfer.S                            | By Dean Camera with assistance from John Samperi 
 		V2Protocol.c + Header file               | By Dean Camera
--------------------------------------------------+---------------------------------------------
+-------------------------------------------------+-----------------------------------------------------
 
-   Special thanks to Barry (BPar) of AVRFreaks, for without his equipment and wisdom in debugging this
-  monstrocity i'd still be working on it. Also thanks to the other members of AVRFreaks for their ideas.
+   Special thanks to both Barry and Scott Coppersmith of AVRFreaks, for without their equipment and
+   wisdom in debugging this monstrocity I'd still be working on it. Also thanks to the other members
+   of AVRFreaks for their ideas.
 
 --------------------------------------------------------------------------------------------------------
 
@@ -133,24 +122,19 @@
 BUTTLOADTAG(Title,     "BUTTLOAD AVRISP");
 BUTTLOADTAG(Version,   VERSION_VSTRING);
 BUTTLOADTAG(Author,    "BY DEAN CAMERA");
-BUTTLOADTAG(Copyright, "<C> 2006 - GPL");
+BUTTLOADTAG(Copyright, "<C> 2005-2006");
 
-#ifdef DEBUG
-  BUTTLOADTAG(DebugMode, "DEBUG MODE ON");
-  
+#ifdef DEBUG_DBFUNCSON
   const uint8_t Func_ManualCalib[]       PROGMEM = "MAN OSCCAL SET";  
   
-  #define DEBUGABOUT       , BUTTTAG_DebugMode.TagData
   #define DEBUGFUNCTIONS   , Func_ManualCalib
   #define DEBUGFUNCPTRS    , DFUNCManCalib
 #else
-  #define DEBUGABOUT
   #define DEBUGFUNCTIONS
   #define DEBUGFUNCPTRS
 #endif
 
-const uint8_t*   AboutTextPtrs[]         PROGMEM = {BUTTTAG_Title.TagData, BUTTTAG_Version.TagData, BUTTTAG_Author.TagData, BUTTTAG_Copyright.TagData
-                                                    DEBUGABOUT};
+const uint8_t*   AboutTextPtrs[]         PROGMEM = {BUTTTAG_Title.TagData, BUTTTAG_Version.TagData, BUTTTAG_Author.TagData, BUTTTAG_Copyright.TagData};
 
 const uint8_t    WaitText[]              PROGMEM = "*WAIT*";
 
@@ -202,10 +186,10 @@ EEPROMVarsType EEPROMVars EEMEM;
 // ======================================================================================
 
 int main(void)
-{
+{	
 	uint8_t CurrFunc = 0;
 
-	#ifndef DEBUG
+	#ifndef DEBUG_JTAGON
 	    MCUCR   = (1 << JTD);                    // Turn off JTAG via code
 	    MCUCR   = (1 << JTD);                    // Twice as specified in datasheet
 	#endif
@@ -511,7 +495,7 @@ void FUNCProgramDataflash(void)
 
 void FUNCProgramAVR(void)
 {
-	uint8_t  DoneFailMessageBuff[19];
+	uint8_t  DoneFailMessageBuff[12];
 	uint8_t  Fault    = ISPCC_NO_FAULT;
 	uint8_t  ProgMode = 0;
 	uint8_t  StoredLocksFuses;
@@ -576,7 +560,7 @@ void FUNCProgramAVR(void)
 			}
 		}
 
-		if ((!(ProgMode) || (ProgMode == 1) || (ProgMode == 3)) && (Fault == ISPCC_NO_FAULT)) // All, flash and EEPROM, or program flash mode
+		if ((!(ProgMode) || (ProgMode == 1) || (ProgMode == 3)) && (Fault != ISPCC_FAULT_NOERASE)) // All, flash and EEPROM, or program flash mode
 		{
 			MAIN_ShowProgType('D');
 
@@ -611,7 +595,7 @@ void FUNCProgramAVR(void)
 			MAIN_ShowProgType('F');
 			
 			StoredLocksFuses = eeprom_read_byte(&EEPROMVars.TotalFuseBytes);
-			if (!(StoredLocksFuses) && (StoredLocksFuses != 0xFF))
+			if (!(StoredLocksFuses) || (StoredLocksFuses != 0xFF))
 			{
 				Fault = ISPCC_FAULT_NODATATYPE;					
 				MAIN_ShowError(PSTR("NO FUSE BYTES"));
@@ -635,7 +619,7 @@ void FUNCProgramAVR(void)
 			MAIN_ShowProgType('L');
 		
 			StoredLocksFuses = eeprom_read_byte(&EEPROMVars.TotalLockBytes);
-			if (!(StoredLocksFuses) && (StoredLocksFuses != 0xFF))
+			if (!(StoredLocksFuses) || (StoredLocksFuses != 0xFF))
 			{
 				Fault = ISPCC_FAULT_NODATATYPE;
 				MAIN_ShowError(PSTR("NO LOCK BYTES"));
@@ -646,14 +630,13 @@ void FUNCProgramAVR(void)
 			}
 		}
 
-		strcpy_P(DoneFailMessageBuff, PSTR("PROGRAMMING DONE"));
+		strcpy_P(DoneFailMessageBuff, PSTR("PROG DONE"));
 
-		if (Fault != ISPCC_NO_FAULT)             // Takes less code to just overwrite part of the string on fail
-		  strcpy_P(&DoneFailMessageBuff[12], PSTR("FAILED"));
+		if (Fault != ISPCC_NO_FAULT)              // Takes less code to just overwrite part of the string on fail
+		  strcpy_P(&DoneFailMessageBuff[5], PSTR("FAILED"));
 
 		LCD_puts(DoneFailMessageBuff);
 
-		MAIN_Delay10MS(225);
 		MAIN_Delay10MS(225);
 	}
 	else
@@ -807,7 +790,7 @@ void FUNCSetResetMode(void)
 	{
 		if (JoyStatus)
 		{
-			if ((JoyStatus & JOY_UP) || (JoyStatus & JOY_DOWN))
+			if (JoyStatus & (JOY_UP | JOY_DOWN))
 			{
 				CurrMode ^= 1;
 			}
@@ -987,7 +970,7 @@ void FUNCGoBootloader(void)
 {
 	volatile uint8_t MD = (MCUCR & ~(1 << JTD)); // Forces compiler to use IN, AND plus two OUTs rather than two lots of IN/AND/OUTs
 	MCUCR = MD;                                  // Turn on JTAG via code
-	MCUCR = MD;                                  // Set bit twice as specified in datasheet        
+	MCUCR = MD;                                  // Set bit twice as specified in datasheet
 
 	TIMEOUT_SLEEP_TIMER_OFF();
 	
@@ -1000,16 +983,16 @@ void FUNCGoBootloader(void)
 	                                             // assuming the BOOTRST fuse is programmed
 }
 
-#ifdef DEBUG
+#ifdef DEBUG_DBFUNCSON
 void DFUNCManCalib(void)
 {
 	uint8_t Buffer[16];
 
-	JoyStatus = 1;                               // Invalid value to force the LCD to update
-	
+	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
+	                                             // name of the default command onto the LCD
 	USART_Init();
 
-	while (1)
+	for (;;)
 	{
 		if (BuffElements)                        // Routine will also echo send chars (directly accesses the ringbuffer count var)
 		  USART_Tx(BUFF_GetBuffByte());
@@ -1025,13 +1008,12 @@ void DFUNCManCalib(void)
 					
 			// Copy the programmer name out of memory and transmit it several times via the USART:
 			strcpy_P(Buffer, BUTTTAG_Title.TagData);
+			
 			for (uint8_t SendLoop = 0; SendLoop < 18; SendLoop++)
 			{
 				for (uint8_t BByte = 0; BByte < 15; BByte++)
-				{
-					USART_Tx(Buffer[BByte]);
-				}
-
+				  USART_Tx(Buffer[BByte]);
+				
 				USART_Tx(' ');
 				USART_Tx(' ');
 			}
