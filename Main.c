@@ -25,7 +25,7 @@
 		   non-volatile memory and be able to retrieve said program on user request and
 		   thus program AVRs via ISP in the field
 		
-		3) Devices with large, 24-bit flash addresses (such as the MEGA2560) are supported.
+		3) Devices with larger than 16-bit flash addresses (such as the MEGA2560) are supported.
 		
 		4) Ability to read and program external AVR dataflash memory chips directly
 					
