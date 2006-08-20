@@ -156,7 +156,7 @@ const uint8_t    SFunc_SETSPISPEED[]     PROGMEM = "SET ISP SPEED";
 const uint8_t    SFunc_SETRESETMODE[]    PROGMEM = "SET RESET MODE";
 const uint8_t    SFunc_SETFIRMMINOR[]    PROGMEM = "SET FIRM VERSION";
 const uint8_t    SFunc_SETAUTOSLEEPTO[]  PROGMEM = "SET SLEEP TIMEOUT";
-const uint8_t    SFunc_CLEARMEM[]        PROGMEM = "CLEAR MEMORY";
+const uint8_t    SFunc_CLEARMEM[]        PROGMEM = "CLEAR SETTINGS";
 const uint8_t    SFunc_GOBOOTLOADER[]    PROGMEM = "JUMP TO BOOTLOADER";
 
 const uint8_t*   SettingFunctionNames[]  PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_SETRESETMODE, SFunc_SETFIRMMINOR , SFunc_SETAUTOSLEEPTO   , SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
@@ -193,7 +193,7 @@ int main(void)
 	    MCUCR   = (1 << JTD);                    // Turn off JTAG via code
 	    MCUCR   = (1 << JTD);                    // Twice as specified in datasheet
 	#endif
-		
+
 	ACSR    = (1 << ACD);                        // Disable the unused Analogue Comparitor to save power
 	PRR     = ((1 << PRADC) | (1 << PRSPI) | (1 << PRUSART0)); // Disable subsystems (for now) to save power
 	
@@ -202,7 +202,7 @@ int main(void)
 	PORTB   = ((1 << 0) | (1 << 1) | (1 << 2) | (1 << 3)   // Set SPI pins to high/pullups, and disable dataflash (send /CS high)
 	        | JOY_BMASK);                        // \ Turn joystick
 	PORTE   = JOY_EMASK;                         // /  pullups on
-	
+			  
 	PCMSK0  = JOY_EMASK;                         // \.
 	PCMSK1  = JOY_BMASK;                         // | Turn on joystick
 	EIMSK   = ((1 << PCIE0) | (1 << PCIE1));     // |  interrupts
@@ -216,7 +216,7 @@ int main(void)
 	LCD_Init();
 	LCD_CONTRAST_LEVEL(0x0F);
 	LCD_puts_f(WaitText);
-
+	
 	if (eeprom_read_byte(&EEPROMVars.MagicNumber) != MAGIC_NUM) // Check if first ButtLoad run
 	{
 		for (uint16_t EAddr = 0; EAddr < sizeof(EEPROMVars); EAddr++) // Clear the EEPROM if first run
@@ -386,7 +386,7 @@ void MAIN_ShowError(const uint8_t *pFlashStr)
 	ErrorBuff[1] = '>';
 
 	strcpy_P(&ErrorBuff[2], pFlashStr);          // WARNING: If flash error text is larger than (TEXTBUFFER_SIZE - 2),
-	                                             // this will overflow the buffer and crash the program.
+	                                             // this will overflow the buffer and crash the program!
 	LCD_puts(ErrorBuff);
 	
 	MAIN_WaitForJoyRelease();
@@ -412,9 +412,11 @@ ISR(BADISR_vect, ISR_NAKED)                      // Bad ISR routine; should neve
 	TIMEOUT_PACKET_TIMER_OFF();
 	TIMEOUT_SLEEP_TIMER_OFF();
 
-	LCD_puts_f(PSTR("BADISR"));
-	
-	MAIN_SETSTATUSLED(MAIN_STATLED_RED);	
+	MAIN_SETSTATUSLED(MAIN_STATLED_RED);
+
+	MAIN_ShowError(PSTR("BADISR"));
+		
+	for (;;) {};
 }
 
 // ======================================================================================
@@ -423,6 +425,8 @@ void FUNCChangeSettings(void)
 {
 	uint8_t CurrSFunc = 0;
 	
+	MAIN_WaitForJoyRelease();
+
 	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
 	                                             // name of the default command onto the LCD
 	for (;;)
@@ -545,7 +549,7 @@ void FUNCProgramAVR(void)
 
 	if (PacketBytes[1] == AICB_STATUS_CMD_OK)    // ISPCC_EnterChipProgrammingMode alters the PacketBytes buffer rather than returning a value
 	{						
-		if (!(ProgMode) || (ProgMode == 7) || (ProgMode == 1) || (ProgMode == 3)) // All, erase chip, flash and eeprom, or program flash mode
+		if ((ProgMode == 0) || (ProgMode == 7) || (ProgMode == 1) || (ProgMode == 3)) // All, erase chip, flash and eeprom, or program flash mode
 		{
 			MAIN_ShowProgType('C');
 			
@@ -560,7 +564,7 @@ void FUNCProgramAVR(void)
 			}
 		}
 
-		if ((!(ProgMode) || (ProgMode == 1) || (ProgMode == 3)) && (Fault != ISPCC_FAULT_NOERASE)) // All, flash and EEPROM, or program flash mode
+		if (((ProgMode == 0) || (ProgMode == 1) || (ProgMode == 3)) && (Fault != ISPCC_FAULT_NOERASE)) // All, flash and EEPROM, or program flash mode
 		{
 			MAIN_ShowProgType('D');
 
@@ -575,7 +579,7 @@ void FUNCProgramAVR(void)
 			}
 		}
 	
-		if (!(ProgMode) || (ProgMode == 2) || (ProgMode == 3)) // All, flash and EEPROM, or program EEPROM mode
+		if ((ProgMode == 0) || (ProgMode == 2) || (ProgMode == 3)) // All, flash and EEPROM, or program EEPROM mode
 		{
 			MAIN_ShowProgType('E');
 				
@@ -590,7 +594,7 @@ void FUNCProgramAVR(void)
 			}
 		}
 
-		if (!(ProgMode) || (ProgMode == 4) || (ProgMode == 6)) // All, fuse and lock bytes, or program fuse bytes mode
+		if ((ProgMode == 0) || (ProgMode == 4) || (ProgMode == 6)) // All, fuse and lock bytes, or program fuse bytes mode
 		{
 			MAIN_ShowProgType('F');
 			
@@ -606,7 +610,7 @@ void FUNCProgramAVR(void)
 			}
 		}
 
-		if (!(ProgMode) || (ProgMode == 5) || (ProgMode == 6)) // All, fuse and lock bytes, or program lock bytes mode
+		if ((ProgMode == 0) || (ProgMode == 5) || (ProgMode == 6)) // All, fuse and lock bytes, or program lock bytes mode
 		{
 			if (ProgMode == 6)                           // If fusebytes have already been written, we need to re-enter programming mode to latch them
 			{
@@ -970,8 +974,8 @@ void FUNCGoBootloader(void)
 {
 	volatile uint8_t MD = (MCUCR & ~(1 << JTD)); // Forces compiler to use IN, AND plus two OUTs rather than two lots of IN/AND/OUTs
 	MCUCR = MD;                                  // Turn on JTAG via code
-	MCUCR = MD;                                  // Set bit twice as specified in datasheet
-
+	MCUCR = MD; 
+	
 	TIMEOUT_SLEEP_TIMER_OFF();
 	
 	LCD_puts_f(PSTR("*JTAG ON*"));
@@ -980,7 +984,7 @@ void FUNCGoBootloader(void)
 	
 	WDTCR = ((1<<WDCE) | (1<<WDE));              // Enable Watchdog Timer to give reset after minimum timeout
 	for (;;) {};                                 // Eternal loop - when watchdog resets the AVR it will enter the bootloader,
-	                                             // assuming the BOOTRST fuse is programmed
+	                                             // assuming the BOOTRST fuse is programmed (ptherwise app will just restart)
 }
 
 #ifdef DEBUG_DBFUNCSON

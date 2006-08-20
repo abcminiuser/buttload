@@ -16,7 +16,7 @@
 	#include "ISRMacro.h"
 
 	// DEFINES:
-	#define OSCCAL_TARGETCOUNT         (uint16_t)(F_CPU / 128) // (Target Freq / Reference Freq)	
+	#define OSCCAL_TARGETCOUNT         (uint16_t)(F_CPU / (32768 / 256)) // (Target Freq / Reference Freq)	
 	
 	// PROTOTYPES:
 	void OSCCAL_Calibrate(void);

@@ -7,11 +7,6 @@
 
 #include "OSCCal.h"
 
-/* Code taken from Colin Oflynn from AVRFreaks and modified. His code originally used an externally
-   divided 32768Hz clock on an external interrupt pin, but I changed that to use the timer 2 async
-   mode with an overflow interrupt (clock source is the external 32768Hz crystal on the Butterfly.
-   Code will calibrate to 7372800Hz for correct serial transmission at high baud rates.             */
-
 void OSCCAL_Calibrate(void)
 {
 	uint8_t LoopCount = (0x7F / 2); // Maximum range is 128, and starts from the middle, so 64 is the max number of iterations required

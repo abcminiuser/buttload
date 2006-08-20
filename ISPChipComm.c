@@ -23,7 +23,7 @@ void ISPCC_EnterChipProgrammingMode(void)
 
 	MAIN_Delay1MS(PacketBytes[2]);          // Wait before continuing, amount specified in the packet
 
-	if ((!(Attempts)) || (Attempts > 100))  // if no attempts or too high a value is specified, a fixed number is chosen
+	if ((!(Attempts)) || (Attempts > 100))  // If no attempts or too high a value is specified, a fixed number is chosen
 	   Attempts = 24;
 		
 	while (Attempts--)
@@ -81,9 +81,9 @@ void ISPCC_ProgramChip(void)
 			ByteToWrite = PacketBytes[10 + WriteByte];
 		
 			if (CmdMemType == AICB_CMD_PROGRAM_FLASH_ISP) // Flash write mode - word addresses so MSB/LSB masking 
-			   USI_SPITransmit(WriteCommand | ((WriteByte & 0x01)? ISPCC_HIGH_BYTE_WRITE : ISPCC_LOW_BYTE_WRITE));
-			else                                         // EEPROM write mode - byte addresses so no masking 
-			   USI_SPITransmit(WriteCommand);
+			  USI_SPITransmit(WriteCommand | ((WriteByte & 0x01)? ISPCC_HIGH_BYTE_WRITE : ISPCC_LOW_BYTE_WRITE));
+			else                                          // EEPROM write mode - byte addresses so no masking 
+			  USI_SPITransmit(WriteCommand);
 
 			USI_SPITransmitWord(CurrAddress & 0xFFFF);    // Only the LSW of the address should be sent
 			USI_SPITransmit(ByteToWrite);                 // Send one of the new bytes to be written
@@ -96,13 +96,13 @@ void ISPCC_ProgramChip(void)
 					PollAddress = (CurrAddress & 0xFFFF); // Save the current address
 				
 					if (CmdMemType == AICB_CMD_PROGRAM_FLASH_ISP)
-					   PollAddress = ((PollAddress << 1) + (WriteByte & 0x01));
+					  PollAddress = ((PollAddress << 1) + (WriteByte & 0x01));
 				}
 			}
 
 			// Flash addresses are in words; only increment address on odd byte, OR if it's the EEPROM being programmed (byte addresses)
 			if ((WriteByte & 0x01) || (CmdMemType == AICB_CMD_PROGRAM_EEPROM_ISP))
-			   V2P_IncrementCurrAddress();
+			  V2P_IncrementCurrAddress();
 		}
 
 		PollType = ProgMode;
@@ -114,7 +114,7 @@ void ISPCC_ProgramChip(void)
 			USI_SPITransmit(0x00);
 
 			if (!(PollAddress))                          // No polling address
-			   PollType = ((ProgMode & ~ISPCC_PAGE_POLLTYPE_MASK) | ISPCC_PAGE_POLLTYPE_WAIT);
+			  PollType = ((ProgMode & ~ISPCC_PAGE_POLLTYPE_MASK) | ISPCC_PAGE_POLLTYPE_WAIT);
 
 			ISPCC_PollForProgComplete(PollType, PollAddress);
 		}
@@ -126,9 +126,9 @@ void ISPCC_ProgramChip(void)
 			ByteToWrite = PacketBytes[10 + WriteByte];
 
 			if (CmdMemType == AICB_CMD_PROGRAM_FLASH_ISP)
-			   USI_SPITransmit(WriteCommand | ((WriteByte & 0x01)? ISPCC_HIGH_BYTE_WRITE : ISPCC_LOW_BYTE_WRITE));
+			  USI_SPITransmit(WriteCommand | ((WriteByte & 0x01)? ISPCC_HIGH_BYTE_WRITE : ISPCC_LOW_BYTE_WRITE));
 			else
-			   USI_SPITransmit(WriteCommand);					
+			  USI_SPITransmit(WriteCommand);					
 					
 			USI_SPITransmitWord(CurrAddress & 0xFFFF);    // Transmit the current address to the slave AVR
 			USI_SPITransmit(ByteToWrite);                 // Send one of the new bytes to be written
@@ -141,7 +141,7 @@ void ISPCC_ProgramChip(void)
 				PollAddress = (CurrAddress & 0xFFFF);     // Save the current address;
 
 				if (CmdMemType == AICB_CMD_PROGRAM_FLASH_ISP)
-				   PollAddress = ((PollAddress << 1) + (WriteByte & 0x01));
+				  PollAddress = ((PollAddress << 1) + (WriteByte & 0x01));
 			}
 			else
 			{
@@ -150,7 +150,7 @@ void ISPCC_ProgramChip(void)
 
 			// Flash addresses are in words; only increment address on the odd byte, OR if it's the EEPROM being programmed (byte addresses)
 			if ((WriteByte & 0x01) || (CmdMemType == AICB_CMD_PROGRAM_EEPROM_ISP))
-			   V2P_IncrementCurrAddress();
+			  V2P_IncrementCurrAddress();
 
 			ISPCC_PollForProgComplete(PollType, PollAddress);
 		}
@@ -163,9 +163,9 @@ void ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr)
 	uint8_t ProgCommand;
 
 	if (PollData & ISPCC_PROG_MODE_PAGE)
-	   PollType = ((PollData & ISPCC_PAGE_POLLTYPE_MASK) >> ISPCC_PAGE_POLLTYPE_MASKSHIFT);
+	  PollType = ((PollData & ISPCC_PAGE_POLLTYPE_MASK) >> ISPCC_PAGE_POLLTYPE_MASKSHIFT);
 	else
-	   PollType = ((PollData & ISPCC_WORD_POLLTYPE_MASK) >> ISPCC_WORD_POLLTYPE_MASKSHIFT);	
+	  PollType = ((PollData & ISPCC_WORD_POLLTYPE_MASK) >> ISPCC_WORD_POLLTYPE_MASKSHIFT);	
 
 	switch (PollType & ISPCC_POLLTYPE_MASK)
 	{
@@ -188,7 +188,7 @@ void ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr)
 			break;
 		case ISPCC_POLLTYPE_READY:
 			do
-			   USI_SPITransmitWord(0xF000);
+			  USI_SPITransmitWord(0xF000);
 			while (USI_SPITransmitWord(0x0000) & ISPCC_POLL_BUSYFLAG);
 
 			break;

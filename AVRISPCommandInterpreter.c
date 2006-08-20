@@ -24,9 +24,9 @@ void AICI_InterpretPacket(void)
 			ISPCC_EnterChipProgrammingMode();       // Run the Enter Programming Mode routine
 
 			if (InProgrammingMode)
-			   LCD_puts_f(AVRISPModeMessage);
+			  LCD_puts_f(AVRISPModeMessage);
 			else
-			   LCD_puts_f(SyncErrorMessage);
+			  LCD_puts_f(SyncErrorMessage);
 			
 			break;
 		case AICB_CMD_LEAVE_PROGMODE_ISP:
@@ -78,11 +78,11 @@ void AICI_InterpretPacket(void)
 					RecievedByte = USI_SPITransmit(PacketBytes[3 + TxByteNum]); // Transmit the byte, store the answer
 
 					if ((TxByteNum >= RxStartByte) && (RxByteNum < RxBytes))
-					   PacketBytes[2 + RxByteNum++] = RecievedByte;
+					  PacketBytes[2 + RxByteNum++] = RecievedByte;
 				}
 
 				while (RxByteNum++ < RxBytes)                          // Still more bytes to recieve
-				   PacketBytes[2 + RxByteNum] = USI_SPITransmit(0x00); // its answer to be recorded (or more bytes than sent need responses), send dummy bytes to fetch the response(s)
+				  PacketBytes[2 + RxByteNum] = USI_SPITransmit(0x00);  // its answer to be recorded (or more bytes than sent need responses), send dummy bytes to fetch the response(s)
 
 				PacketBytes[1]             = AICB_STATUS_CMD_OK; // Data should be encompassed
 				PacketBytes[3 + RxByteNum] = AICB_STATUS_CMD_OK; //  by STATS_CMD_OKs
@@ -99,7 +99,7 @@ void AICI_InterpretPacket(void)
 				uint8_t Response = USI_SPITransmit(PacketBytes[1 + ByteNum]); // Transmit the four signature request bytes
 
 				if (ByteNum == PacketBytes[1])         // If the current byte is the requested signature byte, save the reponse in the packet
-					PacketBytes[2] = Response;
+				  PacketBytes[2] = Response;
 			}
 
 			PacketBytes[1] = AICB_STATUS_CMD_OK;       // Data byte is encased in CMD_OKs

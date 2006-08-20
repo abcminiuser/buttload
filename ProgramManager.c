@@ -350,11 +350,12 @@ void PM_SendEraseCommand(void)
 
 void PM_CreateProgrammingPackets(const uint8_t Type)
 {			
-	uint32_t BytesRead       = 0;
-	uint32_t BytesToRead     = PM_GetStoredDataSize(Type);              // Get the byte size of the stored program
+	uint32_t BytesRead        = 0;
+	uint32_t BytesToRead      = PM_GetStoredDataSize(Type);              // Get the byte size of the stored program
 	uint16_t BytesPerProgram;
-	uint16_t PageLength      = eeprom_read_word((Type == TYPE_FLASH)? &EEPROMVars.PageLength : &EEPROMVars.EPageLength);
-	uint8_t  ContinuedPage   = FALSE;
+	uint16_t PageLength       = eeprom_read_word((Type == TYPE_FLASH)? &EEPROMVars.PageLength : &EEPROMVars.EPageLength);
+	uint16_t BytesPerProgress = (BytesToRead / 6);
+	uint8_t  ContinuedPage    = FALSE;
 	uint8_t* EEPROMAddress;
 
 	CurrAddress = 0;
@@ -444,6 +445,7 @@ void PM_CreateProgrammingPackets(const uint8_t Type)
 		}
 
 		ISPCC_ProgramChip();                                            // Start the program cycle
+		LCD_BARGRAPH((uint8_t)(BytesRead / BytesPerProgress));          // Show the progress onto the LCD
 	}
 }
 

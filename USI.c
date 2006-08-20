@@ -19,7 +19,9 @@ void USI_SPIInitMaster()
 
 	// Get the clock delay value:
 	USIDelay = eeprom_read_byte(&EEPROMVars.SCKDuration);
-	if (USIDelay > USI_PRESET_SPEEDS) USIDelay = 0;
+
+	if (USIDelay == 0xFF)
+	  USIDelay = 0;
 }
 
 void USI_SPIOff(void)

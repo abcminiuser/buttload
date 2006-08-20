@@ -2,11 +2,11 @@
 
 const uint8_t AutoSleepTOValues[5] PROGMEM = {   0,  15,  30,  60, 120};
 
-volatile uint8_t  PacketTimeOutTicks   = 0;
-volatile uint8_t  PacketTimeOut        = FALSE;
+volatile uint8_t  PacketTimeOutTicks  = 0;
+volatile uint8_t  PacketTimeOut       = FALSE;
 
-volatile uint16_t SleepTimeOutTicks    = 0;
-volatile uint16_t TicksBeforeAutoSleep = 0;
+volatile uint8_t SleepTimeOutTicks    = 0;
+volatile uint8_t TicksBeforeAutoSleep = 0;
 
 // ======================================================================================
 

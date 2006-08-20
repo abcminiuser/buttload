@@ -18,15 +18,15 @@
 #define INC_FROM_DRIVER
 #include "LCD_Driver.h"
 
-static uint8_t  TextBuffer[LCD_TEXTBUFFER_SIZE + 7] = {};
-static uint8_t  SegBuffer[LCD_SEGBUFFER_SIZE]       = {};
-static uint8_t  StrStart                            = 0;
-static uint8_t  StrEnd                              = 0;
-static uint8_t  ScrollMode                          = 0;
-static uint8_t  ScrollCount                         = 0;
-static uint8_t  UpdateLCD                           = FALSE;
+volatile uint8_t  TextBuffer[LCD_TEXTBUFFER_SIZE + 7] = {};
+volatile uint8_t  SegBuffer[LCD_SEGBUFFER_SIZE]       = {};
+volatile uint8_t  StrStart                            = 0;
+volatile uint8_t  StrEnd                              = 0;
+volatile uint8_t  ScrollMode                          = 0;
+volatile uint8_t  ScrollCount                         = 0;
+volatile uint8_t  UpdateLCD                           = FALSE;
 
-static uint16_t LCD_SegTable[] PROGMEM =
+const    uint16_t LCD_SegTable[] PROGMEM =
 {
     0xEAA8,     // '*'
     0x2A80,     // '+'
@@ -89,7 +89,7 @@ static uint16_t LCD_SegTable[] PROGMEM =
 void LCD_Init(void)
 {
 	// Set the initial contrast level to maximum:
-	LCDCCR = 0x0F;
+	LCDCCR  = 0x0F;
 
     // Select asynchronous clock source, enable all COM pins and enable all segment pins:
     LCDCRB  = (1<<LCDCS) | (3<<LCDMUX0) | (7<<LCDPM0);
@@ -140,8 +140,8 @@ void LCD_puts(const uint8_t *Data)
 
 static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit)
 {
-	uint16_t SegData  = 0x00;
-	uint8_t  *BuffPtr = (&SegBuffer[0] + (Digit >> 1));
+	uint16_t SegData  = 0x0000;
+	uint8_t  *BuffPtr = (uint8_t*)(&SegBuffer[0] + (Digit >> 1));
 
 	if (Byte != 0xFF)
 	  SegData = pgm_read_word(&LCD_SegTable[Byte]);	
@@ -161,7 +161,7 @@ static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit)
 
 		SegData >>= 4;
 		BuffPtr  += 5;
-	}
+	}	
 }
 
 ISR(LCD_vect, ISR_NOBLOCK)
@@ -190,8 +190,8 @@ ISR(LCD_vect, ISR_NOBLOCK)
 		if (StrStart++ == StrEnd)
 		  StrStart = 1;
 
-		for (uint8_t LCDChar = 0; LCDChar < LCD_SEGBUFFER_SIZE; LCDChar++)
-		   *(pLCDREG + LCDChar) = SegBuffer[LCDChar];
+		for (uint8_t LCDChar = 0; LCDChar <= LCD_SEGBUFFER_SIZE; LCDChar++)
+		  *(pLCDREG + LCDChar) = SegBuffer[LCDChar];
 
 		UpdateLCD = FALSE;
 	}

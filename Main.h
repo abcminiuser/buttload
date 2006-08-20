@@ -9,7 +9,7 @@
 #define MAIN_H
 
 	// DEBUG SWITCHES
-	#define DEBUG_DBFUNCSON
+//	#define DEBUG_DBFUNCSON
 //	#define DEBUG_JTAGON
 	// END DEBUG SWITCHES
 	

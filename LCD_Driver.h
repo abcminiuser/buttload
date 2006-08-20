@@ -22,8 +22,31 @@
 	#define LCD_SCROLLCOUNT_DEFAULT   3
 	#define LCD_DELAYCOUNT_DEFAULT    10
 	#define LCD_TEXTBUFFER_SIZE       20
-	#define LCD_SEGBUFFER_SIZE        20
+	#define LCD_SEGBUFFER_SIZE        19
 	
+	/* DIRTY HACK ALERT!!
+	   This will display the "val" number of arrows running atop the Butterfly's
+	   display. It will be cleared if the currently displayed text is scrolling
+	   or changed.
+	*/
+	#define LCD_BARGRAPH(val)         MACROS{                      \
+	                                  switch (val)                 \
+                                      {                            \
+										default:                   \
+	                                 		LCDDR3 |= (1 << 0);    \
+	                                 	case 4:                    \
+	                                 		LCDDR1 |= (1 << 6);    \
+	                                 	case 3:                    \
+	                                 		LCDDR1 |= (1 << 2);    \
+	                                 	case 2:                    \
+	                                 		LCDDR0 |= (1 << 5);    \
+	                                 	case 1:                    \
+	                                 		LCDDR0 |= (1 << 1);    \
+										case 0:                    \
+											break;                 \
+	                                  }                            \
+									  }MACROE
+
 	// PROTOTYPES:
 	void LCD_puts(const uint8_t *Data);
 	void LCD_puts_f(const uint8_t *FlashData);

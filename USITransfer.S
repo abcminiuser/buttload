@@ -49,7 +49,9 @@ GoSlowLoop:
 SlowLoopStart:
 	sts	 _SFR_MEM_ADDR(USICR), r24
 	mov  r27, r23
-	nop
+	nop                                                 ; Maintain 50% duty cycle - 3 NOPs which
+	nop                                                 ; use the same amount of clock cycles as
+	nop                                                 ; the DEC and BRNE at the end of the loop
 
 TimeLoop:
 	dec  r27
