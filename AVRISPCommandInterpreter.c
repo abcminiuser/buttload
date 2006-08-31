@@ -170,7 +170,7 @@ void AICI_InterpretPacket(void)
 			
 			break;
 		default:                                        // Unknown command, return error
-			MessageSize = 1;
+			MessageSize = 2;
 			
 			PacketBytes[1] = AICB_STATUS_CMD_UNKNOWN;
 	}

@@ -23,7 +23,7 @@ ISR(TIMER2_COMP_vect, ISR_NOBLOCK)
 // Autosleep Timeout = ((F_CPU / 1024) / (7200 * TIMEOUT_TICKSBEFORETIMEOUT)) per second
 ISR(TIMER1_COMPA_vect, ISR_NOBLOCK)
 {
-	if (SleepTimeOutTicks++ == TicksBeforeAutoSleep)
+	if ((TicksBeforeAutoSleep) && (SleepTimeOutTicks++ == TicksBeforeAutoSleep))
 	{
 		TIMEOUT_SLEEP_TIMER_OFF();
 		FUNCSleepMode();

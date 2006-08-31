@@ -122,17 +122,15 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 								break;				
 							case AICB_CMD_LOAD_ADDRESS:
 								MessageSize = 2;
-			
-								V2P_CheckForExtendedAddress();
 
-								/*
-									NON PORTABLE!! The following line stores the PacketBytes variable bytes 1-4 (true index)
-									into the CurrAddress variable. This assumes that the compiler (GCC) uses the same endian
-									as the sending device - which it does. Using a more conventional method of shifting and
-									concanating the individual bytes wastes over 100 bytes of unessesary commands.
-								*/
-								CurrAddress = *((uint32_t*)&PacketBytes[1]);
-	
+								// Doing this the normal way - shifting each byte into the CurrAddress long - produces ABYSMAL code.
+								// By using two words in this manner the produced code is ever so slightly smaller and more efficient.
+								uint16_t AddressHighWord = ((uint16_t)PacketBytes[1] << 8) | (PacketBytes[2]);
+								uint16_t AddressLowWord  = ((uint16_t)PacketBytes[3] << 8) | (PacketBytes[4]);
+								CurrAddress           = (((uint32_t)AddressHighWord << 16) | ((uint16_t)AddressLowWord));
+
+								V2P_CheckForExtendedAddress();
+								
 								PacketBytes[1] = AICB_STATUS_CMD_OK;
 
 								V2P_SendPacket();
