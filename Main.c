@@ -26,8 +26,6 @@
 		   thus program AVRs via ISP in the field
 		
 		3) Devices with larger than 16-bit flash addresses (such as the MEGA2560) are supported.
-		
-		4) Ability to read and program external AVR dataflash memory chips directly
 					
 			      Status Colour | Description
 			      --------------+------------
@@ -65,7 +63,8 @@
 		PORTF (as viewed from the TOP of the board)
 			Pin 1  (PF4) - Green (active-high) lead of a Bicolour LED (optional)
 			Pin 5  (PF5) - Red (active-high) lead of a Bicolour LED (optional)
-			Pin 3  (PF6) - /RESET line of slave AVR and /CS line of slave Dataflash
+			Pin 3  (PF6) - /RESET line of slave AVR
+			Pin 9  (PF7) - Butterfly battery voltage detection (optional)
 			Pin 10 (GND) - Status LED ground if used (optional)			
 			
 		USART Interface
@@ -84,10 +83,13 @@
 		-----------------------------------------+---------------------------------------------
 		AVRISPCommandBytes.h                     | By Dean Camera
 		AVRISPCommandInterpreter.c + Header file | By Dean Camera
+		BattVoltage.c + Header file              | By Dean Camera
+		ButtLoadTag.h                            | By Dean Camera
 		Dataflash.c + Header file                | By Dean Camera, re-coded from the generic dataflash
 		                                         | code by Atmel (ported to GCC by Martin Thomas)
 		DataflashCommandBytes.h                  | By Atmel, modified by Martin Thomas
-		EEPROMVariables.h                        | By Dean Camera		
+		EEPROMVariables.h                        | By Dean Camera
+		GlobalMacros.h                           | By Dean Camera
 		ISPChipComm.c + Header file              | By Dean Camera
 		ISRMacro.h                               | By Dean Camera
 		JoystickInterrupt.S                      | By Dean Camera
@@ -97,7 +99,9 @@
 		ProgramManager.c + Header file           | By Dean Camera
 		RingBuff.c + Header file                 | By Dean Camera
 		SPI.c + Header file                      | By Dean Camera
+		TagManager.c + Header file               | By Dean Camera
 		Timeout.c + Header file                  | By Dean Camera
+		ToneGeneration.c + Header file           | By Dean Camera
 		USART.c + Header file                    | By Atmel, ported to GCC by Martin Thomas and
 		                                         | modified by Dean Camera
 		USI.c + Header file                      | By Dean Camera
@@ -124,43 +128,32 @@ BUTTLOADTAG(Version,   VERSION_VSTRING);
 BUTTLOADTAG(Author,    "BY DEAN CAMERA");
 BUTTLOADTAG(Copyright, "<C> 2005-2006");
 
-#ifdef DEBUG_DBFUNCSON
-  const uint8_t Func_ManualCalib[]       PROGMEM = "MAN OSCCAL SET";  
-  
-  #define DEBUGFUNCTIONS   , Func_ManualCalib
-  #define DEBUGFUNCPTRS    , DFUNCManCalib
-#else
-  #define DEBUGFUNCTIONS
-  #define DEBUGFUNCPTRS
-#endif
-
 const uint8_t*   AboutTextPtrs[]         PROGMEM = {BUTTTAG_Title.TagData, BUTTTAG_Version.TagData, BUTTTAG_Author.TagData, BUTTTAG_Copyright.TagData};
 
 const uint8_t    WaitText[]              PROGMEM = "*WAIT*";
+const uint8_t    OffText[]               PROGMEM = "OFF";
 
 const uint8_t    Func_ISPPRGM[]          PROGMEM = "AVRISP MODE";
 const uint8_t    Func_STOREPRGM[]        PROGMEM = "STORE PRGM";
 const uint8_t    Func_PRGMAVR[]          PROGMEM = "PROGRAM AVR";
-const uint8_t    Func_PRGMDATAFLASH[]    PROGMEM = "DATAFLASH PRGM";
-const uint8_t    Func_PRGMSTOREINFO[]    PROGMEM = "DATASTORE INFO";
+const uint8_t    Func_PRGMSTOREINFO[]    PROGMEM = "DATAFLASH STATS";
 const uint8_t    Func_SETTINGS[]         PROGMEM = "SETTINGS";
 const uint8_t    Func_SLEEP[]            PROGMEM = "SLEEP MODE";
 	
-const uint8_t*   MainFunctionNames[]     PROGMEM = {Func_ISPPRGM  , Func_STOREPRGM  , Func_PRGMAVR  , Func_PRGMDATAFLASH  , Func_PRGMSTOREINFO, Func_SETTINGS      , Func_SLEEP
-                                                    DEBUGFUNCTIONS};
-const FuncPtr    MainFunctionPtrs[]      PROGMEM = {FUNCAVRISPMode, FUNCStoreProgram, FUNCProgramAVR, FUNCProgramDataflash, FUNCStorageInfo   , FUNCChangeSettings , FUNCSleepMode
-                                                    DEBUGFUNCPTRS};
+const uint8_t*   MainFunctionNames[]     PROGMEM = {Func_ISPPRGM  , Func_STOREPRGM  , Func_PRGMAVR  , Func_PRGMSTOREINFO, Func_SETTINGS      , Func_SLEEP};
+const FuncPtr    MainFunctionPtrs[]      PROGMEM = {FUNCAVRISPMode, FUNCStoreProgram, FUNCProgramAVR, FUNCStorageInfo   , FUNCChangeSettings , FUNCSleepMode};
 
 const uint8_t    SFunc_SETCONTRAST[]     PROGMEM = "SET CONTRAST";
 const uint8_t    SFunc_SETSPISPEED[]     PROGMEM = "SET ISP SPEED";
 const uint8_t    SFunc_SETRESETMODE[]    PROGMEM = "SET RESET MODE";
 const uint8_t    SFunc_SETFIRMMINOR[]    PROGMEM = "SET FIRM VERSION";
 const uint8_t    SFunc_SETAUTOSLEEPTO[]  PROGMEM = "SET SLEEP TIMEOUT";
+const uint8_t    SFunc_SETTONEVOL[]      PROGMEM = "SET TONE VOLUME";
 const uint8_t    SFunc_CLEARMEM[]        PROGMEM = "CLEAR SETTINGS";
 const uint8_t    SFunc_GOBOOTLOADER[]    PROGMEM = "JUMP TO BOOTLOADER";
 
-const uint8_t*   SettingFunctionNames[]  PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_SETRESETMODE, SFunc_SETFIRMMINOR , SFunc_SETAUTOSLEEPTO   , SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
-const FuncPtr    SettingFunctionPtrs[]   PROGMEM = {FUNCSetContrast  , FUNCSetISPSpeed  , FUNCSetResetMode  , FUNCSetFirmMinorVer, FUNCSetAutoSleepTimeOut, FUNCClearMem  , FUNCGoBootloader};
+const uint8_t*   SettingFunctionNames[]  PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_SETRESETMODE, SFunc_SETFIRMMINOR , SFunc_SETAUTOSLEEPTO   , SFunc_SETTONEVOL, SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
+const FuncPtr    SettingFunctionPtrs[]   PROGMEM = {FUNCSetContrast  , FUNCSetISPSpeed  , FUNCSetResetMode  , FUNCSetFirmMinorVer, FUNCSetAutoSleepTimeOut, FUNCSetToneVol  , FUNCClearMem  , FUNCGoBootloader};
 
 const uint8_t    PRG_A[]                 PROGMEM = "PRGM ALL";
 const uint8_t    PRG_D[]                 PROGMEM = "DATA ONLY";
@@ -176,9 +169,6 @@ const uint8_t*   ProgOptions[]           PROGMEM = {PRG_A, PRG_D, PRG_E, PRG_DE,
 const uint8_t    USISpeeds[USI_PRESET_SPEEDS][10]  PROGMEM = {"921600 HZ", "230400 HZ", " 57600 HZ", " 28800 HZ"};
 const uint8_t    SPIResetModes[2][6]               PROGMEM = {"LOGIC", "FLOAT"};
 const uint8_t    SIFONames[2][15]                  PROGMEM = {"STORAGE SIZES", "VIEW DATA TAGS"};
-
-// GLOBAL VARIABLES:
-volatile uint8_t JoyStatus;
 
 // GLOBAL EEPROM VARIABLE STRUCT:
 EEPROMVarsType EEPROMVars EEMEM;
@@ -197,12 +187,13 @@ int main(void)
 	ACSR    = (1 << ACD);                        // Disable the unused Analogue Comparitor to save power
 	PRR     = ((1 << PRADC) | (1 << PRSPI) | (1 << PRUSART0)); // Disable subsystems (for now) to save power
 	
-	DDRF    = ((1 << 4) | (1 << 5));             // Set status LEDs as outputs
+	DDRF    = ((1 << 4) | (1 << 5));             // Set status LEDs as outputs, rest as inputs
 	DDRB    = ((1 << 0) | (1 << 1) | (1 << 2) | (1 << 5)); // On-board dataflash /CS, ISP MOSI/SCK and beeper as outputs
 	PORTB   = ((1 << 0) | (1 << 1) | (1 << 2) | (1 << 3)   // Set SPI pins to high/pullups, and disable dataflash (send /CS high)
 	        | JOY_BMASK);                        // \ Turn joystick
 	PORTE   = JOY_EMASK;                         // /  pullups on
-			  
+	PORTF   = (1 << 7);                          // Enable PORTF pullups on Bat Detect pin
+		  
 	PCMSK0  = JOY_EMASK;                         // \.
 	PCMSK1  = JOY_BMASK;                         // | Turn on joystick
 	EIMSK   = ((1 << PCIE0) | (1 << PCIE1));     // |  interrupts
@@ -231,8 +222,21 @@ int main(void)
 	TOUT_SetupSleepTimer();                      // Set up and start the auto-sleep timer
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);	     // Set status LEDs to green (ready)	
 	
+	TONEGEN_GET_TONE_VOL();
+	TG_PlayToneSeq(TONEGEN_SEQ_STARTUP);         // Play startup tone
+
+/* TEMP 
+	while (!(JoyStatus))
+	{
+		uint8_t Buff[10];
+		MAIN_IntToStr(BV_GetBatteryADCValue(), Buff);
+		LCD_puts(Buff);
+	}
+ TEMP */
+
 	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
 	                                             // name of the default command onto the LCD
+
 	for (;;)
 	{
 		if (JoyStatus)                           // Joystick is in the non-center position
@@ -297,11 +301,6 @@ void MAIN_ResetCSLine(const uint8_t ActiveInactive)
 			  PORTF |=  (1 << 6);
 		
 			break;
-		case MAIN_RESETCS_EXTDFACTIVE:           // Dataflash chips are always active low.
-			DDRF  |=  (1 << 6);
-			PORTF &= ~(1 << 6);
-			
-			break;
 		case MAIN_RESETCS_INACTIVE:              // Must determine what to do for inactive RESET.
 			if (eeprom_read_byte(&EEPROMVars.SPIResetMode)) // FLOAT mode reset
 			{
@@ -344,9 +343,9 @@ void MAIN_IntToStr(uint16_t IntV, uint8_t* Buff)
 {
 	// Shows leading zeros, unlike itoa.
 	// Maximum value which can be converted is 999.
-
-	uint8_t Temp = 0;
 	
+	uint8_t Temp = 0;
+
 	while (IntV >= 100)
 	{
 		Temp++;
@@ -482,21 +481,6 @@ void FUNCAVRISPMode(void)
 	V2P_RunStateMachine(AICI_InterpretPacket);
 }
 
-void FUNCProgramDataflash(void)
-{
-	USI_SPIInitMaster();
-	DataflashInfo.UseExernalDF = TRUE;
-	DataflashInfo.DFSPIRoutinePointer = USI_SPITransmit;
-	
-	USART_Init();
-	LCD_puts_f(DataFlashProgMode);
-
-	V2P_RunStateMachine(PD_InterpretAVRISPPacket);
-	   
-	DF_EnableDataflash(FALSE);
-	SPI_SPIOFF();
-}
-
 void FUNCProgramAVR(void)
 {
 	uint8_t  DoneFailMessageBuff[12];
@@ -529,8 +513,6 @@ void FUNCProgramAVR(void)
 
 	LCD_puts_f(WaitText);
 	SPI_SPIInit();
-	DataflashInfo.UseExernalDF = FALSE;
-	DataflashInfo.DFSPIRoutinePointer = SPI_SPITransmit;
 	
 	if (!(DF_CheckCorrectOnboardChip()))
 	  return;
@@ -582,7 +564,7 @@ void FUNCProgramAVR(void)
 		if ((ProgMode == 0) || (ProgMode == 2) || (ProgMode == 3)) // All, flash and EEPROM, or program EEPROM mode
 		{
 			MAIN_ShowProgType('E');
-				
+
 			if (!(PM_GetStoredDataSize(TYPE_EEPROM))) // Check to make sure EEPROM data is present in memory
 			{
 				Fault = ISPCC_FAULT_NODATATYPE;
@@ -599,7 +581,7 @@ void FUNCProgramAVR(void)
 			MAIN_ShowProgType('F');
 			
 			StoredLocksFuses = eeprom_read_byte(&EEPROMVars.TotalFuseBytes);
-			if (!(StoredLocksFuses) || (StoredLocksFuses != 0xFF))
+			if (!(StoredLocksFuses) || (StoredLocksFuses == 0xFF))
 			{
 				Fault = ISPCC_FAULT_NODATATYPE;					
 				MAIN_ShowError(PSTR("NO FUSE BYTES"));
@@ -623,7 +605,7 @@ void FUNCProgramAVR(void)
 			MAIN_ShowProgType('L');
 		
 			StoredLocksFuses = eeprom_read_byte(&EEPROMVars.TotalLockBytes);
-			if (!(StoredLocksFuses) || (StoredLocksFuses != 0xFF))
+			if (!(StoredLocksFuses) || (StoredLocksFuses == 0xFF))
 			{
 				Fault = ISPCC_FAULT_NODATATYPE;
 				MAIN_ShowError(PSTR("NO LOCK BYTES"));
@@ -637,7 +619,14 @@ void FUNCProgramAVR(void)
 		strcpy_P(DoneFailMessageBuff, PSTR("PROG DONE"));
 
 		if (Fault != ISPCC_NO_FAULT)              // Takes less code to just overwrite part of the string on fail
-		  strcpy_P(&DoneFailMessageBuff[5], PSTR("FAILED"));
+		{
+			strcpy_P(&DoneFailMessageBuff[5], PSTR("FAILED"));
+			TG_PlayToneSeq(TONEGEN_SEQ_PROGFAIL);
+		}
+		else
+		{
+			TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);		
+		}
 
 		LCD_puts(DoneFailMessageBuff);
 
@@ -659,8 +648,6 @@ void FUNCProgramAVR(void)
 void FUNCStoreProgram(void)
 {
 	SPI_SPIInit();
-	DataflashInfo.UseExernalDF = FALSE;
-	DataflashInfo.DFSPIRoutinePointer = SPI_SPITransmit;
 	DF_EnableDataflash(TRUE);
 
 	if (!(DF_CheckCorrectOnboardChip()))
@@ -885,7 +872,7 @@ void FUNCSetAutoSleepTimeOut(void)
 
 			if (!(SleepVal))
 			{
-				LCD_puts_f(PSTR("OFF"));
+				LCD_puts_f(OffText);
 			}
 			else
 			{
@@ -899,19 +886,79 @@ void FUNCSetAutoSleepTimeOut(void)
 	}	
 }
 
+void FUNCSetToneVol(void)
+{
+	uint8_t VolBuffer[5];
+
+	VolBuffer[0] = 'V';
+	
+	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
+	                                             // name of the default command onto the LCD
+	for (;;)
+	{
+		if (JoyStatus)
+		{
+			uint8_t ToneVolLcl = ToneVol;        // Copy the global to a local variable to save space
+
+			if (JoyStatus & JOY_UP)
+			{
+				if (ToneVolLcl < 80)
+				  ToneVolLcl += 8;
+				else
+				  ToneVolLcl = 0;				
+			}
+			if (JoyStatus & JOY_DOWN)
+			{
+				if (ToneVolLcl)
+				  ToneVolLcl -= 8;
+				else
+				  ToneVolLcl = 80;
+			}
+			else if (JoyStatus & JOY_LEFT)
+			{
+				eeprom_write_byte(&EEPROMVars.ToneVolume, ToneVolLcl);
+				return;
+			}
+
+			ToneVol = ToneVolLcl;            // Copy the local value back into the global
+
+			if (!(ToneVolLcl))
+			{
+				LCD_puts_f(OffText);
+			}
+			else
+			{
+				TG_PlayToneSeq(TONEGEN_SEQ_VOLTEST);
+				MAIN_IntToStr((ToneVol >> 3), &VolBuffer[1]);
+				LCD_puts(VolBuffer);				
+			}
+
+			MAIN_WaitForJoyRelease();
+		}
+	}	
+}
+
 void FUNCSleepMode(void)
 {
 	LCDCRA &= ~(1 << LCDEN);                     // Turn off LCD driver while sleeping
 	LCDCRA |=  (1 << LCDBL);                     // Blank LCD to discharge all segments
 	PRR    |=  (1 << PRLCD);                     // Enable LCD power reduction bit
 
+	TG_PlayToneSeq(TONEGEN_SEQ_SLEEP);
+
 	MAIN_SETSTATUSLED(MAIN_STATLED_OFF);         // Save battery power - turn off status LED
+	TIMEOUT_SLEEP_TIMER_OFF();
+
+	while (ASSR & ((1 << TCN2UB) | (1 << TCR2UB) | (1 << OCR2UB))); // Wait for sleep timer to disengage
 
 	SMCR    = ((1 << SM1) | (1 << SE));          // Power down sleep mode
 	while (!(JoyStatus & JOY_UP))                // Joystick interrupt wakes the micro
 	  SLEEP();
 	   
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Turn status LED back on
+	TOUT_SetupSleepTimer();
+		
+	TG_PlayToneSeq(TONEGEN_SEQ_RESUME);
 
 	PRR    &= ~(1 << PRLCD);                     // Disable LCD power reduction bit
 	LCDCRA &= ~(1 << LCDBL);                     // Un-blank LCD to enable all segments
@@ -945,8 +992,6 @@ void FUNCStorageInfo(void)
 				if (SelectedItem == 1)           // View storage tags
 				{
 					SPI_SPIInit();
-					DataflashInfo.UseExernalDF = FALSE;
-					DataflashInfo.DFSPIRoutinePointer = (SPIFuncPtr)SPI_SPITransmit;
 					DF_EnableDataflash(TRUE);
 
 					if (!(PM_GetStoredDataSize(TYPE_FLASH)))
@@ -986,53 +1031,3 @@ void FUNCGoBootloader(void)
 	for (;;) {};                                 // Eternal loop - when watchdog resets the AVR it will enter the bootloader,
 	                                             // assuming the BOOTRST fuse is programmed (ptherwise app will just restart)
 }
-
-#ifdef DEBUG_DBFUNCSON
-void DFUNCManCalib(void)
-{
-	uint8_t Buffer[16];
-
-	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
-	                                             // name of the default command onto the LCD
-	USART_Init();
-
-	for (;;)
-	{
-		if (BuffElements)                        // Routine will also echo send chars (directly accesses the ringbuffer count var)
-		  USART_Tx(BUFF_GetBuffByte());
-	
-		if (JoyStatus)
-		{
-			if (JoyStatus & JOY_UP)
-			  OSCCAL++;
-			else if (JoyStatus & JOY_DOWN)
-			  OSCCAL--;
-			else if (JoyStatus & JOY_LEFT)
-			  break;
-					
-			// Copy the programmer name out of memory and transmit it several times via the USART:
-			strcpy_P(Buffer, BUTTTAG_Title.TagData);
-			
-			for (uint8_t SendLoop = 0; SendLoop < 18; SendLoop++)
-			{
-				for (uint8_t BByte = 0; BByte < 15; BByte++)
-				  USART_Tx(Buffer[BByte]);
-				
-				USART_Tx(' ');
-				USART_Tx(' ');
-			}
-
-			Buffer[0] = 'C';
-			Buffer[1] = 'V';
-			Buffer[2] = ' ';
-
-			MAIN_IntToStr(OSCCAL, &Buffer[3]);
-			LCD_puts(Buffer);
-
-			MAIN_WaitForJoyRelease();
-		}
-	}
-	
-	USART_OFF();
-}
-#endif

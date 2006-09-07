@@ -20,13 +20,8 @@
 	
 	typedef struct
 	{
-		uint16_t   PageBits;
-		uint16_t   PageSize;
-		uint16_t   TotalPages;
 		uint16_t   CurrPageAddress;
 		uint16_t   CurrBuffByte;
-		uint8_t    UseExernalDF;
-		SPIFuncPtr DFSPIRoutinePointer;
 	} DFinfo;
 	
 	// DEFINES AND MACROS:
@@ -35,20 +30,15 @@
 	#define DF_BUSYMASK              0x80
 	#define DF_DFINFOMASK            0x38
 	#define DF_INTERNALDF_BUFFBYTES  264
-	
-	#define DF_MAKELOCALSPIFUNCPTR() SPIFuncPtr LocalSPISendRoutinePtr = DataflashInfo.DFSPIRoutinePointer;
-	#define DF_SENDSPIBYTE(data)     (LocalSPISendRoutinePtr)(data)
-	
-	#define PageShiftHigh            GPIOR1 // Psuedo variable; linked to the General Purpose Storage register 1 for speed
-	#define PageShiftLow             GPIOR2 // Psuedo variable; linked to the General Purpose Storage register 2 for speed
+		
+	#define DF_PAGESHIFT_HIGH        (16 - 9)
+	#define DF_PAGESHIFT_LOW         ( 9 - 8)
 	
 	// GLOBAL VARIABLES:
 	extern DFinfo         DataflashInfo;
-	extern const uint8_t  DataFlashError[] PROGMEM;
 	
 	// PROTOTYPES:
 	uint8_t DF_CheckCorrectOnboardChip(void);
-	void    DF_GetChipCharacteristics(void);
 	void    DF_WaitWhileBusy(void);
 	void    DF_CopyBufferToFlashPage(const uint16_t PageAddress);
 	void    DF_CopyFlashPageToBuffer(const uint16_t PageAddress);

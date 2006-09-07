@@ -1,10 +1,21 @@
-Current Version: Public Release 2.0
+Current Version: Public Release 2.1
 
 	PENDING CHANGES FOR 2.1:
 	=======================================
-	  * Add non-consecutive HEX support
-	  * Add low-battery detection
-	  * Add audio-feedback for programming operations
+	  * ADD: Add non-consecutive HEX support
+	  * ADD: Add low-battery detection
+	  * ADD: Extra ISP speeds (settings menu only)
+	  * ADD: Timeouts on target busy wait loops
+	  * REM: In preperation for low bat detection, sleep timer is always active
+	  * BUG: EEPROM programming is very slow in all modes
+	  
+	IN PUBLIC RELEASE 2.1:
+	=======================================
+	  * Added in audio feedback for several options
+	  * Removed direct dataflash programming code to save space (no one unused it anyway)
+	  * "Data" replaced with "Flash" in DATASTORE STATS now that confusion with PRGM DATAFLASH MODE is not possible
+	  * Fixed Fusebyte/Lockbyte bug in PROGRAM AVR mode
+	  * Fixed EEPROM storage bug
 
 	IN PUBLIC RELEASE 2.0:
 	=======================================

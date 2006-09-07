@@ -47,6 +47,7 @@ void ISPCC_EnterChipProgrammingMode(void)
 
 			InProgrammingMode = TRUE;
 			MAIN_SETSTATUSLED(MAIN_STATLED_RED);
+			TG_PlayToneSeq(TONEGEN_SEQ_SYNCDONE);
 			PacketBytes[1] = AICB_STATUS_CMD_OK;
 			return;
 		}
@@ -60,6 +61,7 @@ void ISPCC_EnterChipProgrammingMode(void)
 
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);
 	PacketBytes[1] = AICB_STATUS_CMD_FAILED;
+	TG_PlayToneSeq(TONEGEN_SEQ_SYNCFAIL);
 }
 
 void ISPCC_ProgramChip(void)

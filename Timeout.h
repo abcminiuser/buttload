@@ -19,23 +19,25 @@
 	
 	// DEFINES AND MACROS:
 	#define TIMEOUT_PACKET_TIMEOUTTICKS   150   // Approx 1 timeout every 5 secs (which is close to the computer timout period)
-	#define TIMEOUT_PACKET_TIMER_OFF()    MACROS{ TCCR2A = 0; TIMSK2 = 0; }MACROE
+	#define TIMEOUT_PACKET_TIMER_OFF()    MACROS{ TCCR0A = 0; TIMSK0 = 0; }MACROE
 	#define TIMEOUT_PACKET_TIMER_ON()     MACROS{ PacketTimeOut = FALSE;  \
 												  PacketTimeOutTicks = 0; \
-												  TCNT2  = 0;             \
-												  OCR2A  = 240;           \
-												  TIMSK2 = (1 << OCIE2A); \
-												  TCCR2A = ((1 << WGM21) | (1 << CS22) | (1 << CS21) | (1 << CS20)); }MACROE
+												  TCNT0  = 0;             \
+												  OCR0A  = 240;           \
+												  TIMSK0 = (1 << OCIE0A); \
+												  TCCR0A = ((1 << WGM01) | (1 << CS02) | (1 << CS01) | (1 << CS00)); }MACROE
 	
-	#define TIMEOUT_SLEEP_TIMER_OFF()     MACROS{ TCCR1B &= ~((1 << CS12) | (1 << CS10)); }MACROE
-	#define TIMEOUT_SLEEP_TIMER_ON()      MACROS{ TCCR1B |=  ((1 << CS12) | (1 << CS10)); }MACROE
-	#define TIMEOUT_SLEEP_TIMEOUT_RESET() MACROS{ SleepTimeOutTicks = 0; TCNT1 = 0; }MACROE
+	#define TIMEOUT_SLEEP_TIMER_OFF()     MACROS{ TCCR2A = 0; ASSR = 0; SecsBeforeAutoSleep = 0; }MACROE
+	#define TIMEOUT_SLEEP_TIMER_ON()      MACROS{ ASSR = (1 << AS2); TCCR2A = ((1 << WGM21) | (1 << CS22) | (1 << CS21)); }MACROE
+	#define TIMEOUT_SLEEP_TIMEOUT_RESET() MACROS{ SleepTimeOutSecs = 0; TCNT2 = 0; }MACROE
 	
 	// EXTERNAL VARIABLES:
 	extern volatile uint8_t  PacketTimeOut;
 	extern volatile uint8_t  PacketTimeOutTicks;
-	extern volatile uint8_t  SleepTimeOutTicks;
-	extern const    uint8_t  AutoSleepTOValues[5];
+	extern volatile uint8_t  SleepTimeOutSecs;
+	extern volatile uint8_t  SecsBeforeAutoSleep;
+
+	extern const    uint8_t  AutoSleepTOValues[5] PROGMEM;	
 
 	// PROTOTYPES:
 	void TOUT_SetupSleepTimer(void);

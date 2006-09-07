@@ -10,7 +10,7 @@
 
 	// Version Macros:
 	#define VERSION_MAJOR            2
-	#define VERSION_MINOR            0
+	#define VERSION_MINOR            1
 	#define VERSION_VSTRING          {'V','0' + VERSION_MAJOR,'-','0' + VERSION_MINOR, '\0'}
 	
 	#define MAGIC_NUM                0b01101010 // Magic number, used for first-run detection or upgrade incompatibility checks

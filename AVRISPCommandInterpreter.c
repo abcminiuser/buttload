@@ -32,14 +32,17 @@ void AICI_InterpretPacket(void)
 		case AICB_CMD_LEAVE_PROGMODE_ISP:
 			MessageSize = 2;
 
+			if (InProgrammingMode)
+			  TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);
+
 			MAIN_Delay1MS(PacketBytes[1]);           // Wait for the "PreDelay" amount specified in the packet
-			MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);   // Non programming mode = green status led
 			InProgrammingMode = FALSE;
 			MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE); // Release the RESET line and allow the slave AVR to run
 			MAIN_Delay1MS(PacketBytes[2]);           // Wait for the "PostDelay" amount specified in the packet
 			
 			USI_SPIOff();
 
+			MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);   // Non programming mode = green status led
 			PacketBytes[1] = AICB_STATUS_CMD_OK;     // Return OK
 
 			break;
@@ -52,7 +55,7 @@ void AICI_InterpretPacket(void)
 			if (PacketBytes[2])                       // Poll mode, value of 1 indicates a busy flag wait
 			{
 				do
-					USI_SPITransmitWord(0xF000);
+				  USI_SPITransmitWord(0xF000);
 				while (USI_SPITransmitWord(0x0000) & 0x01);
 			}
 			else                                      // Poll mode flag of 0 indicates a predefined delay
@@ -69,8 +72,8 @@ void AICI_InterpretPacket(void)
 				uint8_t TxBytes      = PacketBytes[1]; // \. The packet data is overwritten during the transfer. Because
 				uint8_t RxStartByte  = PacketBytes[2]; // |  of this each data byte must be stored into temp variables
 				uint8_t RxBytes      = PacketBytes[3]; // /  so that their contents are not lost.
-				uint8_t RxByteNum    = 1;
-				uint8_t TxByteNum    = 1;
+				uint8_t RxByteNum    = 0;
+				uint8_t TxByteNum    = 0;
 				uint8_t RecievedByte = 0;
 
 				while (TxByteNum++ < TxBytes)          // Still bytes to transfer

@@ -16,7 +16,7 @@ uint16_t GPageLength         = 0;
 
 uint32_t PM_GetStoredDataSize(const uint8_t Type)
 {
-	/* This take a **LOT** of code and is accessed several times throughout
+	/* This takes a **LOT** of code and is accessed several times throughout
 	   the program, so I've put it into a seperate function to save on flash. */
 
 	uint32_t ProgDataSize;
@@ -32,7 +32,6 @@ uint32_t PM_GetStoredDataSize(const uint8_t Type)
 void PM_SetupDFAddressCounters(const uint8_t Type)
 {
 	uint32_t StartAddress;
-	ldiv_t   DataflashPos;
 	
 	MemoryType  = Type;
 	GPageLength = 0;
@@ -40,12 +39,10 @@ void PM_SetupDFAddressCounters(const uint8_t Type)
 	if (Type == TYPE_FLASH)                                             // Type 1 = Flash
 	  StartAddress = (CurrAddress << 1);                                // Convert flash word address to byte address
 	else
-	  StartAddress = CurrAddress + PM_EEPROM_OFFSET;                    // EEPROM uses byte addresses, and starts at the 257th kilobyte in Dataflash
+	  StartAddress = (CurrAddress + PM_EEPROM_OFFSET);                  // EEPROM uses byte addresses, and starts at the 257th kilobyte in Dataflash
 	
-	DataflashPos = ldiv(StartAddress, DF_INTERNALDF_BUFFBYTES);         // Perform a fast division
-	
-	DataflashInfo.CurrPageAddress = (uint16_t)DataflashPos.quot;
-	DataflashInfo.CurrBuffByte    = (uint16_t)DataflashPos.rem;
+	DataflashInfo.CurrPageAddress = (uint16_t)(StartAddress / DF_INTERNALDF_BUFFBYTES);
+	DataflashInfo.CurrBuffByte    = (uint16_t)(StartAddress % DF_INTERNALDF_BUFFBYTES);
 }
 
 void PM_StoreProgramByte(const uint8_t Data)
@@ -71,9 +68,11 @@ void PM_InterpretAVRISPPacket(void)
 		case AICB_CMD_ENTER_PROGMODE_ISP:
 			MessageSize = 2;
 						
-			for (uint8_t PacketB = 0; PacketB <= 11; PacketB++)         // Save the enter programming mode command bytes
+			for (uint8_t PacketB = 0; PacketB < 12; PacketB++)          // Save the enter programming mode command bytes
 			  eeprom_write_byte(&EEPROMVars.EnterProgMode[PacketB], PacketBytes[PacketB]);
 			
+			TG_PlayToneSeq(TONEGEN_SEQ_SYNCDONE);
+
 			InProgrammingMode = TRUE;                                   // Set the flag, prevent the user from exiting the V2P state machine			
 			CurrentMode = PM_NO_SETUP;                                  // Clear the current mode variable
 
@@ -85,7 +84,9 @@ void PM_InterpretAVRISPPacket(void)
 			MessageSize = 2;
 
 			PM_CheckEndOfFuseLockData();                                // Check for remaining bytes to be stored and general cleanup
-			
+
+			if (InProgrammingMode)
+			  TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);			
 			InProgrammingMode = FALSE;                                  // Clear the flag, allow the user to exit the V2P state machine
 
 			DF_EnableDataflash(FALSE);
@@ -226,7 +227,7 @@ void PM_InterpretAVRISPPacket(void)
 			for (uint16_t CurrByte = 0; CurrByte < BytesToWrite; CurrByte++)
 			  PM_StoreProgramByte(PacketBytes[10 + CurrByte]);
 
-			if (!(GPageLength & PM_PAGELENGTH_FOUNDBIT) && (PacketBytes[3] & ISPCC_PROG_MODE_PAGEDONE) && GPageLength)
+			if (!(GPageLength & PM_PAGELENGTH_FOUNDBIT) && (PacketBytes[3] & ISPCC_PROG_MODE_PAGEDONE) && (GPageLength))
 			{
 				eeprom_write_word(((MemoryType == TYPE_FLASH)? &EEPROMVars.PageLength : &EEPROMVars.EPageLength), GPageLength);
 		
@@ -252,7 +253,7 @@ void PM_InterpretAVRISPPacket(void)
 			uint16_t BytesToRead = ((uint16_t)PacketBytes[1] << 8)      // \. Load in the number of bytes that is to
 			                     | PacketBytes[2];                      // /  be read into a temp variable (MSB first)
 						
-			uint16_t BytesInMem  = PM_GetStoredDataSize((PacketBytes[0] == AICB_CMD_READ_FLASH_ISP)? TYPE_FLASH : TYPE_EEPROM);
+			uint32_t BytesInMem  = PM_GetStoredDataSize((PacketBytes[0] == AICB_CMD_READ_FLASH_ISP)? TYPE_FLASH : TYPE_EEPROM);
 
 			for (uint16_t ReadByte = 0; ReadByte < BytesToRead; ReadByte++)
 			{
@@ -282,7 +283,7 @@ void PM_CheckEndOfFuseLockData(void)
 		if (DataflashInfo.CurrBuffByte)                                 // Data in the dataflash buffer, pending to be written
 		  DF_CopyBufferToFlashPage(DataflashInfo.CurrPageAddress);      // Save the remaining buffer bytes
 
-		uint32_t DataSize = ((DataflashInfo.CurrPageAddress * DF_INTERNALDF_BUFFBYTES) + DataflashInfo.CurrBuffByte);
+		uint32_t DataSize = (((uint32_t)DataflashInfo.CurrPageAddress * DF_INTERNALDF_BUFFBYTES) + DataflashInfo.CurrBuffByte);
 
 		if (MemoryType == TYPE_FLASH)
 		{
@@ -390,15 +391,15 @@ void PM_CreateProgrammingPackets(const uint8_t Type)
 			{
 				if (!(ContinuedPage))                                   // Start of a new page, program in the first 150 bytes
 				{
-					BytesPerProgram = 160;
-					PacketBytes[3] &= ~ISPCC_PROG_MODE_PAGEDONE;		
-					ContinuedPage   = TRUE;
+					BytesPerProgram  = 160;
+					PacketBytes[3]  &= ~ISPCC_PROG_MODE_PAGEDONE;		
+					ContinuedPage    = TRUE;
 				}
 				else                                                    // Middle of a page, program in the remainder
 				{
-					BytesPerProgram = PageLength - 160;
-					PacketBytes[3] |= ISPCC_PROG_MODE_PAGEDONE;
-					ContinuedPage   = FALSE;
+					BytesPerProgram  = PageLength - 160;
+					PacketBytes[3]  |= ISPCC_PROG_MODE_PAGEDONE;
+					ContinuedPage    = FALSE;
 				}
 				
 				for (uint16_t LoadB = 0; LoadB < BytesPerProgram; LoadB++)
@@ -436,7 +437,7 @@ void PM_CreateProgrammingPackets(const uint8_t Type)
 			BytesRead += BytesPerProgram;                               // Increment the counter
 		}
 	
-		if (!(BytesRead & 0xFFFF) && (BytesRead & 0x00FF0000))          // Extended address required
+		if (!(BytesRead & 0x0000FFFF) && (BytesRead & 0x00FF0000))      // Extended address required
 		{
 			USI_SPITransmit(V2P_LOAD_EXTENDED_ADDR_CMD);                // Load extended address command
 			USI_SPITransmit(0x00);

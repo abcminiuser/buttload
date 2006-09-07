@@ -16,28 +16,25 @@
 	and the USI bus which is set to SPI mode. This global pointer is then copied to a local
 	pointer by DF_MAKELOCALSPIFUNCPTR() to prevent it from being re-copied before every use
 	of SPI_SENDBYTE. As a consequence this macro must be in all routines which make use of
-	the DF_SENDSPIBYTE macro.
+	the SPI_SPITransmit macro.
 */
 
 #include "Dataflash.h"
 
-//                   DataFlash Size:       512k,   1M,   2M,   4M,   8M,  16M,  32M,  64M
-const uint8_t  DF_PageBits[]    PROGMEM = {    9,    9,    9,    9,    9,   10,   10,   11}; // Index of internal page address bits
-const uint16_t DF_PageSize[]    PROGMEM = {  264,  264,  264,  264,  264,  528,  528, 1056}; // Index of page sizes
-const uint16_t DF_Pages[]       PROGMEM = {  256,  512, 1024, 2048, 4096, 4096, 8192, 8192}; // Index of total pages
-
 const uint8_t  DataFlashError[] PROGMEM = "DATAFLASH ERROR";
-
-DFinfo         DataflashInfo            = {0 , 0, 0, 0, 0, 0, SPI_SPITransmit};
+DFinfo         DataflashInfo            = {0, 0};
 
 // ======================================================================================
 
 uint8_t DF_CheckCorrectOnboardChip(void)          // Ensures onboard Butterfly dataflash is working and the correct type
 {
-	DF_GetChipCharacteristics();
-
-	if (DataflashInfo.TotalPages != 2048)
+	DF_TOGGLEENABLE();
+	
+	SPI_SPITransmit(DFCB_STATUSREG);              // Send the get status register command
+	
+	if (((SPI_SPITransmit(0x00) & DF_DFINFOMASK)) != (3 << 3)) // Bits 3, 4 and 5 contain the dataflash type info
 	{
+		DF_EnableDataflash(FALSE);
 		SPI_SPIOFF();
 		MAIN_ShowError(DataFlashError);
 		
@@ -49,114 +46,82 @@ uint8_t DF_CheckCorrectOnboardChip(void)          // Ensures onboard Butterfly d
 	}
 }
 
-void DF_GetChipCharacteristics(void)
-{
-	DF_MAKELOCALSPIFUNCPTR();
-
-	DF_TOGGLEENABLE();
-	
-	DF_SENDSPIBYTE(DFCB_STATUSREG);               // Send the get status register command
-	
-	uint8_t DataIndex = ((DF_SENDSPIBYTE(0x00) & DF_DFINFOMASK) >> 3);  // Bits 3, 4 and 5 contain the lookup table index
-
-	DataflashInfo.PageBits   = pgm_read_byte(&DF_PageBits[DataIndex]);	// Get number of internal page address bits from look-up table
-	DataflashInfo.PageSize   = pgm_read_word(&DF_PageSize[DataIndex]);  // Get the size of the page (in bytes)
-	DataflashInfo.TotalPages = pgm_read_word(&DF_Pages[DataIndex]);     // Get the total number of pages in the connected dataflash
-
-	PageShiftHigh = (16 - DataflashInfo.PageBits);
-	PageShiftLow  = (DataflashInfo.PageBits - 8);
-}
-
 void DF_WaitWhileBusy(void)
 {
-	DF_MAKELOCALSPIFUNCPTR();
-
 	DF_TOGGLEENABLE();
 	
-	DF_SENDSPIBYTE(DFCB_STATUSREG);               // Send the get status register command
+	SPI_SPITransmit(DFCB_STATUSREG);
 	
-	while (!(DF_SENDSPIBYTE(0x00) & DF_BUSYMASK));
+	while (!(SPI_SPITransmit(0x00) & DF_BUSYMASK));
 }
 
 void DF_CopyBufferToFlashPage(const uint16_t PageAddress)
 {
-	DF_MAKELOCALSPIFUNCPTR();
-
 	DF_TOGGLEENABLE();
 
-	DF_SENDSPIBYTE(DFCB_BUF1TOFLASHWE);           // Send the buffer copy command code
-	DF_SENDSPIBYTE((uint8_t)(PageAddress >> PageShiftHigh)); // Send the upper part of the page address
-	DF_SENDSPIBYTE((uint8_t)(PageAddress << PageShiftLow));  // Send the lower part of the page address
-	DF_SENDSPIBYTE(0x00);                         // Send a dummy byte	
+	SPI_SPITransmit(DFCB_BUF1TOFLASHWE);
+	SPI_SPITransmit((uint8_t)(PageAddress >> DF_PAGESHIFT_HIGH));
+	SPI_SPITransmit((uint8_t)(PageAddress << DF_PAGESHIFT_LOW));
+	SPI_SPITransmit(0x00);
 	
 	DF_WaitWhileBusy();
 }
 
 void DF_CopyFlashPageToBuffer(const uint16_t PageAddress)
 {
-	DF_MAKELOCALSPIFUNCPTR();
-
 	DF_TOGGLEENABLE();
 
-	DF_SENDSPIBYTE(DFCB_FLASHTOBUF1TRANSFER);     // Send the memory copy command code
-	DF_SENDSPIBYTE((uint8_t)(PageAddress >> PageShiftHigh)); // Send the upper part of the page address
-	DF_SENDSPIBYTE((uint8_t)(PageAddress << PageShiftLow));  // Send the lower part of the page address
-	DF_SENDSPIBYTE(0x00);                         // Send a dummy byte	
+	SPI_SPITransmit(DFCB_FLASHTOBUF1TRANSFER);
+	SPI_SPITransmit((uint8_t)(PageAddress >> DF_PAGESHIFT_HIGH));
+	SPI_SPITransmit((uint8_t)(PageAddress << DF_PAGESHIFT_LOW));
+	SPI_SPITransmit(0x00);
 	
 	DF_WaitWhileBusy();
 }
 
 void DF_BufferWriteEnable(const uint16_t BuffAddress)
 {
-	DF_MAKELOCALSPIFUNCPTR();
-
 	DF_TOGGLEENABLE();
 
-	DF_SENDSPIBYTE(DFCB_BUF1WRITE);               // Send the buffer write command code
-	DF_SENDSPIBYTE(0x00);                         // Send a dummy byte
-	DF_SENDSPIBYTE((uint8_t)(BuffAddress >> 8));  // Send the buffer high address	
-	DF_SENDSPIBYTE((uint8_t)(BuffAddress));       // Send the buffer low address	
+	SPI_SPITransmit(DFCB_BUF1WRITE);
+	SPI_SPITransmit(0x00);
+	SPI_SPITransmit((uint8_t)(BuffAddress >> 8));
+	SPI_SPITransmit((uint8_t)(BuffAddress));
 }
 
 void DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddress)
 {
-	DF_MAKELOCALSPIFUNCPTR();
-
 	DF_TOGGLEENABLE();
 	
-	DF_SENDSPIBYTE(DFCB_CONTARRAYREAD);
-	DF_SENDSPIBYTE((uint8_t)(PageAddress >> PageShiftHigh));
-	DF_SENDSPIBYTE((uint8_t)((PageAddress << PageShiftLow) + (BuffAddress >> 8)));
-	DF_SENDSPIBYTE((uint8_t)(BuffAddress));
+	SPI_SPITransmit(DFCB_CONTARRAYREAD);
+	SPI_SPITransmit((uint8_t)(PageAddress >> DF_PAGESHIFT_HIGH));
+	SPI_SPITransmit((uint8_t)((PageAddress << DF_PAGESHIFT_LOW) + (BuffAddress >> 8)));
+	SPI_SPITransmit((uint8_t)(BuffAddress));
 	
 	for (uint8_t DByte = 0; DByte < 4; DByte++)  // Perform 4 dummy writes to intiate the DataFlash address pointers
-	  DF_SENDSPIBYTE(0x00);                         
+	  SPI_SPITransmit(0x00);                         
 }
 
 uint8_t DF_ReadBufferByte(const uint16_t BuffAddress)
 {
-	DF_MAKELOCALSPIFUNCPTR();
-
 	DF_TOGGLEENABLE();
 	
-	DF_SENDSPIBYTE(DFCB_BUF1READ);
-	DF_SENDSPIBYTE((uint8_t)(BuffAddress >> 8));
-	DF_SENDSPIBYTE((uint8_t)(BuffAddress));
-	DF_SENDSPIBYTE(0x00);
+	SPI_SPITransmit(DFCB_BUF1READ);
+	SPI_SPITransmit((uint8_t)(BuffAddress >> 8));
+	SPI_SPITransmit((uint8_t)(BuffAddress));
+	SPI_SPITransmit(0x00);
 	
-	return DF_SENDSPIBYTE(0x00);                         
+	return SPI_SPITransmit(0x00);                         
 }
 
 void DF_EraseBlock(const uint16_t BlockToErase)
 {
-	DF_MAKELOCALSPIFUNCPTR();
-
 	DF_TOGGLEENABLE();
 
-	DF_SENDSPIBYTE(DFCB_BLOCKERASE);                   // Send block erase command
-	DF_SENDSPIBYTE((uint8_t)(BlockToErase >> 8));
-	DF_SENDSPIBYTE((uint8_t)(BlockToErase));
-	DF_SENDSPIBYTE(0x00);
+	SPI_SPITransmit(DFCB_BLOCKERASE);
+	SPI_SPITransmit((uint8_t)(BlockToErase >> 8));
+	SPI_SPITransmit((uint8_t)(BlockToErase));
+	SPI_SPITransmit(0x00);
 
 	DF_WaitWhileBusy();
 }
@@ -164,17 +129,7 @@ void DF_EraseBlock(const uint16_t BlockToErase)
 void DF_EnableDataflash(const uint8_t Enabled)
 {
 	if (Enabled == TRUE)
-	{
-		if (DataflashInfo.UseExernalDF == TRUE)
-		  MAIN_ResetCSLine(MAIN_RESETCS_EXTDFACTIVE);
-		else
-		  PORTB &= ~(1 << 0);
-	}
+	  PORTB &= ~(1 << 0);
 	else
-	{
-		if (DataflashInfo.UseExernalDF == TRUE)
-		  MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE);
-		else
-		  PORTB |= (1 << 0);
-	}
+	  PORTB |= (1 << 0);
 }

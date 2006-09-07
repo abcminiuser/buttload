@@ -9,7 +9,6 @@
 #define MAIN_H
 
 	// DEBUG SWITCHES
-//	#define DEBUG_DBFUNCSON
 //	#define DEBUG_JTAGON
 	// END DEBUG SWITCHES
 	
@@ -29,12 +28,13 @@
 	#include "SPI.h"
 	#include "USI.h"
 	#include "Dataflash.h"
-	#include "ProgDataflash.h"
 	#include "ProgramManager.h"
 	#include "RingBuff.h"
 	#include "EEPROMVariables.h"
 	#include "TagManager.h"
 	#include "ButtLoadTag.h"
+	#include "ToneGeneration.h"
+	#include "BattVoltage.h"
 	
 	// LIB C VERSION CHECK:
 	#if (!defined(__AVR_LIBC_VERSION__) || (__AVR_LIBC_VERSION__ < 10401UL)) // In future AVRLibC version requirements may be increased with changes
@@ -55,8 +55,8 @@
 	// EXTERNAL VARIABLES:
 	extern const uint8_t WaitText[];
 	extern const uint8_t VersionInfo[];
-	
-	extern volatile uint8_t JoyStatus;
+
+	#define JoyStatus                GPIOR1 // Psudo-variable, GPIO register for speed
 
 	extern EEPROMVarsType EEPROMVars EEMEM;
 	
@@ -69,7 +69,6 @@
 	
 	#define MAIN_RESETCS_ACTIVE      0
 	#define MAIN_RESETCS_INACTIVE    1
-	#define MAIN_RESETCS_EXTDFACTIVE 2
 	
 	// PROTOTYPES:
 	void MAIN_ResetCSLine(const uint8_t ActiveInactive);
@@ -84,7 +83,6 @@
 	void FUNCChangeSettings(void);
 	void FUNCShowAbout(void);
 	void FUNCAVRISPMode(void);
-	void FUNCProgramDataflash(void);
 	void FUNCProgramAVR(void);
 	void FUNCStoreProgram(void);
 	void FUNCClearMem(void);
@@ -93,11 +91,8 @@
 	void FUNCSetResetMode(void);
 	void FUNCSetFirmMinorVer(void);
 	void FUNCSetAutoSleepTimeOut(void);
+	void FUNCSetToneVol(void);
 	void FUNCSleepMode(void);
 	void FUNCStorageInfo(void);
 	void FUNCGoBootloader(void) __attribute__((noreturn));
-	
-	#ifdef DEBUG_DBFUNCSON
-	  void DFUNCManCalib(void);
-	#endif
 #endif

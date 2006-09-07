@@ -62,24 +62,22 @@ TARGET = ButtLoad
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC =   Main.c                       \
-                                     \
-		OSCCal.c                     \
-		LCD_Driver.c                 \
-		USART.c                      \
-		SPI.c                        \
-		USI.c                        \
+SRC =	AVRISPCommandInterpreter.c   \
+		BattVoltage.c                \
 		Dataflash.c                  \
-                                     \
-		RingBuff.c                   \
-        Timeout.c                    \
-		                             \
-		ProgDataflash.c              \
-		V2Protocol.c                 \
 		ISPChipComm.c                \
-		AVRISPCommandInterpreter.c   \
+		LCD_Driver.c                 \
+		Main.c                       \
+		OSCCal.c                     \
 		ProgramManager.c             \
-		TagManager.c
+		RingBuff.c                   \
+		SPI.c                        \
+		TagManager.c                 \
+		ToneGeneration.c             \
+        Timeout.c                    \
+		USART.c                      \
+		USI.c                        \
+		V2Protocol.c
 
 
 # List Assembler source files here.

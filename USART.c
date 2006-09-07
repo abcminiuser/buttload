@@ -31,10 +31,7 @@ void USART_Init(void)
 {
 	// Calibrate the internal RC oscilator
 	LCD_puts_f(WaitText);
-
-	#ifndef DEBUG_DBFUNCSON
-	  OSCCAL_Calibrate();
-	#endif
+	OSCCAL_Calibrate();
 
 	// Enable USART subsystem
 	PRR &= ~(1 << PRUSART0);

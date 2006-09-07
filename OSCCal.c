@@ -21,10 +21,13 @@ void OSCCAL_Calibrate(void)
     
 	// Disable timer interrupts
 	TIMSK1 = 0;
-	TIMSK0 = 0;
+	TIMSK2 = 0;
         
 	// Set timer 2 to asyncronous mode (32.768KHz crystal)
 	ASSR   = (1 << AS2);
+
+	// Ensure timer 1 control register A is cleared
+	TCCR1A = 0;
 
 	// Start both counters with no prescaling
 	TCCR1B = (1 << CS10);

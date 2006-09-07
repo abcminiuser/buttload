@@ -36,6 +36,7 @@
 		uint8_t  FirmVerMinor;
 		uint8_t  AutoSleepValIndex;
 		uint8_t  SPIResetMode;
+		uint8_t  ToneVolume;
 		uint8_t  MagicNumber;	
 
 		uint8_t  JUNKVAR2;          // Unused location to guard against EEPROM corruption - this is mainly a

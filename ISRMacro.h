@@ -25,7 +25,7 @@
 #define ISRMACRO_H
 
 	// If present, kill the current ISR macro:
-	#ifdef ISR
+	#if defined(ISR)
 	   #undef ISR
 	#endif
 	
