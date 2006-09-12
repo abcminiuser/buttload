@@ -50,7 +50,7 @@
 	#define ISPCC_USIMASK                     ((1<<USI_DATAIN_PIN) | (1<<USI_DATAOUT_PIN) | (1<<USI_CLOCK_PIN))
 	
 	// EXTERNAL VARIABLES:
-	extern const uint8_t SyncErrorMessage[] PROGMEM;
+	extern const char SyncErrorMessage[] PROGMEM;
 	
 	// PROTOTYPES:
 	void   ISPCC_EnterChipProgrammingMode(void);

@@ -268,7 +268,7 @@ void PM_InterpretAVRISPPacket(void)
 		
 			break;
 		default:
-			MessageSize = 1;
+			MessageSize = 2;
 			
 			PacketBytes[1] = AICB_STATUS_CMD_UNKNOWN;
 	}
@@ -452,7 +452,7 @@ void PM_CreateProgrammingPackets(const uint8_t Type)
 
 void PM_ShowStoredItemSizes(void)
 {
-	uint8_t Buffer[14];
+	char    Buffer[14];
 	uint8_t ItemInfoIndex = 0;
 	uint8_t TempB;
 	

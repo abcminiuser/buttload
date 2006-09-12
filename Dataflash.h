@@ -45,7 +45,6 @@
 	void    DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddress);
 	uint8_t DF_ReadBufferByte(const uint16_t BuffAddress);
 	void    DF_BufferWriteEnable(const uint16_t BuffAddress);
-	void    DF_EraseBlock(const uint16_t BlockToErase);
 	void    DF_EnableDataflash(const uint8_t Enabled);
 	
 #endif

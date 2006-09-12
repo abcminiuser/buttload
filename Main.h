@@ -9,7 +9,7 @@
 #define MAIN_H
 
 	// DEBUG SWITCHES
-//	#define DEBUG_JTAGON
+	//#define DEBUG_JTAGON
 	// END DEBUG SWITCHES
 	
 	// INCLUDES:
@@ -19,6 +19,7 @@
 	#include <avr/version.h>
 	#include <util/delay.h>
 	
+	#include "Analogue.h"
 	#include "GlobalMacros.h"
 	#include "ISRMacro.h"
 	#include "OSCCal.h"
@@ -34,7 +35,6 @@
 	#include "TagManager.h"
 	#include "ButtLoadTag.h"
 	#include "ToneGeneration.h"
-	#include "BattVoltage.h"
 	
 	// LIB C VERSION CHECK:
 	#if (!defined(__AVR_LIBC_VERSION__) || (__AVR_LIBC_VERSION__ < 10401UL)) // In future AVRLibC version requirements may be increased with changes
@@ -53,8 +53,8 @@
 	#endif
 	
 	// EXTERNAL VARIABLES:
-	extern const uint8_t WaitText[];
-	extern const uint8_t VersionInfo[];
+	extern const char WaitText[];
+	extern const char VersionInfo[];
 
 	#define JoyStatus                GPIOR1 // Psudo-variable, GPIO register for speed
 
@@ -70,12 +70,21 @@
 	#define MAIN_RESETCS_ACTIVE      0
 	#define MAIN_RESETCS_INACTIVE    1
 	
+	#define MAIN_PM_ALL              0
+	#define MAIN_PM_FLASH            1
+	#define MAIN_PM_EEPROM           2
+	#define MAIN_PM_FLASHEEPROM      3
+	#define MAIN_PM_FUSE             4
+	#define MAIN_PM_LOCK             5
+	#define MAIN_PM_FUSELOCK         6
+	#define MAIN_PM_ERASE            7
+	
 	// PROTOTYPES:
 	void MAIN_ResetCSLine(const uint8_t ActiveInactive);
 	void MAIN_WaitForJoyRelease(void);
-	void MAIN_IntToStr(uint16_t IntV, uint8_t* Buff);
+	void MAIN_IntToStr(uint16_t IntV, char* Buff);
 	void MAIN_ShowProgType(const uint8_t Letter);
-	void MAIN_ShowError(const uint8_t *pFlashStr);
+	void MAIN_ShowError(const char *pFlashStr);
 	
 	void MAIN_Delay10MS(uint8_t loops);
 	void MAIN_Delay1MS(uint8_t loops);

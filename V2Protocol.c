@@ -12,7 +12,7 @@ const uint8_t SignonResponse[]  PROGMEM = {AICB_CMD_SIGN_ON, AICB_STATUS_CMD_OK,
 
 // GLOBAL VARIABLES:
 uint8_t  PacketBytes[V2P_MAXBUFFSIZE]   = {};
-uint16_t SequenceNum                    = 0;
+uint8_t  SequenceNum                    = 0;
 uint16_t MessageSize                    = 0;
 uint8_t  InProgrammingMode              = FALSE;
 uint32_t CurrAddress                    = 0;

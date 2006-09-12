@@ -18,7 +18,7 @@
 #define INC_FROM_DRIVER
 #include "LCD_Driver.h"
 
-volatile uint8_t  TextBuffer[LCD_TEXTBUFFER_SIZE + 7] = {};
+volatile char     TextBuffer[LCD_TEXTBUFFER_SIZE + 7] = {};
 volatile uint8_t  SegBuffer[LCD_SEGBUFFER_SIZE]       = {};
 volatile uint8_t  StrStart                            = 0;
 volatile uint8_t  StrEnd                              = 0;
@@ -101,15 +101,15 @@ void LCD_Init(void)
     LCDCRA  = (1<<LCDEN) | (1<<LCDAB) | (1<<LCDIE);
 }
 
-void LCD_puts_f(const uint8_t *FlashData)
+void LCD_puts_f(const char *FlashData)
 {
-	uint8_t StrBuff[LCD_TEXTBUFFER_SIZE];
+	char StrBuff[LCD_TEXTBUFFER_SIZE];
 
 	strcpy_P(StrBuff, FlashData);
 	LCD_puts(StrBuff);
 }
 
-void LCD_puts(const uint8_t *Data)
+void LCD_puts(const char *Data)
 {
 	uint8_t LoadB;
 	
@@ -138,7 +138,7 @@ void LCD_puts(const uint8_t *Data)
 	UpdateLCD   = TRUE;
 }
 
-static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit)
+static inline void LCD_WriteChar(const uint8_t Byte, const char Digit)
 {
 	uint16_t SegData  = 0x0000;
 	uint8_t  *BuffPtr = (uint8_t*)(&SegBuffer[0] + (Digit >> 1));

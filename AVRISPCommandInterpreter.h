@@ -18,7 +18,7 @@
 	#include "V2Protocol.h"
 	
 	// EXTERNAL VARIABLES:
-	extern const uint8_t AVRISPModeMessage[] PROGMEM;
+	extern const char AVRISPModeMessage[] PROGMEM;
 	
 	// PROTOTYPES:
 	void AICI_InterpretPacket(void);

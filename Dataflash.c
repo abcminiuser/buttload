@@ -21,7 +21,7 @@
 
 #include "Dataflash.h"
 
-const uint8_t  DataFlashError[] PROGMEM = "DATAFLASH ERROR";
+const char     DataFlashError[] PROGMEM = "DATAFLASH ERROR";
 DFinfo         DataflashInfo            = {0, 0};
 
 // ======================================================================================
@@ -112,18 +112,6 @@ uint8_t DF_ReadBufferByte(const uint16_t BuffAddress)
 	SPI_SPITransmit(0x00);
 	
 	return SPI_SPITransmit(0x00);                         
-}
-
-void DF_EraseBlock(const uint16_t BlockToErase)
-{
-	DF_TOGGLEENABLE();
-
-	SPI_SPITransmit(DFCB_BLOCKERASE);
-	SPI_SPITransmit((uint8_t)(BlockToErase >> 8));
-	SPI_SPITransmit((uint8_t)(BlockToErase));
-	SPI_SPITransmit(0x00);
-
-	DF_WaitWhileBusy();
 }
 
 void DF_EnableDataflash(const uint8_t Enabled)

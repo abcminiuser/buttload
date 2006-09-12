@@ -23,8 +23,11 @@ ISR(TIMER0_COMP_vect, ISR_NOBLOCK)
 // Autosleep Timeout = ((32768 / 256) / (128 * TIMEOUT_SECSBEFORETIMEOUT)) per second
 ISR(TIMER2_COMP_vect, ISR_NOBLOCK)
 {
-	if ((SecsBeforeAutoSleep) && (SleepTimeOutSecs++ == SecsBeforeAutoSleep))
-	  FUNCSleepMode();
+	if (((SecsBeforeAutoSleep) && (SleepTimeOutSecs++ == SecsBeforeAutoSleep))
+	   || (AN_GetADCValue(AN_CHANNEL_SLEEP) > AN_SLEEP_TRIGGER_VALUE))
+	{
+		FUNCSleepMode();
+	}
 }
 
 // ======================================================================================
@@ -33,11 +36,14 @@ void TOUT_SetupSleepTimer(void)
 {
 	uint8_t NewTicksIndex = eeprom_read_byte(&EEPROMVars.AutoSleepValIndex);
 
-	if (NewTicksIndex == 0xFF)            // Blank EEPROM protection
+	if (NewTicksIndex == 0xFF)             // Blank EEPROM protection
 	  NewTicksIndex = 4;
 
-	TIMSK2 = (1 << OCIE2A);               // Compare interrupt enabled
-	OCR2A  = 128;                         // Compare value of 128
+	TIMEOUT_SLEEP_TIMER_OFF();
+
+	TIFR2  = ((1 << OCF2A) | (1 << TOV2)); // Clear any pending timer ISR flags
+	TIMSK2 = (1 << OCIE2A);                // Compare interrupt enabled
+	OCR2A  = 128;                          // Compare value of 128
 	
 	SecsBeforeAutoSleep = pgm_read_byte(&AutoSleepTOValues[NewTicksIndex]); // Set new timeout value
 

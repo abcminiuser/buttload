@@ -62,8 +62,8 @@ TARGET = ButtLoad
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC =	AVRISPCommandInterpreter.c   \
-		BattVoltage.c                \
+SRC =	Analogue.c                   \
+		AVRISPCommandInterpreter.c   \
 		Dataflash.c                  \
 		ISPChipComm.c                \
 		LCD_Driver.c                 \
@@ -138,12 +138,6 @@ CFLAGS += $(CDEFS) $(CINCS)
 CFLAGS += -O$(OPT)
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
 CFLAGS += -Wall -Wstrict-prototypes -Wextra
-
-# GCC4 exclusive options:
-ifeq ($(GCCV), 4)
- CFLAGS += -Wno-pointer-sign
-endif
-
 CFLAGS += -Wa,-adhlns=$(<:.c=.lst)
 CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
 CFLAGS += $(CSTANDARD)
@@ -380,11 +374,7 @@ sizeafter:
 
 # Display compiler version information.
 gccversion : 
-	@$(CC) --version
-	@echo --- --- --- --- --- --- -- --- --- --- --- --- ---
-	@echo --- MAKEFILE SET TO MAKE FOR GCC VERSION $(GCCV).x.x ---
-	@echo --- --- --- --- --- --- -- --- --- --- --- --- ---
-	
+	@$(CC) --version	
 
 # Program the device.  
 program: $(TARGET).hex $(TARGET).eep

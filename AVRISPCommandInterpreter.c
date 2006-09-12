@@ -7,7 +7,7 @@
 
 #include "AVRISPCommandInterpreter.h"
 
-const uint8_t AVRISPModeMessage[] PROGMEM = "*ATAVRISP MODE*";
+const char AVRISPModeMessage[] PROGMEM = "*ATAVRISP MODE*";
 
 // ======================================================================================
 
@@ -20,8 +20,8 @@ void AICI_InterpretPacket(void)
 			
 			USI_SPIInitMaster();
 
-			MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE);  // Pull the slave AVR's RESET line to active
-			ISPCC_EnterChipProgrammingMode();       // Run the Enter Programming Mode routine
+			MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE);     // Pull the slave AVR's RESET line to active
+			ISPCC_EnterChipProgrammingMode();          // Run the Enter Programming Mode routine
 
 			if (InProgrammingMode)
 			  LCD_puts_f(AVRISPModeMessage);
@@ -35,15 +35,15 @@ void AICI_InterpretPacket(void)
 			if (InProgrammingMode)
 			  TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);
 
-			MAIN_Delay1MS(PacketBytes[1]);           // Wait for the "PreDelay" amount specified in the packet
+			MAIN_Delay1MS(PacketBytes[1]);             // Wait for the "PreDelay" amount specified in the packet
 			InProgrammingMode = FALSE;
-			MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE); // Release the RESET line and allow the slave AVR to run
-			MAIN_Delay1MS(PacketBytes[2]);           // Wait for the "PostDelay" amount specified in the packet
+			MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE);   // Release the RESET line and allow the slave AVR to run
+			MAIN_Delay1MS(PacketBytes[2]);             // Wait for the "PostDelay" amount specified in the packet
 			
 			USI_SPIOff();
 
-			MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);   // Non programming mode = green status led
-			PacketBytes[1] = AICB_STATUS_CMD_OK;     // Return OK
+			MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);     // Non programming mode = green status led
+			PacketBytes[1] = AICB_STATUS_CMD_OK;       // Return OK
 
 			break;
 		case AICB_CMD_CHIP_ERASE_ISP:
@@ -52,13 +52,13 @@ void AICI_InterpretPacket(void)
 			for (uint8_t PacketB = 3; PacketB <= 6; PacketB++) // Send the erase commands to the slave AVR
 			  USI_SPITransmit(PacketBytes[PacketB]);
 
-			if (PacketBytes[2])                       // Poll mode, value of 1 indicates a busy flag wait
+			if (PacketBytes[2])                        // Poll mode, value of 1 indicates a busy flag wait
 			{
 				do
 				  USI_SPITransmitWord(0xF000);
 				while (USI_SPITransmitWord(0x0000) & 0x01);
 			}
-			else                                      // Poll mode flag of 0 indicates a predefined delay
+			else                                       // Poll mode flag of 0 indicates a predefined delay
 			{
 				MAIN_Delay1MS(PacketBytes[1]);         // Wait the specified interval to ensure erase complete
 			}
@@ -136,24 +136,24 @@ void AICI_InterpretPacket(void)
 				{
 					USI_SPITransmit(ReadCommand | ((ReadByte & 0x01)? ISPCC_HIGH_BYTE_READ : ISPCC_LOW_BYTE_READ));
 				}
-				else                                       // EEPROM read mode, address is in bytes and so no masking nessesary
+				else                                   // EEPROM read mode, address is in bytes and so no masking nessesary
 				{
 					USI_SPITransmit(ReadCommand);
 				}
 				
-				USI_SPITransmitWord(CurrAddress);          // Transmit the current address to the slave AVR
+				USI_SPITransmitWord(CurrAddress);      // Transmit the current address to the slave AVR
 
 				PacketBytes[2 + ReadByte] = USI_SPITransmit(0x00); // Read in the byte stored at the requested location
 
 				if ((ReadByte & 0x01) || (PacketBytes[0] == AICB_CMD_READ_EEPROM_ISP)) // Flash addresses are given in words; only increment on the odd byte if reading the flash.
 				{
-					V2P_IncrementCurrAddress();             // Increment the address counter
+					V2P_IncrementCurrAddress();        // Increment the address counter
 				}
 				else
 				{
 					if ((CurrAddress & 0x00FF0000) & !(CurrAddress & 0x0000FFFF))
 					{
-						CurrAddress |= (1UL << 31);        // Set MSB set of the address, indicates a LOAD_EXTENDED_ADDRESS must be executed
+						CurrAddress |= (1UL << 31);    // Set MSB set of the address, indicates a LOAD_EXTENDED_ADDRESS must be executed
 						V2P_CheckForExtendedAddress();
 					}
 				}
@@ -165,18 +165,18 @@ void AICI_InterpretPacket(void)
 			break;
 		case AICB_CMD_PROGRAM_FLASH_ISP:
 		case AICB_CMD_PROGRAM_EEPROM_ISP:
-			ISPCC_ProgramChip();                         // Program the bytes into the chip
+			ISPCC_ProgramChip();                       // Program the bytes into the chip
 			
 			MessageSize = 2;
 
 			PacketBytes[1] = AICB_STATUS_CMD_OK;
 			
 			break;
-		default:                                        // Unknown command, return error
+		default:                                       // Unknown command, return error
 			MessageSize = 2;
 			
 			PacketBytes[1] = AICB_STATUS_CMD_UNKNOWN;
 	}
 
-	V2P_SendPacket();                                    // Send the response packet
+	V2P_SendPacket();                                  // Send the response packet
 }

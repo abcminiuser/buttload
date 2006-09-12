@@ -24,8 +24,8 @@
 	// STRUCTS:
 	struct ButtLoadData
 	{
-		uint8_t MagicString[4];
-		uint8_t TagData[];
+		char MagicString[4];
+		char TagData[];
 	};
 	
 	// DEFINES:
