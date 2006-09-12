@@ -6,7 +6,8 @@ Current Version: Public Release 2.1
 	  * ADD: Add low-battery detection
 	  * ADD: Extra ISP speeds (settings menu only)
 	  * ADD: Timeouts on target busy wait loops
-	  * REM: In preperation for low bat detection, sleep timer is always active
+	  * ADD: Checksum to stored program data
+
 	  * BUG: EEPROM programming is very slow in all modes
 	  
 	IN PUBLIC RELEASE 2.1:
@@ -16,6 +17,10 @@ Current Version: Public Release 2.1
 	  * "Data" replaced with "Flash" in DATASTORE STATS now that confusion with PRGM DATAFLASH MODE is not possible
 	  * Fixed Fusebyte/Lockbyte bug in PROGRAM AVR mode
 	  * Fixed EEPROM storage bug
+	  * Fixed incorrect message size on CMD_UNKNOWN return in ProgramManager
+	  * Fixed SPI_MULTI bounds error (off by one)
+	  * Changed strings to use char rather than uint8_t, allowing for a generic makefile without GCC4.x specific flags
+	  * Vin pin is now an external sleep input pin
 
 	IN PUBLIC RELEASE 2.0:
 	=======================================
