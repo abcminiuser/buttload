@@ -43,10 +43,10 @@ void TM_ShowTags(void)
 
 void TM_FindNextTag(void)
 {
-	uint8_t  Buffer[21];
-	uint8_t  HeadBuff[4]      = BT_TAGHEADER;
+	char     Buffer[21];
+	char     HeadBuff[4]      = BT_TAGHEADER;
+	char     TagByte;
 	uint8_t  TotalOkHeadBytes = 0;
-	uint8_t  TagByte;
 	uint8_t  DFBytesRead      = 0;
 	
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);    // Orange = busy
