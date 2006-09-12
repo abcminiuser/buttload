@@ -72,6 +72,10 @@
 			Pin 2        - Transmit relative to Butterfly
 			Pin 3        - Ground
 
+		External Vin Interface
+			Pin 1        - External sleep input (active high)
+			Pin 2        - Ground
+
 	 * Level shifting circuitry must be employed that can translate the 3.3V Butterfly
 	 signals to the target AVR's voltage and vice-versa AT SUFFICIENT CURRENT.
 */
@@ -81,9 +85,9 @@
 
 		FILE                                     |  AUTHOR
 		-----------------------------------------+---------------------------------------------
+		Analogue.c + Header file                 | By Dean Camera
 		AVRISPCommandBytes.h                     | By Dean Camera
 		AVRISPCommandInterpreter.c + Header file | By Dean Camera
-		BattVoltage.c + Header file              | By Dean Camera
 		ButtLoadTag.h                            | By Dean Camera
 		Dataflash.c + Header file                | By Dean Camera, re-coded from the generic dataflash
 		                                         | code by Atmel (ported to GCC by Martin Thomas)
@@ -128,47 +132,47 @@ BUTTLOADTAG(Version,   VERSION_VSTRING);
 BUTTLOADTAG(Author,    "BY DEAN CAMERA");
 BUTTLOADTAG(Copyright, "<C> 2005-2006");
 
-const uint8_t*   AboutTextPtrs[]         PROGMEM = {BUTTTAG_Title.TagData, BUTTTAG_Version.TagData, BUTTTAG_Author.TagData, BUTTTAG_Copyright.TagData};
+const char*   AboutTextPtrs[]                   PROGMEM = {BUTTTAG_Title.TagData, BUTTTAG_Version.TagData, BUTTTAG_Author.TagData, BUTTTAG_Copyright.TagData};
 
-const uint8_t    WaitText[]              PROGMEM = "*WAIT*";
-const uint8_t    OffText[]               PROGMEM = "OFF";
+const char    WaitText[]                        PROGMEM = "*WAIT*";
+const char    OffText[]                         PROGMEM = "OFF";
 
-const uint8_t    Func_ISPPRGM[]          PROGMEM = "AVRISP MODE";
-const uint8_t    Func_STOREPRGM[]        PROGMEM = "STORE PRGM";
-const uint8_t    Func_PRGMAVR[]          PROGMEM = "PROGRAM AVR";
-const uint8_t    Func_PRGMSTOREINFO[]    PROGMEM = "DATAFLASH STATS";
-const uint8_t    Func_SETTINGS[]         PROGMEM = "SETTINGS";
-const uint8_t    Func_SLEEP[]            PROGMEM = "SLEEP MODE";
+const char    Func_ISPPRGM[]                    PROGMEM = "AVRISP MODE";
+const char    Func_STOREPRGM[]                  PROGMEM = "STORE PRGM";
+const char    Func_PRGMAVR[]                    PROGMEM = "PROGRAM AVR";
+const char    Func_PRGMSTOREINFO[]              PROGMEM = "DATAFLASH STATS";
+const char    Func_SETTINGS[]                   PROGMEM = "SETTINGS";
+const char    Func_SLEEP[]                      PROGMEM = "SLEEP MODE";
 	
-const uint8_t*   MainFunctionNames[]     PROGMEM = {Func_ISPPRGM  , Func_STOREPRGM  , Func_PRGMAVR  , Func_PRGMSTOREINFO, Func_SETTINGS      , Func_SLEEP};
-const FuncPtr    MainFunctionPtrs[]      PROGMEM = {FUNCAVRISPMode, FUNCStoreProgram, FUNCProgramAVR, FUNCStorageInfo   , FUNCChangeSettings , FUNCSleepMode};
+const char*   MainFunctionNames[]               PROGMEM = {Func_ISPPRGM  , Func_STOREPRGM  , Func_PRGMAVR  , Func_PRGMSTOREINFO, Func_SETTINGS      , Func_SLEEP};
+const FuncPtr MainFunctionPtrs[]                PROGMEM = {FUNCAVRISPMode, FUNCStoreProgram, FUNCProgramAVR, FUNCStorageInfo   , FUNCChangeSettings , FUNCSleepMode};
 
-const uint8_t    SFunc_SETCONTRAST[]     PROGMEM = "SET CONTRAST";
-const uint8_t    SFunc_SETSPISPEED[]     PROGMEM = "SET ISP SPEED";
-const uint8_t    SFunc_SETRESETMODE[]    PROGMEM = "SET RESET MODE";
-const uint8_t    SFunc_SETFIRMMINOR[]    PROGMEM = "SET FIRM VERSION";
-const uint8_t    SFunc_SETAUTOSLEEPTO[]  PROGMEM = "SET SLEEP TIMEOUT";
-const uint8_t    SFunc_SETTONEVOL[]      PROGMEM = "SET TONE VOLUME";
-const uint8_t    SFunc_CLEARMEM[]        PROGMEM = "CLEAR SETTINGS";
-const uint8_t    SFunc_GOBOOTLOADER[]    PROGMEM = "JUMP TO BOOTLOADER";
+const char    SFunc_SETCONTRAST[]               PROGMEM = "SET CONTRAST";
+const char    SFunc_SETSPISPEED[]               PROGMEM = "SET ISP SPEED";
+const char    SFunc_SETRESETMODE[]              PROGMEM = "SET RESET MODE";
+const char    SFunc_SETFIRMMINOR[]              PROGMEM = "SET FIRM VERSION";
+const char    SFunc_SETAUTOSLEEPTO[]            PROGMEM = "SET SLEEP TIMEOUT";
+const char    SFunc_SETTONEVOL[]                PROGMEM = "SET TONE VOLUME";
+const char    SFunc_CLEARMEM[]                  PROGMEM = "CLEAR SETTINGS";
+const char    SFunc_GOBOOTLOADER[]              PROGMEM = "JUMP TO BOOTLOADER";
 
-const uint8_t*   SettingFunctionNames[]  PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_SETRESETMODE, SFunc_SETFIRMMINOR , SFunc_SETAUTOSLEEPTO   , SFunc_SETTONEVOL, SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
-const FuncPtr    SettingFunctionPtrs[]   PROGMEM = {FUNCSetContrast  , FUNCSetISPSpeed  , FUNCSetResetMode  , FUNCSetFirmMinorVer, FUNCSetAutoSleepTimeOut, FUNCSetToneVol  , FUNCClearMem  , FUNCGoBootloader};
+const char*   SettingFunctionNames[]            PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_SETRESETMODE, SFunc_SETFIRMMINOR , SFunc_SETAUTOSLEEPTO   , SFunc_SETTONEVOL, SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
+const FuncPtr SettingFunctionPtrs[]             PROGMEM = {FUNCSetContrast  , FUNCSetISPSpeed  , FUNCSetResetMode  , FUNCSetFirmMinorVer, FUNCSetAutoSleepTimeOut, FUNCSetToneVol  , FUNCClearMem  , FUNCGoBootloader};
 
-const uint8_t    PRG_A[]                 PROGMEM = "PRGM ALL";
-const uint8_t    PRG_D[]                 PROGMEM = "DATA ONLY";
-const uint8_t    PRG_E[]                 PROGMEM = "EEPROM ONLY";
-const uint8_t    PRG_DE[]                PROGMEM = "DATA AND EEPROM";
-const uint8_t    PRG_F[]                 PROGMEM = "FUSE BYTES ONLY";
-const uint8_t    PRG_L[]                 PROGMEM = "LOCK BYTES ONLY";
-const uint8_t    PRG_FL[]                PROGMEM = "FUSE AND LOCK BYTES";
-const uint8_t    PRG_C[]                 PROGMEM = "ERASE ONLY";
+const char    PRG_A[]                           PROGMEM = "PRGM ALL";
+const char    PRG_D[]                           PROGMEM = "DATA ONLY";
+const char    PRG_E[]                           PROGMEM = "EEPROM ONLY";
+const char    PRG_DE[]                          PROGMEM = "DATA AND EEPROM";
+const char    PRG_F[]                           PROGMEM = "FUSE BYTES ONLY";
+const char    PRG_L[]                           PROGMEM = "LOCK BYTES ONLY";
+const char    PRG_FL[]                          PROGMEM = "FUSE AND LOCK BYTES";
+const char    PRG_C[]                           PROGMEM = "ERASE ONLY";
 
-const uint8_t*   ProgOptions[]           PROGMEM = {PRG_A, PRG_D, PRG_E, PRG_DE, PRG_F, PRG_L, PRG_FL, PRG_C};
+const char*   ProgOptions[]                     PROGMEM = {PRG_A, PRG_D, PRG_E, PRG_DE, PRG_F, PRG_L, PRG_FL, PRG_C};
 
-const uint8_t    USISpeeds[USI_PRESET_SPEEDS][10]  PROGMEM = {"921600 HZ", "230400 HZ", " 57600 HZ", " 28800 HZ"};
-const uint8_t    SPIResetModes[2][6]               PROGMEM = {"LOGIC", "FLOAT"};
-const uint8_t    SIFONames[2][15]                  PROGMEM = {"STORAGE SIZES", "VIEW DATA TAGS"};
+const char    USISpeeds[USI_PRESET_SPEEDS][10]  PROGMEM = {"921600 HZ", "230400 HZ", " 57600 HZ", " 28800 HZ"};
+const char    SPIResetModes[2][6]               PROGMEM = {"LOGIC", "FLOAT"};
+const char    SIFONames[2][15]                  PROGMEM = {"STORAGE SIZES", "VIEW DATA TAGS"};
 
 // GLOBAL EEPROM VARIABLE STRUCT:
 EEPROMVarsType EEPROMVars EEMEM;
@@ -187,16 +191,16 @@ int main(void)
 	ACSR    = (1 << ACD);                        // Disable the unused Analogue Comparitor to save power
 	PRR     = ((1 << PRADC) | (1 << PRSPI) | (1 << PRUSART0)); // Disable subsystems (for now) to save power
 	
-	DDRF    = ((1 << 4) | (1 << 5));             // Set status LEDs as outputs, rest as inputs
+	DDRF    = ((1 << 4) | (1 << 5) | (1 << 3));  // Set status LEDs and VCP as outputs, rest as inputs
 	DDRB    = ((1 << 0) | (1 << 1) | (1 << 2) | (1 << 5)); // On-board dataflash /CS, ISP MOSI/SCK and beeper as outputs
 	PORTB   = ((1 << 0) | (1 << 1) | (1 << 2) | (1 << 3)   // Set SPI pins to high/pullups, and disable dataflash (send /CS high)
 	        | JOY_BMASK);                        // \ Turn joystick
 	PORTE   = JOY_EMASK;                         // /  pullups on
-	PORTF   = (1 << 7);                          // Enable PORTF pullups on Bat Detect pin
+	PORTF   = (1 << 7);                          // Enable PORTF pullup on Bat Detect pin
 		  
 	PCMSK0  = JOY_EMASK;                         // \.
 	PCMSK1  = JOY_BMASK;                         // | Turn on joystick
-	EIMSK   = ((1 << PCIE0) | (1 << PCIE1));     // |  interrupts
+	EIMSK   = ((1 << PCIE0) | (1 << PCIE1));     // | interrupts
 	EIFR    = ((1 << PCIF0) | (1 << PCIF1));     // /
 
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);      // Set status LEDs to orange (busy)
@@ -225,15 +229,6 @@ int main(void)
 	TONEGEN_GET_TONE_VOL();
 	TG_PlayToneSeq(TONEGEN_SEQ_STARTUP);         // Play startup tone
 
-/* TEMP 
-	while (!(JoyStatus))
-	{
-		uint8_t Buff[10];
-		MAIN_IntToStr(BV_GetBatteryADCValue(), Buff);
-		LCD_puts(Buff);
-	}
- TEMP */
-
 	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
 	                                             // name of the default command onto the LCD
 
@@ -251,7 +246,7 @@ int main(void)
 			  FUNCShowAbout();
 
 			// Show current setting function onto the LCD:
-			LCD_puts_f((uint8_t*)pgm_read_word(&MainFunctionNames[CurrFunc]));
+			LCD_puts_f((char*)pgm_read_word(&MainFunctionNames[CurrFunc]));
 
 			MAIN_WaitForJoyRelease();
 		}
@@ -285,10 +280,10 @@ void MAIN_Delay1MS(uint8_t loops)
 
 void MAIN_ResetCSLine(const uint8_t ActiveInactive)
 {
-	/* ActiveInactive controls the /Reset line to an AVR device or external dataflash
-	   /CS line. If the reset polarity parameter is a 0 then interfacing with AT89
-	   devices which has an active high reset. Pins are tristated when inactive unless
-	   the SPIResetMode option is changed in the OPTIONS mode.                         */
+	/* ActiveInactive controls the /Reset line to the target AVR device. If the reset polarity parameter
+	   is a 0 then Buttload is interfacing with AT89x devices (which have an active high rather than an
+	   active low reset) and this is managed automaticaly. The reset pin is tristated when inactive unless
+	   the SPIResetMode option is changed in the OPTIONS mode.                                             */
 	
 	switch (ActiveInactive)
 	{
@@ -339,7 +334,7 @@ void MAIN_WaitForJoyRelease(void)
 	}
 }
 
-void MAIN_IntToStr(uint16_t IntV, uint8_t* Buff)
+void MAIN_IntToStr(uint16_t IntV, char* Buff)
 {
 	// Shows leading zeros, unlike itoa.
 	// Maximum value which can be converted is 999.
@@ -369,7 +364,7 @@ void MAIN_IntToStr(uint16_t IntV, uint8_t* Buff)
 
 void MAIN_ShowProgType(const uint8_t Letter)
 {
-	uint8_t ProgTypeBuffer[7];
+	char ProgTypeBuffer[7];
 
 	strcpy_P(ProgTypeBuffer, PSTR("PRG>  "));
 	ProgTypeBuffer[5] = Letter;
@@ -377,9 +372,9 @@ void MAIN_ShowProgType(const uint8_t Letter)
 	LCD_puts(ProgTypeBuffer);
 }
 
-void MAIN_ShowError(const uint8_t *pFlashStr)
+void MAIN_ShowError(const char *pFlashStr)
 {
-	uint8_t ErrorBuff[LCD_TEXTBUFFER_SIZE];      // New buffer, LCD text buffer size
+	char ErrorBuff[LCD_TEXTBUFFER_SIZE];         // New buffer, LCD text buffer size
 	
 	ErrorBuff[0] = 'E';
 	ErrorBuff[1] = '>';
@@ -442,7 +437,7 @@ void FUNCChangeSettings(void)
 			  return;
 		
 			// Show current function onto the LCD:
-			LCD_puts_f((uint8_t*)pgm_read_word(&SettingFunctionNames[CurrSFunc]));
+			LCD_puts_f((char*)pgm_read_word(&SettingFunctionNames[CurrSFunc]));
 
 			MAIN_WaitForJoyRelease();
 		}
@@ -466,7 +461,7 @@ void FUNCShowAbout(void)
 			else if (JoyStatus & JOY_LEFT)
 			  return;
 
-			LCD_puts_f((uint8_t*)pgm_read_word(&AboutTextPtrs[InfoNum]));
+			LCD_puts_f((char*)pgm_read_word(&AboutTextPtrs[InfoNum]));
 
 			MAIN_WaitForJoyRelease();
 		}
@@ -483,10 +478,10 @@ void FUNCAVRISPMode(void)
 
 void FUNCProgramAVR(void)
 {
-	uint8_t  DoneFailMessageBuff[12];
+	uint8_t  StoredLocksFuses;
+	char     DoneFailMessageBuff[12];
 	uint8_t  Fault    = ISPCC_NO_FAULT;
 	uint8_t  ProgMode = 0;
-	uint8_t  StoredLocksFuses;
 
 	MAIN_WaitForJoyRelease();
 	
@@ -505,7 +500,7 @@ void FUNCProgramAVR(void)
 			else if (JoyStatus & JOY_DOWN)
 			  (ProgMode == ARRAY_UPPERBOUND(ProgOptions))? ProgMode = 0 : ProgMode++;
 
-			LCD_puts_f((uint8_t*)pgm_read_word(&ProgOptions[ProgMode])); // Show current function onto the LCD
+			LCD_puts_f((char*)pgm_read_word(&ProgOptions[ProgMode])); // Show current function onto the LCD
 
 			MAIN_WaitForJoyRelease();
 		}
@@ -524,14 +519,13 @@ void FUNCProgramAVR(void)
 			
 	for (uint8_t PacketB = 0; PacketB < 12; PacketB++) // Read the enter programming mode command bytes
 	  PacketBytes[PacketB] = eeprom_read_byte(&EEPROMVars.EnterProgMode[PacketB]);
+		
+	CurrAddress = 0;
 	
 	ISPCC_EnterChipProgrammingMode();            // Try to sync with the slave AVR
-
-	CurrAddress = 0;
-
-	if (PacketBytes[1] == AICB_STATUS_CMD_OK)    // ISPCC_EnterChipProgrammingMode alters the PacketBytes buffer rather than returning a value
+	if (InProgrammingMode)                       // ISPCC_EnterChipProgrammingMode alters the InProgrammingMode flag
 	{						
-		if ((ProgMode == 0) || (ProgMode == 7) || (ProgMode == 1) || (ProgMode == 3)) // All, erase chip, flash and eeprom, or program flash mode
+		if ((ProgMode == MAIN_PM_ALL) || (ProgMode == MAIN_PM_ERASE) || (ProgMode == MAIN_PM_FLASH) || (ProgMode == MAIN_PM_FLASHEEPROM))
 		{
 			MAIN_ShowProgType('C');
 			
@@ -546,7 +540,8 @@ void FUNCProgramAVR(void)
 			}
 		}
 
-		if (((ProgMode == 0) || (ProgMode == 1) || (ProgMode == 3)) && (Fault != ISPCC_FAULT_NOERASE)) // All, flash and EEPROM, or program flash mode
+		if (((ProgMode == MAIN_PM_ALL) || (ProgMode == MAIN_PM_FLASHEEPROM) || (ProgMode == MAIN_PM_FLASH))
+           && (Fault != ISPCC_FAULT_NOERASE))
 		{
 			MAIN_ShowProgType('D');
 
@@ -561,7 +556,7 @@ void FUNCProgramAVR(void)
 			}
 		}
 	
-		if ((ProgMode == 0) || (ProgMode == 2) || (ProgMode == 3)) // All, flash and EEPROM, or program EEPROM mode
+		if ((ProgMode == MAIN_PM_ALL) || (ProgMode == MAIN_PM_FLASHEEPROM) || (ProgMode == MAIN_PM_EEPROM))
 		{
 			MAIN_ShowProgType('E');
 
@@ -576,7 +571,7 @@ void FUNCProgramAVR(void)
 			}
 		}
 
-		if ((ProgMode == 0) || (ProgMode == 4) || (ProgMode == 6)) // All, fuse and lock bytes, or program fuse bytes mode
+		if ((ProgMode == MAIN_PM_ALL) || (ProgMode == MAIN_PM_FUSELOCK) || (ProgMode == MAIN_PM_FUSE))
 		{
 			MAIN_ShowProgType('F');
 			
@@ -592,7 +587,7 @@ void FUNCProgramAVR(void)
 			}
 		}
 
-		if ((ProgMode == 0) || (ProgMode == 5) || (ProgMode == 6)) // All, fuse and lock bytes, or program lock bytes mode
+		if ((ProgMode == MAIN_PM_ALL) || (ProgMode == MAIN_PM_FUSELOCK) || (ProgMode == MAIN_PM_LOCK))
 		{
 			if (ProgMode == 6)                           // If fusebytes have already been written, we need to re-enter programming mode to latch them
 			{
@@ -697,8 +692,8 @@ void FUNCClearMem(void)
 
 void FUNCSetContrast(void)
 {
-	uint8_t Buffer[6];
 	uint8_t Contrast = (eeprom_read_byte(&EEPROMVars.LCDContrast) & 0x0F); // Ranges from 0-15 so mask retuns 15 on blank EEPROM (0xFF)
+	char Buffer[6];
 	
 	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
 	                                             // name of the default command onto the LCD
@@ -801,8 +796,8 @@ void FUNCSetResetMode(void)
 
 void FUNCSetFirmMinorVer(void)
 {
-	uint8_t VerBuffer[5];
 	uint8_t VerMinor = eeprom_read_byte(&EEPROMVars.FirmVerMinor);
+	char    VerBuffer[5];
 
 	if (VerMinor > 9)
 	  VerMinor = V2P_SW_VERSION_MINOR_DEFAULT;
@@ -820,7 +815,7 @@ void FUNCSetFirmMinorVer(void)
 				if (VerMinor < 9)
 				  VerMinor++;
 			}
-			if (JoyStatus & JOY_DOWN)
+			else if (JoyStatus & JOY_DOWN)
 			{
 				if (VerMinor)
 				  VerMinor--;
@@ -841,8 +836,8 @@ void FUNCSetFirmMinorVer(void)
 
 void FUNCSetAutoSleepTimeOut(void)
 {
-	uint8_t SleepTxtBuffer[8];
 	uint8_t SleepVal = eeprom_read_byte(&EEPROMVars.AutoSleepValIndex);
+	char    SleepTxtBuffer[8];
 
 	if (SleepVal > ARRAY_UPPERBOUND(AutoSleepTOValues))
 	  SleepVal = ARRAY_UPPERBOUND(AutoSleepTOValues);
@@ -888,7 +883,7 @@ void FUNCSetAutoSleepTimeOut(void)
 
 void FUNCSetToneVol(void)
 {
-	uint8_t VolBuffer[5];
+	char VolBuffer[5];
 
 	VolBuffer[0] = 'V';
 	
@@ -905,14 +900,14 @@ void FUNCSetToneVol(void)
 				if (ToneVolLcl < 80)
 				  ToneVolLcl += 8;
 				else
-				  ToneVolLcl = 0;				
+				  ToneVolLcl  = 0;				
 			}
-			if (JoyStatus & JOY_DOWN)
+			else if (JoyStatus & JOY_DOWN)
 			{
 				if (ToneVolLcl)
 				  ToneVolLcl -= 8;
 				else
-				  ToneVolLcl = 80;
+				  ToneVolLcl  = 80;
 			}
 			else if (JoyStatus & JOY_LEFT)
 			{
