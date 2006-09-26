@@ -9,14 +9,6 @@
 	Compatible with most Atmel dataflash memory devices. This is a re-written, bare-bones
 	version of the generic Atmel Dataflash driver, with some specific ButtLoad routines
 	added in.
-	
-	This uses a lot of abstraction to perform the dataflash tasks. A global pointer to a
-	routine for sending the SPI bytes is kept in DFSPIRoutinePointer which may be changed
-	by the program to redirect the output (in ButtLoad this is changed between the SPI bus
-	and the USI bus which is set to SPI mode. This global pointer is then copied to a local
-	pointer by DF_MAKELOCALSPIFUNCPTR() to prevent it from being re-copied before every use
-	of SPI_SENDBYTE. As a consequence this macro must be in all routines which make use of
-	the SPI_SPITransmit macro.
 */
 
 #include "Dataflash.h"
