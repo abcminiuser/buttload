@@ -13,15 +13,18 @@ Current Version: Public Release 2.1
 	IN PUBLIC RELEASE 2.1:
 	=======================================
 	  * Added in audio feedback for several options
-	  * Removed direct dataflash programming code to save space (no one unused it anyway)
+	  * Removed direct dataflash programming code to save space (nobody used it anyway)
 	  * "Data" replaced with "Flash" in DATASTORE STATS now that confusion with PRGM DATAFLASH MODE is not possible
 	  * Fixed Fusebyte/Lockbyte bug in PROGRAM AVR mode
 	  * Fixed EEPROM storage bug
 	  * Fixed incorrect message size on CMD_UNKNOWN return in ProgramManager
 	  * Fixed SPI_MULTI bounds error (off by one)
 	  * Changed strings to use char rather than uint8_t, allowing for a generic makefile without GCC4.x specific flags
-	  * Vin pin is now an external sleep input pin
-
+	  * Vin pin is now an external sleep input pin - pull high externally to initate sleep
+	  * PROGRAM AVR mode now allows for arbitrary combinations of programming options
+	  * Added in new startup mode option
+	  * Programming a data type in STORAGE MODE now automatically enables that data type for programming in PROGRAM AVR mode
+	  
 	IN PUBLIC RELEASE 2.0:
 	=======================================
 	  * OSCCAL is now calibrated before any function involving the USART
