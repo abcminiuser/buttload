@@ -80,7 +80,7 @@ const    uint16_t LCD_SegTable[] PROGMEM =
     0x1441,     // '['
     0x8020,     // '\'
     0x1111,     // ']'
-    0x0000,     // '^' (Not defined)
+    0xD579,     // '^' (Checked Symbol)
     0x1000      // '_'
 };
 

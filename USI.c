@@ -34,14 +34,14 @@ void USI_SPIOff(void)
 
 void USI_SPIToggleClock(void)
 {
-	MAIN_Delay1MS(1);
+	_delay_us(100);
 	USICR = (USICONTROLREGS);
-	MAIN_Delay1MS(1);
+	_delay_us(100);
 	USICR = (USICONTROLREGS | (1 << USICLK));
-	MAIN_Delay1MS(1);
+	_delay_us(100);
 }
 
-uint8_t USI_SPITransmitWord(const uint16_t val )
+uint8_t USI_SPITransmitWord(const uint16_t val)
 {
 	USI_SPITransmit((uint8_t)(val >> 8));
 	return USI_SPITransmit((uint8_t)val);

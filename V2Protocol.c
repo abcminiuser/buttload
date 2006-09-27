@@ -127,7 +127,7 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 								// By using two words in this manner the produced code is ever so slightly smaller and more efficient.
 								uint16_t AddressHighWord = ((uint16_t)PacketBytes[1] << 8) | (PacketBytes[2]);
 								uint16_t AddressLowWord  = ((uint16_t)PacketBytes[3] << 8) | (PacketBytes[4]);
-								CurrAddress           = (((uint32_t)AddressHighWord << 16) | ((uint16_t)AddressLowWord));
+								CurrAddress              = (((uint32_t)AddressHighWord << 16) | ((uint16_t)AddressLowWord));
 
 								V2P_CheckForExtendedAddress();
 								

@@ -67,30 +67,30 @@ void AICI_InterpretPacket(void)
 			
 			break;
 		case AICB_CMD_SPI_MULTI:
-				MessageSize = (3 + PacketBytes[2]);    // Number of recieved bytes, plus two OKs and the command byte
-		
-				uint8_t TxBytes      = PacketBytes[1]; // \. The packet data is overwritten during the transfer. Because
-				uint8_t RxStartByte  = PacketBytes[2]; // |  of this each data byte must be stored into temp variables
-				uint8_t RxBytes      = PacketBytes[3]; // /  so that their contents are not lost.
-				uint8_t RxByteNum    = 0;
-				uint8_t TxByteNum    = 0;
-				uint8_t RecievedByte = 0;
+			MessageSize = (3 + PacketBytes[2]);    // Number of recieved bytes, plus two OKs and the command byte
+	
+			uint8_t TxBytes      = PacketBytes[1]; // \. The packet data is overwritten during the transfer. Because
+			uint8_t RxStartByte  = PacketBytes[2]; // |  of this each data byte must be stored into temp variables
+			uint8_t RxBytes      = PacketBytes[3]; // /  so that their contents are not lost.
+			uint8_t RxByteNum    = 0;
+			uint8_t TxByteNum    = 0;
+			uint8_t RecievedByte = 0;
 
-				while (TxByteNum++ < TxBytes)          // Still bytes to transfer
-				{
-					RecievedByte = USI_SPITransmit(PacketBytes[3 + TxByteNum]); // Transmit the byte, store the answer
+			while (TxByteNum++ < TxBytes)          // Still bytes to transfer
+			{
+				RecievedByte = USI_SPITransmit(PacketBytes[3 + TxByteNum]); // Transmit the byte, store the answer
 
-					if ((TxByteNum >= RxStartByte) && (RxByteNum < RxBytes))
-					  PacketBytes[2 + RxByteNum++] = RecievedByte;
-				}
+				if ((TxByteNum >= RxStartByte) && (RxByteNum < RxBytes))
+				  PacketBytes[2 + RxByteNum++] = RecievedByte;
+			}
 
-				while (RxByteNum++ < RxBytes)                          // Still more bytes to recieve
-				  PacketBytes[2 + RxByteNum] = USI_SPITransmit(0x00);  // its answer to be recorded (or more bytes than sent need responses), send dummy bytes to fetch the response(s)
+			while (RxByteNum++ < RxBytes)                          // Still more bytes to recieve
+			  PacketBytes[2 + RxByteNum] = USI_SPITransmit(0x00);  // its answer to be recorded (or more bytes than sent need responses), send dummy bytes to fetch the response(s)
 
-				PacketBytes[1]             = AICB_STATUS_CMD_OK; // Data should be encompassed
-				PacketBytes[3 + RxByteNum] = AICB_STATUS_CMD_OK; //  by STATS_CMD_OKs
+			PacketBytes[1]             = AICB_STATUS_CMD_OK; // Data should be encompassed
+			PacketBytes[3 + RxByteNum] = AICB_STATUS_CMD_OK; //  by STATS_CMD_OKs
 
-				break;
+			break;
 		case AICB_CMD_READ_SIGNATURE_ISP:
 		case AICB_CMD_READ_FUSE_ISP:
 		case AICB_CMD_READ_LOCK_ISP:

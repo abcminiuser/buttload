@@ -70,15 +70,6 @@
 	#define MAIN_RESETCS_ACTIVE      0
 	#define MAIN_RESETCS_INACTIVE    1
 	
-	#define MAIN_PM_ALL              0
-	#define MAIN_PM_FLASH            1
-	#define MAIN_PM_EEPROM           2
-	#define MAIN_PM_FLASHEEPROM      3
-	#define MAIN_PM_FUSE             4
-	#define MAIN_PM_LOCK             5
-	#define MAIN_PM_FUSELOCK         6
-	#define MAIN_PM_ERASE            7
-	
 	// PROTOTYPES:
 	void MAIN_ResetCSLine(const uint8_t ActiveInactive);
 	void MAIN_WaitForJoyRelease(void);
@@ -101,6 +92,7 @@
 	void FUNCSetFirmMinorVer(void);
 	void FUNCSetAutoSleepTimeOut(void);
 	void FUNCSetToneVol(void);
+	void FUNCSetStartupMode(void);
 	void FUNCSleepMode(void);
 	void FUNCStorageInfo(void);
 	void FUNCGoBootloader(void) __attribute__((noreturn));

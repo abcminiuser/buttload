@@ -7,7 +7,10 @@
 
 #include "ProgramManager.h"
 
-// Global Variables:
+// PROGMEM CONSTANTS:
+const char ProgTypes[4][5] PROGMEM = {"DATA", "EPRM", "FUSE", "LOCK"};
+
+// GLOBAL VARIABLES:
 uint8_t  MemoryType          = TYPE_FLASH;
 uint8_t  CurrentMode         = PM_NO_SETUP;
 uint16_t GPageLength         = 0;
@@ -71,8 +74,6 @@ void PM_InterpretAVRISPPacket(void)
 			for (uint8_t PacketB = 0; PacketB < 12; PacketB++)          // Save the enter programming mode command bytes
 			  eeprom_write_byte(&EEPROMVars.EnterProgMode[PacketB], PacketBytes[PacketB]);
 			
-			TG_PlayToneSeq(TONEGEN_SEQ_SYNCDONE);
-
 			InProgrammingMode = TRUE;                                   // Set the flag, prevent the user from exiting the V2P state machine			
 			CurrentMode = PM_NO_SETUP;                                  // Clear the current mode variable
 
@@ -142,11 +143,13 @@ void PM_InterpretAVRISPPacket(void)
 			{
 				EEPROMAddress = &EEPROMVars.FuseBytes[DataflashInfo.CurrBuffByte][0];
 				MemoryType    = TYPE_FUSE;
+				PM_SetProgramDataType(PM_OPT_FUSE);
 			}
 			else
 			{
 				EEPROMAddress = &EEPROMVars.LockBytes[DataflashInfo.CurrBuffByte][0];
 				MemoryType    = TYPE_LOCK;
+				PM_SetProgramDataType(PM_OPT_LOCK);
 			}				
 			
 			if (DataflashInfo.CurrBuffByte < PM_MAX_FUSELOCKBITS)
@@ -204,11 +207,13 @@ void PM_InterpretAVRISPPacket(void)
 				{
 					EEPROMAddress = (uint8_t*)&EEPROMVars.WriteProgram; // Set the eeprom address to the Program command bytes location
 					PM_SetupDFAddressCounters(TYPE_FLASH);
+					PM_SetProgramDataType(PM_OPT_FLASH);
 				}
 				else                                                    // EEPROM programming mode
 				{
 					EEPROMAddress = (uint8_t*)&EEPROMVars.WriteEEPROM;  // Set the eeprom address to the EEPROM command bytes location
 					PM_SetupDFAddressCounters(TYPE_EEPROM);
+					PM_SetProgramDataType(PM_OPT_EEPROM);
 				}
 				
 				DF_BufferWriteEnable(DataflashInfo.CurrBuffByte);
@@ -472,27 +477,232 @@ void PM_ShowStoredItemSizes(void)
 			switch (ItemInfoIndex)
 			{
 				case 0:
-					strcpy_P(Buffer, PSTR("DATA-"));
+					strcpy_P(Buffer, ProgTypes[0]);
 					ultoa(PM_GetStoredDataSize(TYPE_FLASH), &Buffer[5], 10);
 					break;
 				case 1:
-					strcpy_P(Buffer, PSTR("EPRM-"));
+					strcpy_P(Buffer, ProgTypes[1]);
 					ultoa(PM_GetStoredDataSize(TYPE_EEPROM), &Buffer[5], 10);
 					break;
 				case 2:
-					strcpy_P(Buffer, PSTR("FUSE-"));
+					strcpy_P(Buffer, ProgTypes[2]);
 					TempB = eeprom_read_byte(&EEPROMVars.TotalFuseBytes);
 					ultoa(((TempB == 0xFF)? 0x00 : TempB), &Buffer[5], 10);
 					break;
 				case 3:
-					strcpy_P(Buffer, PSTR("LOCK-"));
+					strcpy_P(Buffer, ProgTypes[3]);
 					TempB = eeprom_read_byte(&EEPROMVars.TotalLockBytes);
 					ultoa(((TempB == 0xFF)? 0x00 : TempB), &Buffer[5], 10);
 			}
 	
+			Buffer[4] = '-';
 			LCD_puts(Buffer);
 
 			MAIN_WaitForJoyRelease();
 		}
 	}
+}
+
+void PM_StartProgAVR(void)
+{
+	uint8_t StoredLocksFuses;
+	char    MessageBuffer[12];
+	uint8_t Fault       = ISPCC_NO_FAULT;
+	uint8_t ProgOptions = eeprom_read_byte(&EEPROMVars.PGOptions);
+
+	if (ProgOptions > 15)
+	{
+		ProgOptions = PM_OPT_FLASH;
+	}
+	else if (!(ProgOptions))
+	{
+		LCD_puts_f(PSTR("NOTHING SELECTED"));
+		MAIN_Delay10MS(225);
+		return;
+	}
+
+	LCD_puts_f(WaitText);
+	SPI_SPIInit();
+	
+	if (!(DF_CheckCorrectOnboardChip()))
+	  return;
+
+	TIMEOUT_SLEEP_TIMER_OFF();
+
+	USI_SPIInitMaster();
+	MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE);       // Capture the RESET line of the slave AVR
+			
+	for (uint8_t PacketB = 0; PacketB < 12; PacketB++) // Read the enter programming mode command bytes
+	  PacketBytes[PacketB] = eeprom_read_byte(&EEPROMVars.EnterProgMode[PacketB]);
+		
+	CurrAddress = 0;
+	
+	ISPCC_EnterChipProgrammingMode();            // Try to sync with the slave AVR
+	if (InProgrammingMode)                       // ISPCC_EnterChipProgrammingMode alters the InProgrammingMode flag
+	{						
+		if (ProgOptions & PM_OPT_FLASH)
+		{
+			MAIN_ShowProgType('C');
+			
+			if (!(eeprom_read_byte(&EEPROMVars.EraseCmdStored) == TRUE))
+			{
+				Fault = ISPCC_FAULT_NOERASE;
+				MAIN_ShowError(PSTR("NO ERASE CMD"));
+			}
+			else
+			{
+				PM_SendEraseCommand();
+			}
+		}
+
+		if ((ProgOptions & PM_OPT_FLASH) && (Fault != ISPCC_FAULT_NOERASE))
+		{
+			MAIN_ShowProgType('D');
+
+			if (!(PM_GetStoredDataSize(TYPE_FLASH))) // Check to make sure a program is present in memory
+			{
+				Fault = ISPCC_FAULT_NODATATYPE;					
+				MAIN_ShowError(PSTR("NO DATA"));
+			}
+			else
+			{
+				PM_CreateProgrammingPackets(TYPE_FLASH);
+			}
+		}
+	
+		if (ProgOptions & PM_OPT_EEPROM)
+		{
+			MAIN_ShowProgType('E');
+
+			if (!(PM_GetStoredDataSize(TYPE_EEPROM))) // Check to make sure EEPROM data is present in memory
+			{
+				Fault = ISPCC_FAULT_NODATATYPE;
+				MAIN_ShowError(PSTR("NO EEPROM"));
+			}
+			else
+			{
+				PM_CreateProgrammingPackets(TYPE_EEPROM);
+			}
+		}
+
+		if (ProgOptions & PM_OPT_FUSE)
+		{
+			MAIN_ShowProgType('F');
+			
+			StoredLocksFuses = eeprom_read_byte(&EEPROMVars.TotalFuseBytes);
+			if (!(StoredLocksFuses) || (StoredLocksFuses == 0xFF))
+			{
+				Fault = ISPCC_FAULT_NODATATYPE;					
+				MAIN_ShowError(PSTR("NO FUSE BYTES"));
+			}
+			else
+			{
+				PM_SendFuseLockBytes(TYPE_FUSE);
+			}
+		}
+
+		if (ProgOptions & PM_OPT_LOCK)
+		{
+			if (ProgOptions & PM_OPT_FUSE)               // If fusebytes have already been written, we need to re-enter programming mode to latch them
+			{
+				MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE); // Release the RESET line of the slave AVR
+				MAIN_Delay10MS(1);
+				MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE);   // Capture the RESET line of the slave AVR
+				ISPCC_EnterChipProgrammingMode();        // Try to sync with the slave AVR
+			}
+
+			MAIN_ShowProgType('L');
+		
+			StoredLocksFuses = eeprom_read_byte(&EEPROMVars.TotalLockBytes);
+			if (!(StoredLocksFuses) || (StoredLocksFuses == 0xFF))
+			{
+				Fault = ISPCC_FAULT_NODATATYPE;
+				MAIN_ShowError(PSTR("NO LOCK BYTES"));
+			}
+			else
+			{
+				PM_SendFuseLockBytes(TYPE_LOCK);
+			}
+		}
+
+		strcpy_P(MessageBuffer, PSTR("PROG DONE"));
+
+		if (Fault != ISPCC_NO_FAULT)              // Takes less code to just overwrite part of the string on fail
+		{
+			strcpy_P(&MessageBuffer[5], PSTR("FAILED"));
+			TG_PlayToneSeq(TONEGEN_SEQ_PROGFAIL);
+		}
+		else
+		{
+			TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);		
+		}
+
+		LCD_puts(MessageBuffer);
+
+		MAIN_Delay10MS(225);
+		MAIN_Delay10MS(120);
+	}
+	else
+	{
+		MAIN_ShowError(SyncErrorMessage);
+	}
+	
+	TOUT_SetupSleepTimer();
+	MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE);     // Release the RESET line and allow the slave AVR to run	
+	USI_SPIOff();
+	DF_EnableDataflash(FALSE);
+	SPI_SPIOFF();
+	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Set status LEDs to green (ready)
+}
+
+void PM_ChooseProgAVROpts(void)
+{
+	char Buffer[7];
+	uint8_t SelectedOpt = 0;
+	uint8_t ProgOptions = eeprom_read_byte(&EEPROMVars.PGOptions);
+
+	if (ProgOptions > 15)
+	  ProgOptions = PM_OPT_FLASH;
+
+	MAIN_WaitForJoyRelease();
+
+	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
+	                                             // name of the default command onto the LCD
+	for (;;)
+	{
+		if (JoyStatus)
+		{
+			if (JoyStatus & JOY_LEFT)
+			  break;
+			else if (JoyStatus & JOY_PRESS)
+			  ProgOptions ^= (1 << SelectedOpt);
+			else if (JoyStatus & JOY_UP)
+			  (SelectedOpt == 0)? SelectedOpt = ARRAY_UPPERBOUND(ProgTypes) : SelectedOpt--;
+			else if (JoyStatus & JOY_DOWN)
+			  (SelectedOpt == ARRAY_UPPERBOUND(ProgTypes))? SelectedOpt = 0 : SelectedOpt++;
+
+			strcpy_P(Buffer, ProgTypes[SelectedOpt]);
+			Buffer[4] = ' ';
+			Buffer[5] = ((ProgOptions & (1 << SelectedOpt)) ? '^' : 'O');
+			Buffer[6] = 0x00;
+
+			LCD_puts(Buffer);
+
+			MAIN_WaitForJoyRelease();
+		}
+	}
+
+	eeprom_write_byte(&EEPROMVars.PGOptions, ProgOptions);
+}
+
+void PM_SetProgramDataType(uint8_t Mask)
+{
+	uint8_t ProgOptions = eeprom_read_byte(&EEPROMVars.PGOptions);
+
+	if (ProgOptions > 15)
+	  ProgOptions  = PM_OPT_FLASH;
+
+	ProgOptions |= Mask;
+	  
+	eeprom_write_byte(&EEPROMVars.PGOptions, ProgOptions);
 }

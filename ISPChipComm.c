@@ -47,7 +47,6 @@ void ISPCC_EnterChipProgrammingMode(void)
 
 			InProgrammingMode = TRUE;
 			MAIN_SETSTATUSLED(MAIN_STATLED_RED);
-			TG_PlayToneSeq(TONEGEN_SEQ_SYNCDONE);
 			PacketBytes[1] = AICB_STATUS_CMD_OK;
 			return;
 		}

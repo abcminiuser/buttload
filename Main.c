@@ -153,26 +153,18 @@ const char    SFunc_SETRESETMODE[]              PROGMEM = "SET RESET MODE";
 const char    SFunc_SETFIRMMINOR[]              PROGMEM = "SET FIRM VERSION";
 const char    SFunc_SETAUTOSLEEPTO[]            PROGMEM = "SET SLEEP TIMEOUT";
 const char    SFunc_SETTONEVOL[]                PROGMEM = "SET TONE VOLUME";
+const char    SFunc_SETSTARTUP[]                PROGMEM = "SET STARTUP MODE";
 const char    SFunc_CLEARMEM[]                  PROGMEM = "CLEAR SETTINGS";
 const char    SFunc_GOBOOTLOADER[]              PROGMEM = "JUMP TO BOOTLOADER";
 
-const char*   SettingFunctionNames[]            PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_SETRESETMODE, SFunc_SETFIRMMINOR , SFunc_SETAUTOSLEEPTO   , SFunc_SETTONEVOL, SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
-const FuncPtr SettingFunctionPtrs[]             PROGMEM = {FUNCSetContrast  , FUNCSetISPSpeed  , FUNCSetResetMode  , FUNCSetFirmMinorVer, FUNCSetAutoSleepTimeOut, FUNCSetToneVol  , FUNCClearMem  , FUNCGoBootloader};
-
-const char    PRG_A[]                           PROGMEM = "PRGM ALL";
-const char    PRG_D[]                           PROGMEM = "DATA ONLY";
-const char    PRG_E[]                           PROGMEM = "EEPROM ONLY";
-const char    PRG_DE[]                          PROGMEM = "DATA AND EEPROM";
-const char    PRG_F[]                           PROGMEM = "FUSE BYTES ONLY";
-const char    PRG_L[]                           PROGMEM = "LOCK BYTES ONLY";
-const char    PRG_FL[]                          PROGMEM = "FUSE AND LOCK BYTES";
-const char    PRG_C[]                           PROGMEM = "ERASE ONLY";
-
-const char*   ProgOptions[]                     PROGMEM = {PRG_A, PRG_D, PRG_E, PRG_DE, PRG_F, PRG_L, PRG_FL, PRG_C};
+const char*   SettingFunctionNames[]            PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_SETRESETMODE, SFunc_SETFIRMMINOR , SFunc_SETAUTOSLEEPTO   , SFunc_SETTONEVOL, SFunc_SETSTARTUP  , SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
+const FuncPtr SettingFunctionPtrs[]             PROGMEM = {FUNCSetContrast  , FUNCSetISPSpeed  , FUNCSetResetMode  , FUNCSetFirmMinorVer, FUNCSetAutoSleepTimeOut, FUNCSetToneVol  , FUNCSetStartupMode, FUNCClearMem  , FUNCGoBootloader};
 
 const char    USISpeeds[USI_PRESET_SPEEDS][10]  PROGMEM = {"921600 HZ", "230400 HZ", " 57600 HZ", " 28800 HZ"};
 const char    SPIResetModes[2][6]               PROGMEM = {"LOGIC", "FLOAT"};
 const char    SIFONames[2][15]                  PROGMEM = {"STORAGE SIZES", "VIEW DATA TAGS"};
+const char    ProgramAVROptions[2][8]           PROGMEM = {"START", "OPTIONS"};
+const char    StartupModes[3][11]               PROGMEM = {"NORMAL", "PRODUCTION", "AVRISP"};
 
 // GLOBAL EEPROM VARIABLE STRUCT:
 EEPROMVarsType EEPROMVars EEMEM;
@@ -181,7 +173,8 @@ EEPROMVarsType EEPROMVars EEMEM;
 
 int main(void)
 {	
-	uint8_t CurrFunc = 0;
+	uint8_t CurrFunc    = 0;
+	uint8_t StartupMode = eeprom_read_byte(&EEPROMVars.StartupMode);
 
 	#ifndef DEBUG_JTAGON
 	    MCUCR   = (1 << JTD);                    // Turn off JTAG via code
@@ -231,6 +224,11 @@ int main(void)
 
 	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
 	                                             // name of the default command onto the LCD
+
+	if (StartupMode == 1)                        // Check if production startup mode
+	  FUNCProgramAVR();
+	else if (StartupMode == 2)                   // Check if AVRISP startup mode
+	  FUNCAVRISPMode();
 
 	for (;;)
 	{
@@ -364,7 +362,7 @@ void MAIN_IntToStr(uint16_t IntV, char* Buff)
 
 void MAIN_ShowProgType(const uint8_t Letter)
 {
-	char ProgTypeBuffer[7];
+	char ProgTypeBuffer[6];
 
 	strcpy_P(ProgTypeBuffer, PSTR("PRG>  "));
 	ProgTypeBuffer[5] = Letter;
@@ -374,12 +372,12 @@ void MAIN_ShowProgType(const uint8_t Letter)
 
 void MAIN_ShowError(const char *pFlashStr)
 {
-	char ErrorBuff[LCD_TEXTBUFFER_SIZE];         // New buffer, LCD text buffer size
+	char ErrorBuff[LCD_TEXTBUFFER_SIZE + 2];     // New buffer, LCD text buffer size plus space for the "E>" prefix
 	
 	ErrorBuff[0] = 'E';
 	ErrorBuff[1] = '>';
 
-	strcpy_P(&ErrorBuff[2], pFlashStr);          // WARNING: If flash error text is larger than (TEXTBUFFER_SIZE - 2),
+	strcpy_P(&ErrorBuff[2], pFlashStr);          // WARNING: If flash error text is larger than TEXTBUFFER_SIZE,
 	                                             // this will overflow the buffer and crash the program!
 	LCD_puts(ErrorBuff);
 	
@@ -478,13 +476,10 @@ void FUNCAVRISPMode(void)
 
 void FUNCProgramAVR(void)
 {
-	uint8_t  StoredLocksFuses;
-	char     DoneFailMessageBuff[12];
-	uint8_t  Fault    = ISPCC_NO_FAULT;
-	uint8_t  ProgMode = 0;
-
-	MAIN_WaitForJoyRelease();
+	uint8_t ProgMode = 0;
 	
+	MAIN_WaitForJoyRelease();
+
 	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
 	                                             // name of the default command onto the LCD
 	for (;;)
@@ -492,152 +487,26 @@ void FUNCProgramAVR(void)
 		if (JoyStatus)
 		{
 			if (JoyStatus & JOY_LEFT)
-			  return;
+			{
+				return;
+			}
 			else if (JoyStatus & JOY_PRESS)
-			  break;
-			else if (JoyStatus & JOY_UP)
-			  (ProgMode == 0)? ProgMode = ARRAY_UPPERBOUND(ProgOptions) : ProgMode--;
-			else if (JoyStatus & JOY_DOWN)
-			  (ProgMode == ARRAY_UPPERBOUND(ProgOptions))? ProgMode = 0 : ProgMode++;
+			{
+				if (ProgMode == 1)
+				  PM_ChooseProgAVROpts();
+				else
+				  PM_StartProgAVR();
+			}
+			else if (JoyStatus & (JOY_UP | JOY_DOWN))
+			{
+				ProgMode ^= 1;
+			}
 
-			LCD_puts_f((char*)pgm_read_word(&ProgOptions[ProgMode])); // Show current function onto the LCD
+			LCD_puts_f(ProgramAVROptions[ProgMode]);
 
 			MAIN_WaitForJoyRelease();
 		}
 	}
-
-	LCD_puts_f(WaitText);
-	SPI_SPIInit();
-	
-	if (!(DF_CheckCorrectOnboardChip()))
-	  return;
-
-	TIMEOUT_SLEEP_TIMER_OFF();
-
-	USI_SPIInitMaster();
-	MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE);       // Capture the RESET line of the slave AVR
-			
-	for (uint8_t PacketB = 0; PacketB < 12; PacketB++) // Read the enter programming mode command bytes
-	  PacketBytes[PacketB] = eeprom_read_byte(&EEPROMVars.EnterProgMode[PacketB]);
-		
-	CurrAddress = 0;
-	
-	ISPCC_EnterChipProgrammingMode();            // Try to sync with the slave AVR
-	if (InProgrammingMode)                       // ISPCC_EnterChipProgrammingMode alters the InProgrammingMode flag
-	{						
-		if ((ProgMode == MAIN_PM_ALL) || (ProgMode == MAIN_PM_ERASE) || (ProgMode == MAIN_PM_FLASH) || (ProgMode == MAIN_PM_FLASHEEPROM))
-		{
-			MAIN_ShowProgType('C');
-			
-			if (!(eeprom_read_byte(&EEPROMVars.EraseCmdStored) == TRUE))
-			{
-				Fault = ISPCC_FAULT_NOERASE;
-				MAIN_ShowError(PSTR("NO ERASE CMD"));
-			}
-			else
-			{
-				PM_SendEraseCommand();
-			}
-		}
-
-		if (((ProgMode == MAIN_PM_ALL) || (ProgMode == MAIN_PM_FLASHEEPROM) || (ProgMode == MAIN_PM_FLASH))
-           && (Fault != ISPCC_FAULT_NOERASE))
-		{
-			MAIN_ShowProgType('D');
-
-			if (!(PM_GetStoredDataSize(TYPE_FLASH))) // Check to make sure a program is present in memory
-			{
-				Fault = ISPCC_FAULT_NODATATYPE;					
-				MAIN_ShowError(PSTR("NO DATA"));
-			}
-			else
-			{
-				PM_CreateProgrammingPackets(TYPE_FLASH);
-			}
-		}
-	
-		if ((ProgMode == MAIN_PM_ALL) || (ProgMode == MAIN_PM_FLASHEEPROM) || (ProgMode == MAIN_PM_EEPROM))
-		{
-			MAIN_ShowProgType('E');
-
-			if (!(PM_GetStoredDataSize(TYPE_EEPROM))) // Check to make sure EEPROM data is present in memory
-			{
-				Fault = ISPCC_FAULT_NODATATYPE;
-				MAIN_ShowError(PSTR("NO EEPROM"));
-			}
-			else
-			{
-				PM_CreateProgrammingPackets(TYPE_EEPROM);
-			}
-		}
-
-		if ((ProgMode == MAIN_PM_ALL) || (ProgMode == MAIN_PM_FUSELOCK) || (ProgMode == MAIN_PM_FUSE))
-		{
-			MAIN_ShowProgType('F');
-			
-			StoredLocksFuses = eeprom_read_byte(&EEPROMVars.TotalFuseBytes);
-			if (!(StoredLocksFuses) || (StoredLocksFuses == 0xFF))
-			{
-				Fault = ISPCC_FAULT_NODATATYPE;					
-				MAIN_ShowError(PSTR("NO FUSE BYTES"));
-			}
-			else
-			{
-				PM_SendFuseLockBytes(TYPE_FUSE);
-			}
-		}
-
-		if ((ProgMode == MAIN_PM_ALL) || (ProgMode == MAIN_PM_FUSELOCK) || (ProgMode == MAIN_PM_LOCK))
-		{
-			if (ProgMode == 6)                           // If fusebytes have already been written, we need to re-enter programming mode to latch them
-			{
-				MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE); // Release the RESET line of the slave AVR
-				MAIN_Delay10MS(1);
-				MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE);   // Capture the RESET line of the slave AVR
-				ISPCC_EnterChipProgrammingMode();        // Try to sync with the slave AVR
-			}
-
-			MAIN_ShowProgType('L');
-		
-			StoredLocksFuses = eeprom_read_byte(&EEPROMVars.TotalLockBytes);
-			if (!(StoredLocksFuses) || (StoredLocksFuses == 0xFF))
-			{
-				Fault = ISPCC_FAULT_NODATATYPE;
-				MAIN_ShowError(PSTR("NO LOCK BYTES"));
-			}
-			else
-			{
-				PM_SendFuseLockBytes(TYPE_LOCK);
-			}
-		}
-
-		strcpy_P(DoneFailMessageBuff, PSTR("PROG DONE"));
-
-		if (Fault != ISPCC_NO_FAULT)              // Takes less code to just overwrite part of the string on fail
-		{
-			strcpy_P(&DoneFailMessageBuff[5], PSTR("FAILED"));
-			TG_PlayToneSeq(TONEGEN_SEQ_PROGFAIL);
-		}
-		else
-		{
-			TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);		
-		}
-
-		LCD_puts(DoneFailMessageBuff);
-
-		MAIN_Delay10MS(225);
-	}
-	else
-	{
-		MAIN_ShowError(SyncErrorMessage);
-	}
-	
-	TOUT_SetupSleepTimer();
-	MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE);     // Release the RESET line and allow the slave AVR to run	
-	USI_SPIOff();
-	DF_EnableDataflash(FALSE);
-	SPI_SPIOFF();
-	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Set status LEDs to green (ready)
 }
 
 void FUNCStoreProgram(void)
@@ -664,6 +533,8 @@ void FUNCClearMem(void)
 
 	LCD_puts_f(PSTR("<N Y>"));
 
+	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
+	                                             // name of the default command onto the LCD	
 	for (;;)
 	{
 		if (JoyStatus)
@@ -933,6 +804,35 @@ void FUNCSetToneVol(void)
 	}	
 }
 
+void FUNCSetStartupMode(void)
+{
+	uint8_t StartupMode = eeprom_read_byte(&EEPROMVars.StartupMode);
+
+	if (StartupMode > ARRAY_UPPERBOUND(StartupModes))
+	  StartupMode = 0;
+
+	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
+	                                             // name of the default command onto the LCD
+	for (;;)
+	{
+		if (JoyStatus)
+		{
+			if (JoyStatus & JOY_UP)
+			  (StartupMode == 0)? StartupMode = ARRAY_UPPERBOUND(StartupModes) : StartupMode--;
+			else if (JoyStatus & JOY_DOWN)
+			  (StartupMode == ARRAY_UPPERBOUND(StartupModes))? StartupMode = 0 : StartupMode++;
+			else if (JoyStatus & JOY_LEFT)
+			  break;
+
+			LCD_puts_f(StartupModes[StartupMode]);			
+
+			MAIN_WaitForJoyRelease();
+		}
+	}	
+
+	eeprom_write_byte(&EEPROMVars.StartupMode, StartupMode);
+}
+
 void FUNCSleepMode(void)
 {
 	LCDCRA &= ~(1 << LCDEN);                     // Turn off LCD driver while sleeping
@@ -1024,5 +924,5 @@ void FUNCGoBootloader(void)
 	
 	WDTCR = ((1<<WDCE) | (1<<WDE));              // Enable Watchdog Timer to give reset after minimum timeout
 	for (;;) {};                                 // Eternal loop - when watchdog resets the AVR it will enter the bootloader,
-	                                             // assuming the BOOTRST fuse is programmed (ptherwise app will just restart)
+	                                             // assuming the BOOTRST fuse is programmed (otherwise app will just restart)
 }
