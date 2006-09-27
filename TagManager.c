@@ -16,7 +16,7 @@ void TM_ShowTags(void)
 {
 	DF_ContinuousReadEnable(0, 0);
 	TagExists = FALSE;
-	DFDataBytesLeft = PM_GetStoredDataSize(TYPE_FLASH);
+	DFDataBytesLeft = SM_GetStoredDataSize(TYPE_FLASH);
 
 	TM_FindNextTag();
 	if (!(TagExists))
@@ -88,7 +88,7 @@ void TM_FindNextTag(void)
 		}
 	}
 	
-	DFDataBytesLeft = PM_GetStoredDataSize(TYPE_FLASH);
+	DFDataBytesLeft = SM_GetStoredDataSize(TYPE_FLASH);
 	DF_ContinuousReadEnable(0, 0);
 	
 	if (TagExists == FALSE)

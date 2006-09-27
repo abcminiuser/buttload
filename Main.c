@@ -103,6 +103,7 @@
 		ProgramManager.c + Header file           | By Dean Camera
 		RingBuff.c + Header file                 | By Dean Camera
 		SPI.c + Header file                      | By Dean Camera
+		StorageManager.c + Header file           | By Dean Camera
 		TagManager.c + Header file               | By Dean Camera
 		Timeout.c + Header file                  | By Dean Camera
 		ToneGeneration.c + Header file           | By Dean Camera
@@ -520,7 +521,7 @@ void FUNCStoreProgram(void)
 	USART_Init();
 	LCD_puts_f(PSTR("*STORAGE MODE*"));
 
-	V2P_RunStateMachine(PM_InterpretAVRISPPacket);
+	V2P_RunStateMachine(SM_InterpretAVRISPPacket);
 	
 	DF_EnableDataflash(FALSE);
 	SPI_SPIOFF();
@@ -889,7 +890,7 @@ void FUNCStorageInfo(void)
 					SPI_SPIInit();
 					DF_EnableDataflash(TRUE);
 
-					if (!(PM_GetStoredDataSize(TYPE_FLASH)))
+					if (!(SM_GetStoredDataSize(TYPE_FLASH)))
 					  MAIN_ShowError(PSTR("NO STORED PRGM"));
 					else if (DF_CheckCorrectOnboardChip())
 					  TM_ShowTags();

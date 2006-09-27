@@ -30,7 +30,7 @@
 	#include "USI.h"
 	#include "Dataflash.h"
 	#include "ProgramManager.h"
-	#include "RingBuff.h"
+	#include "StorageManager.h"
 	#include "EEPROMVariables.h"
 	#include "TagManager.h"
 	#include "ButtLoadTag.h"

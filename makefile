@@ -72,6 +72,7 @@ SRC =	Analogue.c                   \
 		ProgramManager.c             \
 		RingBuff.c                   \
 		SPI.c                        \
+		StorageManager.c             \
 		TagManager.c                 \
 		ToneGeneration.c             \
         Timeout.c                    \
