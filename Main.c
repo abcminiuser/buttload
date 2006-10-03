@@ -11,8 +11,8 @@
 /*
 	This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+	General Public License for more details.
 */
 
 /*
@@ -674,7 +674,8 @@ void FUNCSetFirmMinorVer(void)
 	if (VerMinor > 9)
 	  VerMinor = V2P_SW_VERSION_MINOR_DEFAULT;
 	
-	strcpy_P(VerBuffer, PSTR("V2- "));
+	VerBuffer[0] = 'V';
+	VerBuffer[1] = '2';
 
 	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
 	                                             // name of the default command onto the LCD
@@ -684,7 +685,7 @@ void FUNCSetFirmMinorVer(void)
 		{
 			if (JoyStatus & JOY_UP)
 			{
-				if (VerMinor < 9)
+				if (VerMinor < 20)
 				  VerMinor++;
 			}
 			else if (JoyStatus & JOY_DOWN)
@@ -698,7 +699,8 @@ void FUNCSetFirmMinorVer(void)
 				return;
 			}
 			
-			VerBuffer[3] = '0' + VerMinor;
+			MAIN_IntToStr(VerMinor, &VerBuffer[2]);
+			VerBuffer[2] = '-';
 			LCD_puts(VerBuffer);
 
 			MAIN_WaitForJoyRelease();
@@ -917,6 +919,7 @@ void FUNCGoBootloader(void)
 	MCUCR = MD;                                  // Turn on JTAG via code
 	MCUCR = MD; 
 	
+	SecsBeforeAutoSleep = 0;
 	TIMEOUT_SLEEP_TIMER_OFF();
 	
 	LCD_puts_f(PSTR("*JTAG ON*"));

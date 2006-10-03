@@ -80,7 +80,7 @@ const    uint16_t LCD_SegTable[] PROGMEM =
     0x1441,     // '['
     0x8020,     // '\'
     0x1111,     // ']'
-    0xD579,     // '^' (Checked Symbol)
+    0x0000,     // '^' (Not defined)
     0x1000      // '_'
 };
 
@@ -164,7 +164,7 @@ static inline void LCD_WriteChar(const uint8_t Byte, const char Digit)
 	}	
 }
 
-ISR(LCD_vect, ISR_NOBLOCK)
+ISR(LCD_vect, ISR_BLOCK)
 {
 	if (ScrollMode)
 	{

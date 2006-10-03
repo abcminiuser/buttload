@@ -211,18 +211,12 @@ void PM_ShowStoredItemSizes(void)
 void PM_StartProgAVR(void)
 {
 	uint8_t StoredLocksFuses;
-	char    MessageBuffer[12];
 	uint8_t Fault       = ISPCC_NO_FAULT;
 	uint8_t ProgOptions = eeprom_read_byte(&EEPROMVars.PGOptions);
 
-	if (ProgOptions > 15)
+	if (!(ProgOptions) || (ProgOptions > 15))
 	{
-		ProgOptions = PM_OPT_FLASH;
-	}
-	else if (!(ProgOptions))
-	{
-		LCD_puts_f(PSTR("NOTHING SELECTED"));
-		MAIN_Delay10MS(225);
+		MAIN_ShowError(PSTR("NOTHING SELECTED"));
 		return;
 	}
 
@@ -330,22 +324,19 @@ void PM_StartProgAVR(void)
 			}
 		}
 
-		strcpy_P(MessageBuffer, PSTR("PROG DONE"));
-
-		if (Fault != ISPCC_NO_FAULT)              // Takes less code to just overwrite part of the string on fail
+		if (Fault != ISPCC_NO_FAULT)
 		{
-			strcpy_P(&MessageBuffer[5], PSTR("FAILED"));
+			LCD_puts_f(PSTR("PROG FAILED"));
 			TG_PlayToneSeq(TONEGEN_SEQ_PROGFAIL);
 		}
 		else
 		{
+			LCD_puts_f(PSTR("PROG DONE"));
 			TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);		
 		}
 
-		LCD_puts(MessageBuffer);
-
-		MAIN_Delay10MS(225);
-		MAIN_Delay10MS(120);
+		MAIN_Delay10MS(172);
+		MAIN_Delay10MS(172);
 	}
 	else
 	{
@@ -367,7 +358,7 @@ void PM_ChooseProgAVROpts(void)
 	uint8_t ProgOptions = eeprom_read_byte(&EEPROMVars.PGOptions);
 
 	if (ProgOptions > 15)
-	  ProgOptions = PM_OPT_FLASH;
+	  ProgOptions = 0;
 
 	MAIN_WaitForJoyRelease();
 
@@ -387,8 +378,8 @@ void PM_ChooseProgAVROpts(void)
 			  (SelectedOpt == ARRAY_UPPERBOUND(ProgTypes))? SelectedOpt = 0 : SelectedOpt++;
 
 			strcpy_P(Buffer, ProgTypes[SelectedOpt]);
-			Buffer[4] = ' ';
-			Buffer[5] = ((ProgOptions & (1 << SelectedOpt)) ? '^' : 'O');
+			Buffer[4] = '>';
+			Buffer[5] = ((ProgOptions & (1 << SelectedOpt)) ? 'Y' : 'N');
 			Buffer[6] = 0x00;
 
 			LCD_puts(Buffer);
@@ -405,9 +396,12 @@ void PM_SetProgramDataType(uint8_t Mask)
 	uint8_t ProgOptions = eeprom_read_byte(&EEPROMVars.PGOptions);
 
 	if (ProgOptions > 15)
-	  ProgOptions  = PM_OPT_FLASH;
+	  ProgOptions = 0;
 
-	ProgOptions |= Mask;
+	if (Mask & PM_OPT_CLEARFLAGS)
+	  ProgOptions &= ~(Mask & 0b01111111);	
+	else
+	  ProgOptions |=  (Mask & 0b01111111);
 	  
 	eeprom_write_byte(&EEPROMVars.PGOptions, ProgOptions);
 }

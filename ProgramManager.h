@@ -16,6 +16,8 @@
 	#include "EEPROMVariables.h"
 	
 	// DEFINES:
+	#define PM_OPT_CLEARFLAGS      (1 << 7)
+
 	#define PM_OPT_FLASH           (1 << 0)
 	#define PM_OPT_EEPROM          (1 << 1)
 	#define PM_OPT_FUSE            (1 << 2)
