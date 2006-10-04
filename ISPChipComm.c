@@ -73,9 +73,9 @@ void ISPCC_ProgramChip(void)
 	uint8_t  PollType;
 	uint8_t  ByteToWrite;
 
-	if (ProgMode & ISPCC_PROG_MODE_PAGE)                 // Page writing mode
+	if (ProgMode & ISPCC_PROG_MODE_PAGE)                  // Page writing mode
 	{
-		for (uint16_t WriteByte = 0; WriteByte < BytesToWrite; WriteByte++) // Transmit the page bytes
+		for (uint16_t WriteByte = 0; ((WriteByte < BytesToWrite) && !(ProgrammingFault)); WriteByte++) // Transmit the page bytes
 		{
 			ByteToWrite = PacketBytes[10 + WriteByte];
 		
@@ -120,7 +120,7 @@ void ISPCC_ProgramChip(void)
 	}
 	else                                                 // Flash Word writing mode or EEPROM byte writing mode
 	{
-		for (uint16_t WriteByte = 0; WriteByte < BytesToWrite; WriteByte++)
+		for (uint16_t WriteByte = 0; ((WriteByte < BytesToWrite) && !(ProgrammingFault)); WriteByte++)
 		{
 			ByteToWrite = PacketBytes[10 + WriteByte];
 
@@ -160,6 +160,9 @@ void ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr)
 {
 	uint8_t PollType;
 	uint8_t ProgCommand;
+	
+	TCNT1  = 0;                                      // Clear timer 1
+	TCCR1B = ((1 << CS12) | (1 << CS10));            // Start timer 1 with a Fcpu/1024 clock
 
 	if (PollData & ISPCC_PROG_MODE_PAGE)
 	  PollType = ((PollData & ISPCC_PAGE_POLLTYPE_MASK) >> ISPCC_PAGE_POLLTYPE_MASKSHIFT);
@@ -182,16 +185,21 @@ void ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr)
 				USI_SPITransmit(ProgCommand);
 				USI_SPITransmitWord(PollAddr);
 			}
-			while (USI_SPITransmit(0x00) == PacketBytes[8]);
+			while ((USI_SPITransmit(0x00) == PacketBytes[8]) && (TCNT1 < ISPCC_COMM_TIMEOUT));
 						
 			break;
 		case ISPCC_POLLTYPE_READY:
 			do
 			  USI_SPITransmitWord(0xF000);
-			while (USI_SPITransmitWord(0x0000) & ISPCC_POLL_BUSYFLAG);
+			while ((USI_SPITransmitWord(0x0000) & ISPCC_POLL_BUSYFLAG) && (TCNT1 < ISPCC_COMM_TIMEOUT));
 
 			break;
 		default:                                      // Default is Wait polling
 			MAIN_Delay1MS(PacketBytes[4]);	
 	}
+
+	if (TCNT1 >= ISPCC_COMM_TIMEOUT)
+	  ProgrammingFault = ISPCC_FAULT_TIMEOUT;
+	
+	TCCR1B = 0;                                       // Stop timer 1
 }

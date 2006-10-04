@@ -46,11 +46,15 @@
 	#define ISPCC_NO_FAULT                    0
 	#define ISPCC_FAULT_NOERASE               2
 	#define ISPCC_FAULT_NODATATYPE            3
+	#define ISPCC_FAULT_TIMEOUT               4
 	
+	#define ISPCC_COMM_TIMEOUT                0xFC // 35ms timeout at 7372800Hz, 1024 prescale - more than triple the typical minimum EEPROM/flash write time
+
 	#define ISPCC_USIMASK                     ((1<<USI_DATAIN_PIN) | (1<<USI_DATAOUT_PIN) | (1<<USI_CLOCK_PIN))
 	
 	// EXTERNAL VARIABLES:
 	extern const char SyncErrorMessage[] PROGMEM;
+	#define ProgrammingFault                  GPIOR2 // Psudo-variable, GPIO register for speed
 	
 	// PROTOTYPES:
 	void   ISPCC_EnterChipProgrammingMode(void);

@@ -49,13 +49,21 @@ void PM_SendEraseCommand(void)
 			
 	if (eeprom_read_byte(&EEPROMVars.EraseChip[2]))                     // Value of 1 indicates a busy flag test
 	{
+		TCNT1  = 0;                                                     // Clear timer 1
+		TCCR1B = ((1 << CS12) | (1 << CS10));                           // Start timer 1 with a Fcpu/1024 clock
+
 		do
 		  USI_SPITransmitWord(0xF000);
-		while (USI_SPITransmitWord(0x0000) & 0x01);
+		while ((USI_SPITransmitWord(0x0000) & 0x01) && (TCNT1 < ISPCC_COMM_TIMEOUT));
+
+		if (TCNT1 >= ISPCC_COMM_TIMEOUT)
+		  ProgrammingFault = ISPCC_FAULT_TIMEOUT;
+	
+		TCCR1B = 0;                                                      // Stop timer 1
 	}
-	else                                                                // Cleared flag means use a predefined delay
+	else                                                                 // Cleared flag means use a predefined delay
 	{		
-		MAIN_Delay1MS(eeprom_read_byte(&EEPROMVars.EraseChip[1]));      // Wait the erase delay
+		MAIN_Delay1MS(eeprom_read_byte(&EEPROMVars.EraseChip[1]));       // Wait the erase delay
 	}
 }
 
@@ -157,6 +165,9 @@ void PM_CreateProgrammingPackets(const uint8_t Type)
 
 		ISPCC_ProgramChip();                                            // Start the program cycle
 		LCD_BARGRAPH((uint8_t)(BytesRead / BytesPerProgress));          // Show the progress onto the LCD
+
+		if (ProgrammingFault)                                           // Error out early if there's a problem
+		  return;
 	}
 }
 
@@ -211,7 +222,6 @@ void PM_ShowStoredItemSizes(void)
 void PM_StartProgAVR(void)
 {
 	uint8_t StoredLocksFuses;
-	uint8_t Fault       = ISPCC_NO_FAULT;
 	uint8_t ProgOptions = eeprom_read_byte(&EEPROMVars.PGOptions);
 
 	if (!(ProgOptions) || (ProgOptions > 15))
@@ -234,7 +244,8 @@ void PM_StartProgAVR(void)
 	for (uint8_t PacketB = 0; PacketB < 12; PacketB++) // Read the enter programming mode command bytes
 	  PacketBytes[PacketB] = eeprom_read_byte(&EEPROMVars.EnterProgMode[PacketB]);
 		
-	CurrAddress = 0;
+	CurrAddress      = 0;
+	ProgrammingFault = ISPCC_NO_FAULT;
 	
 	ISPCC_EnterChipProgrammingMode();            // Try to sync with the slave AVR
 	if (InProgrammingMode)                       // ISPCC_EnterChipProgrammingMode alters the InProgrammingMode flag
@@ -245,7 +256,7 @@ void PM_StartProgAVR(void)
 			
 			if (!(eeprom_read_byte(&EEPROMVars.EraseCmdStored) == TRUE))
 			{
-				Fault = ISPCC_FAULT_NOERASE;
+				ProgrammingFault = ISPCC_FAULT_NOERASE;
 				MAIN_ShowError(PSTR("NO ERASE CMD"));
 			}
 			else
@@ -254,13 +265,13 @@ void PM_StartProgAVR(void)
 			}
 		}
 
-		if ((ProgOptions & PM_OPT_FLASH) && (Fault != ISPCC_FAULT_NOERASE))
+		if ((ProgOptions & PM_OPT_FLASH) && (ProgrammingFault != ISPCC_FAULT_NOERASE))
 		{
 			MAIN_ShowProgType('D');
 
 			if (!(SM_GetStoredDataSize(TYPE_FLASH))) // Check to make sure a program is present in memory
 			{
-				Fault = ISPCC_FAULT_NODATATYPE;					
+				ProgrammingFault = ISPCC_FAULT_NODATATYPE;					
 				MAIN_ShowError(PSTR("NO DATA"));
 			}
 			else
@@ -275,7 +286,7 @@ void PM_StartProgAVR(void)
 
 			if (!(SM_GetStoredDataSize(TYPE_EEPROM))) // Check to make sure EEPROM data is present in memory
 			{
-				Fault = ISPCC_FAULT_NODATATYPE;
+				ProgrammingFault = ISPCC_FAULT_NODATATYPE;
 				MAIN_ShowError(PSTR("NO EEPROM"));
 			}
 			else
@@ -291,7 +302,7 @@ void PM_StartProgAVR(void)
 			StoredLocksFuses = eeprom_read_byte(&EEPROMVars.TotalFuseBytes);
 			if (!(StoredLocksFuses) || (StoredLocksFuses == 0xFF))
 			{
-				Fault = ISPCC_FAULT_NODATATYPE;					
+				ProgrammingFault = ISPCC_FAULT_NODATATYPE;					
 				MAIN_ShowError(PSTR("NO FUSE BYTES"));
 			}
 			else
@@ -315,7 +326,7 @@ void PM_StartProgAVR(void)
 			StoredLocksFuses = eeprom_read_byte(&EEPROMVars.TotalLockBytes);
 			if (!(StoredLocksFuses) || (StoredLocksFuses == 0xFF))
 			{
-				Fault = ISPCC_FAULT_NODATATYPE;
+				ProgrammingFault = ISPCC_FAULT_NODATATYPE;
 				MAIN_ShowError(PSTR("NO LOCK BYTES"));
 			}
 			else
@@ -324,7 +335,10 @@ void PM_StartProgAVR(void)
 			}
 		}
 
-		if (Fault != ISPCC_NO_FAULT)
+		if (ProgrammingFault == ISPCC_FAULT_TIMEOUT)
+		  MAIN_ShowError(PSTR("TIMEOUT"));
+
+		if (ProgrammingFault != ISPCC_NO_FAULT)
 		{
 			LCD_puts_f(PSTR("PROG FAILED"));
 			TG_PlayToneSeq(TONEGEN_SEQ_PROGFAIL);
@@ -399,9 +413,9 @@ void PM_SetProgramDataType(uint8_t Mask)
 	  ProgOptions = 0;
 
 	if (Mask & PM_OPT_CLEARFLAGS)
-	  ProgOptions &= ~(Mask & 0b01111111);	
+	  ProgOptions  = 0;
 	else
-	  ProgOptions |=  (Mask & 0b01111111);
+	  ProgOptions |= (Mask & 0b01111111);
 	  
 	eeprom_write_byte(&EEPROMVars.PGOptions, ProgOptions);
 }

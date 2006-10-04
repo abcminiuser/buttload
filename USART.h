@@ -1,26 +1,13 @@
+/*
+             BUTTLOAD - Butterfly ISP Programmer
+				
+              Copyright (C) Dean Camera, 2006.
+                  dean_camera@hotmail.com
+*/
+
 #ifndef USART_H
 #define USART_H
 
-	//***************************************************************************
-	//
-	//  File........: usart.c
-	//
-	//  Author(s)...: ATMEL Norway
-	//
-	//  Target(s)...: ATmega169
-	//
-	//  Compiler....: IAR EWAAVR 2.28a
-	//
-	//  Description.: AVR Butterfly USART routines
-	//
-	//  Revisions...: 1.0
-	//
-	//  YYYYMMDD - VER. - COMMENT                                       - SIGN.
-	//
-	//  20030116 - 1.0  - Created                                       - LHM
-	//
-	//***************************************************************************
-	
 	// INCLUDES:
 	#include <avr/io.h>
 	

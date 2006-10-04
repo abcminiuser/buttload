@@ -1,31 +1,13 @@
-//***************************************************************************
-//
-//  File........: usart.c
-//
-//  Author(s)...: ATMEL Norway
-//
-//  Target(s)...: ATmega169
-//
-//  Compiler....: IAR EWAAVR 2.28a
-//
-//  Description.: AVR Butterfly USART routines
-//
-//  Revisions...: 1.0
-//
-//  YYYYMMDD - VER. - COMMENT                                       - SIGN.
-//
-//  20030116 - 1.0  - Created                                       - LHM
-//
-//***************************************************************************
+/*
+             BUTTLOAD - Butterfly ISP Programmer
+				
+              Copyright (C) Dean Camera, 2006.
+                  dean_camera@hotmail.com
+*/
 
 #include "USART.h"
 
-/*
-	Edit for ButtLoad: I've changed the recieve method so when a character is
-	recieved it is loaded into a FIFO (ring) buffer immediatly via an interrupt.
-	This ensures that no characters are lost while the processor is busy with
-	other tasks such as updating the LCD.
-*/
+// ======================================================================================
 
 void USART_Init(void)
 {
@@ -55,12 +37,12 @@ void USART_Init(void)
 
 void USART_Tx(const char data)
 {
-    while (!(UCSRA & (1 << UDRE)));
-    UDR = data;
+	while (!(UCSRA & (1 << UDRE)));
+	UDR = data;
 }
 
 char USART_Rx(void)
 {
-    while (!(BuffElements) && !(PacketTimeOut)) {};
-    return BUFF_GetBuffByte();
+	while (!(BuffElements) && !(PacketTimeOut)) {};
+	return BUFF_GetBuffByte();
 }

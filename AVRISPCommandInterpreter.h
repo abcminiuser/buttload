@@ -16,6 +16,7 @@
 	#include "LCD_Driver.h"
 	#include "ISPChipComm.h"
 	#include "V2Protocol.h"
+	#include "AVRISPCommandBytes.h"
 	
 	// EXTERNAL VARIABLES:
 	extern const char AVRISPModeMessage[] PROGMEM;

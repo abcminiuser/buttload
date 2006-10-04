@@ -107,8 +107,7 @@
 		TagManager.c + Header file               | By Dean Camera
 		Timeout.c + Header file                  | By Dean Camera
 		ToneGeneration.c + Header file           | By Dean Camera
-		USART.c + Header file                    | By Atmel, ported to GCC by Martin Thomas and
-		                                         | modified by Dean Camera
+		USART.c + Header file                    | By Dean Camera
 		USI.c + Header file                      | By Dean Camera
 		USITransfer.S                            | By Dean Camera with assistance from John Samperi 
 		V2Protocol.c + Header file               | By Dean Camera
@@ -381,6 +380,8 @@ void MAIN_ShowError(const char *pFlashStr)
 	strcpy_P(&ErrorBuff[2], pFlashStr);          // WARNING: If flash error text is larger than TEXTBUFFER_SIZE,
 	                                             // this will overflow the buffer and crash the program!
 	LCD_puts(ErrorBuff);
+	
+	TG_PlayToneSeq(TONEGEN_SEQ_ERROR);
 	
 	MAIN_WaitForJoyRelease();
 	while (!(JoyStatus & JOY_PRESS)) {};

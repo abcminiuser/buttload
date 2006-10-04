@@ -47,7 +47,7 @@
 	
 	#define V2P_HW_VERSION               2
 	#define V2P_SW_VERSION_MAJOR         2
-	#define V2P_SW_VERSION_MINOR_DEFAULT 7
+	#define V2P_SW_VERSION_MINOR_DEFAULT 10
 	
 	// EXTERNAL VARIABLES:
 	extern uint8_t   PacketBytes[V2P_MAXBUFFSIZE];

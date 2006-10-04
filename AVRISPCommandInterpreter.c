@@ -19,6 +19,7 @@ void AICI_InterpretPacket(void)
 			MessageSize = 2;
 			
 			USI_SPIInitMaster();
+			ProgrammingFault = ISPCC_NO_FAULT;
 
 			MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE);     // Pull the slave AVR's RESET line to active
 			ISPCC_EnterChipProgrammingMode();          // Run the Enter Programming Mode routine
@@ -33,7 +34,7 @@ void AICI_InterpretPacket(void)
 			MessageSize = 2;
 
 			if (InProgrammingMode)
-			  TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);
+			  TG_PlayToneSeq((ProgrammingFault == ISPCC_NO_FAULT)? TONEGEN_SEQ_PROGDONE : TONEGEN_SEQ_PROGFAIL);
 
 			MAIN_Delay1MS(PacketBytes[1]);             // Wait for the "PreDelay" amount specified in the packet
 			InProgrammingMode = FALSE;
@@ -54,17 +55,23 @@ void AICI_InterpretPacket(void)
 
 			if (PacketBytes[2])                        // Poll mode, value of 1 indicates a busy flag wait
 			{
+				TCNT1  = 0;                            // Clear timer 1
+				TCCR1B = ((1 << CS12) | (1 << CS10));  // Start timer 1 with a Fcpu/1024 clock
+
 				do
 				  USI_SPITransmitWord(0xF000);
-				while (USI_SPITransmitWord(0x0000) & 0x01);
+				while ((USI_SPITransmitWord(0x0000) & 0x01) && (TCNT1 < ISPCC_COMM_TIMEOUT));
+
+				TCCR1B = 0;                            // Stop timer 1
+
+				PacketBytes[1] = ((TCNT1 < ISPCC_COMM_TIMEOUT)? AICB_STATUS_CMD_OK : AICB_STATUS_CMD_TOUT);
 			}
 			else                                       // Poll mode flag of 0 indicates a predefined delay
 			{
 				MAIN_Delay1MS(PacketBytes[1]);         // Wait the specified interval to ensure erase complete
+				PacketBytes[1] = AICB_STATUS_CMD_OK;   // Always return OK
 			}
-			
-			PacketBytes[1] = AICB_STATUS_CMD_OK;       // Always return OK
-			
+						
 			break;
 		case AICB_CMD_SPI_MULTI:
 			MessageSize = (3 + PacketBytes[2]);    // Number of recieved bytes, plus two OKs and the command byte
@@ -169,7 +176,7 @@ void AICI_InterpretPacket(void)
 			
 			MessageSize = 2;
 
-			PacketBytes[1] = AICB_STATUS_CMD_OK;
+			PacketBytes[1] = ((ProgrammingFault == ISPCC_NO_FAULT) ? AICB_STATUS_CMD_OK : AICB_STATUS_CMD_TOUT);
 			
 			break;
 		default:                                       // Unknown command, return error
