@@ -26,7 +26,7 @@ ISR(TIMER2_COMP_vect, ISR_NOBLOCK)
 	if (((SecsBeforeAutoSleep) && (SleepTimeOutSecs++ == SecsBeforeAutoSleep))
 	   || (AN_GetADCValue(AN_CHANNEL_SLEEP) > AN_SLEEP_TRIGGER_VALUE))
 	{
-		FUNCSleepMode();
+		MAIN_SleepMode();
 	}
 }
 

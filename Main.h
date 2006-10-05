@@ -80,20 +80,23 @@
 	void MAIN_Delay10MS(uint8_t loops);
 	void MAIN_Delay1MS(uint8_t loops);
 	
-	void FUNCChangeSettings(void);
-	void FUNCShowAbout(void);
-	void FUNCAVRISPMode(void);
-	void FUNCProgramAVR(void);
-	void FUNCStoreProgram(void);
-	void FUNCClearMem(void);
-	void FUNCSetContrast(void);
-	void FUNCSetISPSpeed(void);
-	void FUNCSetResetMode(void);
-	void FUNCSetFirmMinorVer(void);
-	void FUNCSetAutoSleepTimeOut(void);
-	void FUNCSetToneVol(void);
-	void FUNCSetStartupMode(void);
-	void FUNCSleepMode(void);
-	void FUNCStorageInfo(void);
-	void FUNCGoBootloader(void) __attribute__((noreturn));
+	void MAIN_AVRISPMode(void);
+	void MAIN_ProgramAVR(void);
+	void MAIN_StoreProgram(void);
+	void MAIN_StorageInfo(void);
+	void MAIN_ChangeSettings(void);
+	void MAIN_SleepMode(void);
+
+	void MAIN_ShowAbout(void);
+
+	void MAIN_ClearMem(void);
+	void MAIN_SetContrast(void);
+	void MAIN_SetISPSpeed(void);
+	void MAIN_SetResetMode(void);
+	void MAIN_SetFirmMinorVer(void);
+	void MAIN_SetAutoSleepTimeOut(void);
+	void MAIN_SetToneVol(void);
+	void MAIN_SetStartupMode(void);
+	void MAIN_GoBootloader(void) __attribute__((noreturn));
+
 #endif

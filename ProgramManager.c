@@ -190,23 +190,21 @@ void PM_ShowStoredItemSizes(void)
 			else if (JoyStatus & JOY_LEFT)
 			  return;
 		
+			strcpy_P(Buffer, ProgTypes[ItemInfoIndex]);
+
 			switch (ItemInfoIndex)
 			{
 				case 0:
-					strcpy_P(Buffer, ProgTypes[0]);
 					ultoa(SM_GetStoredDataSize(TYPE_FLASH), &Buffer[5], 10);
 					break;
 				case 1:
-					strcpy_P(Buffer, ProgTypes[1]);
 					ultoa(SM_GetStoredDataSize(TYPE_EEPROM), &Buffer[5], 10);
 					break;
 				case 2:
-					strcpy_P(Buffer, ProgTypes[2]);
 					TempB = eeprom_read_byte(&EEPROMVars.TotalFuseBytes);
 					ultoa(((TempB == 0xFF)? 0x00 : TempB), &Buffer[5], 10);
 					break;
 				case 3:
-					strcpy_P(Buffer, ProgTypes[3]);
 					TempB = eeprom_read_byte(&EEPROMVars.TotalLockBytes);
 					ultoa(((TempB == 0xFF)? 0x00 : TempB), &Buffer[5], 10);
 			}
@@ -302,7 +300,7 @@ void PM_StartProgAVR(void)
 			StoredLocksFuses = eeprom_read_byte(&EEPROMVars.TotalFuseBytes);
 			if (!(StoredLocksFuses) || (StoredLocksFuses == 0xFF))
 			{
-				ProgrammingFault = ISPCC_FAULT_NODATATYPE;					
+				ProgrammingFault = ISPCC_FAULT_NODATATYPE;
 				MAIN_ShowError(PSTR("NO FUSE BYTES"));
 			}
 			else

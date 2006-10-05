@@ -7,6 +7,7 @@
 
 #ifndef LCDDRIVER_H
 #define LCDDRIVER_H
+
 	// INCLUDES:
 	#include <avr/io.h>
 	#include <avr/pgmspace.h>

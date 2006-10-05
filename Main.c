@@ -113,8 +113,8 @@
 		V2Protocol.c + Header file               | By Dean Camera
 -------------------------------------------------+-----------------------------------------------------
 
-   Special thanks to both Barry and Scott Coppersmith of AVRFreaks, for without their equipment and
-   wisdom in debugging this monstrocity I'd still be working on it. Also thanks to the other members
+   Special thanks to Barry, Nard Awater and Scott Coppersmith of AVRFreaks, for without their equipment
+   and wisdom in debugging this monstrocity I'd still be working on it. Also thanks to the other members
    of AVRFreaks for their ideas.
 
 --------------------------------------------------------------------------------------------------------
@@ -145,7 +145,7 @@ const char    Func_SETTINGS[]                   PROGMEM = "SETTINGS";
 const char    Func_SLEEP[]                      PROGMEM = "SLEEP MODE";
 	
 const char*   MainFunctionNames[]               PROGMEM = {Func_ISPPRGM  , Func_STOREPRGM  , Func_PRGMAVR  , Func_PRGMSTOREINFO, Func_SETTINGS      , Func_SLEEP};
-const FuncPtr MainFunctionPtrs[]                PROGMEM = {FUNCAVRISPMode, FUNCStoreProgram, FUNCProgramAVR, FUNCStorageInfo   , FUNCChangeSettings , FUNCSleepMode};
+const FuncPtr MainFunctionPtrs[]                PROGMEM = {MAIN_AVRISPMode, MAIN_StoreProgram, MAIN_ProgramAVR, MAIN_StorageInfo   , MAIN_ChangeSettings , MAIN_SleepMode};
 
 const char    SFunc_SETCONTRAST[]               PROGMEM = "SET CONTRAST";
 const char    SFunc_SETSPISPEED[]               PROGMEM = "SET ISP SPEED";
@@ -158,7 +158,7 @@ const char    SFunc_CLEARMEM[]                  PROGMEM = "CLEAR SETTINGS";
 const char    SFunc_GOBOOTLOADER[]              PROGMEM = "JUMP TO BOOTLOADER";
 
 const char*   SettingFunctionNames[]            PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_SETRESETMODE, SFunc_SETFIRMMINOR , SFunc_SETAUTOSLEEPTO   , SFunc_SETTONEVOL, SFunc_SETSTARTUP  , SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
-const FuncPtr SettingFunctionPtrs[]             PROGMEM = {FUNCSetContrast  , FUNCSetISPSpeed  , FUNCSetResetMode  , FUNCSetFirmMinorVer, FUNCSetAutoSleepTimeOut, FUNCSetToneVol  , FUNCSetStartupMode, FUNCClearMem  , FUNCGoBootloader};
+const FuncPtr SettingFunctionPtrs[]             PROGMEM = {MAIN_SetContrast  , MAIN_SetISPSpeed  , MAIN_SetResetMode  , MAIN_SetFirmMinorVer, MAIN_SetAutoSleepTimeOut, MAIN_SetToneVol  , MAIN_SetStartupMode, MAIN_ClearMem  , MAIN_GoBootloader};
 
 const char    USISpeeds[USI_PRESET_SPEEDS][10]  PROGMEM = {"921600 HZ", "230400 HZ", " 57600 HZ", " 28800 HZ"};
 const char    SPIResetModes[2][6]               PROGMEM = {"LOGIC", "FLOAT"};
@@ -226,9 +226,9 @@ int main(void)
 	                                             // name of the default command onto the LCD
 
 	if (StartupMode == 1)                        // Check if production startup mode
-	  FUNCProgramAVR();
+	  MAIN_ProgramAVR();
 	else if (StartupMode == 2)                   // Check if AVRISP startup mode
-	  FUNCAVRISPMode();
+	  MAIN_AVRISPMode();
 
 	for (;;)
 	{
@@ -241,7 +241,7 @@ int main(void)
 			else if (JoyStatus & JOY_PRESS)      // Select current function
 			  ((FuncPtr)pgm_read_word(&MainFunctionPtrs[CurrFunc]))(); // Run associated function
 			else if (JoyStatus & JOY_RIGHT)      // About ButtLoad list
-			  FUNCShowAbout();
+			  MAIN_ShowAbout();
 
 			// Show current setting function onto the LCD:
 			LCD_puts_f((char*)pgm_read_word(&MainFunctionNames[CurrFunc]));
@@ -415,7 +415,7 @@ ISR(BADISR_vect, ISR_NAKED)                      // Bad ISR routine; should neve
 
 // ======================================================================================
 
-void FUNCChangeSettings(void)
+void MAIN_ChangeSettings(void)
 {
 	uint8_t CurrSFunc = 0;
 	
@@ -444,7 +444,7 @@ void FUNCChangeSettings(void)
 	}
 }
 
-void FUNCShowAbout(void)
+void MAIN_ShowAbout(void)
 {
 	uint8_t InfoNum = 0;
 	
@@ -468,7 +468,7 @@ void FUNCShowAbout(void)
 	}
 }
 
-void FUNCAVRISPMode(void)
+void MAIN_AVRISPMode(void)
 {
 	USART_Init();
 	LCD_puts_f(AVRISPModeMessage);
@@ -476,7 +476,7 @@ void FUNCAVRISPMode(void)
 	V2P_RunStateMachine(AICI_InterpretPacket);
 }
 
-void FUNCProgramAVR(void)
+void MAIN_ProgramAVR(void)
 {
 	uint8_t ProgMode = 0;
 	
@@ -511,7 +511,7 @@ void FUNCProgramAVR(void)
 	}
 }
 
-void FUNCStoreProgram(void)
+void MAIN_StoreProgram(void)
 {
 	SPI_SPIInit();
 	DF_EnableDataflash(TRUE);
@@ -528,7 +528,7 @@ void FUNCStoreProgram(void)
 	SPI_SPIOFF();
 }
 
-void FUNCClearMem(void)
+void MAIN_ClearMem(void)
 {
 	LCD_puts_f(PSTR("CONFIRM"));
 	MAIN_Delay10MS(180);
@@ -563,7 +563,7 @@ void FUNCClearMem(void)
 	MAIN_Delay10MS(250);
 }
 
-void FUNCSetContrast(void)
+void MAIN_SetContrast(void)
 {
 	uint8_t Contrast = (eeprom_read_byte(&EEPROMVars.LCDContrast) & 0x0F); // Ranges from 0-15 so mask retuns 15 on blank EEPROM (0xFF)
 	char Buffer[6];
@@ -604,7 +604,7 @@ void FUNCSetContrast(void)
 	}
 }
 
-void FUNCSetISPSpeed(void)
+void MAIN_SetISPSpeed(void)
 {
 	uint8_t CurrSpeed = eeprom_read_byte(&EEPROMVars.SCKDuration);
 
@@ -639,7 +639,7 @@ void FUNCSetISPSpeed(void)
 	}
 }
 
-void FUNCSetResetMode(void)
+void MAIN_SetResetMode(void)
 {
 	uint8_t CurrMode = (eeprom_read_byte(&EEPROMVars.SPIResetMode) & 0x01);
 
@@ -667,7 +667,7 @@ void FUNCSetResetMode(void)
 	}
 }
 
-void FUNCSetFirmMinorVer(void)
+void MAIN_SetFirmMinorVer(void)
 {
 	uint8_t VerMinor = eeprom_read_byte(&EEPROMVars.FirmVerMinor);
 	char    VerBuffer[5];
@@ -709,7 +709,7 @@ void FUNCSetFirmMinorVer(void)
 	}	
 }
 
-void FUNCSetAutoSleepTimeOut(void)
+void MAIN_SetAutoSleepTimeOut(void)
 {
 	uint8_t SleepVal = eeprom_read_byte(&EEPROMVars.AutoSleepValIndex);
 	char    SleepTxtBuffer[8];
@@ -756,7 +756,7 @@ void FUNCSetAutoSleepTimeOut(void)
 	}	
 }
 
-void FUNCSetToneVol(void)
+void MAIN_SetToneVol(void)
 {
 	char VolBuffer[5];
 
@@ -808,7 +808,7 @@ void FUNCSetToneVol(void)
 	}	
 }
 
-void FUNCSetStartupMode(void)
+void MAIN_SetStartupMode(void)
 {
 	uint8_t StartupMode = eeprom_read_byte(&EEPROMVars.StartupMode);
 
@@ -837,7 +837,7 @@ void FUNCSetStartupMode(void)
 	eeprom_write_byte(&EEPROMVars.StartupMode, StartupMode);
 }
 
-void FUNCSleepMode(void)
+void MAIN_SleepMode(void)
 {
 	LCDCRA &= ~(1 << LCDEN);                     // Turn off LCD driver while sleeping
 	LCDCRA |=  (1 << LCDBL);                     // Blank LCD to discharge all segments
@@ -866,7 +866,7 @@ void FUNCSleepMode(void)
 	MAIN_WaitForJoyRelease();
 }
 
-void FUNCStorageInfo(void)
+void MAIN_StorageInfo(void)
 {
 	uint8_t SelectedItem = 0;
 
@@ -914,7 +914,7 @@ void FUNCStorageInfo(void)
 	}
 }
 
-void FUNCGoBootloader(void)
+void MAIN_GoBootloader(void)
 {
 	volatile uint8_t MD = (MCUCR & ~(1 << JTD)); // Forces compiler to use IN, AND plus two OUTs rather than two lots of IN/AND/OUTs
 	MCUCR = MD;                                  // Turn on JTAG via code
