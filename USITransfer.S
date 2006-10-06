@@ -10,7 +10,7 @@
 ; into the GPIOR0 register. Interrupts are disabled during the transfer.
 ;
 ; No push/pops required; only the "Call-Saved" registers are used, which improves speed. For
-; infomation on how GCC handles register management, see the "FAQ" section of the AVRLIBC manual.
+; information on how GCC handles register management, see the "FAQ" section of the AVRLIBC manual.
 
 #include "USI.h"
 
@@ -25,16 +25,25 @@ USI_SPITransmit:
 	
 	in   r27, _SFR_IO_ADDR(USIDelay)                    ; Grab the delay value from the GPIOR0 register
 
+	cli                                                 ; Kill interrupts while transferring
+
 ; DELAY CHECKS - Convert delay index into the actual cycle delay
-	cpi  r27, 0                                         ; Test for 921600 Hz frequency
+	cpi  r27, 0                                         ; Test for 1843200 Hz frequency
+	breq GoSuperFastLoop
+
+	cpi  r27, 1                                         ; Test for 921600 Hz frequency
 	breq GoFastLoop
 
 	ldi  r23, (((32 - 4) / 4) / 3)
-	cpi  r27, 1                                         ; Test for 230400 Hz frequency
+	cpi  r27, 2                                         ; Test for 230400 Hz frequency
 	breq GoSlowLoop
 	
+	ldi  r23, (((64 - 4) / 4) / 3)
+	cpi  r27, 3                                         ; Test for 115200 Hz frequency
+	breq GoSlowLoop
+
 	ldi  r23, (((128 - 4) / 4) / 3)
-	cpi  r27, 2                                         ; Test for 57600 Hz frequency
+	cpi  r27, 4                                         ; Test for 57600 Hz frequency
 	breq GoSlowLoop
 
 	ldi  r23, (((256 - 4) / 4) / 3)                     ; Assume 28800 Hz frequency
@@ -44,7 +53,6 @@ USI_SPITransmit:
 ; SLOW LOOP
 GoSlowLoop:
 	ldi  r26, 8                                         ; Transferred bits counter register
-	cli
 	
 SlowLoopStart:
 	sts	 _SFR_MEM_ADDR(USICR), r24
@@ -71,29 +79,44 @@ TimeLoop2:
 	rjmp Epilogue
 ; END SLOW LOOP
 
-
 ; FAST LOOP
 GoFastLoop:
-	cli
+	ldi  r27, (_SFR_MEM_ADDR(USICR) >> 8)     ; XH = R27
+	ldi  r26, (_SFR_MEM_ADDR(USICR) & 0x00FF) ; XL = R26
 
-	sts	 _SFR_MEM_ADDR(USICR), r24
-	sts	 _SFR_MEM_ADDR(USICR), r25
-	sts	 _SFR_MEM_ADDR(USICR), r24
-	sts	 _SFR_MEM_ADDR(USICR), r25
-	sts	 _SFR_MEM_ADDR(USICR), r24
-	sts	 _SFR_MEM_ADDR(USICR), r25
-	sts	 _SFR_MEM_ADDR(USICR), r24
-	sts	 _SFR_MEM_ADDR(USICR), r25
-	sts	 _SFR_MEM_ADDR(USICR), r24
-	sts	 _SFR_MEM_ADDR(USICR), r25
-	sts	 _SFR_MEM_ADDR(USICR), r24
-	sts	 _SFR_MEM_ADDR(USICR), r25
-	sts	 _SFR_MEM_ADDR(USICR), r24
-	sts	 _SFR_MEM_ADDR(USICR), r25
-	sts	 _SFR_MEM_ADDR(USICR), r24
-	sts	 _SFR_MEM_ADDR(USICR), r25
-; END FAST LOOP	
+	ldi  r23, 8
 
+FastLoopStart:
+	st   X, r24
+	nop
+	nop
+	nop
+	st   X, r25
+	dec  r23
+	brne FastLoopStart
+
+	rjmp Epilogue
+; END FAST LOOP
+
+; SUPER FAST LOOP
+GoSuperFastLoop:
+	sts  _SFR_MEM_ADDR(USICR), r24
+	sts  _SFR_MEM_ADDR(USICR), r25
+	sts  _SFR_MEM_ADDR(USICR), r24
+	sts  _SFR_MEM_ADDR(USICR), r25
+	sts  _SFR_MEM_ADDR(USICR), r24
+	sts  _SFR_MEM_ADDR(USICR), r25
+	sts  _SFR_MEM_ADDR(USICR), r24
+	sts  _SFR_MEM_ADDR(USICR), r25
+	sts  _SFR_MEM_ADDR(USICR), r24
+	sts  _SFR_MEM_ADDR(USICR), r25
+	sts  _SFR_MEM_ADDR(USICR), r24
+	sts  _SFR_MEM_ADDR(USICR), r25
+	sts  _SFR_MEM_ADDR(USICR), r24
+	sts  _SFR_MEM_ADDR(USICR), r25
+	sts  _SFR_MEM_ADDR(USICR), r24
+	sts  _SFR_MEM_ADDR(USICR), r25
+; END SUPER FAST LOOP
 
 Epilogue:
 	sei

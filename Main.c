@@ -157,10 +157,13 @@ const char    SFunc_SETSTARTUP[]                PROGMEM = "SET STARTUP MODE";
 const char    SFunc_CLEARMEM[]                  PROGMEM = "CLEAR SETTINGS";
 const char    SFunc_GOBOOTLOADER[]              PROGMEM = "JUMP TO BOOTLOADER";
 
-const char*   SettingFunctionNames[]            PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_SETRESETMODE, SFunc_SETFIRMMINOR , SFunc_SETAUTOSLEEPTO   , SFunc_SETTONEVOL, SFunc_SETSTARTUP  , SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
-const FuncPtr SettingFunctionPtrs[]             PROGMEM = {MAIN_SetContrast  , MAIN_SetISPSpeed  , MAIN_SetResetMode  , MAIN_SetFirmMinorVer, MAIN_SetAutoSleepTimeOut, MAIN_SetToneVol  , MAIN_SetStartupMode, MAIN_ClearMem  , MAIN_GoBootloader};
+const char*   SettingFunctionNames[]            PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_SETRESETMODE, SFunc_SETFIRMMINOR  , SFunc_SETAUTOSLEEPTO    , SFunc_SETTONEVOL, SFunc_SETSTARTUP   , SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
+const FuncPtr SettingFunctionPtrs[]             PROGMEM = {MAIN_SetContrast , MAIN_SetISPSpeed , MAIN_SetResetMode , MAIN_SetFirmMinorVer, MAIN_SetAutoSleepTimeOut, MAIN_SetToneVol , MAIN_SetStartupMode, MAIN_ClearMem , MAIN_GoBootloader};
 
-const char    USISpeeds[USI_PRESET_SPEEDS][10]  PROGMEM = {"921600 HZ", "230400 HZ", " 57600 HZ", " 28800 HZ"};
+const char    USISpeeds[USI_PRESET_SPEEDS][11]  PROGMEM = {"1843200 HZ", " 921600 HZ", " 230400 HZ", " 115200 HZ", "  57600 HZ", "  28800 HZ"};
+const char    USISpeedVals[]                    PROGMEM = {           0,           0,           1,           1,           2,           3}; // Translate from stored SCK value to nearest AVRStudio SCK value
+const char    USISpeedIndex[]                   PROGMEM = {                        1,           2,                        4,           5}; // Translate from recieved AVRStudio SCK value to nearest Buttload SCK value
+
 const char    SPIResetModes[2][6]               PROGMEM = {"LOGIC", "FLOAT"};
 const char    SIFONames[2][15]                  PROGMEM = {"STORAGE SIZES", "VIEW DATA TAGS"};
 const char    ProgramAVROptions[2][8]           PROGMEM = {"START", "OPTIONS"};
@@ -609,7 +612,7 @@ void MAIN_SetISPSpeed(void)
 	uint8_t CurrSpeed = eeprom_read_byte(&EEPROMVars.SCKDuration);
 
 	if (CurrSpeed > ARRAY_UPPERBOUND(USISpeeds))
-	  CurrSpeed = 0;                             // Protection against blank EEPROM
+	  CurrSpeed = pgm_read_byte(&USISpeedIndex[0]); // Protection against blank EEPROM
 
 	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
 	                                             // name of the default command onto the LCD

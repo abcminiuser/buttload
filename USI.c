@@ -21,7 +21,7 @@ void USI_SPIInitMaster()
 	USIDelay = eeprom_read_byte(&EEPROMVars.SCKDuration);
 
 	if (USIDelay == 0xFF)
-	  USIDelay = 0;
+	  USIDelay = pgm_read_byte(&USISpeedIndex[0]);
 }
 
 void USI_SPIOff(void)

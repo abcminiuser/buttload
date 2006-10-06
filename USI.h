@@ -33,8 +33,9 @@
 		#define USI_DATAOUT_PIN	   6
 
 		// OTHER DEFINES:
-		#define USI_PRESET_SPEEDS  4
-			
+		#define USI_PRESET_SPEEDS  6
+		#define USI_STUDIO_SPEEDS  4
+
 		// PROTOTYPES:
 		void           USI_SPIInitMaster(void);
 		void           USI_SPIOff(void);

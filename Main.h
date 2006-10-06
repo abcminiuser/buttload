@@ -55,6 +55,8 @@
 	// EXTERNAL VARIABLES:
 	extern const char WaitText[];
 	extern const char VersionInfo[];
+	extern const char USISpeedVals[];
+	extern const char USISpeedIndex[];
 
 	#define JoyStatus                GPIOR1 // Psudo-variable, GPIO register for speed
 

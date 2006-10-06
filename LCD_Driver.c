@@ -24,7 +24,7 @@ volatile uint8_t  StrStart                            = 0;
 volatile uint8_t  StrEnd                              = 0;
 volatile uint8_t  ScrollMode                          = 0;
 volatile uint8_t  ScrollCount                         = 0;
-volatile uint8_t  UpdateLCD                           = FALSE;
+volatile uint8_t  LCDFlags                            = 0;
 
 const    uint16_t LCD_SegTable[] PROGMEM =
 {
@@ -135,7 +135,7 @@ void LCD_puts(const char *Data)
 	StrEnd      = LoadB;	
 	ScrollCount = LCD_SCROLLCOUNT_DEFAULT + LCD_DELAYCOUNT_DEFAULT;
 
-	UpdateLCD   = TRUE;
+	LCDFlags   |= LCD_FLAG_UPDATE;
 }
 
 static inline void LCD_WriteChar(const uint8_t Byte, const char Digit)
@@ -164,18 +164,23 @@ static inline void LCD_WriteChar(const uint8_t Byte, const char Digit)
 	}	
 }
 
-ISR(LCD_vect, ISR_BLOCK)
+ISR(LCD_vect, ISR_NOBLOCK)
 {
+	if (LCDFlags & LCD_FLAG_BLOCKISR) // ISR is interruptable, but not re-enterable
+	  return;
+	else
+	  LCDFlags |= LCD_FLAG_BLOCKISR;
+
 	if (ScrollMode)
 	{
 		if (!(ScrollCount--))
 		{
-			UpdateLCD   = TRUE;
+			LCDFlags   |= LCD_FLAG_UPDATE;
 			ScrollCount = LCD_SCROLLCOUNT_DEFAULT;
 		}
 	}
 
-	if (UpdateLCD)
+	if (LCDFlags & LCD_FLAG_UPDATE)
 	{
 		for (uint8_t Character = 0; Character < 6; Character++)
 		{
@@ -192,7 +197,7 @@ ISR(LCD_vect, ISR_BLOCK)
 
 		for (uint8_t LCDChar = 0; LCDChar <= LCD_SEGBUFFER_SIZE; LCDChar++)
 		  *(pLCDREG + LCDChar) = SegBuffer[LCDChar];
-
-		UpdateLCD = FALSE;
 	}
+
+	LCDFlags = 0;
 }

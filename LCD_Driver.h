@@ -25,6 +25,9 @@
 	#define LCD_TEXTBUFFER_SIZE       20
 	#define LCD_SEGBUFFER_SIZE        19
 	
+	#define LCD_FLAG_UPDATE           (1 << 0)
+	#define LCD_FLAG_BLOCKISR         (1 << 1)
+	
 	/*                        DIRTY HACK ALERT!!
 	   This will display the "val" number of arrows running atop the Butterfly's
 	   display. It will be cleared if the currently displayed text is scrolling
