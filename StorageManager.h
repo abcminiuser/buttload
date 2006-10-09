@@ -1,0 +1,38 @@
+/*
+             BUTTLOAD - Butterfly ISP Programmer
+				
+              Copyright (C) Dean Camera, 2006.
+                  dean_camera@hotmail.com
+*/
+
+#ifndef STOREMGR_H
+#define STOREMGR_H
+
+	// INCLUDES:
+	#include <avr/io.h>
+	
+	#include "Dataflash.h"
+	#include "AVRISPCommandBytes.h"
+	#include "EEPROMVariables.h"
+	
+	// DEFINES:
+	#define SM_NO_SETUP            0
+	#define SM_DATAFLASH_WRITE     1
+	#define SM_DATAFLASH_READ      2
+	#define SM_LOCKFUSEBITS_WRITE  3
+	#define SM_LOCKFUSEBITS_READ   4
+	
+	#define SM_PAGELENGTH_FOUNDBIT (1 << 15)
+	
+	#define SM_MAX_FUSELOCKBITS    10
+	
+	#define SM_EEPROM_OFFSET       (1024UL * 257UL)
+	
+	// PROTOTYPES:
+	uint32_t SM_GetStoredDataSize(const uint8_t Type);
+	void     SM_SetupDFAddressCounters(uint8_t Type);
+	void     SM_StoreProgramByte(const uint8_t Data);
+	void     SM_InterpretAVRISPPacket(void);
+	void     SM_CheckEndOfFuseLockData(void);
+	
+#endif
