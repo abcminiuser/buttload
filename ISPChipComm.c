@@ -38,7 +38,7 @@ void ISPCC_EnterChipProgrammingMode(void)
 		  USI_SPITransmit(PacketBytes[11]);
 		else
 		  Response = USI_SPITransmit(PacketBytes[11]);
-				
+
 		if (!(PacketBytes[7]) || (Response == PacketBytes[6])) // Polling disabled, or returned value matches expected poll value
 		{
 			MAIN_Delay1MS(ByteDelay);

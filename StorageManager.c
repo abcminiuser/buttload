@@ -207,11 +207,13 @@ void SM_InterpretAVRISPPacket(void)
 				{
 					EEPROMAddress = (uint8_t*)&EEPROMVars.WriteProgram; // Set the eeprom address to the Program command bytes location
 					SM_SetupDFAddressCounters(TYPE_FLASH);
+					PM_SetProgramDataType(PM_OPT_FLASH);
 				}
 				else                                                    // EEPROM programming mode
 				{
 					EEPROMAddress = (uint8_t*)&EEPROMVars.WriteEEPROM;  // Set the eeprom address to the EEPROM command bytes location
 					SM_SetupDFAddressCounters(TYPE_EEPROM);
+					PM_SetProgramDataType(PM_OPT_EEPROM);
 				}
 				
 				DF_BufferWriteEnable(DataflashInfo.CurrBuffByte);

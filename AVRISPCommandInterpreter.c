@@ -28,7 +28,7 @@ void AICI_InterpretPacket(void)
 			  LCD_puts_f(AVRISPModeMessage);
 			else
 			  LCD_puts_f(SyncErrorMessage);
-			
+
 			break;
 		case AICB_CMD_LEAVE_PROGMODE_ISP:
 			MessageSize = 2;

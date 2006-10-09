@@ -32,14 +32,14 @@ USI_SPITransmit:
 	sts  _SFR_MEM_ADDR(USIDR), USI_PARAM_ASM_REG                  ; Input uint8_t stored in R24, place in USI data register
 	
 	ldi	 USI_CONTROL_ASM_REG,   (USICONTROLREGS)                  ; Preload values to be set into a temp reg for speed
-	ldi	 USI_CONTROLCK_ASM_REG, (USICONTROLREGS | (1 << USICLK))  ; Preload values to be set into a temp reg for speed
-	
-	in   USI_SCRATCH_ASM_REG, _SFR_IO_ADDR(USIDelay)              ; Grab the delay value from the GPIOR0 register
+	ldi	 USI_CONTROLCK_ASM_REG, (USICONTROLREGS | (1 << USICLK))  ; Preload values to be set into a temp reg for speed	
 
 	ldi  USI_XH_ASM_REG, (_SFR_MEM_ADDR(USICR) >> 8)              ; XH = R27
 	ldi  USI_XL_ASM_REG, (_SFR_MEM_ADDR(USICR) & 0x00FF)          ; XL = R26
 
 	ldi  USI_BITSREM_ASM_REG, 8
+
+	in   USI_SCRATCH_ASM_REG, _SFR_IO_ADDR(USIDelay)              ; Grab the delay value from the GPIOR0 register
 
 	cli                                                           ; Kill interrupts while transferring
 
@@ -125,5 +125,5 @@ SuperFastTransfer:
 
 Epilogue:
 	sei
-	ld   USI_PARAM_ASM_REG, USI_USICR_PTR_ASM_REG                 ; Output uint8_t stored in R24, get from USI data register
+	lds  USI_PARAM_ASM_REG, _SFR_MEM_ADDR(USIDR)                  ; Output uint8_t stored in R24, get from USI data register
 	ret
