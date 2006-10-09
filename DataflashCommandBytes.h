@@ -5,7 +5,7 @@
                   dean_camera@hotmail.com
 */
 
-// This file originally by Atmel, modified by Martin Thomas and myself.
+// This file originally by Atmel, modified by Martin Thomas and Dean Camera.
 
 #ifndef DFCB_H
 #define DFCB_H
