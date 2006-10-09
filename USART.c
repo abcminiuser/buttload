@@ -43,6 +43,15 @@ void USART_Tx(const char data)
 
 char USART_Rx(void)
 {
-	while (!(BuffElements) && !(PacketTimeOut)) {};
+	uint8_t AtomicBuffElements;
+	
+	do
+	{
+		cli();
+		AtomicBuffElements = BuffElements;
+		sei();
+	}
+	while (!(AtomicBuffElements) && !(PacketTimeOut));
+
 	return BUFF_GetBuffByte();
 }

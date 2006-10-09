@@ -127,7 +127,7 @@ void ISPCC_ProgramChip(void)
 			if (CmdMemType == AICB_CMD_PROGRAM_FLASH_ISP)
 			  USI_SPITransmit(WriteCommand | ((WriteByte & 0x01)? ISPCC_HIGH_BYTE_WRITE : ISPCC_LOW_BYTE_WRITE));
 			else
-			  USI_SPITransmit(WriteCommand);					
+			  USI_SPITransmit(WriteCommand);
 					
 			USI_SPITransmitWord(CurrAddress & 0xFFFF);    // Transmit the current address to the slave AVR
 			USI_SPITransmit(ByteToWrite);                 // Send one of the new bytes to be written

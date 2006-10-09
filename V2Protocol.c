@@ -41,9 +41,13 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 		
 		switch (V2PState)
 		{
-			case V2P_STATE_IDLE:	
+			case V2P_STATE_IDLE:
+				cli();
+				
 				if (BuffElements)                 // Serial data recieved in FIFO buffer
 				  V2PState = V2P_STATE_START;
+
+				sei();
 				
 				if ((JoyStatus & JOY_LEFT) && !(InProgrammingMode))
 				{

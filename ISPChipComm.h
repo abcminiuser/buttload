@@ -48,8 +48,8 @@
 	#define ISPCC_FAULT_NODATATYPE            3
 	#define ISPCC_FAULT_TIMEOUT               4
 	
-	#define ISPCC_COMM_TIMEOUT                0xFC // 35ms timeout at 7372800Hz, 1024 prescale - more than triple the typical minimum EEPROM/flash write time
-
+	#define ISPCC_COMM_TIMEOUT                0x02D0 // 100ms timeout at 7372800Hz
+	
 	#define ISPCC_USIMASK                     ((1<<USI_DATAIN_PIN) | (1<<USI_DATAOUT_PIN) | (1<<USI_CLOCK_PIN))
 	
 	// EXTERNAL VARIABLES:

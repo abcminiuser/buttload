@@ -17,108 +17,113 @@
 .global  USI_SPITransmit                                ; \ Link the USI_SPITransmit label to the function
 .func    USI_SPITransmit                                ; / prototype declared in USI.h
 
-USI_SPITransmit:
-	sts  _SFR_MEM_ADDR(USIDR), r24                      ; Input uint8_t stored in R24, place in USI data register
-	
-	ldi	 r24, (USICONTROLREGS)                          ; Preload values to be set into a temp reg for speed
-	ldi	 r25, (USICONTROLREGS | (1 << USICLK))          ; Preload values to be set into a temp reg for speed
-	
-	in   r27, _SFR_IO_ADDR(USIDelay)                    ; Grab the delay value from the GPIOR0 register
+; REGISTER ALLOCATIONS (all call-saved):
+#define  USI_SCRATCH_ASM_REG   r20
+#define  USI_CONTROL_ASM_REG   r21
+#define  USI_CONTROLCK_ASM_REG r22
+#define  USI_BITSREM_ASM_REG   r23
+#define  USI_PARAM_ASM_REG     r24
+#define  USI_DELAYCNT_ASM_REG  r25
+#define  USI_XL_ASM_REG        r26
+#define  USI_XH_ASM_REG        r27
+#define  USI_USICR_PTR_ASM_REG X
 
-	cli                                                 ; Kill interrupts while transferring
+USI_SPITransmit:
+	sts  _SFR_MEM_ADDR(USIDR), USI_PARAM_ASM_REG                  ; Input uint8_t stored in R24, place in USI data register
+	
+	ldi	 USI_CONTROL_ASM_REG,   (USICONTROLREGS)                  ; Preload values to be set into a temp reg for speed
+	ldi	 USI_CONTROLCK_ASM_REG, (USICONTROLREGS | (1 << USICLK))  ; Preload values to be set into a temp reg for speed
+	
+	in   USI_SCRATCH_ASM_REG, _SFR_IO_ADDR(USIDelay)              ; Grab the delay value from the GPIOR0 register
+
+	ldi  USI_XH_ASM_REG, (_SFR_MEM_ADDR(USICR) >> 8)              ; XH = R27
+	ldi  USI_XL_ASM_REG, (_SFR_MEM_ADDR(USICR) & 0x00FF)          ; XL = R26
+
+	ldi  USI_BITSREM_ASM_REG, 8
+
+	cli                                                           ; Kill interrupts while transferring
 
 ; DELAY CHECKS - Convert delay index into the actual cycle delay
-	cpi  r27, 0                                         ; Test for 1843200 Hz frequency
-	breq GoSuperFastLoop
+	cpi  USI_SCRATCH_ASM_REG, 0                                   ; Test for 1843200 Hz frequency
+	breq SuperFastTransfer
 
-	cpi  r27, 1                                         ; Test for 921600 Hz frequency
-	breq GoFastLoop
+	cpi  USI_SCRATCH_ASM_REG, 1                                   ; Test for 921600 Hz frequency
+	breq FastTransfer
 
-	ldi  r23, (((32 - 4) / 4) / 3)
-	cpi  r27, 2                                         ; Test for 230400 Hz frequency
-	breq GoSlowLoop
+	ldi  USI_DELAYCNT_ASM_REG, (((32 - 4) / 4) / 3)
+	cpi  USI_SCRATCH_ASM_REG, 2                                   ; Test for 230400 Hz frequency
+	breq SlowTransfer
 	
-	ldi  r23, (((64 - 4) / 4) / 3)
-	cpi  r27, 3                                         ; Test for 115200 Hz frequency
-	breq GoSlowLoop
+	ldi  USI_DELAYCNT_ASM_REG, (((64 - 4) / 4) / 3)
+	cpi  USI_SCRATCH_ASM_REG, 3                                   ; Test for 115200 Hz frequency
+	breq SlowTransfer
 
-	ldi  r23, (((128 - 4) / 4) / 3)
-	cpi  r27, 4                                         ; Test for 57600 Hz frequency
-	breq GoSlowLoop
+	ldi  USI_DELAYCNT_ASM_REG, (((128 - 4) / 4) / 3)
+	cpi  USI_SCRATCH_ASM_REG, 4                                   ; Test for 57600 Hz frequency
+	breq SlowTransfer
 
-	ldi  r23, (((256 - 4) / 4) / 3)                     ; Assume 28800 Hz frequency
+	ldi  USI_DELAYCNT_ASM_REG, (((256 - 4) / 4) / 3)              ; Assume 28800 Hz frequency
 ; END DELAY CHECKS	
 	
 	
 ; SLOW LOOP
-GoSlowLoop:
-	ldi  r26, 8                                         ; Transferred bits counter register
-	
-SlowLoopStart:
-	sts	 _SFR_MEM_ADDR(USICR), r24
-	mov  r27, r23
+SlowTransfer:
+	st	 USI_USICR_PTR_ASM_REG, USI_CONTROL_ASM_REG
+	mov  USI_SCRATCH_ASM_REG, USI_DELAYCNT_ASM_REG
 
-	nop                                                 ; Maintain 50% duty cycle - 3 NOPs which
-	nop                                                 ; use the same amount of clock cycles as
-	nop                                                 ; the DEC and BRNE at the end of the loop
+	nop                                                           ; Maintain 50% duty cycle - 3 NOPs which
+	nop                                                           ; use the same amount of clock cycles as
+	nop                                                           ; the DEC and BRNE at the end of the loop
 
 TimeLoop:
-	dec  r27
+	dec  USI_SCRATCH_ASM_REG
 	brne TimeLoop
 
-	sts	 _SFR_MEM_ADDR(USICR), r25
-	mov  r27, r23
+	st	 USI_USICR_PTR_ASM_REG, USI_CONTROLCK_ASM_REG
+	mov  USI_SCRATCH_ASM_REG, USI_DELAYCNT_ASM_REG
 
 TimeLoop2:
-	dec  r27
+	dec  USI_SCRATCH_ASM_REG
 	brne TimeLoop2
 
-	dec  r26
-	brne SlowLoopStart
+	dec  USI_BITSREM_ASM_REG
+	brne SlowTransfer
 	
 	rjmp Epilogue
 ; END SLOW LOOP
 
 ; FAST LOOP
-GoFastLoop:
-	ldi  r27, (_SFR_MEM_ADDR(USICR) >> 8)     ; XH = R27
-	ldi  r26, (_SFR_MEM_ADDR(USICR) & 0x00FF) ; XL = R26
-
-	ldi  r23, 8
-
-FastLoopStart:
-	st   X, r24
-	nop
-	nop
-	nop
-	st   X, r25
-	dec  r23
-	brne FastLoopStart
+FastTransfer:
+	st   USI_USICR_PTR_ASM_REG, USI_CONTROL_ASM_REG
+	nop                                                           ; NOP to maintain 50% duty cycle
+	dec  USI_BITSREM_ASM_REG                                      ; DEC can be executed here since ST doesn't modify the Z flag
+	st   USI_USICR_PTR_ASM_REG, USI_CONTROLCK_ASM_REG
+	brne FastTransfer
 
 	rjmp Epilogue
 ; END FAST LOOP
 
 ; SUPER FAST LOOP
-GoSuperFastLoop:
-	sts  _SFR_MEM_ADDR(USICR), r24
-	sts  _SFR_MEM_ADDR(USICR), r25
-	sts  _SFR_MEM_ADDR(USICR), r24
-	sts  _SFR_MEM_ADDR(USICR), r25
-	sts  _SFR_MEM_ADDR(USICR), r24
-	sts  _SFR_MEM_ADDR(USICR), r25
-	sts  _SFR_MEM_ADDR(USICR), r24
-	sts  _SFR_MEM_ADDR(USICR), r25
-	sts  _SFR_MEM_ADDR(USICR), r24
-	sts  _SFR_MEM_ADDR(USICR), r25
-	sts  _SFR_MEM_ADDR(USICR), r24
-	sts  _SFR_MEM_ADDR(USICR), r25
-	sts  _SFR_MEM_ADDR(USICR), r24
-	sts  _SFR_MEM_ADDR(USICR), r25
-	sts  _SFR_MEM_ADDR(USICR), r24
-	sts  _SFR_MEM_ADDR(USICR), r25
+SuperFastTransfer:
+	st   USI_USICR_PTR_ASM_REG, USI_CONTROL_ASM_REG
+	st   USI_USICR_PTR_ASM_REG, USI_CONTROLCK_ASM_REG
+	st   USI_USICR_PTR_ASM_REG, USI_CONTROL_ASM_REG
+	st   USI_USICR_PTR_ASM_REG, USI_CONTROLCK_ASM_REG
+	st   USI_USICR_PTR_ASM_REG, USI_CONTROL_ASM_REG
+	st   USI_USICR_PTR_ASM_REG, USI_CONTROLCK_ASM_REG
+	st   USI_USICR_PTR_ASM_REG, USI_CONTROL_ASM_REG
+	st   USI_USICR_PTR_ASM_REG, USI_CONTROLCK_ASM_REG
+	st   USI_USICR_PTR_ASM_REG, USI_CONTROL_ASM_REG
+	st   USI_USICR_PTR_ASM_REG, USI_CONTROLCK_ASM_REG
+	st   USI_USICR_PTR_ASM_REG, USI_CONTROL_ASM_REG
+	st   USI_USICR_PTR_ASM_REG, USI_CONTROLCK_ASM_REG
+	st   USI_USICR_PTR_ASM_REG, USI_CONTROL_ASM_REG
+	st   USI_USICR_PTR_ASM_REG, USI_CONTROLCK_ASM_REG
+	st   USI_USICR_PTR_ASM_REG, USI_CONTROL_ASM_REG
+	st   USI_USICR_PTR_ASM_REG, USI_CONTROLCK_ASM_REG
 ; END SUPER FAST LOOP
 
 Epilogue:
 	sei
-	lds  r24, _SFR_MEM_ADDR(USIDR)                      ; Output uint8_t stored in R24, get from USI data register
+	ld   USI_PARAM_ASM_REG, USI_USICR_PTR_ASM_REG                 ; Output uint8_t stored in R24, get from USI data register
 	ret

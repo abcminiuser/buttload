@@ -248,7 +248,7 @@ void PM_StartProgAVR(void)
 	ISPCC_EnterChipProgrammingMode();            // Try to sync with the slave AVR
 	if (InProgrammingMode)                       // ISPCC_EnterChipProgrammingMode alters the InProgrammingMode flag
 	{						
-		if (ProgOptions & PM_OPT_FLASH)
+		if ((ProgOptions & PM_OPT_FLASH) && (ProgrammingFault == ISPCC_NO_FAULT))
 		{
 			MAIN_ShowProgType('C');
 			
@@ -263,7 +263,7 @@ void PM_StartProgAVR(void)
 			}
 		}
 
-		if ((ProgOptions & PM_OPT_FLASH) && (ProgrammingFault != ISPCC_FAULT_NOERASE))
+		if ((ProgOptions & PM_OPT_FLASH) && (ProgrammingFault != ISPCC_FAULT_NOERASE)  && (ProgrammingFault == ISPCC_NO_FAULT))
 		{
 			MAIN_ShowProgType('D');
 
@@ -278,7 +278,7 @@ void PM_StartProgAVR(void)
 			}
 		}
 	
-		if (ProgOptions & PM_OPT_EEPROM)
+		if ((ProgOptions & PM_OPT_EEPROM) && (ProgrammingFault == ISPCC_NO_FAULT))
 		{
 			MAIN_ShowProgType('E');
 
@@ -293,7 +293,7 @@ void PM_StartProgAVR(void)
 			}
 		}
 
-		if (ProgOptions & PM_OPT_FUSE)
+		if ((ProgOptions & PM_OPT_FUSE) && (ProgrammingFault == ISPCC_NO_FAULT))
 		{
 			MAIN_ShowProgType('F');
 			
@@ -309,7 +309,7 @@ void PM_StartProgAVR(void)
 			}
 		}
 
-		if (ProgOptions & PM_OPT_LOCK)
+		if ((ProgOptions & PM_OPT_LOCK) && (ProgrammingFault == ISPCC_NO_FAULT))
 		{
 			if (ProgOptions & PM_OPT_FUSE)               // If fusebytes have already been written, we need to re-enter programming mode to latch them
 			{

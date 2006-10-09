@@ -675,7 +675,7 @@ void MAIN_SetFirmMinorVer(void)
 	uint8_t VerMinor = eeprom_read_byte(&EEPROMVars.FirmVerMinor);
 	char    VerBuffer[5];
 
-	if (VerMinor > 9)
+	if (VerMinor > 19)
 	  VerMinor = V2P_SW_VERSION_MINOR_DEFAULT;
 	
 	VerBuffer[0] = 'V';
@@ -775,17 +775,11 @@ void MAIN_SetToneVol(void)
 
 			if (JoyStatus & JOY_UP)
 			{
-				if (ToneVolLcl < 80)
-				  ToneVolLcl += 8;
-				else
-				  ToneVolLcl  = 0;				
+				ToneVolLcl = ((ToneVolLcl == 80)? 0 : (ToneVolLcl + 8));
 			}
 			else if (JoyStatus & JOY_DOWN)
 			{
-				if (ToneVolLcl)
-				  ToneVolLcl -= 8;
-				else
-				  ToneVolLcl  = 80;
+				ToneVolLcl = ((ToneVolLcl == 0)? 80 : (ToneVolLcl - 8));
 			}
 			else if (JoyStatus & JOY_LEFT)
 			{
@@ -793,7 +787,7 @@ void MAIN_SetToneVol(void)
 				return;
 			}
 
-			ToneVol = ToneVolLcl;            // Copy the local value back into the global
+			ToneVol = ToneVolLcl;                // Copy the local value back into the global
 
 			if (!(ToneVolLcl))
 			{
@@ -849,9 +843,8 @@ void MAIN_SleepMode(void)
 	TG_PlayToneSeq(TONEGEN_SEQ_SLEEP);
 
 	MAIN_SETSTATUSLED(MAIN_STATLED_OFF);         // Save battery power - turn off status LED
-	TIMEOUT_SLEEP_TIMER_OFF();
 
-	while (ASSR & ((1 << TCN2UB) | (1 << TCR2UB) | (1 << OCR2UB))); // Wait for sleep timer to disengage
+	TIMEOUT_SLEEP_TIMER_OFF();
 
 	SMCR    = ((1 << SM1) | (1 << SE));          // Power down sleep mode
 	while (!(JoyStatus & JOY_UP))                // Joystick interrupt wakes the micro
@@ -922,14 +915,14 @@ void MAIN_GoBootloader(void)
 	volatile uint8_t MD = (MCUCR & ~(1 << JTD)); // Forces compiler to use IN, AND plus two OUTs rather than two lots of IN/AND/OUTs
 	MCUCR = MD;                                  // Turn on JTAG via code
 	MCUCR = MD; 
-	
+
 	SecsBeforeAutoSleep = 0;
 	TIMEOUT_SLEEP_TIMER_OFF();
 	
 	LCD_puts_f(PSTR("*JTAG ON*"));
 	
 	MAIN_WaitForJoyRelease();
-	
+
 	WDTCR = ((1<<WDCE) | (1<<WDE));              // Enable Watchdog Timer to give reset after minimum timeout
 	for (;;) {};                                 // Eternal loop - when watchdog resets the AVR it will enter the bootloader,
 	                                             // assuming the BOOTRST fuse is programmed (otherwise app will just restart)
