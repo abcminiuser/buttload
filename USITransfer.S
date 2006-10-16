@@ -17,6 +17,14 @@
 .global  USI_SPITransmit                                ; \ Link the USI_SPITransmit label to the function
 .func    USI_SPITransmit                                ; / prototype declared in USI.h
 
+; DEFINES:
+#define  MEM_ADDR(sfr)         _SFR_MEM_ADDR(sfr)
+#define  IO_ADDR(sfr)          _SFR_IO_ADDR(sfr)
+#define  HIGH(val)             (val >> 8)
+#define  LOW(val)              (val & 0xFF)
+#define  XL                    r26
+#define  XH                    r27
+
 ; REGISTER ALLOCATIONS (all call-saved):
 #define  USI_SCRATCH_ASM_REG   r20
 #define  USI_CONTROL_ASM_REG   r21
@@ -24,8 +32,8 @@
 #define  USI_BITSREM_ASM_REG   r23
 #define  USI_PARAM_ASM_REG     r24
 #define  USI_DELAYCNT_ASM_REG  r25
-#define  USI_XL_ASM_REG        r26
-#define  USI_XH_ASM_REG        r27
+#define  USI_XL_ASM_REG        XL
+#define  USI_XH_ASM_REG        XH
 #define  USI_USICR_PTR_ASM_REG X
 
 USI_SPITransmit:
@@ -34,12 +42,12 @@ USI_SPITransmit:
 	ldi	 USI_CONTROL_ASM_REG,   (USICONTROLREGS)                  ; Preload values to be set into a temp reg for speed
 	ldi	 USI_CONTROLCK_ASM_REG, (USICONTROLREGS | (1 << USICLK))  ; Preload values to be set into a temp reg for speed	
 
-	ldi  USI_XH_ASM_REG, (_SFR_MEM_ADDR(USICR) >> 8)              ; XH = R27
-	ldi  USI_XL_ASM_REG, (_SFR_MEM_ADDR(USICR) & 0x00FF)          ; XL = R26
+	ldi  USI_XH_ASM_REG, HIGH(MEM_ADDR(USICR))                    ; XH = R27
+	ldi  USI_XL_ASM_REG, LOW(MEM_ADDR(USICR))                     ; XL = R26
 
 	ldi  USI_BITSREM_ASM_REG, 8
 
-	in   USI_SCRATCH_ASM_REG, _SFR_IO_ADDR(USIDelay)              ; Grab the delay value from the GPIOR0 register
+	in   USI_SCRATCH_ASM_REG, IO_ADDR(USIDelay)                   ; Grab the delay value from the GPIOR0 register
 
 	cli                                                           ; Kill interrupts while transferring
 
@@ -125,5 +133,5 @@ SuperFastTransfer:
 
 Epilogue:
 	sei
-	lds  USI_PARAM_ASM_REG, _SFR_MEM_ADDR(USIDR)                  ; Output uint8_t stored in R24, get from USI data register
+	lds  USI_PARAM_ASM_REG, MEM_ADDR(USIDR)                  ; Output uint8_t stored in R24, get from USI data register
 	ret

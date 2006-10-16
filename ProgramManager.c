@@ -336,19 +336,29 @@ void PM_StartProgAVR(void)
 		if (ProgrammingFault == ISPCC_FAULT_TIMEOUT)
 		  MAIN_ShowError(PSTR("TIMEOUT"));
 
-		if (ProgrammingFault != ISPCC_NO_FAULT)
+		if (eeprom_read_byte(&EEPROMVars.StartupMode) != 1) // Production mode supresses final done/fail message
 		{
-			LCD_puts_f(PSTR("PROG FAILED"));
-			TG_PlayToneSeq(TONEGEN_SEQ_PROGFAIL);
+			if (ProgrammingFault != ISPCC_NO_FAULT)
+			{
+				LCD_puts_f(PSTR("PROG FAILED"));
+				TG_PlayToneSeq(TONEGEN_SEQ_PROGFAIL);
+			}
+			else
+			{
+				LCD_puts_f(PSTR("PROG DONE"));
+				TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);		
+			}
+	
+			MAIN_Delay10MS(172);
+			MAIN_Delay10MS(172);
 		}
-		else
+		else                                               // Production mode, just play prog success/fail sound
 		{
-			LCD_puts_f(PSTR("PROG DONE"));
-			TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);		
+			if (ProgrammingFault != ISPCC_NO_FAULT)
+			  TG_PlayToneSeq(TONEGEN_SEQ_PROGFAIL);
+			else
+			  TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);		
 		}
-
-		MAIN_Delay10MS(172);
-		MAIN_Delay10MS(172);
 	}
 	else
 	{

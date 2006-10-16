@@ -8,9 +8,10 @@
 #include "StorageManager.h"
 
 // GLOBAL VARIABLES:
-uint8_t  MemoryType          = TYPE_FLASH;
-uint8_t  CurrentMode         = SM_NO_SETUP;
-uint16_t GPageLength         = 0;
+uint8_t  MemoryType             = TYPE_FLASH;
+uint8_t  CurrentMode            = SM_NO_SETUP;
+uint16_t GPageLength            = 0;
+uint8_t  WriteFlashEEPCmdStored = FALSE;
 
 // ======================================================================================
 
@@ -73,6 +74,7 @@ void SM_InterpretAVRISPPacket(void)
 			
 			InProgrammingMode = TRUE;                                   // Set the flag, prevent the user from exiting the V2P state machine			
 			CurrentMode = SM_NO_SETUP;                                  // Clear the current mode variable
+			WriteFlashEEPCmdStored = FALSE;
 
 			MAIN_SETSTATUSLED(MAIN_STATLED_RED);
 			PacketBytes[1] = AICB_STATUS_CMD_OK;
@@ -219,10 +221,15 @@ void SM_InterpretAVRISPPacket(void)
 				DF_BufferWriteEnable(DataflashInfo.CurrBuffByte);
 				CurrentMode = SM_DATAFLASH_WRITE;
 				
-				for (uint8_t B = 0; B < 10; B++)                        // Save the command bytes
+				if (!(WriteFlashEEPCmdStored))                          // Only store flash/EEPROM programming header once per programming session to save EEPROM lifespan
 				{
-					eeprom_write_byte(EEPROMAddress, PacketBytes[B]);
-					EEPROMAddress++;
+					for (uint8_t B = 0; B < 10; B++)                    // Save the command bytes
+					{
+						eeprom_write_byte(EEPROMAddress, PacketBytes[B]);
+						EEPROMAddress++;
+					}
+
+					WriteFlashEEPCmdStored = TRUE;
 				}
 			}
 

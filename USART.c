@@ -43,7 +43,7 @@ void USART_Tx(const char data)
 
 char USART_Rx(void)
 {
-	uint8_t AtomicBuffElements;
+	volatile uint8_t AtomicBuffElements;
 	
 	do
 	{
