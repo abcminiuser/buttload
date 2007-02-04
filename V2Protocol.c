@@ -5,6 +5,7 @@
                   dean_camera@hotmail.com
 */
 
+#define  INC_FROM_V2P
 #include "V2Protocol.h"
 
 // PROGMEM CONSTANTS:
@@ -56,6 +57,8 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 					return;
 				}
 								
+				IDLECPU();                        // Can idle here, since USART or Joystick interrupt will cause execution to continue
+
 				break;
 			case V2P_STATE_START:			
 				if (USART_Rx() == AICB_MESSAGE_START)  // Start bit is always 0x1B
@@ -127,13 +130,15 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 							case AICB_CMD_LOAD_ADDRESS:
 								MessageSize = 2;
 
-								// Doing this the normal way - shifting each byte into the CurrAddress long - produces ABYSMAL code.
-								// By using two words in this manner the produced code is ever so slightly smaller and more efficient.
-								uint16_t AddressHighWord = ((uint16_t)PacketBytes[1] << 8) | (PacketBytes[2]);
-								uint16_t AddressLowWord  = ((uint16_t)PacketBytes[3] << 8) | (PacketBytes[4]);
-								CurrAddress              = (((uint32_t)AddressHighWord << 16)) | (AddressLowWord);
+								CurrAddress = ((uint32_t)PacketBytes[1] << 24)
+								            | ((uint32_t)PacketBytes[2] << 16)
+											| ((uint16_t)PacketBytes[3] << 8)
+											|            PacketBytes[4];
 
-								V2P_CheckForExtendedAddress();
+								if (PacketDecodeFunction == AICI_InterpretPacket)
+								  V2P_CheckForExtendedAddress();
+								else
+								  VAMM_SetAddress();
 								
 								PacketBytes[1] = AICB_STATUS_CMD_OK;
 
@@ -196,7 +201,31 @@ void V2P_SendPacket(void)
 	SequenceNum++;
 }
 
-uint8_t V2P_GetChecksum()
+
+void V2P_IncrementCurrAddress(void)
+{
+	// Incrementing a 32-bit unsigned variable takes a lot of code. Because much of the code is
+	// not very time critical (much of it is waiting for the hardware), I've chosen to waste a
+	// few extra cycles per increment and save a good 60 bytes or so of code space by putting the
+	// increment inside its own function.
+
+	CurrAddress++;
+}
+
+void V2P_CheckForExtendedAddress(void)
+{
+	if (CurrAddress & V2P_LOAD_EXTENDED_ADDR_FLAG)     // MSB set of the address, indicates a LOAD_EXTENDED_ADDRESS must be executed
+	{
+		USI_SPITransmit(V2P_LOAD_EXTENDED_ADDR_CMD);   // Load extended address command
+		USI_SPITransmit(0x00);
+		USI_SPITransmit((CurrAddress & V2P_LOAD_EXTENDED_ADDR_MASK) >> V2P_LOAD_EXTENDED_ADDR_SHIFT);
+		USI_SPITransmit(0x00);
+		
+		CurrAddress &= ~(V2P_LOAD_EXTENDED_ADDR_FLAG); // Clear the flag
+	}
+}
+
+static uint8_t V2P_GetChecksum(void)
 {
 	uint8_t CheckSumByte;
 	
@@ -215,7 +244,7 @@ uint8_t V2P_GetChecksum()
 	return CheckSumByte;
 }
 
-void V2P_GetSetParamater(void)
+static void V2P_GetSetParamater(void)
 {
 	uint8_t Param_Name = PacketBytes[1];    // Save the parameter number
 
@@ -312,27 +341,4 @@ void V2P_GetSetParamater(void)
 	}
 	
 	V2P_SendPacket();
-}
-
-void V2P_IncrementCurrAddress(void)
-{
-	// Incrementing a 32-bit unsigned variable takes a lot of code. Because much of the code is
-	// not very time critical (much of it is waiting for the hardware), I've chosen to waste a
-	// few extra cycles per increment and save a good 60 bytes or so of code space by putting the
-	// increment inside its own function.
-
-	CurrAddress++;
-}
-
-void V2P_CheckForExtendedAddress(void)
-{
-	if (CurrAddress & V2P_LOAD_EXTENDED_ADDR_FLAG)     // MSB set of the address, indicates a LOAD_EXTENDED_ADDRESS must be executed
-	{
-		USI_SPITransmit(V2P_LOAD_EXTENDED_ADDR_CMD);   // Load extended address command
-		USI_SPITransmit(0x00);
-		USI_SPITransmit((CurrAddress & V2P_LOAD_EXTENDED_ADDR_MASK) >> V2P_LOAD_EXTENDED_ADDR_SHIFT);
-		USI_SPITransmit(0x00);
-		
-		CurrAddress &= ~(V2P_LOAD_EXTENDED_ADDR_FLAG); // Clear the flag
-	}
 }

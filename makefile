@@ -78,7 +78,8 @@ SRC =	Analogue.c                   \
         Timeout.c                    \
 		USART.c                      \
 		USI.c                        \
-		V2Protocol.c
+		V2Protocol.c                 \
+		VirtualAVRMemManager.c
 
 
 # List Assembler source files here.
@@ -138,10 +139,12 @@ CFLAGS = -g$(DEBUG)
 CFLAGS += $(CDEFS) $(CINCS)
 CFLAGS += -O$(OPT)
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
+##CFLAGS += -ffunction-sections 
 CFLAGS += -Wall -Wstrict-prototypes -Wextra
 CFLAGS += -Wa,-adhlns=$(<:.c=.lst)
 CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
 CFLAGS += $(CSTANDARD)
+
 
 #---------------- Assembler Options ----------------
 #  -Wa,...:   tell GCC to pass this to the assembler.
@@ -203,6 +206,7 @@ EXTMEMOPTS =
 #    -Map:      create map file
 #    --cref:    add cross reference to  map file
 LDFLAGS = -Wl,-Map=$(TARGET).map,--cref
+LDFLAGS += -Wl,--gc-sections 
 LDFLAGS += $(EXTMEMOPTS)
 LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
 

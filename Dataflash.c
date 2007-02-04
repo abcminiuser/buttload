@@ -11,6 +11,7 @@
 	added in.
 */
 
+#define  INC_FROM_DF
 #include "Dataflash.h"
 
 const char     DataFlashError[] PROGMEM = "DATAFLASH ERROR";
@@ -26,7 +27,7 @@ uint8_t DF_CheckCorrectOnboardChip(void)          // Ensures onboard Butterfly d
 	
 	if (((SPI_SPITransmit(0x00) & DF_DFINFOMASK)) != (3 << 3)) // Bits 3, 4 and 5 contain the dataflash type info
 	{
-		DF_EnableDataflash(FALSE);
+		DF_ENABLEDATAFLASH(FALSE);
 		SPI_SPIOFF();
 		MAIN_ShowError(DataFlashError);
 		
@@ -36,15 +37,6 @@ uint8_t DF_CheckCorrectOnboardChip(void)          // Ensures onboard Butterfly d
 	{
 		return TRUE;
 	}
-}
-
-void DF_WaitWhileBusy(void)
-{
-	DF_TOGGLEENABLE();
-	
-	SPI_SPITransmit(DFCB_STATUSREG);
-	
-	while (!(SPI_SPITransmit(0x00) & DF_BUSYMASK));
 }
 
 void DF_CopyBufferToFlashPage(const uint16_t PageAddress)
@@ -91,25 +83,14 @@ void DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddr
 	SPI_SPITransmit((uint8_t)(BuffAddress));
 	
 	for (uint8_t DByte = 0; DByte < 4; DByte++)  // Perform 4 dummy writes to intiate the DataFlash address pointers
-	  SPI_SPITransmit(0x00);                         
+	  SPI_SPITransmit(0x00);
 }
 
-uint8_t DF_ReadBufferByte(const uint16_t BuffAddress)
+void DF_WaitWhileBusy(void)
 {
 	DF_TOGGLEENABLE();
 	
-	SPI_SPITransmit(DFCB_BUF1READ);
-	SPI_SPITransmit((uint8_t)(BuffAddress >> 8));
-	SPI_SPITransmit((uint8_t)(BuffAddress));
-	SPI_SPITransmit(0x00);
+	SPI_SPITransmit(DFCB_STATUSREG);
 	
-	return SPI_SPITransmit(0x00);                         
-}
-
-void DF_EnableDataflash(const uint8_t Enabled)
-{
-	if (Enabled == TRUE)
-	  PORTB &= ~(1 << 0);
-	else
-	  PORTB |= (1 << 0);
+	while (!(SPI_SPITransmit(0x00) & DF_BUSYMASK));
 }

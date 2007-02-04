@@ -5,6 +5,7 @@
                   dean_camera@hotmail.com
 */
 
+#define  INC_FROM_TM
 #include "TagManager.h"
 
 uint8_t  TagExists       = FALSE;
@@ -21,7 +22,7 @@ void TM_ShowTags(void)
 	TM_FindNextTag();
 	if (!(TagExists))
 	{
-		DF_EnableDataflash(FALSE);
+		DF_ENABLEDATAFLASH(FALSE);
 		return;
 	}
 
@@ -36,12 +37,14 @@ void TM_ShowTags(void)
 			
 			MAIN_WaitForJoyRelease();
 		}
+
+		IDLECPU();
 	}
 	
-	DF_EnableDataflash(FALSE);
+	DF_ENABLEDATAFLASH(FALSE);
 }
 
-void TM_FindNextTag(void)
+static void TM_FindNextTag(void)
 {
 	char     Buffer[21];
 	char     HeadBuff[4]      = BT_TAGHEADER;
@@ -93,7 +96,7 @@ void TM_FindNextTag(void)
 	
 	if (TagExists == FALSE)
 	{
-		MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);  // Green = ready
+		MAIN_SETSTATUSLED(MAIN_STATLED_GREEN); // Green = ready
 		MAIN_ShowError(PSTR("NO TAGS"));
 	}
 	else

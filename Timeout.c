@@ -1,3 +1,10 @@
+/*
+             BUTTLOAD - Butterfly ISP Programmer
+				
+              Copyright (C) Dean Camera, 2006.
+                  dean_camera@hotmail.com
+*/
+
 #include "Timeout.h"
 
 const    uint8_t  AutoSleepTOValues[5] PROGMEM = {   0,  15,  30,  60, 120};

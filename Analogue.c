@@ -39,5 +39,3 @@ uint16_t AN_GetADCValue(const uint8_t Channel)
 
 	return ADCResult;                     // Return result
 }
-
-// AREF = (0x3FF * 10) / ((BCHAN * 10) / 13) / 10

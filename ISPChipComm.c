@@ -5,6 +5,7 @@
                   dean_camera@hotmail.com
 */
 
+#define  INC_FROM_ISPCC
 #include "ISPChipComm.h"
 
 const char SyncErrorMessage[] PROGMEM = "SYNC ERROR";
@@ -156,7 +157,7 @@ void ISPCC_ProgramChip(void)
 	}
 }
 
-void ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr)
+static void ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr)
 {
 	uint8_t PollType;
 	uint8_t ProgCommand;

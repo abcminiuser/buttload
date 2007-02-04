@@ -39,8 +39,9 @@
 		uint8_t  ToneVolume;
 		uint8_t  PGOptions;
 		uint8_t  StartupMode;
+		uint8_t  PageEraseReqFlags[249];
 
-		uint8_t  MagicNumber;	
+		uint16_t  MagicNumber;	
 
 		uint8_t  JUNKVAR2;          // Unused location to guard against EEPROM corruption - this is mainly a
 		                            // problem because the Butterflies come shipped with the BOD fuse unprogrammed

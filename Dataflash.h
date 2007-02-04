@@ -25,26 +25,28 @@
 	} DFinfo;
 	
 	// DEFINES AND MACROS:
-	#define DF_TOGGLEENABLE()        MACROS{ DF_EnableDataflash(FALSE); DF_EnableDataflash(TRUE); }MACROE
+	#define DF_TOGGLEENABLE()        MACROS{ DF_ENABLEDATAFLASH(FALSE); DF_ENABLEDATAFLASH(TRUE); }MACROE
+	#define DF_ENABLEDATAFLASH(x)    MACROS{ if (x == TRUE) { PORTB &= ~(1 << 0); } else { PORTB |= (1 << 0); } }MACROE
 	
 	#define DF_BUSYMASK              0x80
 	#define DF_DFINFOMASK            0x38
 	#define DF_INTERNALDF_BUFFBYTES  264
-		
+
 	#define DF_PAGESHIFT_HIGH        (16 - 9)
 	#define DF_PAGESHIFT_LOW         ( 9 - 8)
 	
 	// GLOBAL VARIABLES:
-	extern DFinfo         DataflashInfo;
+	extern DFinfo                    DataflashInfo;
 	
 	// PROTOTYPES:
 	uint8_t DF_CheckCorrectOnboardChip(void);
-	void    DF_WaitWhileBusy(void);
 	void    DF_CopyBufferToFlashPage(const uint16_t PageAddress);
 	void    DF_CopyFlashPageToBuffer(const uint16_t PageAddress);
 	void    DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddress);
-	uint8_t DF_ReadBufferByte(const uint16_t BuffAddress);
 	void    DF_BufferWriteEnable(const uint16_t BuffAddress);
-	void    DF_EnableDataflash(const uint8_t Enabled);
+
+	#if defined(INC_FROM_DF)
+	  void    DF_WaitWhileBusy(void);
+	#endif
 	
 #endif

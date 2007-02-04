@@ -27,6 +27,7 @@
 	
 	#define LCD_FLAG_UPDATE           (1 << 0)
 	#define LCD_FLAG_BLOCKISR         (1 << 1)
+	#define LCD_FLAG_SCROLL           (1 << 2)
 	
 	/*                        DIRTY HACK ALERT!!
 	   This will display the "val" number of arrows running atop the Butterfly's
@@ -55,8 +56,9 @@
 	void LCD_puts(const char *Data);
 	void LCD_puts_f(const char *FlashData);
 	void LCD_Init(void);
+	
 	#if defined(INC_FROM_DRIVER)
-		static inline void LCD_WriteChar(const uint8_t Byte, const char Digit) __attribute__((always_inline));
+	  static inline void LCD_WriteChar(const uint8_t Byte, const char Digit) __attribute__((always_inline));
 	#endif
 
 #endif

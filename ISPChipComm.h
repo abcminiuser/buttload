@@ -59,6 +59,9 @@
 	// PROTOTYPES:
 	void   ISPCC_EnterChipProgrammingMode(void);
 	void   ISPCC_ProgramChip(void);
-	void   ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr);
+	
+	#if defined(INC_FROM_ISPCC)
+	  static void   ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr);
+	#endif
 
 #endif

@@ -9,7 +9,7 @@
 #define MAIN_H
 
 	// DEBUG SWITCHES
-	//#define DEBUG_JTAGON
+	#define DEBUG_JTAGON
 	// END DEBUG SWITCHES
 	
 	// INCLUDES:
@@ -35,6 +35,7 @@
 	#include "TagManager.h"
 	#include "ButtLoadTag.h"
 	#include "ToneGeneration.h"
+	#include "VirtualAVRMemManager.h"
 	
 	// LIB C VERSION CHECK:
 	#if (!defined(__AVR_LIBC_VERSION__) || (__AVR_LIBC_VERSION__ < 10401UL)) // In future AVRLibC version requirements may be increased with changes
@@ -61,7 +62,9 @@
 	#define JoyStatus                GPIOR1 // Psudo-variable, GPIO register for speed
 
 	extern EEPROMVarsType EEPROMVars EEMEM;
-	
+
+	extern const uint8_t BitTable[]  PROGMEM;
+
 	// DEFINES AND MACROS:
 	#define MAIN_SETSTATUSLED(mask)  MACROS{ PORTF = ((PORTF & ~MAIN_STATLED_ORANGE) | (mask)); }MACROE
 	#define MAIN_STATLED_GREEN       (1 << 4)
@@ -82,23 +85,28 @@
 	void MAIN_Delay10MS(uint8_t loops);
 	void MAIN_Delay1MS(uint8_t loops);
 	
-	void MAIN_AVRISPMode(void);
-	void MAIN_ProgramAVR(void);
-	void MAIN_StoreProgram(void);
-	void MAIN_StorageInfo(void);
-	void MAIN_ChangeSettings(void);
 	void MAIN_SleepMode(void);
 
-	void MAIN_ShowAbout(void);
+	#if defined(INC_FROM_MAIN)
+	  static void MAIN_ShowAbout(void);
 
-	void MAIN_ClearMem(void);
-	void MAIN_SetContrast(void);
-	void MAIN_SetISPSpeed(void);
-	void MAIN_SetResetMode(void);
-	void MAIN_SetFirmMinorVer(void);
-	void MAIN_SetAutoSleepTimeOut(void);
-	void MAIN_SetToneVol(void);
-	void MAIN_SetStartupMode(void);
-	void MAIN_GoBootloader(void) __attribute__((noreturn));
+	  static void MAIN_AVRISPMode(void);
+	  static void MAIN_ProgramAVR(void);
+	  static void MAIN_StoreProgram(void);
+	  static void MAIN_ChangeSettings(void);
+
+	  static void MAIN_ClearMem(void);
+	  static void MAIN_SetContrast(void);
+	  static void MAIN_SetISPSpeed(void);
+	  static void MAIN_SetResetMode(void);
+	  static void MAIN_SetFirmMinorVer(void);
+	  static void MAIN_SetAutoSleepTimeOut(void);
+	  static void MAIN_SetToneVol(void);
+	  static void MAIN_SetStartupMode(void);
+	  static void MAIN_StorageInfo(void);
+	  static void MAIN_GoBootloader(void) __attribute__((noreturn));
+	#endif
+
+	void MAIN_Util_RAMFill(void) __attribute__((naked)) __attribute__ ((section (".init1")));
 
 #endif

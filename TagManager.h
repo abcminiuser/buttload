@@ -18,6 +18,9 @@
 	
 	// PROTOTYPES:
 	void   TM_ShowTags(void);
-	void   TM_FindNextTag(void);
+	
+	#if defined(INC_FROM_TM)
+	  static void   TM_FindNextTag(void);
+	#endif
 	
 #endif

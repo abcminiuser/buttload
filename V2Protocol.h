@@ -57,11 +57,13 @@
 	
 	// PROTOTYPES:
 	void    V2P_RunStateMachine(FuncPtr PacketDecodeFunction);
-	void    V2P_InterpretPacket(void);
 	void    V2P_SendPacket(void);
-	uint8_t V2P_GetChecksum(void);
-	void    V2P_GetSetParamater(void);
 	void    V2P_IncrementCurrAddress(void);
 	void    V2P_CheckForExtendedAddress(void);
+
+	#if defined(INC_FROM_V2P)
+	  static uint8_t V2P_GetChecksum(void);
+	  static void    V2P_GetSetParamater(void);
+	#endif
 	
 #endif

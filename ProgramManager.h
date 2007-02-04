@@ -24,12 +24,15 @@
 	#define PM_OPT_LOCK            (1 << 3)
 	
 	// PROTOTYPES:
-	void   PM_SendFuseLockBytes(const uint8_t Type);
-	void   PM_SendEraseCommand(void);
-	void   PM_CreateProgrammingPackets(const uint8_t Type);
 	void   PM_ShowStoredItemSizes(void);
 	void   PM_StartProgAVR(void);
 	void   PM_ChooseProgAVROpts(void);
 	void   PM_SetProgramDataType(uint8_t Mask);
+
+	#if defined(INC_FROM_PM)
+	  static void   PM_SendFuseLockBytes(const uint8_t Type);
+	  static void   PM_SendEraseCommand(void);
+	  static void   PM_CreateProgrammingPackets(const uint8_t Type);
+	#endif
 	
 #endif

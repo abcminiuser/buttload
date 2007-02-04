@@ -40,10 +40,6 @@
 		1) A maximum of 10 fuse bytes and 10 lock bytes can be stored in memory at any one
 		   time (writing the same fuse overwrites the existing value). If it is attempted to
 		   write more than this maximum, the extra bytes will be ignored.
-
-		2) HEX files containing addresses which are non-consecutive (eg. use of .ORG command
-		   in assembler other than .ORG 0) cannot be stored into ButtLoad's non-volatile memory.
-		   Normal AVRISP mode is not affected by this issue.
 */
 
 /*
@@ -111,6 +107,7 @@
 		USI.c + Header file                      | By Dean Camera
 		USITransfer.S                            | By Dean Camera with assistance from John Samperi 
 		V2Protocol.c + Header file               | By Dean Camera
+		VirtualAVRMemManager.c + Header file     | By Dean Camera
 -------------------------------------------------+-----------------------------------------------------
 
    Special thanks to Barry, Nard Awater and Scott Coppersmith of AVRFreaks, for without their equipment
@@ -123,7 +120,7 @@
 	original code for each file if you intend to use any of the 3rd party code in you own project.
 */
 
-#define INC_FROM_MAIN
+#define  INC_FROM_MAIN
 #include "Main.h"
 
 // PROGMEM CONSTANTS:
@@ -161,13 +158,15 @@ const char*   SettingFunctionNames[]            PROGMEM = {SFunc_SETCONTRAST, SF
 const FuncPtr SettingFunctionPtrs[]             PROGMEM = {MAIN_SetContrast , MAIN_SetISPSpeed , MAIN_SetResetMode , MAIN_SetFirmMinorVer, MAIN_SetAutoSleepTimeOut, MAIN_SetToneVol , MAIN_SetStartupMode, MAIN_ClearMem , MAIN_GoBootloader};
 
 const char    USISpeeds[USI_PRESET_SPEEDS][11]  PROGMEM = {"1843200 HZ", " 921600 HZ", " 230400 HZ", " 115200 HZ", "  57600 HZ", "  28800 HZ"};
-const char    USISpeedVals[]                    PROGMEM = {           0,           0,           1,           1,           2,           3}; // Translate from stored SCK value to nearest AVRStudio SCK value
-const char    USISpeedIndex[]                   PROGMEM = {                        1,           2,                        4,           5}; // Translate from recieved AVRStudio SCK value to nearest Buttload SCK value
+const char    USISpeedVals[]                    PROGMEM = {           0,            0,            1,            1,            2,            3}; // Translate from stored SCK value to nearest AVRStudio SCK value
+const char    USISpeedIndex[]                   PROGMEM = {                         1,            2,                          4,            5}; // Translate from recieved AVRStudio SCK value to nearest Buttload SCK value
 
 const char    SPIResetModes[2][6]               PROGMEM = {"LOGIC", "FLOAT"};
 const char    SIFONames[2][15]                  PROGMEM = {"STORAGE SIZES", "VIEW DATA TAGS"};
 const char    ProgramAVROptions[2][8]           PROGMEM = {"START", "OPTIONS"};
 const char    StartupModes[3][11]               PROGMEM = {"NORMAL", "PRODUCTION", "AVRISP"};
+
+const uint8_t BitTable[]                        PROGMEM = {(1 << 0), (1 << 1), (1 << 2), (1 << 3), (1 << 4), (1 << 5), (1 << 6), (1 << 7)};
 
 // GLOBAL EEPROM VARIABLE STRUCT:
 EEPROMVarsType EEPROMVars EEMEM;
@@ -208,16 +207,16 @@ int main(void)
 	LCD_CONTRAST_LEVEL(0x0F);
 	LCD_puts_f(WaitText);
 	
-	if (eeprom_read_byte(&EEPROMVars.MagicNumber) != MAGIC_NUM) // Check if first ButtLoad run
+	if (eeprom_read_word(&EEPROMVars.MagicNumber) != MAGIC_NUM)       // Check if first ButtLoad run
 	{
 		for (uint16_t EAddr = 0; EAddr < sizeof(EEPROMVars); EAddr++) // Clear the EEPROM if first run
 		  eeprom_write_byte((uint8_t*)EAddr, 0xFF);
 
-		eeprom_write_byte(&EEPROMVars.MagicNumber, MAGIC_NUM);
+		eeprom_write_word(&EEPROMVars.MagicNumber, MAGIC_NUM);
 	}
 	
 	LCD_CONTRAST_LEVEL(eeprom_read_byte(&EEPROMVars.LCDContrast));
-	DF_EnableDataflash(FALSE);                   // Pull internal Dataflash /CS high to disable it and thus save power
+	DF_ENABLEDATAFLASH(FALSE);                   // Pull internal Dataflash /CS high to disable it and thus save power
 	OSCCAL_Calibrate();                          // Calibrate the internal RC occilator
 	TOUT_SetupSleepTimer();                      // Set up and start the auto-sleep timer
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);	     // Set status LEDs to green (ready)	
@@ -251,6 +250,8 @@ int main(void)
 
 			MAIN_WaitForJoyRelease();
 		}
+
+		IDLECPU();
 	}
 
 	return 0;
@@ -323,7 +324,7 @@ void MAIN_WaitForJoyRelease(void)
 
 	for (;;)
 	{
-		while (JoyStatus) {};                    // Wait until joystick released
+		while (JoyStatus) { IDLECPU(); };         // Wait until joystick released
 
 		MAIN_Delay10MS(2);
 
@@ -418,36 +419,35 @@ ISR(BADISR_vect, ISR_NAKED)                      // Bad ISR routine; should neve
 
 // ======================================================================================
 
-void MAIN_ChangeSettings(void)
+void MAIN_SleepMode(void)
 {
-	uint8_t CurrSFunc = 0;
+	LCDCRA &= ~(1 << LCDEN);                     // Turn off LCD driver while sleeping
+	LCDCRA |=  (1 << LCDBL);                     // Blank LCD to discharge all segments
+	PRR    |=  (1 << PRLCD);                     // Enable LCD power reduction bit
+
+	TG_PlayToneSeq(TONEGEN_SEQ_SLEEP);
+
+	MAIN_SETSTATUSLED(MAIN_STATLED_OFF);         // Save battery power - turn off status LED
+
+	TIMEOUT_SLEEP_TIMER_OFF();
+
+	SMCR    = ((1 << SM1) | (1 << SE));          // Power down sleep mode
+	while (!(JoyStatus & JOY_UP))                // Joystick interrupt wakes the micro
+	  SLEEP();
+	   
+	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Turn status LED back on
+	TOUT_SetupSleepTimer();
+		
+	TG_PlayToneSeq(TONEGEN_SEQ_RESUME);
+
+	PRR    &= ~(1 << PRLCD);                     // Disable LCD power reduction bit
+	LCDCRA &= ~(1 << LCDBL);                     // Un-blank LCD to enable all segments
+	LCDCRA |=  (1 << LCDEN);                     // Re-enable LCD driver
 	
 	MAIN_WaitForJoyRelease();
-
-	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
-	                                             // name of the default command onto the LCD
-	for (;;)
-	{
-		if (JoyStatus)                           // Joystick is in the non-center position
-		{
-			if (JoyStatus & JOY_UP)              // Previous function
-			  (CurrSFunc == 0)? CurrSFunc = ARRAY_UPPERBOUND(SettingFunctionPtrs) : CurrSFunc--;
-			else if (JoyStatus & JOY_DOWN)       // Next function
-			  (CurrSFunc == ARRAY_UPPERBOUND(SettingFunctionPtrs))? CurrSFunc = 0 : CurrSFunc++;
-			else if (JoyStatus & JOY_PRESS)      // Select current function
-			  ((FuncPtr)pgm_read_word(&SettingFunctionPtrs[CurrSFunc]))(); // Run associated function
-			else if (JoyStatus & JOY_LEFT)
-			  return;
-		
-			// Show current function onto the LCD:
-			LCD_puts_f((char*)pgm_read_word(&SettingFunctionNames[CurrSFunc]));
-
-			MAIN_WaitForJoyRelease();
-		}
-	}
 }
 
-void MAIN_ShowAbout(void)
+static void MAIN_ShowAbout(void)
 {
 	uint8_t InfoNum = 0;
 	
@@ -468,10 +468,12 @@ void MAIN_ShowAbout(void)
 
 			MAIN_WaitForJoyRelease();
 		}
+
+		IDLECPU();
 	}
 }
 
-void MAIN_AVRISPMode(void)
+static void MAIN_AVRISPMode(void)
 {
 	USART_Init();
 	LCD_puts_f(AVRISPModeMessage);
@@ -479,7 +481,7 @@ void MAIN_AVRISPMode(void)
 	V2P_RunStateMachine(AICI_InterpretPacket);
 }
 
-void MAIN_ProgramAVR(void)
+static void MAIN_ProgramAVR(void)
 {
 	uint8_t ProgMode = 0;
 	
@@ -511,27 +513,59 @@ void MAIN_ProgramAVR(void)
 
 			MAIN_WaitForJoyRelease();
 		}
+
+		IDLECPU();
 	}
 }
 
-void MAIN_StoreProgram(void)
+static void MAIN_StoreProgram(void)
 {
 	SPI_SPIInit();
-	DF_EnableDataflash(TRUE);
+	DF_ENABLEDATAFLASH(TRUE);
 
 	if (!(DF_CheckCorrectOnboardChip()))
 	  return;
 			
 	USART_Init();
-	LCD_puts_f(PSTR("*STORAGE MODE*"));
-
+	LCD_puts_f(StorageText);
 	V2P_RunStateMachine(SM_InterpretAVRISPPacket);
 	
-	DF_EnableDataflash(FALSE);
+	DF_ENABLEDATAFLASH(FALSE);
 	SPI_SPIOFF();
 }
 
-void MAIN_ClearMem(void)
+static void MAIN_ChangeSettings(void)
+{
+	uint8_t CurrSFunc = 0;
+	
+	MAIN_WaitForJoyRelease();
+
+	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
+	                                             // name of the default command onto the LCD
+	for (;;)
+	{
+		if (JoyStatus)                           // Joystick is in the non-center position
+		{
+			if (JoyStatus & JOY_UP)              // Previous function
+			  (CurrSFunc == 0)? CurrSFunc = ARRAY_UPPERBOUND(SettingFunctionPtrs) : CurrSFunc--;
+			else if (JoyStatus & JOY_DOWN)       // Next function
+			  (CurrSFunc == ARRAY_UPPERBOUND(SettingFunctionPtrs))? CurrSFunc = 0 : CurrSFunc++;
+			else if (JoyStatus & JOY_PRESS)      // Select current function
+			  ((FuncPtr)pgm_read_word(&SettingFunctionPtrs[CurrSFunc]))(); // Run associated function
+			else if (JoyStatus & JOY_LEFT)
+			  return;
+		
+			// Show current function onto the LCD:
+			LCD_puts_f((char*)pgm_read_word(&SettingFunctionNames[CurrSFunc]));
+
+			MAIN_WaitForJoyRelease();
+		}
+
+		IDLECPU();
+	}
+}
+
+static void MAIN_ClearMem(void)
 {
 	LCD_puts_f(PSTR("CONFIRM"));
 	MAIN_Delay10MS(180);
@@ -549,6 +583,8 @@ void MAIN_ClearMem(void)
 			else if (JoyStatus & JOY_RIGHT)
 			  break;
 		}
+
+		IDLECPU();
 	}
 
 	MAIN_WaitForJoyRelease();
@@ -559,14 +595,14 @@ void MAIN_ClearMem(void)
 	for (uint16_t EAddr = 0; EAddr < sizeof(EEPROMVars); EAddr++)
 	  eeprom_write_byte((uint8_t*)EAddr, 0xFF);
 	
-	eeprom_write_byte(&EEPROMVars.MagicNumber, MAGIC_NUM);
+	eeprom_write_word(&EEPROMVars.MagicNumber, MAGIC_NUM);
 
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Set status LEDs to green (ready)
 	LCD_puts_f(PSTR("MEM CLEARED"));
 	MAIN_Delay10MS(250);
 }
 
-void MAIN_SetContrast(void)
+static void MAIN_SetContrast(void)
 {
 	uint8_t Contrast = (eeprom_read_byte(&EEPROMVars.LCDContrast) & 0x0F); // Ranges from 0-15 so mask retuns 15 on blank EEPROM (0xFF)
 	char Buffer[6];
@@ -604,10 +640,12 @@ void MAIN_SetContrast(void)
 
 			MAIN_WaitForJoyRelease();
 		}
+
+		IDLECPU();
 	}
 }
 
-void MAIN_SetISPSpeed(void)
+static void MAIN_SetISPSpeed(void)
 {
 	uint8_t CurrSpeed = eeprom_read_byte(&EEPROMVars.SCKDuration);
 
@@ -639,10 +677,12 @@ void MAIN_SetISPSpeed(void)
 
 			MAIN_WaitForJoyRelease();
 		}
+
+		IDLECPU();
 	}
 }
 
-void MAIN_SetResetMode(void)
+static void MAIN_SetResetMode(void)
 {
 	uint8_t CurrMode = (eeprom_read_byte(&EEPROMVars.SPIResetMode) & 0x01);
 
@@ -667,10 +707,12 @@ void MAIN_SetResetMode(void)
 
 			MAIN_WaitForJoyRelease();
 		}
+
+		IDLECPU();
 	}
 }
 
-void MAIN_SetFirmMinorVer(void)
+static void MAIN_SetFirmMinorVer(void)
 {
 	uint8_t VerMinor = eeprom_read_byte(&EEPROMVars.FirmVerMinor);
 	char    VerBuffer[5];
@@ -709,10 +751,12 @@ void MAIN_SetFirmMinorVer(void)
 
 			MAIN_WaitForJoyRelease();
 		}
+
+		IDLECPU();
 	}	
 }
 
-void MAIN_SetAutoSleepTimeOut(void)
+static void MAIN_SetAutoSleepTimeOut(void)
 {
 	uint8_t SleepVal = eeprom_read_byte(&EEPROMVars.AutoSleepValIndex);
 	char    SleepTxtBuffer[8];
@@ -756,10 +800,12 @@ void MAIN_SetAutoSleepTimeOut(void)
 
 			MAIN_WaitForJoyRelease();
 		}
+
+		IDLECPU();
 	}	
 }
 
-void MAIN_SetToneVol(void)
+static void MAIN_SetToneVol(void)
 {
 	char VolBuffer[5];
 
@@ -802,10 +848,12 @@ void MAIN_SetToneVol(void)
 
 			MAIN_WaitForJoyRelease();
 		}
+
+		IDLECPU();
 	}	
 }
 
-void MAIN_SetStartupMode(void)
+static void MAIN_SetStartupMode(void)
 {
 	uint8_t StartupMode = eeprom_read_byte(&EEPROMVars.StartupMode);
 
@@ -829,40 +877,14 @@ void MAIN_SetStartupMode(void)
 
 			MAIN_WaitForJoyRelease();
 		}
+
+		IDLECPU();
 	}	
 
 	eeprom_write_byte(&EEPROMVars.StartupMode, StartupMode);
 }
 
-void MAIN_SleepMode(void)
-{
-	LCDCRA &= ~(1 << LCDEN);                     // Turn off LCD driver while sleeping
-	LCDCRA |=  (1 << LCDBL);                     // Blank LCD to discharge all segments
-	PRR    |=  (1 << PRLCD);                     // Enable LCD power reduction bit
-
-	TG_PlayToneSeq(TONEGEN_SEQ_SLEEP);
-
-	MAIN_SETSTATUSLED(MAIN_STATLED_OFF);         // Save battery power - turn off status LED
-
-	TIMEOUT_SLEEP_TIMER_OFF();
-
-	SMCR    = ((1 << SM1) | (1 << SE));          // Power down sleep mode
-	while (!(JoyStatus & JOY_UP))                // Joystick interrupt wakes the micro
-	  SLEEP();
-	   
-	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Turn status LED back on
-	TOUT_SetupSleepTimer();
-		
-	TG_PlayToneSeq(TONEGEN_SEQ_RESUME);
-
-	PRR    &= ~(1 << PRLCD);                     // Disable LCD power reduction bit
-	LCDCRA &= ~(1 << LCDBL);                     // Un-blank LCD to enable all segments
-	LCDCRA |=  (1 << LCDEN);                     // Re-enable LCD driver
-	
-	MAIN_WaitForJoyRelease();
-}
-
-void MAIN_StorageInfo(void)
+static void MAIN_StorageInfo(void)
 {
 	uint8_t SelectedItem = 0;
 
@@ -887,14 +909,14 @@ void MAIN_StorageInfo(void)
 				if (SelectedItem == 1)           // View storage tags
 				{
 					SPI_SPIInit();
-					DF_EnableDataflash(TRUE);
+					DF_ENABLEDATAFLASH(TRUE);
 
 					if (!(SM_GetStoredDataSize(TYPE_FLASH)))
 					  MAIN_ShowError(PSTR("NO STORED PRGM"));
 					else if (DF_CheckCorrectOnboardChip())
 					  TM_ShowTags();
 
-					DF_EnableDataflash(FALSE);
+					DF_ENABLEDATAFLASH(FALSE);
 					SPI_SPIOFF();
 				}
 				else                             // View stored data sizes
@@ -907,10 +929,12 @@ void MAIN_StorageInfo(void)
 
 			MAIN_WaitForJoyRelease();
 		}
+
+		IDLECPU();
 	}
 }
 
-void MAIN_GoBootloader(void)
+static void MAIN_GoBootloader(void)
 {
 	volatile uint8_t MD = (MCUCR & ~(1 << JTD)); // Forces compiler to use IN, AND plus two OUTs rather than two lots of IN/AND/OUTs
 	MCUCR = MD;                                  // Turn on JTAG via code
@@ -926,4 +950,15 @@ void MAIN_GoBootloader(void)
 	WDTCR = ((1<<WDCE) | (1<<WDE));              // Enable Watchdog Timer to give reset after minimum timeout
 	for (;;) {};                                 // Eternal loop - when watchdog resets the AVR it will enter the bootloader,
 	                                             // assuming the BOOTRST fuse is programmed (otherwise app will just restart)
+}
+
+// ======================================================================================
+
+void MAIN_Util_RAMFill(void)
+{
+	/* Debugging aid. Fills ram up with the recognisable constant DC (my initials) on program start.
+	   this makes it easier to look for stack overflows and other memory related problems.           */
+	
+	for (uint16_t RamLoc = 0x0100; RamLoc < RAMEND; RamLoc++)
+	  *((uint8_t*)RamLoc) = 0xDC;
 }

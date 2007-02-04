@@ -14,6 +14,7 @@
 	#include "Dataflash.h"
 	#include "AVRISPCommandBytes.h"
 	#include "EEPROMVariables.h"
+	#include "VirtualAVRMemManager.h"
 	
 	// DEFINES:
 	#define SM_NO_SETUP            0
@@ -28,11 +29,17 @@
 	
 	#define SM_EEPROM_OFFSET       (1024UL * 257UL)
 	
+	// EXTERNAL VARIABLES:
+	extern uint8_t  MemoryType;
+	
+	extern const char StorageText[] PROGMEM;
+
 	// PROTOTYPES:
 	uint32_t SM_GetStoredDataSize(const uint8_t Type);
-	void     SM_SetupDFAddressCounters(uint8_t Type);
-	void     SM_StoreProgramByte(const uint8_t Data);
 	void     SM_InterpretAVRISPPacket(void);
-	void     SM_CheckEndOfFuseLockData(void);
+	
+	#if defined(INC_FROM_SM)
+	  static void     SM_CheckEndOfFuseLockData(void);
+	#endif
 	
 #endif

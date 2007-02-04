@@ -13,7 +13,7 @@
 	#define VERSION_MINOR            1
 	#define VERSION_VSTRING          {'V','0' + VERSION_MAJOR,'-','0' + VERSION_MINOR, '\0'}
 	
-	#define MAGIC_NUM                0b01101010 // Magic number, used for first-run detection or upgrade incompatibility checks
+	#define MAGIC_NUM                (0xDC | 0x1357) // Magic number, used for first-run detection or upgrade incompatibility checks
 	
 	// Program Type Macros:	
 	#define TYPE_EEPROM              0
@@ -43,5 +43,8 @@
 		
 	// ASM Macros:
 	#define SLEEP()                  MACROS{ asm volatile ("sleep" ::); }MACROE
+
+	// Other General Macros:
+	#define IDLECPU()           MACROS{ SMCR = (1 << SE); SLEEP(); }MACROE
 
 #endif
