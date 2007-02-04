@@ -42,12 +42,12 @@ uint8_t DF_CheckCorrectOnboardChip(void)          // Ensures onboard Butterfly d
 void DF_CopyBufferToFlashPage(const uint16_t PageAddress)
 {
 	DF_TOGGLEENABLE();
-
+	
 	SPI_SPITransmit(DFCB_BUF1TOFLASHWE);
 	SPI_SPITransmit((uint8_t)(PageAddress >> DF_PAGESHIFT_HIGH));
 	SPI_SPITransmit((uint8_t)(PageAddress << DF_PAGESHIFT_LOW));
 	SPI_SPITransmit(0x00);
-	
+		
 	DF_WaitWhileBusy();
 }
 

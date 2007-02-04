@@ -24,9 +24,8 @@ void TG_PlayToneSeq(uint8_t* Sequence)
 {
 	if (!(ToneVol))                               // If no volume (off), skip tone playing
 	  return;
-	else if (ToneVol > 80)                        // Volume max of 80
-	  ToneVol = 80;
 
+	TIMSK1 = 0;                                   // Turn off timer interrupts
 	OCR1A  = ToneVol;                             // Set the tone volume via the global register
 	TCCR1A = (1 << COM1A1);                       // OC1A set when counting up, cleared when counting down
 	TCCR1B = ((1 << WGM13) | (1 << CS10));        // Phase/Freq correct PWM mode, turn on with prescaler of 1

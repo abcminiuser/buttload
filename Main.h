@@ -9,7 +9,8 @@
 #define MAIN_H
 
 	// DEBUG SWITCHES
-	#define DEBUG_JTAGON
+	//#define DEBUG_JTAGON
+	#define DEBUG_MEMFILLON
 	// END DEBUG SWITCHES
 	
 	// INCLUDES:

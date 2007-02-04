@@ -377,6 +377,7 @@ void MAIN_ShowProgType(const uint8_t Letter)
 void MAIN_ShowError(const char *pFlashStr)
 {
 	char ErrorBuff[LCD_TEXTBUFFER_SIZE + 2];     // New buffer, LCD text buffer size plus space for the "E>" prefix
+	uint8_t CurrLedStatus = (PORTF & MAIN_STATLED_ORANGE);
 	
 	ErrorBuff[0] = 'E';
 	ErrorBuff[1] = '>';
@@ -384,12 +385,20 @@ void MAIN_ShowError(const char *pFlashStr)
 	strcpy_P(&ErrorBuff[2], pFlashStr);          // WARNING: If flash error text is larger than TEXTBUFFER_SIZE,
 	                                             // this will overflow the buffer and crash the program!
 	LCD_puts(ErrorBuff);
-	
+	MAIN_SETSTATUSLED(MAIN_STATLED_RED);	
 	TG_PlayToneSeq(TONEGEN_SEQ_ERROR);
+	
+	TIMSK1 = (1 << OCIE1A);                      // Enable compare match channel A interrupt
+	OCR1A  = 0x384;                              // Compare rate of 8Hz at 7372800Hz system clock, 1024 prescaler
+	TCCR1A = 0;
+	TCCR1B = ((1 << WGM12) | (1 << CS12) | (1 << CS10)); // Start timer at Fcpu/1024 speed in CTC mode, flash the red status LED
 	
 	MAIN_WaitForJoyRelease();
 	while (!(JoyStatus & JOY_PRESS)) {};
 	MAIN_WaitForJoyRelease();
+
+	TCCR1B = 0;                                  // Turn off timer 1
+	MAIN_SETSTATUSLED(CurrLedStatus);            // Restore previous LED status
 }
 
 // ======================================================================================
@@ -415,6 +424,11 @@ ISR(BADISR_vect, ISR_NAKED)                      // Bad ISR routine; should neve
 	MAIN_ShowError(PSTR("BADISR"));
 		
 	for (;;) {};
+}
+
+ISR(TIMER1_COMPA_vect, ISR_BLOCK)                // Used for status LED flashing during an error
+{
+	PORTF ^= MAIN_STATLED_RED;
 }
 
 // ======================================================================================
@@ -938,7 +952,7 @@ static void MAIN_GoBootloader(void)
 {
 	volatile uint8_t MD = (MCUCR & ~(1 << JTD)); // Forces compiler to use IN, AND plus two OUTs rather than two lots of IN/AND/OUTs
 	MCUCR = MD;                                  // Turn on JTAG via code
-	MCUCR = MD; 
+	MCUCR = MD;
 
 	SecsBeforeAutoSleep = 0;
 	TIMEOUT_SLEEP_TIMER_OFF();
@@ -954,11 +968,13 @@ static void MAIN_GoBootloader(void)
 
 // ======================================================================================
 
-void MAIN_Util_RAMFill(void)
-{
-	/* Debugging aid. Fills ram up with the recognisable constant DC (my initials) on program start.
-	   this makes it easier to look for stack overflows and other memory related problems.           */
+#ifdef DEBUG_MEMFILLON
+	void MAIN_Util_RAMFill(void)
+	{
+		/* Debugging aid. Fills ram up with the recognisable constant DC (my initials) on program start.
+		this makes it easier to look for stack overflows and other memory related problems.           */
 	
-	for (uint16_t RamLoc = 0x0100; RamLoc < RAMEND; RamLoc++)
-	  *((uint8_t*)RamLoc) = 0xDC;
-}
+		for (uint16_t RamLoc = 0x0100; RamLoc < RAMEND; RamLoc++)
+		  *((uint8_t*)RamLoc) = 0xDC;
+	}
+#endif

@@ -14,6 +14,7 @@
 	#include <util/delay.h>
 
 	#include "ISRMacro.h"
+	#include "GlobalMacros.h"
 
 	// DEFINES:
 	#define OSCCAL_TARGETCOUNT         (uint16_t)(F_CPU / (32768 / 256)) // (Target Freq / Reference Freq)	

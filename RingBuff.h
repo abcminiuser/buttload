@@ -13,6 +13,7 @@
 	#include <avr/interrupt.h>
 	
 	#include "ISRMacro.h"
+	#include "GlobalMacros.h"
 	
 	// DEFINES:
 	#define BUFF_BUFFLEN  64

@@ -47,9 +47,11 @@ char USART_Rx(void)
 	
 	do
 	{
-		cli();
-		AtomicBuffElements = BuffElements;
-		sei();
+		ATOMIC_BLOCK(ATOMIC_ASSUMEON)
+		{
+			AtomicBuffElements = BuffElements;
+		}
+		END_ATOMIC_BLOCK
 	}
 	while (!(AtomicBuffElements) && !(PacketTimeOut));
 
