@@ -38,7 +38,6 @@
 		uint8_t  ToneVolume;
 		uint8_t  PGOptions;
 		uint8_t  StartupMode;
-		uint8_t  PageEraseReqFlags[249];
 
 		uint16_t MagicNumber;	
 

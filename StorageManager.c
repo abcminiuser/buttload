@@ -34,21 +34,26 @@ uint32_t SM_GetStoredDataSize(const uint8_t Type)
 
 	if (Type == TYPE_FLASH)
 	{
-		BlockStart = 0;
-		BlockEnd   = 124;
+		BlockStart = SM_BYTES_TO_BLOCKNUM(0);
+		BlockEnd   = SM_BYTES_TO_BLOCKNUM((unsigned long)(1024UL * 256));
 		PageLength = eeprom_read_word(&EEPROMVars.PageLength);
 	}
 	else
 	{
-		BlockStart = 125;
-		BlockEnd   = 249;
+		BlockStart = SM_BYTES_TO_BLOCKNUM(SM_EEPROM_OFFSET);
+		BlockEnd   = SM_BYTES_TO_BLOCKNUM((unsigned long)(SM_EEPROM_OFFSET + (1024UL * 250)));
 		PageLength = eeprom_read_word(&EEPROMVars.EPageLength);
 	}
+
+	SPI_SPIInit();
+	DF_ENABLEDATAFLASH(TRUE);
+
+	DF_ContinuousReadEnable((DF_DATAFLASH_PAGES - 1), 0);               // Last dataflash page contains the erased page flag array
 
 	for (uint8_t EEPageBlock = BlockStart; EEPageBlock < BlockEnd; EEPageBlock++)
 	{
 		uint8_t Mask      = (1 << 7);
-		uint8_t BlockData = eeprom_read_byte(&EEPROMVars.PageEraseReqFlags[EEPageBlock]);
+		uint8_t BlockData = SPI_SPITransmit(0x00);                      // Fetch next erased page flag byte
 
 		while (Mask)
 		{
@@ -60,7 +65,10 @@ uint32_t SM_GetStoredDataSize(const uint8_t Type)
 	}
 	
 	ProgDataSize -= (ProgDataSize % PageLength);                        // Get data size to nearest page
-	
+
+	DF_ENABLEDATAFLASH(FALSE);
+	SPI_SPIOFF();
+
 	return ProgDataSize;
 }
 
@@ -97,8 +105,9 @@ void SM_InterpretAVRISPPacket(void)
 			MessageSize = 2;
 
 			SM_CheckEndOfFuseLockData();                                // Check for remaining bytes to be stored and general cleanup
+			VAMM_ExitStorageMode();
 
-			TG_PlayToneSeq((InProgrammingMode && !(EraseFlagsTransReq))? TONEGEN_SEQ_PROGDONE : TONEGEN_SEQ_WAITWRITE);
+			TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);
 		
 			InProgrammingMode = FALSE;                                  // Clear the flag, allow the user to exit the V2P state machine
 
@@ -281,12 +290,6 @@ void SM_InterpretAVRISPPacket(void)
 	}
 
 	V2P_SendPacket();                                                   // Send the response packet
-
-	if (!(InProgrammingMode) && (EraseFlagsTransReq))                   // Programming mode exited, cleanup
-	{
-		VAMM_ExitStorageMode();
-		TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);
-	}
 }
 
 /*

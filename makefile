@@ -313,6 +313,7 @@ MSG_SYMBOL_TABLE = Creating Symbol Table:
 MSG_LINKING = Linking:
 MSG_COMPILING = Compiling C:
 MSG_ASSEMBLING = Assembling:
+MSG_PREPROCESSING = Preprocessing:
 MSG_CLEANING = Cleaning project:
 MSG_CREATING_LIBRARY = Creating library:
 
@@ -342,11 +343,15 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 # Default target.
 all: begin gccversion sizebefore build sizeafter end
 
+# Preprocessed source for all files.
+preprocess: begin gccversion pre end
+
 # Change the build target to build a HEX file or a library.
 build: elf hex eep lss sym
 #build: lib
 
 
+pre: $(SRC:%.c=%.i)
 elf: $(TARGET).elf
 hex: $(TARGET).hex
 eep: $(TARGET).eep
@@ -512,6 +517,8 @@ $(OBJDIR)/%.o : %.S
 
 # Create preprocessed source for use in sending a bug report.
 %.i : %.c
+	@echo
+	@echo $(MSG_PREPROCESSING) $<
 	$(CC) -E -mmcu=$(MCU) -I. $(CFLAGS) $< -o $@ 
 
 
@@ -547,4 +554,4 @@ $(shell mkdir $(OBJDIR) 2>/dev/null)
 # Listing of phony targets.
 .PHONY : all begin finish end sizebefore sizeafter gccversion \
 build elf hex eep lss sym coff extcoff \
-clean clean_list program debug gdb-config
+clean clean_list preprocess program debug gdb-config

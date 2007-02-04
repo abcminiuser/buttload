@@ -86,6 +86,7 @@ void PM_StartProgAVR(void)
 	}
 
 	LCD_puts_f(WaitText);
+	DF_ENABLEDATAFLASH(TRUE);
 	SPI_SPIInit();
 	
 	if (!(DF_CheckCorrectOnboardChip()))

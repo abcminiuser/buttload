@@ -34,6 +34,8 @@
 	#define COMP_BYTE_ORDER           COMP_ORDER_LITTLE
 	#define COMP_ORDER_LITTLE         0
 	#define COMP_ORDER_BIG            1
+	
+	#define ROUND_UP(x)               (unsigned long)(((float)x) + .5)
 
 	// Joystick Macros:
 	#define JOY_LEFT                  (1 << 2)

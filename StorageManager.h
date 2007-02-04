@@ -20,17 +20,19 @@
 	#include "VirtualAVRMemManager.h"
 	
 	// DEFINES:
-	#define SM_NO_SETUP            0
-	#define SM_DATAFLASH_WRITE     1
-	#define SM_DATAFLASH_READ      2
-	#define SM_LOCKFUSEBITS_WRITE  3
-	#define SM_LOCKFUSEBITS_READ   4
+	#define SM_NO_SETUP             0
+	#define SM_DATAFLASH_WRITE      1
+	#define SM_DATAFLASH_READ       2
+	#define SM_LOCKFUSEBITS_WRITE   3
+	#define SM_LOCKFUSEBITS_READ    4
 	
-	#define SM_PAGELENGTH_FOUNDBIT (1 << 15)
+	#define SM_PAGELENGTH_FOUNDBIT  (1 << 15)
 	
-	#define SM_MAX_FUSELOCKBITS    20
+	#define SM_MAX_FUSELOCKBITS     20
 	
-	#define SM_EEPROM_OFFSET       (1024UL * 257UL)
+	#define SM_EEPROM_OFFSET        (1024UL * 257UL)
+	
+	#define SM_BYTES_TO_BLOCKNUM(b) ROUND_UP(((b / DF_INTERNALDF_BUFFBYTES) >> 3))
 	
 	// EXTERNAL VARIABLES:
 	extern uint8_t  MemoryType;

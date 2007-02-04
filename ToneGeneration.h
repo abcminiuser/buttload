@@ -22,7 +22,6 @@
 	#define TONEGEN_SEQ_SYNCFAIL   ToneSeq_SyncFail
 	#define TONEGEN_SEQ_PROGDONE   ToneSeq_ProgDone
 	#define TONEGEN_SEQ_PROGFAIL   ToneSeq_ProgFail
-	#define TONEGEN_SEQ_WAITWRITE  ToneSeq_VolTest
 	#define TONEGEN_SEQ_VOLTEST    ToneSeq_VolTest
 	#define TONEGEN_SEQ_SLEEP      ToneSeq_Sleep
 	#define TONEGEN_SEQ_RESUME     ToneSeq_Resume

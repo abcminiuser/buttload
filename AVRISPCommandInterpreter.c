@@ -185,9 +185,9 @@ void AICI_InterpretPacket(void)
 			break;
 		case AICB_CMD_PROGRAM_FLASH_ISP:
 		case AICB_CMD_PROGRAM_EEPROM_ISP:
-			ISPCC_ProgramChip();                       // Program the bytes into the chip
-			
 			MessageSize = 2;
+
+			ISPCC_ProgramChip();                       // Program the bytes into the chip			
 
 			PacketBytes[1] = ((ProgrammingFault == ISPCC_NO_FAULT) ? AICB_STATUS_CMD_OK : AICB_STATUS_CMD_TOUT);
 			

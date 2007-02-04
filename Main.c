@@ -792,11 +792,13 @@ static void MAIN_ClearMem(void)
 
 /* \/\/\/ TEMP - REMOVE FOR RELEASE!!! \/\/\/ */
 	SPI_SPIInit();
+	DF_ENABLEDATAFLASH(TRUE);
 	if (DF_CheckCorrectOnboardChip())
 	{
 		for (uint16_t Block = 0; Block < DF_DATAFLASH_BLOCKS; Block++)
 			DF_EraseBlock(Block);
 	}
+	DF_ENABLEDATAFLASH(FALSE);
 	SPI_SPIOFF();
 /* /\/\/\ TEMP - REMOVE FOR RELEASE!!! /\/\/\ */
 
