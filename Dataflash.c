@@ -30,7 +30,7 @@ uint8_t DF_CheckCorrectOnboardChip(void)          // Ensures onboard Butterfly d
 {
 	DF_TOGGLEENABLE();
 	
-	SPI_SPITransmit(DFCB_STATUSREG);              // Send the get status register command
+	SPI_SPITransmit(DFCB_STATUSREG);              // Send the Get Status Register command
 	
 	if (((SPI_SPITransmit(0x00) & DF_DFINFOMASK)) != (3 << 3)) // Bits 3, 4 and 5 contain the dataflash type info
 	{

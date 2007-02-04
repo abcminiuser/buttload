@@ -22,7 +22,7 @@ const char StorageText[] PROGMEM = "*STORAGE MODE*";
 /*
  NAME:      | SM_GetStoredDataSize
  PURPOSE:   | Returns the size of the requested stored data type
- ARGUMENTS: | Type of data to get the size of (TYPE_FLASH, TYPE_EEPROM, TYPE_FUSE, TYPE_LOCK)
+ ARGUMENTS: | Type of data to get the size of (TYPE_FLASH, TYPE_EEPROM, TYPE_FUSE or TYPE_LOCK)
  RETURNS:   | Size of requested data type in bytes
 */
 uint32_t SM_GetStoredDataSize(const uint8_t Type)
@@ -59,7 +59,7 @@ uint32_t SM_GetStoredDataSize(const uint8_t Type)
 		}
 	}
 	
-	ProgDataSize = ((ProgDataSize / PageLength) * PageLength);          // Get data size to nearest page
+	ProgDataSize -= (ProgDataSize % PageLength);                        // Get data size to nearest page
 	
 	return ProgDataSize;
 }
@@ -240,7 +240,7 @@ void SM_InterpretAVRISPPacket(void)
 
 			for (uint16_t CurrByte = 0; CurrByte < BytesToWrite; CurrByte++)
 			{
-				VAMM_StoreByte(PacketBytes[10 + CurrByte]);
+				VAMM_StoreByte(PacketBytes[10 + CurrByte]);             // Store the program's bytes into the dataflash
 				GPageLength++;
 			}
 
@@ -266,7 +266,7 @@ void SM_InterpretAVRISPPacket(void)
 			                     | PacketBytes[2];                      // /  be read into a temp variable (MSB first)
 								 
 			for (uint16_t ReadByte = 0; ReadByte < BytesToRead; ReadByte++)
-			  PacketBytes[2 + ReadByte] = VAMM_ReadByte(); // Read in the next dataflash byte if present
+			  PacketBytes[2 + ReadByte] = VAMM_ReadByte();              // Read in the next dataflash byte if present
 
 			MessageSize = BytesToRead + 3;
 

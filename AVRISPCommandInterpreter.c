@@ -32,9 +32,15 @@ void AICI_InterpretPacket(void)
 			ISPCC_EnterChipProgrammingMode();           // Run the Enter Programming Mode routine
 
 			if (InProgrammingMode)
-			  LCD_puts_f(AVRISPModeMessage);
+			{
+				LCD_puts_f(AVRISPModeMessage);
+				PacketBytes[1] = AICB_STATUS_CMD_OK;
+			}
 			else
-			  LCD_puts_f(SyncErrorMessage);
+			{
+				LCD_puts_f(SyncErrorMessage);
+				PacketBytes[1] = AICB_STATUS_CMD_FAILED;
+			}
 
 			break;
 		case AICB_CMD_LEAVE_PROGMODE_ISP:

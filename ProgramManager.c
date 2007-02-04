@@ -219,7 +219,7 @@ void PM_StartProgAVR(void)
 	USI_SPIOff();
 	DF_ENABLEDATAFLASH(FALSE);
 	SPI_SPIOFF();
-	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Set status LEDs to green (ready)
+	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);        // Set status LEDs to green (ready)
 }
 
 /*
@@ -253,7 +253,7 @@ void PM_ChooseProgAVROpts(void)
 			}
 			else if (JoyStatus & JOY_PRESS)
 			{
-				ProgOptions  ^= SelectedOptMask;
+				ProgOptions ^= SelectedOptMask;
 			}
 			else if (JoyStatus & JOY_UP)
 			{
@@ -283,7 +283,7 @@ void PM_ChooseProgAVROpts(void)
 /*
  NAME:      | PM_SetProgramDataType
  PURPOSE:   | Toggles the selected flag for the specified datatype
- ARGUMENTS: | Mask of the datatype flag to change (PM_OPT_FLASH, PM_OPT_EEPROM, PM_OPT_FUSE or PM_OPT_LOCK)
+ ARGUMENTS: | Mask of the datatype flag to enable (PM_OPT_FLASH, PM_OPT_EEPROM, PM_OPT_FUSE or PM_OPT_LOCK) or PM_OPT_CLEARFLAGS to clear
  RETURNS:   | None
 */
 void PM_SetProgramDataType(uint8_t Mask)
@@ -296,7 +296,7 @@ void PM_SetProgramDataType(uint8_t Mask)
 	if (Mask & PM_OPT_CLEARFLAGS)
 	  ProgOptions  = 0;
 	else
-	  ProgOptions |= (Mask & ~(1 << 7));
+	  ProgOptions |= Mask;
 	  
 	eeprom_write_byte(&EEPROMVars.PGOptions, ProgOptions);
 }
@@ -323,7 +323,7 @@ static void PM_SendFuseLockBytes(const uint8_t Type)
 		EEPROMAddress = &EEPROMVars.LockBytes[0][0];	
 	}
 
-	while (TotalBytes--)                                                // Write each of the fuse/lock bytes stored in memory to the slave AVR
+	while (TotalBytes--)                                                // Write each of the fuse/lock bytes stored in memory to the target AVR
 	{
 		for (uint8_t CommandByte = 0; CommandByte < 4; CommandByte++)   // Write each individual command byte
 		{
@@ -360,11 +360,11 @@ static void PM_SendEraseCommand(void)
 		if (TCNT1 >= ISPCC_COMM_TIMEOUT)
 		  ProgrammingFault = ISPCC_FAULT_TIMEOUT;
 	
-		TCCR1B = 0;                                                      // Stop timer 1
+		TCCR1B = 0;                                                     // Stop timer 1
 	}
-	else                                                                 // Cleared flag means use a predefined delay
+	else                                                                // Cleared flag means use a predefined delay
 	{		
-		MAIN_Delay1MS(eeprom_read_byte(&EEPROMVars.EraseChip[1]));       // Wait the erase delay
+		MAIN_Delay1MS(eeprom_read_byte(&EEPROMVars.EraseChip[1]));      // Wait the erase delay
 	}
 }
 
@@ -377,14 +377,17 @@ static void PM_SendEraseCommand(void)
 static void PM_CreateProgrammingPackets(const uint8_t Type)
 {			
 	uint32_t BytesRead        = 0;
-	uint32_t BytesToRead      = SM_GetStoredDataSize(Type);              // Get the byte size of the stored program
+	uint32_t BytesToRead      = SM_GetStoredDataSize(Type);             // Get the byte size of the stored program
 	uint16_t BytesPerProgram;
 	uint16_t PageLength       = eeprom_read_word((Type == TYPE_FLASH)? &EEPROMVars.PageLength : &EEPROMVars.EPageLength);
-	uint16_t BytesPerProgress = (BytesToRead / LCD_BARGRAPH_SIZE);
+	uint16_t BytesPerProgress = (BytesToRead / (LCD_BARGRAPH_SIZE - 1));
 	uint8_t  ContinuedPage    = FALSE;
 	uint8_t* EEPROMAddress;
 
 	CurrAddress = 0;
+
+	VAMM_EnterStorageMode();                                            // Prepare virtual AVR memory for readback
+	VAMM_SetAddress();                                                  // Set virtual AVR memory read location to 0
 
 	if (Type == TYPE_FLASH)
 	{
@@ -414,7 +417,7 @@ static void PM_CreateProgrammingPackets(const uint8_t Type)
 		{
 			if (PageLength > 160)                                       // Max 160 bytes at a time
 			{
-				if (!(ContinuedPage))                                   // Start of a new page, program in the first 150 bytes
+				if (!(ContinuedPage))                                   // Start of a new page, program in the first 160 bytes
 				{
 					BytesPerProgram  = 160;
 					PacketBytes[3]  &= ~ISPCC_PROG_MODE_PAGEDONE;		
@@ -428,7 +431,7 @@ static void PM_CreateProgrammingPackets(const uint8_t Type)
 				}
 				
 				for (uint16_t LoadB = 0; LoadB < BytesPerProgram; LoadB++)
-				  PacketBytes[10 + LoadB] = SPI_SPITransmit(0x00);      // Load in the page				
+				  PacketBytes[10 + LoadB] = VAMM_ReadByte();            // Load in the page				
 
 				PacketBytes[1] = (uint8_t)(BytesPerProgram >> 8);
 				PacketBytes[2] = (uint8_t)(BytesPerProgram);
@@ -438,7 +441,7 @@ static void PM_CreateProgrammingPackets(const uint8_t Type)
 			else
 			{
 				for (uint16_t LoadB = 0; LoadB < PageLength; LoadB++)
-				  PacketBytes[10 + LoadB] = SPI_SPITransmit(0x00);      // Load in the page
+				  PacketBytes[10 + LoadB] = VAMM_ReadByte();            // Load in the page
 			
 				PacketBytes[1]  = (uint8_t)(PageLength >> 8);
 				PacketBytes[2]  = (uint8_t)(PageLength);
@@ -457,7 +460,7 @@ static void PM_CreateProgrammingPackets(const uint8_t Type)
 			}
 
 			for (uint16_t LoadB = 0; LoadB < BytesPerProgram; LoadB++)
-			  PacketBytes[10 + LoadB] = SPI_SPITransmit(0x00);          // Load in the page
+			  PacketBytes[10 + LoadB] = VAMM_ReadByte();                // Load in the page
 		
 			BytesRead += BytesPerProgram;                               // Increment the counter
 		}
@@ -473,8 +476,12 @@ static void PM_CreateProgrammingPackets(const uint8_t Type)
 		ISPCC_ProgramChip();                                            // Start the program cycle
 		LCD_BARGRAPH((uint8_t)(BytesRead / BytesPerProgress));          // Show the progress onto the LCD
 
-		if (ProgrammingFault)                                           // Error out early if there's a problem
-		  return;
+		if (ProgrammingFault)                                           // Error out early if there's a problem such as a timeout
+		{
+			VAMM_ExitStorageMode();                                     // Cleanup virtual AVR memory manager
+			return;
+		}
 	}
+	
+	VAMM_ExitStorageMode();                                             // Cleanup virtual AVR memory manager
 }
-

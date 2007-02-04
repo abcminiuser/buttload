@@ -53,7 +53,6 @@ void ISPCC_EnterChipProgrammingMode(void)
 
 			InProgrammingMode = TRUE;
 			MAIN_SETSTATUSLED(MAIN_STATLED_RED);
-			PacketBytes[1] = AICB_STATUS_CMD_OK;
 			return;
 		}
 		
@@ -65,7 +64,7 @@ void ISPCC_EnterChipProgrammingMode(void)
 	// resetting the status leds to green (ready) and send a fail message.
 
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);
-	PacketBytes[1] = AICB_STATUS_CMD_FAILED;
+	InProgrammingMode = FALSE;
 	TG_PlayToneSeq(TONEGEN_SEQ_SYNCFAIL);
 }
 

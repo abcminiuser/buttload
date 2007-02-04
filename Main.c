@@ -965,7 +965,7 @@ static void MAIN_SetAutoSleepTimeOut(void)
 			}
 			else
 			{
-				MAIN_IntToStr(pgm_read_byte(&AutoSleepTOValues[SleepVal]), &SleepTxtBuffer[0]);
+				MAIN_IntToStr(pgm_read_byte(&AutoSleepTOValues[SleepVal]), SleepTxtBuffer);
 				SleepTxtBuffer[3] = ' ';         // Remove the auto-string termination from the buffer
 				LCD_puts(SleepTxtBuffer);
 			}
