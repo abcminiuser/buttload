@@ -1,8 +1,9 @@
 /*
              BUTTLOAD - Butterfly ISP Programmer
-				
-              Copyright (C) Dean Camera, 2006.
+
+              Copyright (C) Dean Camera, 2007.
                   dean_camera@hotmail.com
+            http://home.pacific.net.au/~sthelena/
 */
 
 #define  INC_FROM_V2P
@@ -127,10 +128,25 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 							case AICB_CMD_LOAD_ADDRESS:
 								MessageSize = 2;
 
-								CurrAddress = ((uint32_t)PacketBytes[1] << 24)
-								            | ((uint32_t)PacketBytes[2] << 16)
-											| ((uint16_t)PacketBytes[3] << 8)
-											|            PacketBytes[4];
+								union
+								{
+									uint8_t  Bytes[4];
+									uint32_t UnsignedLong;
+								} Conv;
+								
+								#if (COMP_BYTE_ORDER == COMP_ORDER_LITTLE)
+									Conv.Bytes[0] = PacketBytes[4];
+									Conv.Bytes[1] = PacketBytes[3];
+									Conv.Bytes[2] = PacketBytes[2];
+									Conv.Bytes[3] = PacketBytes[1];
+								#else
+									Conv.Bytes[3] = PacketBytes[4];
+									Conv.Bytes[2] = PacketBytes[3];
+									Conv.Bytes[1] = PacketBytes[2];
+									Conv.Bytes[0] = PacketBytes[1];								
+								#endif
+								
+								CurrAddress = Conv.UnsignedLong;
 
 								if (PacketDecodeFunction == AICI_InterpretPacket)
 								  V2P_CheckForExtendedAddress();

@@ -1,19 +1,19 @@
 /*
              BUTTLOAD - Butterfly ISP Programmer
-				
-              Copyright (C) Dean Camera, 2006.
+
+              Copyright (C) Dean Camera, 2007.
                   dean_camera@hotmail.com
-						
+            http://home.pacific.net.au/~sthelena/
 
   Requires: AVR-GCC 3.4.3 or above, AVRLibC version 1.4.1 or above.
             Compile in GNU99 standards mode, with optimization -0s.
 */
 
 /*
-	This program is distributed in the hope that it will be useful,
+    This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-	General Public License for more details.
+    General Public License for more details.
 */
 
 /*
@@ -27,13 +27,13 @@
 		   thus program AVRs via ISP in the field
 		
 		3) Devices with larger than 16-bit flash addresses (such as the MEGA2560) are supported.
-					
+
 			      Status Colour   | Description
 			      ----------------+-------------
 			       Green          | Ready
 			       Orange         | Busy
 			       Red            | Programming
-				   Red (Flashing) | Error
+			       Red (Flashing) | Error
 */
 
 /*
@@ -129,7 +129,7 @@
 BUTTLOADTAG(Title,     "BUTTLOAD AVRISP");
 BUTTLOADTAG(Version,   VERSION_VSTRING);
 BUTTLOADTAG(Author,    "BY DEAN CAMERA");
-BUTTLOADTAG(Copyright, "<C> 2005-2006");
+BUTTLOADTAG(Copyright, "<C> 2007 - GPL");
 
 // PROGMEM CONSTANTS:
 const char*   AboutTextPtrs[]                   PROGMEM = {BUTTTAG_Title.TagData, BUTTTAG_Version.TagData, BUTTTAG_Author.TagData, BUTTTAG_Copyright.TagData};
@@ -428,10 +428,12 @@ ISR(BADISR_vect, ISR_NAKED)                      // Bad ISR routine; should neve
 	TIMEOUT_SLEEP_TIMER_OFF();
 
 	MAIN_SETSTATUSLED(MAIN_STATLED_RED);
-
-	MAIN_ShowError(PSTR("BADISR"));
 		
-	for (;;) { SLEEPCPU(SLEEP_POWERSAVE); };
+	for (;;)
+	{
+		MAIN_ShowError(PSTR("BADISR"));
+		SLEEPCPU(SLEEP_POWERSAVE);
+	};
 }
 
 ISR(TIMER1_COMPA_vect, ISR_NAKED)                // Used for status LED flashing during an error
@@ -987,9 +989,63 @@ static void MAIN_GoBootloader(void)
 	void MAIN_Util_RAMFill(void)
 	{
 		/* Debugging aid. Fills ram up with the recognisable constant DC (my initials) on program start.
-		this makes it easier to look for stack overflows and other memory related problems.           */
+		   this makes it easier to look for stack overflows and other memory related problems.           */
 	
 		for (uint16_t RamLoc = 0x0100; RamLoc < RAMEND; RamLoc++)
 		  *((uint8_t*)RamLoc) = 0xDC;
+	}
+#endif
+
+#ifdef DEBUG_BYTEORDERTEST
+	void MAIN_Util_ByteOrderTest(void)
+	{
+		/* Debugging aid. Ensures that the selected byte ordering (in GlobalMacros.h) is correct. This
+		   prevents corruption issues when converting between data types using unions rather than normal
+		   bitshifts to save on flash. In the event of a misconfiguration, the Butterfly's speaker will
+		   play tone on a perpetual loop and fail to start.                                              */
+	
+		uint8_t Success  = FALSE;
+		
+		union
+		{
+			uint8_t  Bytes[2];
+			uint16_t UnsignedInt;
+		} UnionTest = { UnsignedInt: 0x00FF };
+		
+		#if (COMP_BYTE_ORDER == COMP_ORDER_LITTLE)
+			if (UnionTest.Bytes[0] == 0xFF)
+			  Success = TRUE;
+		#else
+			if (UnionTest.Bytes[1] == 0xFF)
+			  Success = TRUE;
+		#endif
+		
+		if (Success == FALSE)
+		{
+			DDRB = (1 << 5);
+			
+			for (;;)
+			  TG_PlayToneSeq(TONEGEN_SEQ_SLEEP);
+		}
+	}
+#endif
+
+#ifdef DEBUG_SERIALTRANS
+	void MAIN_Util_SerialTrans(void)
+	{
+		/* Debugging aid. Sends out a known string on startup to diagnose serial connection problems. */
+		
+		char* StringByte = BUTTTAG_Title.TagData;
+		
+		OSCCAL_Calibrate();
+		USART_Init();
+		
+		while (*StringByte)
+		{
+			USART_Tx(*StringByte);
+			StringByte++;
+		}
+		
+		USART_OFF();
 	}
 #endif

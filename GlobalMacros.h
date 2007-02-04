@@ -1,8 +1,9 @@
 /*
              BUTTLOAD - Butterfly ISP Programmer
-				
-              Copyright (C) Dean Camera, 2006.
+
+              Copyright (C) Dean Camera, 2007.
                   dean_camera@hotmail.com
+            http://home.pacific.net.au/~sthelena/
 */
 
 #ifndef GLOBALMACROS_H
@@ -30,6 +31,10 @@
 	#define MACROS                    do
 	#define MACROE                    while (0)
 
+	#define COMP_BYTE_ORDER           COMP_ORDER_LITTLE
+	#define COMP_ORDER_LITTLE         0
+	#define COMP_ORDER_BIG            1
+
 	// Joystick Macros:
 	#define JOY_LEFT                  (1 << 2)
 	#define JOY_RIGHT                 (1 << 3)
@@ -53,15 +58,15 @@
 
 	// Function attributes:
 	#define ATTR_NO_RETURN            __attribute__ ((noreturn))
-	#define ATTR_INIT_SECTION         __attribute__ ((naked, section (".init1")))
+	#define ATTR_INIT_SECTION(x)      __attribute__ ((naked, section (".init" #x )))
 	#define ATTR_WARN_UNUSED_RESULT   __attribute__ ((warn_unused_result))
 
 	// Other General Macros:
-	#define ATOMIC_BLOCK(exitmode)   { exitmode cli();
-	#define END_ATOMIC_BLOCK         }
+	#define ATOMIC_BLOCK(exitmode)   do { exitmode cli();
+	#define END_ATOMIC_BLOCK         } while (0);
 	
-	#define ATOMIC_RESTORESTATE      inline void __irestore(uint8_t *s) { SREG = *s; }         \
-	                                 uint8_t __isave __attribute__((__cleanup__(__irestore))) = SREG;
-	#define ATOMIC_ASSUMEON          inline void __irestore(uint8_t *s) { sei(); *s = 0; }     \
-	                                 uint8_t __isave __attribute__((__cleanup__(__irestore))) = 0;
+	#define ATOMIC_RESTORESTATE      inline void __irestore(const uint8_t *s) { SREG = *s; }         \
+	                                 const uint8_t __isave __attribute__((__cleanup__(__irestore))) = SREG;
+	#define ATOMIC_ASSUMEON          inline void __irestore(const uint8_t *s) { sei(); (void)s; }     \
+	                                 const uint8_t __isave __attribute__((__cleanup__(__irestore))) = 0;
 #endif

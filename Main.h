@@ -1,8 +1,9 @@
 /*
              BUTTLOAD - Butterfly ISP Programmer
-				
-              Copyright (C) Dean Camera, 2006.
+
+              Copyright (C) Dean Camera, 2007.
                   dean_camera@hotmail.com
+            http://home.pacific.net.au/~sthelena/
 */
 
 #ifndef MAIN_H
@@ -11,6 +12,8 @@
 	// DEBUG SWITCHES
 	#define DEBUG_JTAGON
 	#define DEBUG_MEMFILLON
+	#define DEBUG_BYTEORDERTEST
+	#define DEBUG_SERIALTRANS
 	// END DEBUG SWITCHES
 	
 	// INCLUDES:
@@ -33,7 +36,7 @@
 	#include "ProgramManager.h"
 	#include "StorageManager.h"
 	#include "TagManager.h"
-	#include "ButtLoadTag.h"
+	#include "Support/ButtLoadTag.h"
 	#include "ToneGeneration.h"
 	#include "VirtualAVRMemManager.h"
 	#include "EEPROMVariables.h"
@@ -113,5 +116,7 @@
 	  static void MAIN_GoBootloader(void) ATTR_NO_RETURN;
 	#endif
 
-	void MAIN_Util_RAMFill(void) ATTR_INIT_SECTION;
+	void MAIN_Util_RAMFill(void) ATTR_INIT_SECTION(0);
+	void MAIN_Util_ByteOrderTest(void) ATTR_INIT_SECTION(3);
+	void MAIN_Util_SerialTrans(void) ATTR_INIT_SECTION(3);
 #endif
