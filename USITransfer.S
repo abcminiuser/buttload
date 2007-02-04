@@ -22,6 +22,7 @@
 #define  IO_ADDR(sfr)          _SFR_IO_ADDR(sfr)
 #define  HIGH(val)             (val >> 8)
 #define  LOW(val)              (val & 0xFF)
+
 #define  XL                    r26
 #define  XH                    r27
 
@@ -37,7 +38,7 @@
 #define  USI_USICR_PTR_ASM_REG X
 
 USI_SPITransmit:
-	sts  _SFR_MEM_ADDR(USIDR), USI_PARAM_ASM_REG                  ; Input uint8_t stored in R24, place in USI data register
+	sts  MEM_ADDR(USIDR), USI_PARAM_ASM_REG                       ; Input uint8_t stored in R24, place in USI data register
 	
 	ldi	 USI_CONTROL_ASM_REG,   (USICONTROLREGS)                  ; Preload values to be set into a temp reg for speed
 	ldi	 USI_CONTROLCK_ASM_REG, (USICONTROLREGS | (1 << USICLK))  ; Preload values to be set into a temp reg for speed	
@@ -133,5 +134,5 @@ SuperFastTransfer:
 
 Epilogue:
 	sei
-	lds  USI_PARAM_ASM_REG, MEM_ADDR(USIDR)                  ; Output uint8_t stored in R24, get from USI data register
+	lds  USI_PARAM_ASM_REG, MEM_ADDR(USIDR)                       ; Output uint8_t stored in R24, get from USI data register
 	ret

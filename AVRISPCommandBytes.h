@@ -37,21 +37,21 @@
 	#define AICB_PARAM_HARDWARE_VERSION    0x90
 	#define AICB_PARAM_SW_MAJOR            0x91
 	#define AICB_PARAM_SW_MINOR            0x92
+	#define AICB_PARAM_VTARGET             0x94
+	#define AICB_PARAM_VADJUST             0x95
 	#define AICB_PARAM_OSC_PSCALE          0x96
 	#define AICB_PARAM_OSC_CMATCH          0x97
 	#define AICB_PARAM_SCK_DURATION        0x98
-	#define AICB_PARAM_RESET_POLARITY      0x9E
-	#define AICB_PARAM_CONTROLLER_INIT     0x9F
 	#define AICB_PARAM_TOPCARD_DETECT      0x9A
 	#define AICB_PARAM_STATUS              0x9C
-	#define AICB_PARAM_VTARGET             0x94
-	#define AICB_PARAM_VADJUST             0x95
 	#define AICB_PARAM_DATA                0x9D
+	#define AICB_PARAM_RESET_POLARITY      0x9E
+	#define AICB_PARAM_CONTROLLER_INIT     0x9F
 	
 	#define AICB_STATUS_CMD_OK             0x00
-	#define AICB_STATUS_CMD_FAILED         0xC0
-	#define AICB_STATUS_CMD_UNKNOWN        0xC9
 	#define AICB_STATUS_CMD_TOUT           0x80
+	#define AICB_STATUS_CMD_FAILED         0xC0
 	#define AICB_STATUS_CKSUM_ERROR        0xC1
+	#define AICB_STATUS_CMD_UNKNOWN        0xC9
 	
 #endif

@@ -18,11 +18,11 @@
 #define INC_FROM_DRIVER
 #include "LCD_Driver.h"
 
-volatile char     TextBuffer[LCD_TEXTBUFFER_SIZE + 7] = {};
-volatile uint8_t  SegBuffer[LCD_SEGBUFFER_SIZE]       = {};
+//                           LCD Text            + Nulls for scrolling + Null Termination
+volatile char     TextBuffer[LCD_TEXTBUFFER_SIZE + LCD_DISPLAY_SIZE    + 1] = {};
 volatile uint8_t  StrStart                            = 0;
 volatile uint8_t  StrEnd                              = 0;
-volatile uint8_t  ScrollMode                          = 0;
+volatile uint8_t  ScrollDisplay                       = 0;
 volatile uint8_t  ScrollCount                         = 0;
 volatile uint8_t  LCDFlags                            = 0;
 
@@ -103,86 +103,73 @@ void LCD_Init(void)
 
 void LCD_puts_f(const char *FlashData)
 {
-	char StrBuff[LCD_TEXTBUFFER_SIZE];
+	/* Rather than create a new buffer here (wasting RAM), the TextBuffer global
+	   is re-used as a temp buffer. Once the ASCII data is loaded in to TextBuffer,
+	   LCD_puts is called with it to post-process it into the correct format for the
+	   LCD interrupt.                                                                */
 
-	strcpy_P(StrBuff, FlashData);
-	LCD_puts(StrBuff);
+	strcpy_P((char*)&TextBuffer[0], FlashData);
+	LCD_puts((char*)&TextBuffer[0]);
 }
 
 void LCD_puts(const char *Data)
 {
-	uint8_t LoadB;
-	
-	for (LoadB = 0; LoadB < 20; LoadB++)
-	{
-		uint8_t CByte = *(Data++);
-	
-		if ((CByte >= '*') && (CByte <= 'z') && (CByte != ' '))
-		  TextBuffer[LoadB] = (CByte - '*');
-		else if (CByte == 0x00)
-		  break;
-		else
-		  TextBuffer[LoadB] = 0xFF;		
-	}
+	uint8_t LoadB       = 0;
+	uint8_t CurrByte;
 
-	ScrollMode  = ((LoadB > 6)? TRUE : FALSE);
+	do
+	{
+		CurrByte = *(Data++);
+		
+		switch (CurrByte)
+		{
+			case '*'...'z':	                   // Valid character, load it into the array
+				TextBuffer[LoadB++] = (CurrByte - '*');
+				break;
+			case 0x00:                         // Null termination of the string - ignore for now so the nulls can be appended below
+				break;
+			case ' ':                          // Space or invalid character, use 0xFF to display a blank
+			default:
+				TextBuffer[LoadB++] = LCD_SPACE_OR_INVALID_CHAR;
+		}
+	}
+	while (CurrByte && (LoadB < LCD_TEXTBUFFER_SIZE));
+
+	ScrollDisplay = ((LoadB > LCD_DISPLAY_SIZE)? TRUE : FALSE);
 
 	for (uint8_t Nulls = 0; Nulls < 7; Nulls++)
-		TextBuffer[LoadB++] = 0xFF;
+	  TextBuffer[LoadB++] = LCD_SPACE_OR_INVALID_CHAR; // Load in nulls to ensure that when scrolling, the display clears before wrapping
 	
-	TextBuffer[LoadB] = 0x00;
+	TextBuffer[LoadB] = 0x00;                  // Null-terminate string
+	
 	StrStart    = 0;
-	StrEnd      = LoadB;	
+	StrEnd      = LoadB;
 	ScrollCount = LCD_SCROLLCOUNT_DEFAULT + LCD_DELAYCOUNT_DEFAULT;
 
 	LCDFlags   |= LCD_FLAG_UPDATE;
 }
 
-static inline void LCD_WriteChar(const uint8_t Byte, const char Digit)
-{
-	uint16_t SegData  = 0x0000;
-	uint8_t  *BuffPtr = (uint8_t*)(&SegBuffer[0] + (Digit >> 1));
-
-	if (Byte != 0xFF)
-	  SegData = pgm_read_word(&LCD_SegTable[Byte]);	
-
-	for (uint8_t BNib = 0; BNib < 4; BNib++)
-	{
-		uint8_t Mask          = 0xF0;
-		uint8_t MaskedSegData = (SegData & 0x0000F);
-	
-		if (Digit & 0x01)
-		{
-			Mask = 0x0F;
-			MaskedSegData <<= 4;
-		}
-		
-		*BuffPtr = ((*BuffPtr & Mask) | MaskedSegData);
-
-		SegData >>= 4;
-		BuffPtr  += 5;
-	}	
-}
-
 ISR(LCD_vect, ISR_NOBLOCK)
 {
-	if (LCDFlags & LCD_FLAG_BLOCKISR) // ISR is interruptable, but not re-enterable
+	uint8_t LCDFlagsLocalCopy = LCDFlags;      // Local copy of the global flags, use to save space
+
+	if (LCDFlagsLocalCopy & LCD_FLAG_BLOCKISR) // ISR is interruptable, but not re-enterable
 	  return;
 	else
-	  LCDFlags |= LCD_FLAG_BLOCKISR;
+	  LCDFlags |= LCD_FLAG_BLOCKISR;           // Set global copy here, so that it takes effect!
 
-	if (ScrollMode)
+	if (ScrollDisplay)
 	{
 		if (!(ScrollCount--))
 		{
-			LCDFlags   |= LCD_FLAG_UPDATE;
+			LCDFlagsLocalCopy |= LCD_FLAG_UPDATE;
 			ScrollCount = LCD_SCROLLCOUNT_DEFAULT;
 		}
 	}
 
-	if (LCDFlags & LCD_FLAG_UPDATE)
+	if (LCDFlagsLocalCopy & LCD_FLAG_UPDATE)
 	{
-		for (uint8_t Character = 0; Character < 6; Character++)
+		for (uint8_t Character = 0; Character < LCD_DISPLAY_SIZE; Character++)
 		{
 			uint8_t Byte = (StrStart + Character);
 
@@ -194,10 +181,28 @@ ISR(LCD_vect, ISR_NOBLOCK)
 		
 		if (StrStart++ == StrEnd)
 		  StrStart = 1;
-
-		for (uint8_t LCDChar = 0; LCDChar <= LCD_SEGBUFFER_SIZE; LCDChar++)
-		  *(LCD_LCDREGS_START + LCDChar) = SegBuffer[LCDChar];
 	}
 
-	LCDFlags = 0;
+	LCDFlags = 0;                              // Clear LCD management flags, LCD update is complete
+}
+
+static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit)
+{
+	uint16_t SegData  = 0x0000;
+
+	if (Byte != LCD_SPACE_OR_INVALID_CHAR)     // Null indicates invalid character or space
+	  SegData = pgm_read_word(&LCD_SegTable[Byte]);	
+
+	for (uint8_t BNib = 0; BNib < 4; BNib++)
+	{
+		uint8_t *BuffPtr      = (uint8_t*)(LCD_LCDREGS_START + (5 * BNib) + (Digit >> 1));
+		uint8_t MaskedSegData = (SegData & 0x0000F);
+	
+		if (Digit & 0x01)
+		  *BuffPtr = ((*BuffPtr & 0x0F) | (MaskedSegData << 4));
+		else
+		  *BuffPtr = ((*BuffPtr & 0xF0) | MaskedSegData);
+
+		SegData >>= 4;
+	}	
 }

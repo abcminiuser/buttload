@@ -38,7 +38,7 @@
 /*
 	KNOWN ISSUES:
 
-		1) A maximum of 10 fuse bytes and 10 lock bytes can be stored in memory at any one
+		1) A maximum of 20 fuse bytes and 20 lock bytes can be stored in memory at any one
 		   time (writing the same fuse overwrites the existing value). If it is attempted to
 		   write more than this maximum, the extra bytes will be ignored.
 */
@@ -377,7 +377,7 @@ void MAIN_ShowProgType(const uint8_t Letter)
 
 void MAIN_ShowError(const char *pFlashStr)
 {
-	char ErrorBuff[LCD_TEXTBUFFER_SIZE + 2];     // New buffer, LCD text buffer size plus space for the "E>" prefix
+	char ErrorBuff[LCD_TEXTBUFFER_SIZE + 3];     // New buffer, LCD text buffer size plus space for the "E>" prefix and null-termination
 	uint8_t CurrLedStatus = (MAIN_STATUSLED_PORT & MAIN_STATLED_ORANGE);
 	
 	ErrorBuff[0] = 'E';
@@ -385,6 +385,7 @@ void MAIN_ShowError(const char *pFlashStr)
 
 	strcpy_P(&ErrorBuff[2], pFlashStr);          // WARNING: If flash error text is larger than TEXTBUFFER_SIZE,
 	                                             // this will overflow the buffer and crash the program!
+
 	LCD_puts(ErrorBuff);
 	MAIN_SETSTATUSLED(MAIN_STATLED_RED);	
 	TG_PlayToneSeq(TONEGEN_SEQ_ERROR);
@@ -405,7 +406,7 @@ void MAIN_ShowError(const char *pFlashStr)
 // ======================================================================================
 
 ISR_ALIAS_COMPAT(PCINT0_vect, PCINT1_vect);
-ISR(PCINT1_vect, ISR_NOBLOCK)                    // Joystick routine; PCINT0_vect is bound to this also via JoystickInterrupt.S
+ISR(PCINT1_vect, ISR_NOBLOCK)                    // Joystick routine; PCINT0_vect is bound to this also
 {
 	JoyStatus = (~PINB & JOY_BMASK)
 	          | (~PINE & JOY_EMASK);
@@ -430,7 +431,7 @@ ISR(BADISR_vect, ISR_NAKED)                      // Bad ISR routine; should neve
 
 ISR(TIMER1_COMPA_vect, ISR_NAKED)                // Used for status LED flashing during an error
 {
-	MAIN_STATUSLED_PIN |= MAIN_STATLED_RED;      // Compiles down to a SBI - the PIN register toggles a bit on the MEGA169 if the bit is set as an output
+	MAIN_TOGGLESTATUSLED(MAIN_STATLED_RED);      // Compiles down to a SBI - the PIN register toggles a bit on the MEGA169 if the bit is set as an output
 	reti();                                      // No register changes, so ISR is naked - RETI must be put here explicitly
 }
 

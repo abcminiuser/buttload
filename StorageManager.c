@@ -179,7 +179,7 @@ void SM_InterpretAVRISPPacket(void)
 				uint8_t FuseLockNum  = DataflashInfo.CurrBuffByte;
 				uint8_t FuseLockByte = (PacketBytes[1] - 1);
 				
-				PacketBytes[2] = eeprom_read_byte((uint8_t*)(((PacketBytes[0] == AICB_CMD_READ_FUSE_ISP)? &EEPROMVars.FuseBytes[FuseLockNum][FuseLockByte] : &EEPROMVars.LockBytes[FuseLockNum][FuseLockByte])));
+				PacketBytes[2] = eeprom_read_byte((PacketBytes[0] == AICB_CMD_READ_FUSE_ISP)? &EEPROMVars.FuseBytes[FuseLockNum][FuseLockByte] : &EEPROMVars.LockBytes[FuseLockNum][FuseLockByte]);
 			}
 
 			DataflashInfo.CurrBuffByte++;

@@ -51,7 +51,7 @@
 	
 		#if defined(DEBUG_DBFUNCSON)
 			#warning DEBUG_DBFUNCSON option is activated - Debug routines are enabled. Remove before releasing.
-		#endif
+		#endif		
 	#endif
 	
 	// EXTERNAL VARIABLES:
@@ -67,17 +67,19 @@
 	extern const uint8_t BitTable[]  PROGMEM;
 
 	// DEFINES AND MACROS:
-	#define MAIN_STATUSLED_PORT      PORTF
-	#define MAIN_STATUSLED_PIN       PINF
+	#define MAIN_STATUSLED_PORT        PORTF
+	#define MAIN_STATUSLED_PIN         PINF
 	
-	#define MAIN_SETSTATUSLED(mask)  MACROS{ MAIN_STATUSLED_PORT = ((MAIN_STATUSLED_PORT & ~MAIN_STATLED_ORANGE) | (mask)); }MACROE
-	#define MAIN_STATLED_GREEN       (1 << 4)
-	#define MAIN_STATLED_RED         (1 << 5)
-	#define MAIN_STATLED_ORANGE      (MAIN_STATLED_GREEN | MAIN_STATLED_RED)
-	#define MAIN_STATLED_OFF         0
+	#define MAIN_SETSTATUSLED(mask)    MACROS{ MAIN_STATUSLED_PORT = ((MAIN_STATUSLED_PORT & ~MAIN_STATLED_ORANGE) | (mask)); }MACROE
+	#define MAIN_TOGGLESTATUSLED(mask) MACROS{ MAIN_STATUSLED_PIN |= mask; }MACROE
+
+	#define MAIN_STATLED_GREEN         (1 << 4)
+	#define MAIN_STATLED_RED           (1 << 5)
+	#define MAIN_STATLED_ORANGE        (MAIN_STATLED_GREEN | MAIN_STATLED_RED)
+	#define MAIN_STATLED_OFF           0
 	
-	#define MAIN_RESETCS_ACTIVE      0
-	#define MAIN_RESETCS_INACTIVE    1
+	#define MAIN_RESETCS_ACTIVE        0
+	#define MAIN_RESETCS_INACTIVE      1
 		
 	// PROTOTYPES:
 	void MAIN_ResetCSLine(const uint8_t ActiveInactive);

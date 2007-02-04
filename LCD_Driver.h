@@ -18,16 +18,18 @@
 	
 	// DEFINES:
 	#define LCD_LCDREGS_START         ((uint8_t*)&LCDDR0)
+	#define LCD_SPACE_OR_INVALID_CHAR 0xFF
 	
 	#define LCD_CONTRAST_LEVEL(level) MACROS{ LCDCCR = (0x0F & level); }MACROE
+	
 	#define LCD_SCROLLCOUNT_DEFAULT   3
 	#define LCD_DELAYCOUNT_DEFAULT    10
 	#define LCD_TEXTBUFFER_SIZE       20
 	#define LCD_SEGBUFFER_SIZE        19
+	#define LCD_DISPLAY_SIZE          6
 	
 	#define LCD_FLAG_UPDATE           (1 << 0)
 	#define LCD_FLAG_BLOCKISR         (1 << 1)
-	#define LCD_FLAG_SCROLL           (1 << 2)
 	
 	/*                        DIRTY HACK ALERT!!
 	   This will display the "val" number of arrows running atop the Butterfly's
@@ -58,7 +60,7 @@
 	void LCD_Init(void);
 	
 	#if defined(INC_FROM_DRIVER)
-	  static inline void LCD_WriteChar(const uint8_t Byte, const char Digit);
+	  static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit);
 	#endif
 
 #endif

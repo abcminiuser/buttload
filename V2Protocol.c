@@ -147,7 +147,7 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 								break;			
 							case AICB_CMD_GET_PARAMETER:
 							case AICB_CMD_SET_PARAMETER:						
-								V2P_GetSetParamater();
+								V2P_GetSetParameter();
 								break;
 							default:
 								((FuncPtr)PacketDecodeFunction)();        // Run the interpret packet routine as set by the pointer
@@ -245,7 +245,7 @@ static uint8_t V2P_GetChecksum(void)
 	return CheckSumByte;
 }
 
-static void V2P_GetSetParamater(void)
+static void V2P_GetSetParameter(void)
 {
 	uint8_t Param_Name = PacketBytes[1];    // Save the parameter number
 
