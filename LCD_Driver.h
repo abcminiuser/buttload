@@ -16,20 +16,24 @@
 	#include "ISRMacro.h"
 	#include "GlobalMacros.h"
 	
+	// EXTERNAL VARIABLES:
+	extern volatile uint8_t ScrollFlags;
+	
 	// DEFINES:
-	#define LCD_LCDREGS_START         ((uint8_t*)&LCDDR0)
-	#define LCD_SPACE_OR_INVALID_CHAR 0xFF
+	#define LCD_LCDREGS_START          ((uint8_t*)&LCDDR0)
+	#define LCD_SPACE_OR_INVALID_CHAR  0xFF
 	
-	#define LCD_CONTRAST_LEVEL(level) MACROS{ LCDCCR = (0x0F & level); }MACROE
+	#define LCD_CONTRAST_LEVEL(level)  MACROS{ LCDCCR = (0x0F & level); }MACROE
+	#define LCD_WAIT_FOR_SCROLL_DONE() MACROS{ while (!(ScrollFlags & LCD_FLAG_SCROLL_DONE)) {} }MACROE	
 	
-	#define LCD_SCROLLCOUNT_DEFAULT   3
-	#define LCD_DELAYCOUNT_DEFAULT    10
-	#define LCD_TEXTBUFFER_SIZE       20
-	#define LCD_SEGBUFFER_SIZE        19
-	#define LCD_DISPLAY_SIZE          6
-	
-	#define LCD_FLAG_UPDATE           (1 << 0)
-	#define LCD_FLAG_BLOCKISR         (1 << 1)
+	#define LCD_SCROLLCOUNT_DEFAULT    3
+	#define LCD_DELAYCOUNT_DEFAULT     10
+	#define LCD_TEXTBUFFER_SIZE        20
+	#define LCD_SEGBUFFER_SIZE         19
+	#define LCD_DISPLAY_SIZE           6
+
+	#define LCD_FLAG_SCROLL            (1 << 0)
+	#define LCD_FLAG_SCROLL_DONE       (1 << 1)	
 	
 	/*                        DIRTY HACK ALERT!!
 	   This will display the "val" number of arrows running atop the Butterfly's

@@ -192,7 +192,7 @@ int main(void)
 	PORTB   = ((1 << 0) | (1 << 1) | (1 << 2) | (1 << 3)   // Set SPI pins to high/pullups, and disable dataflash (send /CS high)
 	        | JOY_BMASK);                        // \ Turn joystick
 	PORTE   = JOY_EMASK;                         // /  pullups on
-	PORTF   = (1 << 7);                          // Enable PORTF pullup on Bat Detect pin
+	PORTF   = (1 << 7);                          // Enable PORTF pullup on unused PORTF pin to save power
 		  
 	PCMSK0  = JOY_EMASK;                         // \.
 	PCMSK1  = JOY_BMASK;                         // | Turn on joystick
@@ -300,17 +300,20 @@ void MAIN_ResetCSLine(const uint8_t ActiveInactive)
 		
 			break;
 		case MAIN_RESETCS_INACTIVE:              // Must determine what to do for inactive RESET.
-			if (eeprom_read_byte(&EEPROMVars.SPIResetMode)) // FLOAT mode reset
+			if (eeprom_read_byte(&EEPROMVars.SPIResetMode))  // FLOAT mode reset
 			{
 				DDRF  &= ~(1 << 6);
+
 				PORTF &= ~(1 << 6);
 			}
-			else                                 // ACTIVE mode reset
+			else                                             // ACTIVE mode reset
 			{
+				DDRF |= (1 << 6);
+			
 				if (eeprom_read_byte(&EEPROMVars.ResetPolarity)) // Translate to correct inactive logic level for target device type
 				  PORTF |=  (1 << 6);
 				else
-				  PORTF &= ~(1 << 6);			
+				  PORTF &= ~(1 << 6);	
 			}
 	}
 }
@@ -325,8 +328,9 @@ void MAIN_WaitForJoyRelease(void)
 
 	for (;;)
 	{
-		while (JoyStatus) { SLEEPCPU(SLEEP_POWERSAVE); };         // Wait until joystick released
-
+		while (JoyStatus)                        // Wait until joystick released
+		  SLEEPCPU(SLEEP_POWERSAVE);
+		  
 		MAIN_Delay10MS(2);
 
 		if (!(JoyStatus))                        // Joystick still released (not bouncing), return
@@ -586,7 +590,7 @@ static void MAIN_ChangeSettings(void)
 static void MAIN_ClearMem(void)
 {
 	LCD_puts_f(PSTR("CONFIRM"));
-	MAIN_Delay10MS(180);
+	LCD_WAIT_FOR_SCROLL_DONE();                  // Loop until the message has finished scrolling completely
 
 	LCD_puts_f(PSTR("<N Y>"));
 
@@ -617,7 +621,7 @@ static void MAIN_ClearMem(void)
 
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Set status LEDs to green (ready)
 	LCD_puts_f(PSTR("MEM CLEARED"));
-	MAIN_Delay10MS(250);
+	LCD_WAIT_FOR_SCROLL_DONE();                  // Loop until the message has finished scrolling completely
 }
 
 static void MAIN_SetContrast(void)

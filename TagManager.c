@@ -9,7 +9,7 @@
 #include "TagManager.h"
 
 uint8_t  TagExists       = FALSE;
-uint32_t DFDataBytesLeft = 0x0000;
+uint32_t DFDataBytesLeft = 0x00000000;
 
 // ======================================================================================
 
@@ -46,29 +46,25 @@ void TM_ShowTags(void)
 
 static void TM_FindNextTag(void)
 {
-	char     Buffer[21];
-	char     HeadBuff[4]      = BT_TAGHEADER;
-	char     TagByte;
-	uint8_t  TotalOkHeadBytes = 0;
-	uint8_t  DFBytesRead      = 0;
+	char       Buffer[21];
+	const char HeadBuff[4]      = BT_TAGHEADER;
+	char       TagByte;
+	uint8_t    TotalOkHeadBytes = 0;
 	
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);    // Orange = busy
 	LCD_puts_f(WaitText);
 
-	while ((DFDataBytesLeft - DFBytesRead) != 0)
-	{
-		DFBytesRead = 1;
+	while (DFDataBytesLeft)
+	{		
+		TagByte = TM_GetNextByte();            // Get next byte from dataflash
 		
-		TagByte = SPI_SPITransmit(0x00);       // Get next byte from dataflash
 		if (TagByte == HeadBuff[TotalOkHeadBytes++])
 		{
 			if (TotalOkHeadBytes == 4)
 			{
-				uint8_t BuffPos;
-			
-				for (BuffPos = 0; BuffPos < 20; BuffPos++)
+				for (uint8_t BuffPos = 0; BuffPos < 20; BuffPos++)
 				{
-					TagByte = SPI_SPITransmit(0x00);
+					TagByte = TM_GetNextByte();
 					Buffer[BuffPos] = TagByte;
 					
 					if (TagByte == 0x00)
@@ -78,7 +74,6 @@ static void TM_FindNextTag(void)
 				Buffer[20] = '\0';             // Make sure string is null-terminated
 
 				TagExists   = TRUE;
-				DFBytesRead = (BuffPos + 2);
 
 				LCD_puts(Buffer);
 				MAIN_SETSTATUSLED(MAIN_STATLED_GREEN); // Green = ready
@@ -109,4 +104,11 @@ static void TM_FindNextTag(void)
            function returns to the main tag handling routine.                               */
 		TM_FindNextTag();
 	}
+}
+
+static uint8_t TM_GetNextByte(void)
+{
+	DFDataBytesLeft--;
+	
+	return SPI_SPITransmit(0x00);
 }

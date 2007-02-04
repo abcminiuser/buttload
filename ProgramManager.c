@@ -193,8 +193,7 @@ void PM_StartProgAVR(void)
 				TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);		
 			}
 	
-			MAIN_Delay10MS(172);
-			MAIN_Delay10MS(172);
+			LCD_WAIT_FOR_SCROLL_DONE();          // Loop until the message has finished scrolling completely
 		}
 	}
 	else

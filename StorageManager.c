@@ -12,7 +12,7 @@
 uint8_t  MemoryType          = TYPE_FLASH;
 uint8_t  CurrentMode         = SM_NO_SETUP;
 uint16_t GPageLength         = 0;
-uint8_t  WriteCmdStored      = 0;
+uint8_t  WriteCmdStored      = FALSE;
 
 const char StorageText[] PROGMEM = "*STORAGE MODE*";
 
@@ -99,7 +99,7 @@ void SM_InterpretAVRISPPacket(void)
 			MessageSize = 4;
 
 			PacketBytes[1] = AICB_STATUS_CMD_OK;                        // Data byte is encased in CMD_OKs
-			PacketBytes[2] = 0x01;                                      // Signature bytes all return "01" in storage mode
+			PacketBytes[2] = 0x01;                                      // Signature bytes all return 0x01 in storage mode
 			PacketBytes[3] = AICB_STATUS_CMD_OK;                        // Data byte is encased in CMD_OKs
 
 			break;

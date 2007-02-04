@@ -20,11 +20,11 @@
 
 //                           LCD Text            + Nulls for scrolling + Null Termination
 volatile char     TextBuffer[LCD_TEXTBUFFER_SIZE + LCD_DISPLAY_SIZE    + 1] = {};
-volatile uint8_t  StrStart                            = 0;
-volatile uint8_t  StrEnd                              = 0;
-volatile uint8_t  ScrollDisplay                       = 0;
-volatile uint8_t  ScrollCount                         = 0;
-volatile uint8_t  LCDFlags                            = 0;
+volatile uint8_t  StrStart        = 0;
+volatile uint8_t  StrEnd          = 0;
+volatile uint8_t  ScrollFlags     = 0;
+volatile uint8_t  ScrollCount     = 0;
+volatile uint8_t  UpdateDisplay   = FALSE;
 
 const    uint16_t LCD_SegTable[] PROGMEM =
 {
@@ -135,39 +135,31 @@ void LCD_puts(const char *Data)
 	}
 	while (CurrByte && (LoadB < LCD_TEXTBUFFER_SIZE));
 
-	ScrollDisplay = ((LoadB > LCD_DISPLAY_SIZE)? TRUE : FALSE);
+	ScrollFlags = ((LoadB > LCD_DISPLAY_SIZE)? LCD_FLAG_SCROLL : 0x00);
 
 	for (uint8_t Nulls = 0; Nulls < 7; Nulls++)
 	  TextBuffer[LoadB++] = LCD_SPACE_OR_INVALID_CHAR; // Load in nulls to ensure that when scrolling, the display clears before wrapping
 	
 	TextBuffer[LoadB] = 0x00;                  // Null-terminate string
 	
-	StrStart    = 0;
-	StrEnd      = LoadB;
-	ScrollCount = LCD_SCROLLCOUNT_DEFAULT + LCD_DELAYCOUNT_DEFAULT;
-
-	LCDFlags   |= LCD_FLAG_UPDATE;
+	StrStart      = 0;
+	StrEnd        = LoadB;
+	ScrollCount   = LCD_SCROLLCOUNT_DEFAULT + LCD_DELAYCOUNT_DEFAULT;
+	UpdateDisplay = TRUE;
 }
 
-ISR(LCD_vect, ISR_NOBLOCK)
+ISR(LCD_vect, ISR_BLOCK)
 {
-	uint8_t LCDFlagsLocalCopy = LCDFlags;      // Local copy of the global flags, use to save space
-
-	if (LCDFlagsLocalCopy & LCD_FLAG_BLOCKISR) // ISR is interruptable, but not re-enterable
-	  return;
-	else
-	  LCDFlags |= LCD_FLAG_BLOCKISR;           // Set global copy here, so that it takes effect!
-
-	if (ScrollDisplay)
+	if (ScrollFlags & LCD_FLAG_SCROLL)
 	{
 		if (!(ScrollCount--))
 		{
-			LCDFlagsLocalCopy |= LCD_FLAG_UPDATE;
-			ScrollCount = LCD_SCROLLCOUNT_DEFAULT;
+			UpdateDisplay = TRUE;
+			ScrollCount   = LCD_SCROLLCOUNT_DEFAULT;
 		}
 	}
 
-	if (LCDFlagsLocalCopy & LCD_FLAG_UPDATE)
+	if (UpdateDisplay)
 	{
 		for (uint8_t Character = 0; Character < LCD_DISPLAY_SIZE; Character++)
 		{
@@ -179,11 +171,14 @@ ISR(LCD_vect, ISR_NOBLOCK)
 			LCD_WriteChar(TextBuffer[Byte], Character);
 		}
 		
+		if ((StrStart + (LCD_DISPLAY_SIZE + 1)) == StrEnd)
+		  ScrollFlags |= LCD_FLAG_SCROLL_DONE;
+		
 		if (StrStart++ == StrEnd)
-		  StrStart = 1;
-	}
+		  StrStart     = 1;
 
-	LCDFlags = 0;                              // Clear LCD management flags, LCD update is complete
+		UpdateDisplay  = FALSE;                         // Clear LCD management flags, LCD update is complete
+	}
 }
 
 static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit)

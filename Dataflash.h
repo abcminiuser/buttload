@@ -35,13 +35,15 @@
 	#define DF_PAGESHIFT_HIGH        (16 - 9)
 	#define DF_PAGESHIFT_LOW         ( 9 - 8)
 	
+	#define DF_BUFFER_TO_FLASH       DFCB_BUF1TOFLASHWE
+	#define DF_FLASH_TO_BUFFER       DFCB_FLASHTOBUF1TRANSFER
+	
 	// GLOBAL VARIABLES:
 	extern DFinfo                    DataflashInfo;
 	
 	// PROTOTYPES:
 	uint8_t DF_CheckCorrectOnboardChip(void) ATTR_WARN_UNUSED_RESULT;
-	void    DF_CopyBufferToFlashPage(const uint16_t PageAddress);
-	void    DF_CopyFlashPageToBuffer(const uint16_t PageAddress);
+	void    DF_CopyPage(const uint16_t PageAddress, uint8_t Operation);
 	void    DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddress);
 	void    DF_BufferWriteEnable(const uint16_t BuffAddress);
 

@@ -7,6 +7,8 @@
 
 #include "USI.h"
 
+// ======================================================================================
+
 void USI_SPIInitMaster()
 {
  	DDRE  |=  (1 << USI_DATAOUT_PIN) | (1 << USI_CLOCK_PIN);

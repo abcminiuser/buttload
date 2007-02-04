@@ -20,7 +20,8 @@
 	void   TM_ShowTags(void);
 	
 	#if defined(INC_FROM_TM)
-	  static void   TM_FindNextTag(void);
+	  static void    TM_FindNextTag(void);
+	  static uint8_t TM_GetNextByte(void) ATTR_WARN_UNUSED_RESULT;
 	#endif
 	
 #endif

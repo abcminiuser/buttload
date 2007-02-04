@@ -44,12 +44,8 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 		{
 			case V2P_STATE_IDLE:
 
-				ATOMIC_BLOCK(ATOMIC_ASSUMEON)
-				{
-					if (BuffElements)             // Serial data recieved in FIFO buffer
+				if (BuffElements)                 // Serial data recieved in FIFO buffer
 					  V2PState = V2P_STATE_START;
-				}
-				END_ATOMIC_BLOCK
 				
 				if ((JoyStatus & JOY_LEFT) && !(InProgrammingMode))
 				{

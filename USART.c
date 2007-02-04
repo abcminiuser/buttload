@@ -26,7 +26,7 @@ void USART_Init(void)
 	UCSRA = 0;
 
     // Enable Rx/Tx subsections and recieve complete interrupt
-	UCSRB = ((1<<TXEN) | (1<<RXEN) | (1 << RXCIE));
+	UCSRB = ((1 << TXEN) | (1 << RXEN) | (1 << RXCIE));
 	 
     // Async. mode, 8N1
     UCSRC = (3 << UCSZ0);
@@ -43,17 +43,8 @@ void USART_Tx(const char data)
 
 char USART_Rx(void)
 {
-	uint8_t AtomicBuffElements;
-	
-	do
-	{
-		ATOMIC_BLOCK(ATOMIC_ASSUMEON)
-		{
-			AtomicBuffElements = BuffElements;
-		}
-		END_ATOMIC_BLOCK
-	}
-	while (!(AtomicBuffElements) && !(PacketTimeOut));
+	while (!(BuffElements) && !(PacketTimeOut))
+	  SLEEPCPU(SLEEP_IDLE);      // Idle: USART interrupt on reception of data, or timeout timer ISR will resume execution
 
 	return BUFF_GetBuffByte();
 }

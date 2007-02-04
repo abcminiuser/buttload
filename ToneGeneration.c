@@ -16,7 +16,7 @@ const uint8_t ToneSeq_Sleep[]    PROGMEM = { 94, 125, 156,      0x00};
 const uint8_t ToneSeq_Resume[]   PROGMEM = {156, 125,  94,      0x00};
 const uint8_t ToneSeq_Error[]    PROGMEM = {200, 220,           0x00};
 
-uint8_t ToneVol;
+uint8_t ToneVol = 0;
 
 // ======================================================================================
 
@@ -24,6 +24,8 @@ void TG_PlayToneSeq(const uint8_t* Sequence)
 {
 	if (!(ToneVol))                               // If no volume (off), skip tone playing
 	  return;
+	else if (ToneVol > 80)
+	  ToneVol = 80;
 
 	TIMSK1 = 0;                                   // Turn off timer interrupts
 	OCR1A  = ToneVol;                             // Set the tone volume via the global register
@@ -43,5 +45,6 @@ void TG_PlayToneSeq(const uint8_t* Sequence)
 		MAIN_Delay10MS(15);                       // Delay between tones - 150ms
 	}
 
+	TCCR1A = 0;                                   // Turn off compare output
 	TCCR1B = 0;                                   // Timer off
 }
