@@ -10,7 +10,7 @@
 
 	// INCLUDES:
 	#include <avr/eeprom.h>
-	
+		
 	// TYPE DEFINITIONS:
 	typedef struct
 	{
@@ -26,8 +26,8 @@
 		uint8_t  EnterProgMode[12];
 		uint8_t  TotalFuseBytes;
 		uint8_t  TotalLockBytes;
-		uint8_t  FuseBytes[10][4];
-		uint8_t  LockBytes[10][4];
+		uint8_t  FuseBytes[20][4];
+		uint8_t  LockBytes[20][4];
 		uint16_t PageLength;
 		uint16_t EPageLength;
 		uint8_t  LCDContrast;
@@ -39,7 +39,7 @@
 		uint8_t  StartupMode;
 		uint8_t  PageEraseReqFlags[249];
 
-		uint16_t  MagicNumber;	
+		uint16_t MagicNumber;	
 
 		uint8_t  JUNKVAR2;          // Unused location to guard against EEPROM corruption - this is mainly a
 		                            // problem because the Butterflies come shipped with the BOD fuse unprogrammed

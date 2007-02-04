@@ -278,11 +278,7 @@ void SM_InterpretAVRISPPacket(void)
 
 static void SM_CheckEndOfFuseLockData(void)
 {
-	if (CurrentMode == SM_DATAFLASH_WRITE)
-	{
-		VAMM_Cleanup();
-	}
-	else if (CurrentMode == SM_LOCKFUSEBITS_WRITE)
+	if (CurrentMode == SM_LOCKFUSEBITS_WRITE)
 	{
 		// CurrBuffByte stores the total number of fuse/lock bytes written in this case:
 		eeprom_write_byte(((MemoryType == TYPE_FUSE)? &EEPROMVars.TotalFuseBytes : &EEPROMVars.TotalLockBytes), DataflashInfo.CurrBuffByte);

@@ -25,7 +25,7 @@
 	
 	#define SM_PAGELENGTH_FOUNDBIT (1 << 15)
 	
-	#define SM_MAX_FUSELOCKBITS    10
+	#define SM_MAX_FUSELOCKBITS    20
 	
 	#define SM_EEPROM_OFFSET       (1024UL * 257UL)
 	

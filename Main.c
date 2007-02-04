@@ -28,11 +28,12 @@
 		
 		3) Devices with larger than 16-bit flash addresses (such as the MEGA2560) are supported.
 					
-			      Status Colour | Description
-			      --------------+------------
-			       Green        | Ready
-			       Orange       | Busy
-			       Red          | Programming
+			      Status Colour   | Description
+			      ----------------+-------------
+			       Green          | Ready
+			       Orange         | Busy
+			       Red            | Programming
+				   Red (Flashing) | Error
 */
 
 /*
@@ -124,12 +125,13 @@
 #define  INC_FROM_MAIN
 #include "Main.h"
 
-// PROGMEM CONSTANTS:
+// PROGRAM TAGS:
 BUTTLOADTAG(Title,     "BUTTLOAD AVRISP");
 BUTTLOADTAG(Version,   VERSION_VSTRING);
 BUTTLOADTAG(Author,    "BY DEAN CAMERA");
 BUTTLOADTAG(Copyright, "<C> 2005-2006");
 
+// PROGMEM CONSTANTS:
 const char*   AboutTextPtrs[]                   PROGMEM = {BUTTTAG_Title.TagData, BUTTTAG_Version.TagData, BUTTTAG_Author.TagData, BUTTTAG_Copyright.TagData};
 
 const char    WaitText[]                        PROGMEM = "*WAIT*";
@@ -205,7 +207,6 @@ int main(void)
 	sei();                                       // Enable interrupts
 
 	LCD_Init();
-	LCD_CONTRAST_LEVEL(0x0F);
 	LCD_puts_f(WaitText);
 	
 	if (eeprom_read_word(&EEPROMVars.MagicNumber) != MAGIC_NUM)       // Check if first ButtLoad run
@@ -320,7 +321,7 @@ void MAIN_ResetCSLine(const uint8_t ActiveInactive)
 
 void MAIN_WaitForJoyRelease(void)
 {
-	if (JoyStatus == JOY_INVALID)                // If invalid value used to force menu drawing, reset value and exit
+	if (JoyStatus == JOY_INVALID)                 // If invalid value used to force menu drawing, reset value and exit
 	{
 		JoyStatus = 0;
 		return;
@@ -341,7 +342,7 @@ void MAIN_WaitForJoyRelease(void)
 	}
 }
 
-void MAIN_IntToStr(uint16_t IntV, char* Buff)
+void MAIN_IntToStr(uint16_t IntV, char *Buff)
 {
 	// Shows leading zeros, unlike itoa.
 	// Maximum value which can be converted is 999.
@@ -395,9 +396,9 @@ void MAIN_ShowError(const char *pFlashStr)
 	TG_PlayToneSeq(TONEGEN_SEQ_ERROR);
 	
 	TIMSK1 = (1 << OCIE1A);                      // Enable compare match channel A interrupt
-	OCR1A  = 0x384;                              // Compare rate of 8Hz at 7372800Hz system clock, 1024 prescaler
+	OCR1A  = TIMEOUT_HZ_TO_COMP(8, TIMEOUT_SRC_CPU, 1024); // Compare rate of 8Hz at 7372800Hz system clock, 1024 prescaler
 	TCCR1A = 0;
-	TCCR1B = ((1 << WGM12) | (1 << CS12) | (1 << CS10)); // Start timer at Fcpu/1024 speed in CTC mode, flash the red status LED
+	TCCR1B = ((1 << WGM12) | (1 << CS12) | (1 << CS10));   // Start timer at Fcpu/1024 speed in CTC mode, flash the red status LED
 	
 	MAIN_WaitForJoyRelease();
 	while (!(JoyStatus & JOY_PRESS)) { SLEEPCPU(SLEEP_POWERSAVE); }; // Wait until center button pushed before continuing
@@ -515,11 +516,7 @@ static void MAIN_ProgramAVR(void)
 	{
 		if (JoyStatus)
 		{
-			if (JoyStatus & JOY_LEFT)
-			{
-				return;
-			}
-			else if (JoyStatus & JOY_PRESS)
+			if (JoyStatus & JOY_PRESS)
 			{
 				if (ProgMode == 1)
 				  PM_ChooseProgAVROpts();
@@ -529,6 +526,10 @@ static void MAIN_ProgramAVR(void)
 			else if (JoyStatus & (JOY_UP | JOY_DOWN))
 			{
 				ProgMode ^= 1;
+			}
+			else if (JoyStatus & JOY_LEFT)
+			{
+				return;
 			}
 
 			LCD_puts_f(ProgramAVROptions[ProgMode]);

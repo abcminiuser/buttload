@@ -44,13 +44,11 @@
 	#define ISPCC_LOW_BYTE_WRITE              (0 << 3)
 	
 	#define ISPCC_NO_FAULT                    0
-	#define ISPCC_FAULT_NOERASE               2
-	#define ISPCC_FAULT_NODATATYPE            3
-	#define ISPCC_FAULT_TIMEOUT               4
+	#define ISPCC_FAULT_NOERASE               1
+	#define ISPCC_FAULT_NODATATYPE            2
+	#define ISPCC_FAULT_TIMEOUT               3
 	
 	#define ISPCC_COMM_TIMEOUT                0x02D0 // 100ms timeout at 7372800Hz
-	
-	#define ISPCC_USIMASK                     ((1<<USI_DATAIN_PIN) | (1<<USI_DATAOUT_PIN) | (1<<USI_CLOCK_PIN))
 	
 	// EXTERNAL VARIABLES:
 	extern const char SyncErrorMessage[] PROGMEM;

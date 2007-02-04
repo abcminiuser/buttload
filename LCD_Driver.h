@@ -40,6 +40,7 @@
 	   display. It will be cleared if the currently displayed text is scrolling
 	   or changed.
 	*/
+	#define LCD_BARGRAPH_SIZE         6
 	#define LCD_BARGRAPH(val)         MACROS{                      \
 	                                  switch (val)                 \
                                       {                            \

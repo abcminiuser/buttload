@@ -35,10 +35,10 @@
 	#define V2P_STATE_GETTOKEN           5
 	#define V2P_STATE_GETDATA            6
 	#define V2P_STATE_GETCHECKSUM        7
-	#define V2P_STATE_PACKOK             8
-	#define V2P_STATE_PACKERR            9
-	#define V2P_STATE_TIMEOUT            10
-	#define V2P_STATE_BADCHKSUM          11
+	#define V2P_STATE_BADCHKSUM          8
+	#define V2P_STATE_TIMEOUT            9
+	#define V2P_STATE_PACKERR            10
+	#define V2P_STATE_PACKOK             11
 	
 	#define V2P_LOAD_EXTENDED_ADDR_FLAG  (1UL << 31)
 	#define V2P_LOAD_EXTENDED_ADDR_CMD   0x4D

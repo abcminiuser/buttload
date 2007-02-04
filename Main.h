@@ -32,11 +32,11 @@
 	#include "Dataflash.h"
 	#include "ProgramManager.h"
 	#include "StorageManager.h"
-	#include "EEPROMVariables.h"
 	#include "TagManager.h"
 	#include "ButtLoadTag.h"
 	#include "ToneGeneration.h"
 	#include "VirtualAVRMemManager.h"
+	#include "EEPROMVariables.h"
 	
 	// LIB C VERSION CHECK:
 	#if (!defined(__AVR_LIBC_VERSION__) || (__AVR_LIBC_VERSION__ < 10401UL)) // In future AVRLibC version requirements may be increased with changes
@@ -62,7 +62,7 @@
 
 	#define JoyStatus                GPIOR1 // Psudo-variable, GPIO register for speed
 
-	extern       EEPROMVarsType EEPROMVars EEMEM;
+	extern EEPROMVarsType EEPROMVars EEMEM;
 
 	extern const uint8_t BitTable[]  PROGMEM;
 
@@ -84,7 +84,7 @@
 	// PROTOTYPES:
 	void MAIN_ResetCSLine(const uint8_t ActiveInactive);
 	void MAIN_WaitForJoyRelease(void);
-	void MAIN_IntToStr(uint16_t IntV, char* Buff);
+	void MAIN_IntToStr(uint16_t IntV, char *Buff);
 	void MAIN_ShowProgType(const uint8_t Letter);
 	void MAIN_ShowError(const char *pFlashStr);
 	
@@ -114,5 +114,4 @@
 	#endif
 
 	void MAIN_Util_RAMFill(void) ATTR_INIT_SECTION;
-
 #endif

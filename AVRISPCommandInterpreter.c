@@ -158,9 +158,9 @@ void AICI_InterpretPacket(void)
 				}
 				else
 				{
-					if ((CurrAddress & 0x00FF0000) && !(CurrAddress & 0x0000FFFF))
+					if ((CurrAddress & V2P_LOAD_EXTENDED_ADDR_MASK) && !(CurrAddress & 0x0000FFFF))
 					{
-						CurrAddress |= (1UL << 31);    // Set MSB set of the address, indicates a LOAD_EXTENDED_ADDRESS must be executed
+						CurrAddress |= V2P_LOAD_EXTENDED_ADDR_FLAG; // Set MSB set of the address, indicates a LOAD_EXTENDED_ADDRESS must be executed
 						V2P_CheckForExtendedAddress();
 					}
 				}

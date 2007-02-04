@@ -212,9 +212,9 @@ void PM_StartProgAVR(void)
 void PM_ChooseProgAVROpts(void)
 {
 	char    Buffer[7];
-	uint8_t SelectedOpt = 0;
-	uint8_t ProgOptions = eeprom_read_byte(&EEPROMVars.PGOptions);
-	uint8_t SelectedOptMask;
+	uint8_t ProgOptions     = eeprom_read_byte(&EEPROMVars.PGOptions);
+	uint8_t SelectedOpt     = 0;
+	uint8_t SelectedOptMask = 0x01;
 
 	if (ProgOptions > 15)
 	  ProgOptions = 0;
@@ -227,17 +227,26 @@ void PM_ChooseProgAVROpts(void)
 	{
 		if (JoyStatus)
 		{
+			if (JoyStatus & JOY_LEFT)
+			{
+				eeprom_write_byte(&EEPROMVars.PGOptions, ProgOptions);
+				return;
+			}
+			else if (JoyStatus & JOY_PRESS)
+			{
+				ProgOptions  ^= SelectedOptMask;
+			}
+			else if (JoyStatus & JOY_UP)
+			{
+				(SelectedOpt == 0)? SelectedOpt = ARRAY_UPPERBOUND(ProgTypes) : SelectedOpt--;
+			}
+			else if (JoyStatus & JOY_DOWN)
+			{
+				(SelectedOpt == ARRAY_UPPERBOUND(ProgTypes))? SelectedOpt = 0 : SelectedOpt++;
+			}
+			
 			SelectedOptMask = pgm_read_byte(&BitTable[SelectedOpt]);
 		
-			if (JoyStatus & JOY_LEFT)
-			  break;
-			else if (JoyStatus & JOY_PRESS)
-			  ProgOptions  ^= SelectedOptMask;
-			else if (JoyStatus & JOY_UP)
-			  (SelectedOpt == 0)? SelectedOpt = ARRAY_UPPERBOUND(ProgTypes) : SelectedOpt--;
-			else if (JoyStatus & JOY_DOWN)
-			  (SelectedOpt == ARRAY_UPPERBOUND(ProgTypes))? SelectedOpt = 0 : SelectedOpt++;
-
 			strcpy_P(Buffer, ProgTypes[SelectedOpt]);
 			Buffer[4] = '>';
 			Buffer[5] = ((ProgOptions & SelectedOptMask) ? 'Y' : 'N');
@@ -250,8 +259,6 @@ void PM_ChooseProgAVROpts(void)
 
 		SLEEPCPU(SLEEP_POWERSAVE);
 	}
-
-	eeprom_write_byte(&EEPROMVars.PGOptions, ProgOptions);
 }
 
 void PM_SetProgramDataType(uint8_t Mask)
@@ -330,7 +337,7 @@ static void PM_CreateProgrammingPackets(const uint8_t Type)
 	uint32_t BytesToRead      = SM_GetStoredDataSize(Type);              // Get the byte size of the stored program
 	uint16_t BytesPerProgram;
 	uint16_t PageLength       = eeprom_read_word((Type == TYPE_FLASH)? &EEPROMVars.PageLength : &EEPROMVars.EPageLength);
-	uint16_t BytesPerProgress = (BytesToRead / 6);
+	uint16_t BytesPerProgress = (BytesToRead / LCD_BARGRAPH_SIZE);
 	uint8_t  ContinuedPage    = FALSE;
 	uint8_t* EEPROMAddress;
 
