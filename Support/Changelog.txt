@@ -2,19 +2,13 @@ Current Version: Public Release 2.1
 
 	PENDING CHANGES FOR 2.1:
 	=======================================
-	  * ADD: Add non-consecutive HEX support
-	  * ADD: Add low-battery detection
-	  * ADD: Extra ISP speeds (settings menu only)
-	  * ADD: Timeouts on target busy wait loops
-	  * ADD: Checksum to stored program data
+	  * BUG: EEPROM/Flash seems to overwrite each other (EEPROM write causes FLASH data to change to it also)
 
-	  * BUG: EEPROM programming is very slow in all modes
-	  
 	IN PUBLIC RELEASE 2.1:
 	=======================================
-	  * Added in audio feedback for several options
+	  * Added in audio feedback for several situations
 	  * Removed direct dataflash programming code to save space (nobody used it anyway)
-	  * "Data" replaced with "Flash" in DATASTORE STATS now that confusion with PRGM DATAFLASH MODE is not possible
+	  * "Store" replaced with "Flash" in DATASTORE STATS now that confusion with PRGM DATAFLASH MODE is not possible
 	  * Fixed Fusebyte/Lockbyte bug in PROGRAM AVR mode
 	  * Fixed EEPROM storage bug
 	  * Fixed incorrect message size on CMD_UNKNOWN return in ProgramManager
@@ -22,8 +16,33 @@ Current Version: Public Release 2.1
 	  * Changed strings to use char rather than uint8_t, allowing for a generic makefile without GCC4.x specific flags
 	  * Vin pin is now an external sleep input pin - pull high externally to initate sleep
 	  * PROGRAM AVR mode now allows for arbitrary combinations of programming options
-	  * Added in new startup mode option
+	  * Added in new startup mode settings option
 	  * Programming a data type in STORAGE MODE now automatically enables that data type for programming in PROGRAM AVR mode
+	  * Fixed EEPROM programming very slow in all modes
+	  * Returned firmware version can now be set up to V2.20
+	  * Target busy-wait loops now have timeouts of 100 milliseconds
+	  * 921600Hz programming speed is now correct (was actually double that due to a mis-calculation)
+	  * New programming speeds (accessable via settings menu only) added - 115200Hz and 1843200Hz options
+	  * RingBuffer access is now protected against race-conditions (atomic access)
+	  * Added support for non-consecutive HEX file storage
+	  * Write Flash/EEPROM command now only stored once per program to save on EEPROM lifespan
+	  * PROG DONE/FAIL message is supressed when statup mode is set to PRODUCTION
+	  * Made module-internal functions static project wide
+	  * Status LED now blinks red when an error occurs
+	  * Changes to the RESET MODE option now take effect immediatly after the option is exited
+	  * CPU now enters power save mode when awaiting user input, and idle mode when awaiting PC/user input, saving power
+	  * Added in ATTR_WARN_UNUSED_RESULT for applicable functions, to reduce coding errors
+	  * Fixed logic error in the extended address checking that was preventing >128KB devices from being programmed correctly
+	  * Slimmed down LCD driver routines, eliminated unneeded segment buffering
+	  * LOGIC level reset now hard drives, rather than uses the AVR's internal pullup
+	  * Address loaded in from computer via a union to save space; byte order checking performed to ensure ordering is correct
+	  * Fixed incorrect buffer size in MAIN_ShowProgType, preventing possible overflows and RAM corruption
+	  * Fixed delays while scrolling a LCD message changed over a loop to wait until the LCD message has finished scrolling
+	  * Delay header changed over to a custom one written by Hans-Juergen Heinrichs for more accuracy and flexibility
+	  * Added in function descriptions to increase code maintainability
+	  * Program from storage now uses the new Virtual AVR Memory Manager layer to manage reading back the bytes from the dataflash
+	  * Progressbar while programming from dataflash now gives full range while programming
+	  * Moved individual settings functions to new Settings.c source file
 	  
 	IN PUBLIC RELEASE 2.0:
 	=======================================
