@@ -89,8 +89,7 @@ SRC =	Analogue.c                   \
 #     Even though the DOS/Win* filesystem matches both .s and .S the same,
 #     it will preserve the spelling of the filenames, and gcc itself does
 #     care about how the name is spelled on its command-line.
-ASRC = JoystickInterrupt.S           \
-       USITransfer.S
+ASRC =  USITransfer.S
 
 # Optimization level, can be [0, 1, 2, 3, s]. 
 #     0 = turn off optimization. s = optimize for size.

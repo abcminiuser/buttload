@@ -89,7 +89,7 @@ const    uint16_t LCD_SegTable[] PROGMEM =
 void LCD_Init(void)
 {
 	// Set the initial contrast level to maximum:
-	LCDCCR  = 0x0F;
+	LCD_CONTRAST_LEVEL(0x0F);
 
     // Select asynchronous clock source, enable all COM pins and enable all segment pins:
     LCDCRB  = (1<<LCDCS) | (3<<LCDMUX0) | (7<<LCDPM0);
@@ -196,7 +196,7 @@ ISR(LCD_vect, ISR_NOBLOCK)
 		  StrStart = 1;
 
 		for (uint8_t LCDChar = 0; LCDChar <= LCD_SEGBUFFER_SIZE; LCDChar++)
-		  *(pLCDREG + LCDChar) = SegBuffer[LCDChar];
+		  *(LCD_LCDREGS_START + LCDChar) = SegBuffer[LCDChar];
 	}
 
 	LCDFlags = 0;

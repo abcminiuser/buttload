@@ -6,21 +6,21 @@
 */
 
 #include "ToneGeneration.h"
-                                    // Tone1,......,ToneN, 0x00
-uint8_t  ToneSeq_Startup[]  PROGMEM = {156, 125,  94,  63, 0x00};
-uint8_t  ToneSeq_SyncFail[] PROGMEM = { 94, 156,           0x00};
-uint8_t  ToneSeq_ProgDone[] PROGMEM = {156,  94,  63,      0x00};
-uint8_t  ToneSeq_ProgFail[] PROGMEM = {156, 171, 203,      0x00};
-uint8_t  ToneSeq_VolTest[]  PROGMEM = {156,                0x00};
-uint8_t  ToneSeq_Sleep[]    PROGMEM = { 94, 125, 156,      0x00};
-uint8_t  ToneSeq_Resume[]   PROGMEM = {156, 125,  94,      0x00};
-uint8_t  ToneSeq_Error[]    PROGMEM = {200, 220,           0x00};
+                                          // Tone1,......,ToneN, 0x00
+const uint8_t ToneSeq_Startup[]  PROGMEM = {156, 125,  94,  63, 0x00};
+const uint8_t ToneSeq_SyncFail[] PROGMEM = { 94, 156,           0x00};
+const uint8_t ToneSeq_ProgDone[] PROGMEM = {156,  94,  63,      0x00};
+const uint8_t ToneSeq_ProgFail[] PROGMEM = {156, 171, 203,      0x00};
+const uint8_t ToneSeq_VolTest[]  PROGMEM = {156,                0x00};
+const uint8_t ToneSeq_Sleep[]    PROGMEM = { 94, 125, 156,      0x00};
+const uint8_t ToneSeq_Resume[]   PROGMEM = {156, 125,  94,      0x00};
+const uint8_t ToneSeq_Error[]    PROGMEM = {200, 220,           0x00};
 
-uint8_t  ToneVol;
+uint8_t ToneVol;
 
 // ======================================================================================
 
-void TG_PlayToneSeq(uint8_t* Sequence)
+void TG_PlayToneSeq(const uint8_t* Sequence)
 {
 	if (!(ToneVol))                               // If no volume (off), skip tone playing
 	  return;

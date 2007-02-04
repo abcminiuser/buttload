@@ -23,8 +23,6 @@
 		uint8_t  WriteEEPROM[10];
 		uint8_t  EraseCmdStored;
 		uint8_t  EraseChip[7];
-		uint32_t DataSize;
-		uint32_t EEPROMSize;
 		uint8_t  EnterProgMode[12];
 		uint8_t  TotalFuseBytes;
 		uint8_t  TotalLockBytes;

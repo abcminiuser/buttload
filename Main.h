@@ -9,7 +9,7 @@
 #define MAIN_H
 
 	// DEBUG SWITCHES
-	//#define DEBUG_JTAGON
+	#define DEBUG_JTAGON
 	#define DEBUG_MEMFILLON
 	// END DEBUG SWITCHES
 	
@@ -62,12 +62,15 @@
 
 	#define JoyStatus                GPIOR1 // Psudo-variable, GPIO register for speed
 
-	extern EEPROMVarsType EEPROMVars EEMEM;
+	extern       EEPROMVarsType EEPROMVars EEMEM;
 
 	extern const uint8_t BitTable[]  PROGMEM;
 
 	// DEFINES AND MACROS:
-	#define MAIN_SETSTATUSLED(mask)  MACROS{ PORTF = ((PORTF & ~MAIN_STATLED_ORANGE) | (mask)); }MACROE
+	#define MAIN_STATUSLED_PORT      PORTF
+	#define MAIN_STATUSLED_PIN       PINF
+	
+	#define MAIN_SETSTATUSLED(mask)  MACROS{ MAIN_STATUSLED_PORT = ((MAIN_STATUSLED_PORT & ~MAIN_STATLED_ORANGE) | (mask)); }MACROE
 	#define MAIN_STATLED_GREEN       (1 << 4)
 	#define MAIN_STATLED_RED         (1 << 5)
 	#define MAIN_STATLED_ORANGE      (MAIN_STATLED_GREEN | MAIN_STATLED_RED)
@@ -75,7 +78,7 @@
 	
 	#define MAIN_RESETCS_ACTIVE      0
 	#define MAIN_RESETCS_INACTIVE    1
-	
+		
 	// PROTOTYPES:
 	void MAIN_ResetCSLine(const uint8_t ActiveInactive);
 	void MAIN_WaitForJoyRelease(void);
@@ -105,9 +108,9 @@
 	  static void MAIN_SetToneVol(void);
 	  static void MAIN_SetStartupMode(void);
 	  static void MAIN_StorageInfo(void);
-	  static void MAIN_GoBootloader(void) __attribute__((noreturn));
+	  static void MAIN_GoBootloader(void) ATTR_NO_RETURN;
 	#endif
 
-	void MAIN_Util_RAMFill(void) __attribute__((naked)) __attribute__ ((section (".init1")));
+	void MAIN_Util_RAMFill(void) ATTR_INIT_SECTION;
 
 #endif

@@ -11,11 +11,12 @@
 	// INCLUDES:
 	#include <avr/io.h>
 	#include <avr/interrupt.h>
-	
+
 	#include "Main.h"
+	#include "GlobalMacros.h"
 	
 	// PROTOTYPES:
-	uint16_t AN_GetADCValue(const uint8_t Channel);
+	uint16_t AN_GetADCValue(const uint8_t Channel) ATTR_WARN_UNUSED_RESULT;
 	
 	// DEFINES:
 	#define AN_CHANNEL_SLEEP        (1 << MUX0)

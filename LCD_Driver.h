@@ -17,7 +17,7 @@
 	#include "GlobalMacros.h"
 	
 	// DEFINES:
-	#define pLCDREG                   ((uint8_t*)&LCDDR0)
+	#define LCD_LCDREGS_START         ((uint8_t*)&LCDDR0)
 	
 	#define LCD_CONTRAST_LEVEL(level) MACROS{ LCDCCR = (0x0F & level); }MACROE
 	#define LCD_SCROLLCOUNT_DEFAULT   3
@@ -58,7 +58,7 @@
 	void LCD_Init(void);
 	
 	#if defined(INC_FROM_DRIVER)
-	  static inline void LCD_WriteChar(const uint8_t Byte, const char Digit) __attribute__((always_inline));
+	  static inline void LCD_WriteChar(const uint8_t Byte, const char Digit);
 	#endif
 
 #endif

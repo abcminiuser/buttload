@@ -21,33 +21,38 @@ const char StorageText[] PROGMEM = "*STORAGE MODE*";
 uint32_t SM_GetStoredDataSize(const uint8_t Type)
 {
 	uint32_t ProgDataSize = 0;
-	uint16_t BlockStart;
-	uint16_t BlockEnd;
+	uint16_t PageLength;
+	uint8_t  BlockStart;
+	uint8_t  BlockEnd;
 
 	if (Type == TYPE_FLASH)
 	{
 		BlockStart = 0;
 		BlockEnd   = 124;
+		PageLength = eeprom_read_word(&EEPROMVars.PageLength);
 	}
 	else
 	{
 		BlockStart = 125;
 		BlockEnd   = 249;
+		PageLength = eeprom_read_word(&EEPROMVars.EPageLength);
 	}
 
-	for (uint16_t EEPageBlock = BlockStart; EEPageBlock < BlockEnd; EEPageBlock++)
+	for (uint8_t EEPageBlock = BlockStart; EEPageBlock < BlockEnd; EEPageBlock++)
 	{
-		uint8_t Mask      = 0b10000000;
+		uint8_t Mask      = (1 << 7);
 		uint8_t BlockData = eeprom_read_byte(&EEPROMVars.PageEraseReqFlags[EEPageBlock]);
 
 		while (Mask)
 		{
-			if (BlockData & Mask)
+			if (!(BlockData & Mask))                                    // Check if page not empty
 			  ProgDataSize += DF_INTERNALDF_BUFFBYTES;
 
 			Mask >>= 1;
 		}
 	}
+	
+	ProgDataSize = ((ProgDataSize / PageLength) * PageLength);          // Get data size to nearest page
 	
 	return ProgDataSize;
 }
@@ -207,9 +212,9 @@ void SM_InterpretAVRISPPacket(void)
 				
 				if (!(WriteCmdStored))
 				{
-					for (uint8_t B = 0; B < 10; B++)                        // Save the command bytes
+					for (uint8_t StoreByte = 0; StoreByte < 10; StoreByte++)  // Save the command bytes
 					{
-						eeprom_write_byte(EEPROMAddress, PacketBytes[B]);
+						eeprom_write_byte(EEPROMAddress, PacketBytes[StoreByte]);
 						EEPROMAddress++;
 					}
 					

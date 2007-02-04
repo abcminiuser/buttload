@@ -30,19 +30,19 @@
 	#define TONEGEN_GET_TONE_VOL() MACROS{ ToneVol = eeprom_read_byte(&EEPROMVars.ToneVolume); }MACROE
 	
 	// EXTERNAL VARIABLES:
-	extern uint8_t  ToneSeq_Startup[]  PROGMEM;
-	extern uint8_t  ToneSeq_SyncDone[] PROGMEM;
-	extern uint8_t  ToneSeq_SyncFail[] PROGMEM;
-	extern uint8_t  ToneSeq_ProgDone[] PROGMEM;
-	extern uint8_t  ToneSeq_ProgFail[] PROGMEM;
-	extern uint8_t  ToneSeq_VolTest[]  PROGMEM;
-	extern uint8_t  ToneSeq_Sleep[]    PROGMEM;
-	extern uint8_t  ToneSeq_Resume[]   PROGMEM;	
-	extern uint8_t  ToneSeq_Error[]    PROGMEM;	
+	extern const uint8_t  ToneSeq_Startup[]  PROGMEM;
+	extern const uint8_t  ToneSeq_SyncDone[] PROGMEM;
+	extern const uint8_t  ToneSeq_SyncFail[] PROGMEM;
+	extern const uint8_t  ToneSeq_ProgDone[] PROGMEM;
+	extern const uint8_t  ToneSeq_ProgFail[] PROGMEM;
+	extern const uint8_t  ToneSeq_VolTest[]  PROGMEM;
+	extern const uint8_t  ToneSeq_Sleep[]    PROGMEM;
+	extern const uint8_t  ToneSeq_Resume[]   PROGMEM;	
+	extern const uint8_t  ToneSeq_Error[]    PROGMEM;	
 	
 	extern uint8_t  ToneVol;
 	
 	// PROTOTYPES:
-	void TG_PlayToneSeq(uint8_t* Sequence);
+	void TG_PlayToneSeq(const uint8_t* Sequence);
 
 #endif

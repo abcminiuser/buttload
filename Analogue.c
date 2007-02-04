@@ -38,5 +38,5 @@ uint16_t AN_GetADCValue(const uint8_t Channel)
 	}
 	END_ATOMIC_BLOCK
 
-	return ADCResult;                     // Return result
+	return ADCResult;                         // Return result
 }

@@ -44,9 +44,19 @@
 	// ASM Macros:
 	#define SLEEP()                  MACROS{ asm volatile ("sleep" ::); }MACROE
 
-	// Other General Macros:
-	#define IDLECPU()                MACROS{ SMCR = (1 << SE); SLEEP(); }MACROE
+	// Sleep Macros:
+	#define SLEEPCPU(mode)            MACROS{ SMCR = mode; SLEEP(); }MACROE
 
+	#define SLEEP_IDLE                (1 << SE)
+	#define SLEEP_POWERDOWN           ((1 << SE) | (1 << SM1))
+	#define SLEEP_POWERSAVE           ((1 << SE) | (1 << SM1) | (1 << SM0))
+
+	// Function attributes:
+	#define ATTR_NO_RETURN            __attribute__ ((noreturn))
+	#define ATTR_INIT_SECTION         __attribute__ ((naked, section (".init1")))
+	#define ATTR_WARN_UNUSED_RESULT   __attribute__ ((warn_unused_result))
+
+	// Other General Macros:
 	#define ATOMIC_BLOCK(exitmode)   { exitmode cli();
 	#define END_ATOMIC_BLOCK         }
 	

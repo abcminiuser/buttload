@@ -35,7 +35,7 @@
 	extern const char StorageText[] PROGMEM;
 
 	// PROTOTYPES:
-	uint32_t SM_GetStoredDataSize(const uint8_t Type);
+	uint32_t SM_GetStoredDataSize(const uint8_t Type) ATTR_WARN_UNUSED_RESULT;
 	void     SM_InterpretAVRISPPacket(void);
 	
 	#if defined(INC_FROM_SM)

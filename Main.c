@@ -5,7 +5,8 @@
                   dean_camera@hotmail.com
 						
 
-  Requires: AVR-GCC 3.4.3 or above, AVRLibC version 1.4.1 or above
+  Requires: AVR-GCC 3.4.3 or above, AVRLibC version 1.4.1 or above.
+            Compile in GNU99 standards mode, with optimization -0s.
 */
 
 /*
@@ -166,7 +167,7 @@ const char    SIFONames[2][15]                  PROGMEM = {"STORAGE SIZES", "VIE
 const char    ProgramAVROptions[2][8]           PROGMEM = {"START", "OPTIONS"};
 const char    StartupModes[3][11]               PROGMEM = {"NORMAL", "PRODUCTION", "AVRISP"};
 
-const uint8_t BitTable[]                        PROGMEM = {(1 << 0), (1 << 1), (1 << 2), (1 << 3), (1 << 4), (1 << 5), (1 << 6), (1 << 7)};
+const uint8_t BitTable[]                        PROGMEM = {(1 << 0), (1 << 1), (1 << 2), (1 << 3), (1 << 4), (1 << 5), (1 << 6), (1 << 7)}; // Lookup table, bitnum to bit mask
 
 // GLOBAL EEPROM VARIABLE STRUCT:
 EEPROMVarsType EEPROMVars EEMEM;
@@ -251,7 +252,7 @@ int main(void)
 			MAIN_WaitForJoyRelease();
 		}
 
-		IDLECPU();
+		SLEEPCPU(SLEEP_POWERSAVE);
 	}
 
 	return 0;
@@ -324,7 +325,7 @@ void MAIN_WaitForJoyRelease(void)
 
 	for (;;)
 	{
-		while (JoyStatus) { IDLECPU(); };         // Wait until joystick released
+		while (JoyStatus) { SLEEPCPU(SLEEP_POWERSAVE); };         // Wait until joystick released
 
 		MAIN_Delay10MS(2);
 
@@ -349,7 +350,7 @@ void MAIN_IntToStr(uint16_t IntV, char* Buff)
 		IntV -= 100;
 	}
 
-	*(Buff++) = '0' + Temp;
+	Buff[0] = '0' + Temp;
 	
 	Temp = 0;
 	
@@ -359,9 +360,9 @@ void MAIN_IntToStr(uint16_t IntV, char* Buff)
 		IntV -= 10;
 	}
 		
-	*(Buff++) = '0' + Temp;
-	*(Buff++) = '0' + IntV;
-	*(Buff)   = '\0';
+	Buff[1] = '0' + Temp;
+	Buff[2] = '0' + IntV;
+	Buff[3] = '\0';
 }
 
 void MAIN_ShowProgType(const uint8_t Letter)
@@ -377,7 +378,7 @@ void MAIN_ShowProgType(const uint8_t Letter)
 void MAIN_ShowError(const char *pFlashStr)
 {
 	char ErrorBuff[LCD_TEXTBUFFER_SIZE + 2];     // New buffer, LCD text buffer size plus space for the "E>" prefix
-	uint8_t CurrLedStatus = (PORTF & MAIN_STATLED_ORANGE);
+	uint8_t CurrLedStatus = (MAIN_STATUSLED_PORT & MAIN_STATLED_ORANGE);
 	
 	ErrorBuff[0] = 'E';
 	ErrorBuff[1] = '>';
@@ -394,7 +395,7 @@ void MAIN_ShowError(const char *pFlashStr)
 	TCCR1B = ((1 << WGM12) | (1 << CS12) | (1 << CS10)); // Start timer at Fcpu/1024 speed in CTC mode, flash the red status LED
 	
 	MAIN_WaitForJoyRelease();
-	while (!(JoyStatus & JOY_PRESS)) {};
+	while (!(JoyStatus & JOY_PRESS)) { SLEEPCPU(SLEEP_POWERSAVE); }; // Wait until center button pushed before continuing
 	MAIN_WaitForJoyRelease();
 
 	TCCR1B = 0;                                  // Turn off timer 1
@@ -403,6 +404,7 @@ void MAIN_ShowError(const char *pFlashStr)
 
 // ======================================================================================
 
+ISR_ALIAS_COMPAT(PCINT0_vect, PCINT1_vect);
 ISR(PCINT1_vect, ISR_NOBLOCK)                    // Joystick routine; PCINT0_vect is bound to this also via JoystickInterrupt.S
 {
 	JoyStatus = (~PINB & JOY_BMASK)
@@ -423,20 +425,21 @@ ISR(BADISR_vect, ISR_NAKED)                      // Bad ISR routine; should neve
 
 	MAIN_ShowError(PSTR("BADISR"));
 		
-	for (;;) {};
+	for (;;) { SLEEPCPU(SLEEP_POWERSAVE); };
 }
 
-ISR(TIMER1_COMPA_vect, ISR_BLOCK)                // Used for status LED flashing during an error
+ISR(TIMER1_COMPA_vect, ISR_NAKED)                // Used for status LED flashing during an error
 {
-	PORTF ^= MAIN_STATLED_RED;
+	MAIN_STATUSLED_PIN |= MAIN_STATLED_RED;      // Compiles down to a SBI - the PIN register toggles a bit on the MEGA169 if the bit is set as an output
+	reti();                                      // No register changes, so ISR is naked - RETI must be put here explicitly
 }
 
 // ======================================================================================
 
 void MAIN_SleepMode(void)
 {
-	LCDCRA &= ~(1 << LCDEN);                     // Turn off LCD driver while sleeping
 	LCDCRA |=  (1 << LCDBL);                     // Blank LCD to discharge all segments
+	LCDCRA &= ~(1 << LCDEN);                     // Turn off LCD driver while sleeping
 	PRR    |=  (1 << PRLCD);                     // Enable LCD power reduction bit
 
 	TG_PlayToneSeq(TONEGEN_SEQ_SLEEP);
@@ -445,12 +448,12 @@ void MAIN_SleepMode(void)
 
 	TIMEOUT_SLEEP_TIMER_OFF();
 
-	SMCR    = ((1 << SM1) | (1 << SE));          // Power down sleep mode
 	while (!(JoyStatus & JOY_UP))                // Joystick interrupt wakes the micro
-	  SLEEP();
+	  SLEEPCPU(SLEEP_POWERDOWN);
 	   
-	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Turn status LED back on
 	TOUT_SetupSleepTimer();
+
+	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Turn status LED back on
 		
 	TG_PlayToneSeq(TONEGEN_SEQ_RESUME);
 
@@ -483,7 +486,7 @@ static void MAIN_ShowAbout(void)
 			MAIN_WaitForJoyRelease();
 		}
 
-		IDLECPU();
+		SLEEPCPU(SLEEP_POWERSAVE);
 	}
 }
 
@@ -528,7 +531,7 @@ static void MAIN_ProgramAVR(void)
 			MAIN_WaitForJoyRelease();
 		}
 
-		IDLECPU();
+		SLEEPCPU(SLEEP_POWERSAVE);
 	}
 }
 
@@ -575,7 +578,7 @@ static void MAIN_ChangeSettings(void)
 			MAIN_WaitForJoyRelease();
 		}
 
-		IDLECPU();
+		SLEEPCPU(SLEEP_POWERSAVE);
 	}
 }
 
@@ -598,7 +601,7 @@ static void MAIN_ClearMem(void)
 			  break;
 		}
 
-		IDLECPU();
+		SLEEPCPU(SLEEP_POWERSAVE);
 	}
 
 	MAIN_WaitForJoyRelease();
@@ -655,7 +658,7 @@ static void MAIN_SetContrast(void)
 			MAIN_WaitForJoyRelease();
 		}
 
-		IDLECPU();
+		SLEEPCPU(SLEEP_POWERSAVE);
 	}
 }
 
@@ -692,7 +695,7 @@ static void MAIN_SetISPSpeed(void)
 			MAIN_WaitForJoyRelease();
 		}
 
-		IDLECPU();
+		SLEEPCPU(SLEEP_POWERSAVE);
 	}
 }
 
@@ -713,6 +716,7 @@ static void MAIN_SetResetMode(void)
 			else if (JoyStatus & JOY_LEFT)
 			{
 				eeprom_write_byte(&EEPROMVars.SPIResetMode, CurrMode);
+				MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE);
 				return;
 			}
 			
@@ -722,7 +726,7 @@ static void MAIN_SetResetMode(void)
 			MAIN_WaitForJoyRelease();
 		}
 
-		IDLECPU();
+		SLEEPCPU(SLEEP_POWERSAVE);
 	}
 }
 
@@ -766,7 +770,7 @@ static void MAIN_SetFirmMinorVer(void)
 			MAIN_WaitForJoyRelease();
 		}
 
-		IDLECPU();
+		SLEEPCPU(SLEEP_POWERSAVE);
 	}	
 }
 
@@ -815,7 +819,7 @@ static void MAIN_SetAutoSleepTimeOut(void)
 			MAIN_WaitForJoyRelease();
 		}
 
-		IDLECPU();
+		SLEEPCPU(SLEEP_POWERSAVE);
 	}	
 }
 
@@ -831,7 +835,7 @@ static void MAIN_SetToneVol(void)
 	{
 		if (JoyStatus)
 		{
-			uint8_t ToneVolLcl = ToneVol;        // Copy the global to a local variable to save space
+			uint8_t ToneVolLcl = ToneVol;        // Copy the global to a local variable to save code space
 
 			if (JoyStatus & JOY_UP)
 			{
@@ -863,7 +867,7 @@ static void MAIN_SetToneVol(void)
 			MAIN_WaitForJoyRelease();
 		}
 
-		IDLECPU();
+		SLEEPCPU(SLEEP_POWERSAVE);
 	}	
 }
 
@@ -881,21 +885,26 @@ static void MAIN_SetStartupMode(void)
 		if (JoyStatus)
 		{
 			if (JoyStatus & JOY_UP)
-			  (StartupMode == 0)? StartupMode = ARRAY_UPPERBOUND(StartupModes) : StartupMode--;
+			{
+				(StartupMode == 0)? StartupMode = ARRAY_UPPERBOUND(StartupModes) : StartupMode--;
+			}
 			else if (JoyStatus & JOY_DOWN)
-			  (StartupMode == ARRAY_UPPERBOUND(StartupModes))? StartupMode = 0 : StartupMode++;
+			{
+				(StartupMode == ARRAY_UPPERBOUND(StartupModes))? StartupMode = 0 : StartupMode++;
+			}
 			else if (JoyStatus & JOY_LEFT)
-			  break;
+			{
+				eeprom_write_byte(&EEPROMVars.StartupMode, StartupMode);
+				return;
+			}
 
 			LCD_puts_f(StartupModes[StartupMode]);			
 
 			MAIN_WaitForJoyRelease();
 		}
 
-		IDLECPU();
+		SLEEPCPU(SLEEP_POWERSAVE);
 	}	
-
-	eeprom_write_byte(&EEPROMVars.StartupMode, StartupMode);
 }
 
 static void MAIN_StorageInfo(void)
@@ -944,7 +953,7 @@ static void MAIN_StorageInfo(void)
 			MAIN_WaitForJoyRelease();
 		}
 
-		IDLECPU();
+		SLEEPCPU(SLEEP_POWERSAVE);
 	}
 }
 

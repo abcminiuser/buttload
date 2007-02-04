@@ -38,7 +38,7 @@ void TM_ShowTags(void)
 			MAIN_WaitForJoyRelease();
 		}
 
-		IDLECPU();
+		SLEEPCPU(SLEEP_POWERSAVE);
 	}
 	
 	DF_ENABLEDATAFLASH(FALSE);

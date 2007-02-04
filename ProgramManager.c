@@ -57,7 +57,7 @@ void PM_ShowStoredItemSizes(void)
 			MAIN_WaitForJoyRelease();
 		}
 
-		IDLECPU();
+		SLEEPCPU(SLEEP_POWERSAVE);
 	}
 }
 
@@ -107,7 +107,7 @@ void PM_StartProgAVR(void)
 			}
 		}
 
-		if ((ProgOptions & PM_OPT_FLASH) && (ProgrammingFault != ISPCC_FAULT_NOERASE)  && (ProgrammingFault == ISPCC_NO_FAULT))
+		if ((ProgOptions & PM_OPT_FLASH) && (ProgrammingFault == ISPCC_NO_FAULT))
 		{
 			MAIN_ShowProgType('D');
 
@@ -249,7 +249,7 @@ void PM_ChooseProgAVROpts(void)
 			MAIN_WaitForJoyRelease();
 		}
 
-		IDLECPU();
+		SLEEPCPU(SLEEP_POWERSAVE);
 	}
 
 	eeprom_write_byte(&EEPROMVars.PGOptions, ProgOptions);
@@ -265,7 +265,7 @@ void PM_SetProgramDataType(uint8_t Mask)
 	if (Mask & PM_OPT_CLEARFLAGS)
 	  ProgOptions  = 0;
 	else
-	  ProgOptions |= (Mask & 0b01111111);
+	  ProgOptions |= (Mask & ~(1 << 7));
 	  
 	eeprom_write_byte(&EEPROMVars.PGOptions, ProgOptions);
 }

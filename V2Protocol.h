@@ -62,7 +62,7 @@
 	void    V2P_CheckForExtendedAddress(void);
 
 	#if defined(INC_FROM_V2P)
-	  static uint8_t V2P_GetChecksum(void);
+	  static uint8_t V2P_GetChecksum(void) ATTR_WARN_UNUSED_RESULT;
 	  static void    V2P_GetSetParamater(void);
 	#endif
 	

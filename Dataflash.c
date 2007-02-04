@@ -15,7 +15,7 @@
 #include "Dataflash.h"
 
 const char     DataFlashError[] PROGMEM = "DATAFLASH ERROR";
-DFinfo         DataflashInfo            = {0, 0};
+DFinfo         DataflashInfo            = {CurrPageAddress: 0, CurrBuffByte: 0};
 
 // ======================================================================================
 

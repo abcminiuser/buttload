@@ -39,7 +39,7 @@
 	extern DFinfo                    DataflashInfo;
 	
 	// PROTOTYPES:
-	uint8_t DF_CheckCorrectOnboardChip(void);
+	uint8_t DF_CheckCorrectOnboardChip(void) ATTR_WARN_UNUSED_RESULT;
 	void    DF_CopyBufferToFlashPage(const uint16_t PageAddress);
 	void    DF_CopyFlashPageToBuffer(const uint16_t PageAddress);
 	void    DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddress);

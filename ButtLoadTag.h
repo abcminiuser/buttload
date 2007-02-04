@@ -30,6 +30,6 @@
 	
 	// DEFINES:
 	#define BT_TAGHEADER          {'@','(','#',')'}
-	#define BUTTLOADTAG(id, data) const struct ButtLoadData BUTTTAG_##id PROGMEM = {BT_TAGHEADER, data}
+	#define BUTTLOADTAG(id, data) const struct ButtLoadData BUTTTAG_##id PROGMEM = {MagicString: BT_TAGHEADER, TagData: data}
 
 #endif

@@ -46,7 +46,7 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 
 				ATOMIC_BLOCK(ATOMIC_ASSUMEON)
 				{
-					if (BuffElements)                 // Serial data recieved in FIFO buffer
+					if (BuffElements)             // Serial data recieved in FIFO buffer
 					  V2PState = V2P_STATE_START;
 				}
 				END_ATOMIC_BLOCK
@@ -58,7 +58,7 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 					return;
 				}
 								
-				IDLECPU();                        // Can idle here, since USART or Joystick interrupt will cause execution to continue
+				SLEEPCPU(SLEEP_IDLE);             // Can idle here, since USART or Joystick interrupt will cause execution to continue
 
 				break;
 			case V2P_STATE_START:			
@@ -271,7 +271,7 @@ static void V2P_GetSetParamater(void)
 
 			break;
 		case AICB_PARAM_SW_MINOR:
-			PacketBytes[2] = ((eeprom_read_byte(&EEPROMVars.FirmVerMinor) == 0xFF)? V2P_SW_VERSION_MINOR_DEFAULT : eeprom_read_byte(&EEPROMVars.FirmVerMinor));
+			PacketBytes[2] = ((eeprom_read_byte(&EEPROMVars.FirmVerMinor) != 0xFF)? /* No value, see GCC extention at http://tinyurl.com/yjj737 */ : V2P_SW_VERSION_MINOR_DEFAULT);
 
 			break;
 		case AICB_PARAM_CONTROLLER_INIT:

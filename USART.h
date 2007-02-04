@@ -24,6 +24,6 @@
 	// PROTOTYPES:
 	void USART_Init(void);
 	void USART_Tx(const char data);
-	char USART_Rx(void);
+	char USART_Rx(void) ATTR_WARN_UNUSED_RESULT;
 	
 #endif
