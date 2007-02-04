@@ -14,10 +14,10 @@
 	#include <avr/interrupt.h>
 	#include <avr/pgmspace.h>
 	
-	#include "Main.h"
+	#include "Analogue.h"
 	#include "GlobalMacros.h"
 	#include "ISRMacro.h"
-	#include "Analogue.h"
+	#include "Main.h"
 	
 	// DEFINES AND MACROS:
 	#define TIMEOUT_HZ_TO_COMP(Hz, Src, Psc) ((((Src == TIMEOUT_SRC_CPU)? F_CPU : 32768UL) / Psc) / Hz)

@@ -65,6 +65,24 @@ void DF_CopyPage(const uint16_t PageAddress, uint8_t Operation)
 }
 
 /*
+ NAME:      | DF_EraseBlock
+ PURPOSE:   | Erases a block of 8 pages in the dataflash
+ ARGUMENTS: | Block number to erase
+ RETURNS:   | None
+*/
+void DF_EraseBlock(const uint16_t BlockNumber)
+{
+	DF_TOGGLEENABLE();
+
+	SPI_SPITransmit(DFCB_BLOCKERASE);                   // Send block erase command
+	SPI_SPITransmit((uint8_t)(BlockNumber >> 8));
+	SPI_SPITransmit((uint8_t)(BlockNumber));
+	SPI_SPITransmit(0x00);
+
+	DF_WaitWhileBusy();
+}
+
+/*
  NAME:      | DF_BufferWriteEnable
  PURPOSE:   | Prepares the dataflash's internal buffer for write operations
  ARGUMENTS: | Address in the dataflash's buffer to begin writing from

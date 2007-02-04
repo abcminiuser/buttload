@@ -12,15 +12,16 @@
 	// INCLUDES:
 	#include <avr/io.h>
 	#include <avr/pgmspace.h>
-	#include <Delay.h>
+	#include <avr/eeprom.h>
 	
 	#include "AVRISPCommandBytes.h"
 	#include "AVRISPCommandInterpreter.h"
+	#include "Delay.h"
+	#include "EEPROMVariables.h"
 	#include "LCD_Driver.h"
+	#include "ProgramManager.h"
 	#include "Timeout.h"
 	#include "USART.h"
-	#include "EEPROMVariables.h"
-	#include "ProgramManager.h"
 
 	// TYPE DEFINITIONS:
 	typedef void (*FuncPtr)(void);

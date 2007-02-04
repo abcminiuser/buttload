@@ -76,6 +76,7 @@ SRC =	Analogue.c                   \
 		OSCCal.c                     \
 		ProgramManager.c             \
 		RingBuff.c                   \
+		Settings.c                   \
 		SPI.c                        \
 		StorageManager.c             \
 		TagManager.c                 \

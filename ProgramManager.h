@@ -11,10 +11,13 @@
 
 	// INCLUDES:
 	#include <avr/io.h>
+	#include <avr/eeprom.h>
+	#include <avr/pgmspace.h>
 	#include <stdlib.h>
 	
 	#include "Dataflash.h"
 	#include "EEPROMVariables.h"
+	#include "Main.h"
 	
 	// DEFINES:
 	#define PM_OPT_CLEARFLAGS      (1 << 7)

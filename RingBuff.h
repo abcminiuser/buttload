@@ -13,9 +13,9 @@
 	#include <avr/io.h>
 	#include <avr/interrupt.h>
 	
-	#include "ISRMacro.h"
-	#include "GlobalMacros.h"
 	#include "Atomic.h"
+	#include "GlobalMacros.h"
+	#include "ISRMacro.h"
 	
 	// DEFINES:
 	#define BUFF_BUFFLEN  64

@@ -11,10 +11,12 @@
 
 	// INCLUDES:
 	#include <avr/io.h>
+	#include <avr/eeprom.h>
 	
-	#include "Dataflash.h"
 	#include "AVRISPCommandBytes.h"
+	#include "Dataflash.h"
 	#include "EEPROMVariables.h"
+	#include "GlobalMacros.h"
 	#include "VirtualAVRMemManager.h"
 	
 	// DEFINES:

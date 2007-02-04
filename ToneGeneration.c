@@ -11,7 +11,9 @@
 /* Tone values are compressed to save on space at the expense of resolution.
    When played, the tone value is expanded to 16-bit and shifted left 5 times
    to give 11 bits of resolution. As the exact frequency of the tones isn't
-   important, this is an acceptable tradeoff. Lower values = higher tone.     */
+   important, this is an acceptable tradeoff. Lower values = higher tone. Note
+   that the tone generation is syncronous; program execution halts while the
+   tone plays.                                                                 */
 
                                           // Tone1,......,ToneN, 0x00
 const uint8_t ToneSeq_Startup[]  PROGMEM = {156, 125,  94,  63, 0x00};

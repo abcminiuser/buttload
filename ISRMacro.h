@@ -20,14 +20,14 @@
    The new macro is backwards compatible with the original ISR macro.
    
    The avaliable attributes are:
-      1) ISR_BLOCK   - ISR, interrupts disable until ISR completes.
-      2) ISR_NOBLOCK - ISR, interrupts enabled until ISR completes.
-      3) ISR_NAKED   - ISR, no prologue or epilogue.
-      4) ISR_ALIAS   - ISR, alias to another interrupt vector's ISR. GCC 4.x only.
+      1) ISR_BLOCK         - ISR, interrupts disable until ISR completes.
+      2) ISR_NOBLOCK       - ISR, interrupts enabled until ISR completes.
+      3) ISR_NAKED         - ISR, no prologue or epilogue.
+      4) ISR_ALIASOF(vect) - ISR, alias to another interrupt vector's ISR. GCC 4.2+ only.
 
    For GCC 3.x vector aliases, you can use the ISR_ALIAS_COMPAT macro (instead
-   of ISR macro). Works with GCC 3.x as well as GCC 4.x, but aliased vector
-   ISR will contain a JMP instruction that the non-aliased vector does not have.
+   of ISR macro). Works with GCC 3.x as well as GCC 4.x, but compat aliased vector
+   ISR will contain a JMP instruction that the non-compat aliased vector does not have.
 */
 
 #ifndef ISRMACRO_H

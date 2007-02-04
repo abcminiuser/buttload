@@ -12,10 +12,11 @@
 	// INCLUDES:
 	#include <avr/io.h>
 	
-	#include "GlobalMacros.h"
-	#include "Main.h"
 	#include "ButtLoadTag.h"
 	#include "Dataflash.h"
+	#include "GlobalMacros.h"
+	#include "Main.h"
+	#include "SPI.h"
 	
 	// PROTOTYPES:
 	void   TM_ShowTags(void);

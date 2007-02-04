@@ -12,11 +12,11 @@
 	// INCLUDES:
 	#include <avr/io.h>
 	#include <avr/pgmspace.h>
-	#include <Delay.h>
 	
 	#include "AVRISPCommandBytes.h"
-	#include "Main.h"
+	#include "Delay.h"
 	#include "LCD_Driver.h"
+	#include "Main.h"
 	#include "USI.h"
 	
 	// MACROS AND DEFINES:

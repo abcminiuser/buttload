@@ -12,6 +12,7 @@
 	// INCLUDES:
 	#include <avr/io.h>
 	
+	#include "GlobalMacros.h"
 	#include "LCD_Driver.h"
 	#include "RingBuff.h"
 	#include "Timeout.h"

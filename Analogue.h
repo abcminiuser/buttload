@@ -13,9 +13,9 @@
 	#include <avr/io.h>
 	#include <avr/interrupt.h>
 
-	#include "Main.h"
-	#include "GlobalMacros.h"
 	#include "Atomic.h"
+	#include "GlobalMacros.h"
+	#include "Main.h"
 	
 	// PROTOTYPES:
 	uint16_t AN_GetADCValue(const uint8_t Channel) ATTR_WARN_UNUSED_RESULT;

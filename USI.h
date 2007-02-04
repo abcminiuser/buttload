@@ -7,7 +7,7 @@
 */
 
 #ifndef USI_H
-	#define USI_H
+#define USI_H
 	
 	// INCLUDES:
 	#include <avr/io.h>
@@ -19,12 +19,13 @@
 	#ifndef __ASSEMBLER__
 	
 		// INCLUDES:
+		#include <avr/io.h>
 		#include <avr/interrupt.h>
 		#include <avr/pgmspace.h>
-		#include <Delay.h>
 			
-		#include "GlobalMacros.h"
 		#include "AVRISPCommandBytes.h"
+		#include "Delay.h"
+		#include "GlobalMacros.h"
 		#include "ISRMacro.h"
 		#include "Main.h"
 			

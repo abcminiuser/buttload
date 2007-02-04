@@ -103,13 +103,14 @@
 		ProgramManager.c + Header file           | By Dean Camera
 		RingBuff.c + Header file                 | By Dean Camera
 		SPI.c + Header file                      | By Dean Camera
+		Settings.c + Header file                 | By Dean Camera
 		StorageManager.c + Header file           | By Dean Camera
 		TagManager.c + Header file               | By Dean Camera
 		Timeout.c + Header file                  | By Dean Camera
 		ToneGeneration.c + Header file           | By Dean Camera
 		USART.c + Header file                    | By Dean Camera
 		USI.c + Header file                      | By Dean Camera
-		USITransfer.S                            | By Dean Camera with assistance from John Samperi 
+		USITransfer.S                            | By Dean Camera with assistance from John Samperi
 		V2Protocol.c + Header file               | By Dean Camera
 		VirtualAVRMemManager.c + Header file     | By Dean Camera
 -------------------------------------------------+-----------------------------------------------------
@@ -132,12 +133,13 @@ BUTTLOADTAG(Title,     "BUTTLOAD AVRISP");
 BUTTLOADTAG(Version,   VERSION_VSTRING);
 BUTTLOADTAG(Author,    "BY DEAN CAMERA");
 BUTTLOADTAG(Copyright, "<C> 2007 - GPL");
+BUTTLOADTAG(BuildTime, "BTIME: " __TIME__);
+BUTTLOADTAG(BuildDate, "BDATE: " __DATE__);
 
 // PROGMEM CONSTANTS:
 const char*   AboutTextPtrs[]                   PROGMEM = {BUTTTAG_Title.TagData, BUTTTAG_Version.TagData, BUTTTAG_Author.TagData, BUTTTAG_Copyright.TagData};
 
 const char    WaitText[]                        PROGMEM = "*WAIT*";
-const char    OffText[]                         PROGMEM = "OFF";
 
 const char    Func_ISPPRGM[]                    PROGMEM = "AVRISP MODE";
 const char    Func_STOREPRGM[]                  PROGMEM = "STORE PRGM";
@@ -160,16 +162,10 @@ const char    SFunc_CLEARMEM[]                  PROGMEM = "CLEAR SETTINGS";
 const char    SFunc_GOBOOTLOADER[]              PROGMEM = "JUMP TO BOOTLOADER";
 
 const char*   SettingFunctionNames[]            PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_SETRESETMODE, SFunc_SETFIRMMINOR  , SFunc_SETAUTOSLEEPTO    , SFunc_SETTONEVOL, SFunc_SETSTARTUP   , SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
-const FuncPtr SettingFunctionPtrs[]             PROGMEM = {MAIN_SetContrast , MAIN_SetISPSpeed , MAIN_SetResetMode , MAIN_SetFirmMinorVer, MAIN_SetAutoSleepTimeOut, MAIN_SetToneVol , MAIN_SetStartupMode, MAIN_ClearMem , MAIN_GoBootloader};
+const FuncPtr SettingFunctionPtrs[]             PROGMEM = {SET_SetContrast , SET_SetISPSpeed , SET_SetResetMode , SET_SetFirmMinorVer, SET_SetAutoSleepTimeOut, SET_SetToneVol , SET_SetStartupMode, MAIN_ClearMem , MAIN_GoBootloader};
 
-const char    USISpeeds[USI_PRESET_SPEEDS][11]  PROGMEM = {"1843200 HZ", " 921600 HZ", " 230400 HZ", " 115200 HZ", "  57600 HZ", "  28800 HZ"};
-const char    USISpeedVals[]                    PROGMEM = {           0,            0,            1,            1,            2,            3}; // Translate from stored SCK value to nearest AVRStudio SCK value
-const char    USISpeedIndex[]                   PROGMEM = {                         1,            2,                          4,            5}; // Translate from recieved AVRStudio SCK value to nearest Buttload SCK value
-
-const char    SPIResetModes[2][6]               PROGMEM = {"LOGIC", "FLOAT"};
-const char    SIFONames[2][15]                  PROGMEM = {"STORAGE SIZES", "VIEW DATA TAGS"};
 const char    ProgramAVROptions[2][8]           PROGMEM = {"START", "OPTIONS"};
-const char    StartupModes[3][11]               PROGMEM = {"NORMAL", "PRODUCTION", "AVRISP"};
+const char    SIFONames[2][15]                  PROGMEM = {"STORAGE SIZES", "VIEW DATA TAGS"};
 
 const uint8_t BitTable[]                        PROGMEM = {(1 << 0), (1 << 1), (1 << 2), (1 << 3), (1 << 4), (1 << 5), (1 << 6), (1 << 7)}; // Lookup table, bitnum to bit mask
 
@@ -701,379 +697,6 @@ static void MAIN_ChangeSettings(void)
 }
 
 /*
- NAME:      | MAIN_ClearMem (static)
- PURPOSE:   | Clears all ButtLoad settings (which change back to defaults)
- ARGUMENTS: | None
- RETURNS:   | None
-*/
-static void MAIN_ClearMem(void)
-{
-	LCD_puts_f(PSTR("CONFIRM"));
-	LCD_WAIT_FOR_SCROLL_DONE();                  // Loop until the message has finished scrolling completely
-
-	LCD_puts_f(PSTR("<N Y>"));
-
-	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
-	                                             // name of the default command onto the LCD	
-	for (;;)
-	{
-		if (JoyStatus)
-		{
-			if (JoyStatus & JOY_LEFT)
-			  return;
-			else if (JoyStatus & JOY_RIGHT)
-			  break;
-		}
-
-		SLEEPCPU(SLEEP_POWERSAVE);
-	}
-
-	MAIN_WaitForJoyRelease();
-
-	LCD_puts_f(WaitText);
-	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);      // Set status LEDs to orange (busy)
-
-	for (uint16_t EAddr = 0; EAddr < sizeof(EEPROMVars); EAddr++)
-	  eeprom_write_byte((uint8_t*)EAddr, 0xFF);
-	
-	eeprom_write_word(&EEPROMVars.MagicNumber, MAGIC_NUM);
-
-	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Set status LEDs to green (ready)
-	LCD_puts_f(PSTR("MEM CLEARED"));
-	LCD_WAIT_FOR_SCROLL_DONE();                  // Loop until the message has finished scrolling completely
-}
-
-/*
- NAME:      | MAIN_SetContrast (static)
- PURPOSE:   | Changes the LCD's contrast to the user's preference
- ARGUMENTS: | None
- RETURNS:   | None
-*/
-static void MAIN_SetContrast(void)
-{
-	uint8_t Contrast = (eeprom_read_byte(&EEPROMVars.LCDContrast) & 0x0F); // Ranges from 0-15 so mask retuns 15 on blank EEPROM (0xFF)
-	char Buffer[6];
-	
-	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
-	                                             // name of the default command onto the LCD
-	for (;;)
-	{
-		if (JoyStatus)
-		{
-			if (JoyStatus & JOY_UP)
-			{
-				if (Contrast < 15)
-				  Contrast++;
-			}
-			else if (JoyStatus & JOY_DOWN)
-			{
-				if (Contrast > 1)                // Zero is non-visible, so 1 is the minimum
-				  Contrast--;
-			}
-			else if (JoyStatus & JOY_LEFT)
-			{
-				eeprom_write_byte(&EEPROMVars.LCDContrast, Contrast);
-				return;
-			}
-					
-			Buffer[0] = 'C';
-			Buffer[1] = 'T';
-			Buffer[2] = ' ';
-
-			MAIN_IntToStr((uint16_t)Contrast, &Buffer[3]);
-			LCD_puts(Buffer);
-
-			LCD_CONTRAST_LEVEL(Contrast);
-
-			MAIN_WaitForJoyRelease();
-		}
-
-		SLEEPCPU(SLEEP_POWERSAVE);
-	}
-}
-
-/*
- NAME:      | MAIN_SetISPSpeed (static)
- PURPOSE:   | Changes the target connection ISP speed to the user's preference
- ARGUMENTS: | None
- RETURNS:   | None
-*/
-static void MAIN_SetISPSpeed(void)
-{
-	uint8_t CurrSpeed = eeprom_read_byte(&EEPROMVars.SCKDuration);
-
-	if (CurrSpeed > ARRAY_UPPERBOUND(USISpeeds))
-	  CurrSpeed = pgm_read_byte(&USISpeedIndex[0]); // Protection against blank EEPROM
-
-	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
-	                                             // name of the default command onto the LCD
-	for (;;)
-	{
-		if (JoyStatus)
-		{
-			if (JoyStatus & JOY_UP)
-			{
-				(CurrSpeed == 0)? CurrSpeed = ARRAY_UPPERBOUND(USISpeeds) : CurrSpeed--;
-			}
-			else if (JoyStatus & JOY_DOWN)
-			{
-				(CurrSpeed == ARRAY_UPPERBOUND(USISpeeds))? CurrSpeed = 0 : CurrSpeed++;
-			}
-			else if (JoyStatus & JOY_LEFT)
-			{
-				eeprom_write_byte(&EEPROMVars.SCKDuration, CurrSpeed);
-				return;
-			}
-			
-			// Show selected USI speed value onto the LCD:
-			LCD_puts_f(USISpeeds[CurrSpeed]);
-
-			MAIN_WaitForJoyRelease();
-		}
-
-		SLEEPCPU(SLEEP_POWERSAVE);
-	}
-}
-
-/*
- NAME:      | MAIN_SetResetMode (static)
- PURPOSE:   | Changes the target reset line inactive mode (LOGIC or FLOAT) to the user's preference
- ARGUMENTS: | None
- RETURNS:   | None
-*/
-static void MAIN_SetResetMode(void)
-{
-	uint8_t CurrMode = (eeprom_read_byte(&EEPROMVars.SPIResetMode) & 0x01);
-
-	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
-	                                             // name of the default command onto the LCD
-	for (;;)
-	{
-		if (JoyStatus)
-		{
-			if (JoyStatus & (JOY_UP | JOY_DOWN))
-			{
-				CurrMode ^= 1;
-			}
-			else if (JoyStatus & JOY_LEFT)
-			{
-				eeprom_write_byte(&EEPROMVars.SPIResetMode, CurrMode);
-				MAIN_SetTargetResetLine(MAIN_RESET_INACTIVE);
-				return;
-			}
-			
-			// Show selected USI speed value onto the LCD:
-			LCD_puts_f(SPIResetModes[CurrMode]);
-
-			MAIN_WaitForJoyRelease();
-		}
-
-		SLEEPCPU(SLEEP_POWERSAVE);
-	}
-}
-
-/*
- NAME:      | MAIN_SetFirmMinorVer (static)
- PURPOSE:   | Changes the returned firmware revision number to the user's preference
- ARGUMENTS: | None
- RETURNS:   | None
-*/
-static void MAIN_SetFirmMinorVer(void)
-{
-	uint8_t VerMinor = eeprom_read_byte(&EEPROMVars.FirmVerMinor);
-	char    VerBuffer[5];
-
-	if (VerMinor > 19)
-	  VerMinor = V2P_SW_VERSION_MINOR_DEFAULT;
-	
-	VerBuffer[0] = 'V';
-	VerBuffer[1] = '2';
-
-	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
-	                                             // name of the default command onto the LCD
-	for (;;)
-	{
-		if (JoyStatus)
-		{
-			if (JoyStatus & JOY_UP)
-			{
-				if (VerMinor < 20)
-				  VerMinor++;
-			}
-			else if (JoyStatus & JOY_DOWN)
-			{
-				if (VerMinor)
-				  VerMinor--;
-			}
-			else if (JoyStatus & JOY_LEFT)
-			{
-				eeprom_write_byte(&EEPROMVars.FirmVerMinor, VerMinor);
-				return;
-			}
-			
-			MAIN_IntToStr(VerMinor, &VerBuffer[2]);
-			VerBuffer[2] = '-';
-			LCD_puts(VerBuffer);
-
-			MAIN_WaitForJoyRelease();
-		}
-
-		SLEEPCPU(SLEEP_POWERSAVE);
-	}	
-}
-
-/*
- NAME:      | MAIN_SetAutoSleepTimeOut (static)
- PURPOSE:   | Changes the length of time of inactivity before entering sleep mode to the user's preference
- ARGUMENTS: | None
- RETURNS:   | None
-*/
-static void MAIN_SetAutoSleepTimeOut(void)
-{
-	uint8_t SleepVal = eeprom_read_byte(&EEPROMVars.AutoSleepValIndex);
-	char    SleepTxtBuffer[8];
-
-	if (SleepVal > ARRAY_UPPERBOUND(AutoSleepTOValues))
-	  SleepVal = ARRAY_UPPERBOUND(AutoSleepTOValues);
-
-	strcpy_P(SleepTxtBuffer, PSTR("    SEC"));
-	
-	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
-	                                             // name of the default command onto the LCD
-	for (;;)
-	{
-		if (JoyStatus)
-		{
-			if (JoyStatus & JOY_UP)
-			{
-				(SleepVal == 0)? SleepVal = ARRAY_UPPERBOUND(AutoSleepTOValues) : SleepVal--;
-			}
-			if (JoyStatus & JOY_DOWN)
-			{
-				(SleepVal == ARRAY_UPPERBOUND(AutoSleepTOValues))? SleepVal = 0 : SleepVal++;
-			}
-			else if (JoyStatus & JOY_LEFT)
-			{
-				eeprom_write_byte(&EEPROMVars.AutoSleepValIndex, SleepVal);
-				TOUT_SetupSleepTimer();
-				return;
-			}
-
-			if (!(SleepVal))
-			{
-				LCD_puts_f(OffText);
-			}
-			else
-			{
-				MAIN_IntToStr(pgm_read_byte(&AutoSleepTOValues[SleepVal]), SleepTxtBuffer);
-				SleepTxtBuffer[3] = ' ';         // Remove the auto-string termination from the buffer
-				LCD_puts(SleepTxtBuffer);
-			}
-
-			MAIN_WaitForJoyRelease();
-		}
-
-		SLEEPCPU(SLEEP_POWERSAVE);
-	}	
-}
-
-/*
- NAME:      | MAIN_SetToneVol (static)
- PURPOSE:   | Changes the tone volume to the user's preference
- ARGUMENTS: | None
- RETURNS:   | None
-*/
-static void MAIN_SetToneVol(void)
-{
-	char VolBuffer[5];
-
-	VolBuffer[0] = 'V';
-	
-	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
-	                                             // name of the default command onto the LCD
-	for (;;)
-	{
-		if (JoyStatus)
-		{
-			uint8_t ToneVolLcl = ToneVol;        // Copy the global to a local variable to save code space
-
-			if (JoyStatus & JOY_UP)
-			{
-				ToneVolLcl = ((ToneVolLcl == 80)? 0 : (ToneVolLcl + 8));
-			}
-			else if (JoyStatus & JOY_DOWN)
-			{
-				ToneVolLcl = ((ToneVolLcl == 0)? 80 : (ToneVolLcl - 8));
-			}
-			else if (JoyStatus & JOY_LEFT)
-			{
-				eeprom_write_byte(&EEPROMVars.ToneVolume, ToneVolLcl);
-				return;
-			}
-
-			ToneVol = ToneVolLcl;                // Copy the local value back into the global
-
-			if (!(ToneVolLcl))
-			{
-				LCD_puts_f(OffText);
-			}
-			else
-			{
-				TG_PlayToneSeq(TONEGEN_SEQ_VOLTEST);
-				MAIN_IntToStr((ToneVol >> 3), &VolBuffer[1]);
-				LCD_puts(VolBuffer);				
-			}
-
-			MAIN_WaitForJoyRelease();
-		}
-
-		SLEEPCPU(SLEEP_POWERSAVE);
-	}	
-}
-
-/*
- NAME:      | MAIN_SetStartupMode (static)
- PURPOSE:   | Changes the startup mode to the user's preference
- ARGUMENTS: | None
- RETURNS:   | None
-*/
-static void MAIN_SetStartupMode(void)
-{
-	uint8_t StartupMode = eeprom_read_byte(&EEPROMVars.StartupMode);
-
-	if (StartupMode > ARRAY_UPPERBOUND(StartupModes))
-	  StartupMode = 0;
-
-	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
-	                                             // name of the default command onto the LCD
-	for (;;)
-	{
-		if (JoyStatus)
-		{
-			if (JoyStatus & JOY_UP)
-			{
-				(StartupMode == 0)? StartupMode = ARRAY_UPPERBOUND(StartupModes) : StartupMode--;
-			}
-			else if (JoyStatus & JOY_DOWN)
-			{
-				(StartupMode == ARRAY_UPPERBOUND(StartupModes))? StartupMode = 0 : StartupMode++;
-			}
-			else if (JoyStatus & JOY_LEFT)
-			{
-				eeprom_write_byte(&EEPROMVars.StartupMode, StartupMode);
-				return;
-			}
-
-			LCD_puts_f(StartupModes[StartupMode]);			
-
-			MAIN_WaitForJoyRelease();
-		}
-
-		SLEEPCPU(SLEEP_POWERSAVE);
-	}	
-}
-
-/*
  NAME:      | MAIN_StorageInfo (static)
  PURPOSE:   | Enters a submenu which gives information about the data currently stored in the onboard dataflash
  ARGUMENTS: | None
@@ -1127,6 +750,59 @@ static void MAIN_StorageInfo(void)
 
 		SLEEPCPU(SLEEP_POWERSAVE);
 	}
+}
+
+/*
+ NAME:      | MAIN_ClearMem (static)
+ PURPOSE:   | Clears all ButtLoad settings (which change back to defaults)
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
+static void MAIN_ClearMem(void)
+{
+	LCD_puts_f(PSTR("CONFIRM"));
+	LCD_WAIT_FOR_SCROLL_DONE();                  // Loop until the message has finished scrolling completely
+
+	LCD_puts_f(PSTR("<N Y>"));
+
+	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
+	                                             // name of the default command onto the LCD	
+	for (;;)
+	{
+		if (JoyStatus)
+		{
+			if (JoyStatus & JOY_LEFT)
+			  return;
+			else if (JoyStatus & JOY_RIGHT)
+			  break;
+		}
+
+		SLEEPCPU(SLEEP_POWERSAVE);
+	}
+
+	MAIN_WaitForJoyRelease();
+
+	LCD_puts_f(WaitText);
+	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);      // Set status LEDs to orange (busy)
+
+	for (uint16_t EAddr = 0; EAddr < sizeof(EEPROMVars); EAddr++)
+	  eeprom_write_byte((uint8_t*)EAddr, 0xFF);
+	
+	eeprom_write_word(&EEPROMVars.MagicNumber, MAGIC_NUM);
+
+/* \/\/\/ TEMP - REMOVE FOR RELEASE!!! \/\/\/ */
+	SPI_SPIInit();
+	if (DF_CheckCorrectOnboardChip())
+	{
+		for (uint16_t Block = 0; Block < DF_DATAFLASH_BLOCKS; Block++)
+			DF_EraseBlock(Block);
+	}
+	SPI_SPIOFF();
+/* /\/\/\ TEMP - REMOVE FOR RELEASE!!! /\/\/\ */
+
+	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Set status LEDs to green (ready)
+	LCD_puts_f(PSTR("MEM CLEARED"));
+	LCD_WAIT_FOR_SCROLL_DONE();                  // Loop until the message has finished scrolling completely
 }
 
 /*

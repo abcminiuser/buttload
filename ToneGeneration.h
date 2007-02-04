@@ -18,15 +18,15 @@
 	#include "Main.h"
 	
 	// DEFINES AND MACROS:
-	#define TONEGEN_SEQ_STARTUP    &ToneSeq_Startup[0]
-	#define TONEGEN_SEQ_SYNCFAIL   &ToneSeq_SyncFail[0]
-	#define TONEGEN_SEQ_PROGDONE   &ToneSeq_ProgDone[0]
-	#define TONEGEN_SEQ_PROGFAIL   &ToneSeq_ProgFail[0]
-	#define TONEGEN_SEQ_WAITWRITE  &ToneSeq_VolTest[0]
-	#define TONEGEN_SEQ_VOLTEST    &ToneSeq_VolTest[0]
-	#define TONEGEN_SEQ_SLEEP      &ToneSeq_Sleep[0]
-	#define TONEGEN_SEQ_RESUME     &ToneSeq_Resume[0]
-	#define TONEGEN_SEQ_ERROR      &ToneSeq_Error[0]
+	#define TONEGEN_SEQ_STARTUP    ToneSeq_Startup
+	#define TONEGEN_SEQ_SYNCFAIL   ToneSeq_SyncFail
+	#define TONEGEN_SEQ_PROGDONE   ToneSeq_ProgDone
+	#define TONEGEN_SEQ_PROGFAIL   ToneSeq_ProgFail
+	#define TONEGEN_SEQ_WAITWRITE  ToneSeq_VolTest
+	#define TONEGEN_SEQ_VOLTEST    ToneSeq_VolTest
+	#define TONEGEN_SEQ_SLEEP      ToneSeq_Sleep
+	#define TONEGEN_SEQ_RESUME     ToneSeq_Resume
+	#define TONEGEN_SEQ_ERROR      ToneSeq_Error
 	
 	#define TONEGEN_GET_TONE_VOL() MACROS{ ToneVol = eeprom_read_byte(&EEPROMVars.ToneVolume); }MACROE
 	

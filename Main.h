@@ -10,7 +10,7 @@
 #define MAIN_H
 
 	// DEBUG SWITCHES
-	#define DEBUG_JTAGON
+//	#define DEBUG_JTAGON
 	#define DEBUG_MEMFILLON
 	#define DEBUG_BYTEORDERTEST
 	// END DEBUG SWITCHES
@@ -20,25 +20,26 @@
 	#include <avr/interrupt.h>
 	#include <avr/pgmspace.h>
 	#include <avr/version.h>
-	#include <Delay.h>
-	
+
 	#include "Analogue.h"
+	#include "Dataflash.h"
+	#include "Delay.h"	
+	#include "EEPROMVariables.h"
 	#include "GlobalMacros.h"
 	#include "ISRMacro.h"
-	#include "OSCCal.h"
 	#include "LCD_Driver.h"
-	#include "V2Protocol.h"
-	#include "USART.h"
-	#include "SPI.h"
-	#include "USI.h"
-	#include "Dataflash.h"
+	#include "OSCCal.h"
 	#include "ProgramManager.h"
+	#include "Settings.h"
+	#include "SPI.h"
 	#include "StorageManager.h"
-	#include "TagManager.h"
 	#include "Support/ButtLoadTag.h"
+	#include "TagManager.h"
 	#include "ToneGeneration.h"
+	#include "USART.h"
+	#include "USI.h"
+	#include "V2Protocol.h"
 	#include "VirtualAVRMemManager.h"
-	#include "EEPROMVariables.h"
 	
 	#if defined(INC_FROM_MAIN)
 		// LIB C VERSION CHECK:
@@ -50,17 +51,11 @@
 		#if defined(DEBUG_JTAGON)
 			#warning DEBUG_JTAGON option is activated - JTAG system is enabled. Remove before releasing.
 		#endif
-	
-		#if defined(DEBUG_DBFUNCSON)
-			#warning DEBUG_DBFUNCSON option is activated - Debug routines are enabled. Remove before releasing.
-		#endif
 	#endif
 	
 	// EXTERNAL VARIABLES:
 	extern const char WaitText[];
 	extern const char VersionInfo[];
-	extern const char USISpeedVals[];
-	extern const char USISpeedIndex[];
 
 	#define JoyStatus                  GPIOR1 // Psudo-variable, GPIO register for speed
 
@@ -103,15 +98,9 @@
 	  static void MAIN_StoreProgram(void);
 	  static void MAIN_ChangeSettings(void);
 
-	  static void MAIN_ClearMem(void);
-	  static void MAIN_SetContrast(void);
-	  static void MAIN_SetISPSpeed(void);
-	  static void MAIN_SetResetMode(void);
-	  static void MAIN_SetFirmMinorVer(void);
-	  static void MAIN_SetAutoSleepTimeOut(void);
-	  static void MAIN_SetToneVol(void);
-	  static void MAIN_SetStartupMode(void);
 	  static void MAIN_StorageInfo(void);
+
+	  static void MAIN_ClearMem(void);
 	  static void MAIN_GoBootloader(void) ATTR_NO_RETURN;
 	#endif
 

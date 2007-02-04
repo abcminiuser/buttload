@@ -12,12 +12,12 @@
 	// INCLUDES:
 	#include <avr/io.h>
 	#include <avr/pgmspace.h>
-	#include <Delay.h>
 	
-	#include "LCD_Driver.h"
-	#include "ISPChipComm.h"
-	#include "V2Protocol.h"
 	#include "AVRISPCommandBytes.h"
+	#include "Delay.h"
+	#include "ISPChipComm.h"
+	#include "LCD_Driver.h"
+	#include "V2Protocol.h"
 	
 	// EXTERNAL VARIABLES:
 	extern const char AVRISPModeMessage[] PROGMEM;
