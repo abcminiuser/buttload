@@ -84,12 +84,14 @@
 		FILE                                     |  AUTHOR
 		-----------------------------------------+---------------------------------------------
 		Analogue.c + Header file                 | By Dean Camera
+		Atomic.h                                 | By Dean Camera
 		AVRISPCommandBytes.h                     | By Dean Camera
 		AVRISPCommandInterpreter.c + Header file | By Dean Camera
 		ButtLoadTag.h                            | By Dean Camera
 		Dataflash.c + Header file                | By Dean Camera, re-coded from the generic dataflash
 		                                         | code by Atmel (ported to GCC by Martin Thomas)
 		DataflashCommandBytes.h                  | By Atmel, modified by Martin Thomas
+		Delay.h                                  | By Hans-Juergen Heinrichs
 		EEPROMVariables.h                        | By Dean Camera
 		GlobalMacros.h                           | By Dean Camera
 		ISPChipComm.c + Header file              | By Dean Camera
@@ -176,14 +178,21 @@ EEPROMVarsType EEPROMVars EEMEM;
 
 // ======================================================================================
 
+/*
+ NAME:      | main
+ PURPOSE:   | Entry point into program, handles top level menu and driver initialization
+ ARGUMENTS: | None
+ RETURNS:   | Never
+*/
 int main(void)
 {	
 	uint8_t CurrFunc    = 0;
 	uint8_t StartupMode = eeprom_read_byte(&EEPROMVars.StartupMode);
 
 	#ifndef DEBUG_JTAGON
-	    MCUCR   = (1 << JTD);                    // Turn off JTAG via code
-	    MCUCR   = (1 << JTD);                    // Twice as specified in datasheet
+		register volatile uint8_t MD asm("r24") = (MCUCR | (1 << JTD)); // Forces compiler to use IN, OR plus two OUTs rather than two lots of IN/AND/OUTs
+		MCUCR = MD;                              // Turn on JTAG via code
+		MCUCR = MD;
 	#endif
 
 	ACSR    = (1 << ACD);                        // Disable the unused Analogue Comparitor to save power
@@ -202,7 +211,7 @@ int main(void)
 	EIFR    = ((1 << PCIF0) | (1 << PCIF1));     // /
 
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);      // Set status LEDs to orange (busy)
-	MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE);     // Set target reset line to inactive
+	MAIN_SetTargetResetLine(MAIN_RESET_INACTIVE); // Set target reset line to inactive
 
 	sei();                                       // Enable interrupts
 
@@ -261,6 +270,12 @@ int main(void)
 
 // ======================================================================================
 
+/*
+ NAME:      | MAIN_Delay10MS
+ PURPOSE:   | Delays for specified blocks of 10 milliseconds
+ ARGUMENTS: | Number of blocks of 10ms to delay
+ RETURNS:   | None
+*/
 void MAIN_Delay10MS(uint8_t loops)
 {
   /* Prevents the use of floating point libraries. Delaying in groups of
@@ -271,6 +286,12 @@ void MAIN_Delay10MS(uint8_t loops)
 	  _delay_ms(10);
 }
 
+/*
+ NAME:      | MAIN_Delay1MS
+ PURPOSE:   | Delays for specified blocks of 1 milliseconds
+ ARGUMENTS: | Number of blocks of 1ms to delay
+ RETURNS:   | None
+*/
 void MAIN_Delay1MS(uint8_t loops)
 {
   /* Prevents the use of floating point libraries. Less accurate than the
@@ -282,36 +303,45 @@ void MAIN_Delay1MS(uint8_t loops)
 	  _delay_ms(1);
 }
 
-void MAIN_ResetCSLine(const uint8_t ActiveInactive)
+/*
+ NAME:      | MAIN_SetTargetResetLine
+ PURPOSE:   | Changes the state of the target device's reset line
+ ARGUMENTS: | New line state (MAIN_RESET_ACTIVE or MAIN_RESET_INACTIVE)
+ RETURNS:   | None
+*/
+void MAIN_SetTargetResetLine(const uint8_t ActiveInactive)
 {
 	/* ActiveInactive controls the /Reset line to the target AVR device. If the reset polarity parameter
 	   is a 0 then Buttload is interfacing with AT89x devices (which have an active high rather than an
 	   active low reset) and this is managed automaticaly. The reset pin is tristated when inactive unless
 	   the SPIResetMode option is changed in the OPTIONS mode.                                             */
 	
+	uint8_t ResetPolarity = eeprom_read_byte(&EEPROMVars.ResetPolarity);
+	uint8_t ResetMode     = eeprom_read_byte(&EEPROMVars.SPIResetMode);
+	
 	switch (ActiveInactive)
 	{
-		case MAIN_RESETCS_ACTIVE:                // The target RESET line may be either active high or low.
+		case MAIN_RESET_ACTIVE:                // The target RESET line may be either active high or low.
 			DDRF |= (1 << 6);
 		
-			if (eeprom_read_byte(&EEPROMVars.ResetPolarity)) // Translate to correct active logic level for target device type
+			if (ResetPolarity)                   // Translate to correct active logic level for target device type
 			  PORTF &= ~(1 << 6);
 			else
 			  PORTF |=  (1 << 6);
 		
 			break;
-		case MAIN_RESETCS_INACTIVE:              // Must determine what to do for inactive RESET.
-			if (eeprom_read_byte(&EEPROMVars.SPIResetMode))  // FLOAT mode reset
+		case MAIN_RESET_INACTIVE:              // Must determine what to do for inactive RESET.
+			if (ResetMode)                       // FLOAT mode reset
 			{
 				DDRF  &= ~(1 << 6);
 
 				PORTF &= ~(1 << 6);
 			}
-			else                                             // ACTIVE mode reset
+			else                                 // ACTIVE mode reset
 			{
 				DDRF |= (1 << 6);
 			
-				if (eeprom_read_byte(&EEPROMVars.ResetPolarity)) // Translate to correct inactive logic level for target device type
+				if (ResetPolarity)               // Translate to correct inactive logic level for target device type
 				  PORTF |=  (1 << 6);
 				else
 				  PORTF &= ~(1 << 6);	
@@ -319,9 +349,15 @@ void MAIN_ResetCSLine(const uint8_t ActiveInactive)
 	}
 }
 
+/*
+ NAME:      | MAIN_WaitForJoyRelease
+ PURPOSE:   | Loops until the Butterfly's joystick is released
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 void MAIN_WaitForJoyRelease(void)
 {
-	if (JoyStatus == JOY_INVALID)                 // If invalid value used to force menu drawing, reset value and exit
+	if (JoyStatus == JOY_INVALID)                // If invalid value used to force menu drawing, reset value and exit
 	{
 		JoyStatus = 0;
 		return;
@@ -342,11 +378,14 @@ void MAIN_WaitForJoyRelease(void)
 	}
 }
 
+/*
+ NAME:      | MAIN_IntToStr
+ PURPOSE:   | Converts an integer value to ASCII, with leading zeros
+ ARGUMENTS: | Integer value (range 0-999), pointer to destination string buffer
+ RETURNS:   | None
+*/
 void MAIN_IntToStr(uint16_t IntV, char *Buff)
-{
-	// Shows leading zeros, unlike itoa.
-	// Maximum value which can be converted is 999.
-	
+{	
 	uint8_t Temp = 0;
 
 	while (IntV >= 100)
@@ -370,9 +409,15 @@ void MAIN_IntToStr(uint16_t IntV, char *Buff)
 	Buff[3] = '\0';
 }
 
+/*
+ NAME:      | MAIN_ShowProgType
+ PURPOSE:   | Shows the programming message ("PRG> ") to the LCD, followed by the specified type letter
+ ARGUMENTS: | Letter to display after programming message text
+ RETURNS:   | None
+*/
 void MAIN_ShowProgType(const uint8_t Letter)
 {
-	char ProgTypeBuffer[6];
+	char ProgTypeBuffer[7];
 
 	strcpy_P(ProgTypeBuffer, PSTR("PRG>  "));
 	ProgTypeBuffer[5] = Letter;
@@ -380,6 +425,12 @@ void MAIN_ShowProgType(const uint8_t Letter)
 	LCD_puts(ProgTypeBuffer);
 }
 
+/*
+ NAME:      | MAIN_ShowError
+ PURPOSE:   | Shows the specified error text to the LCD, prepended by "E>", and waits for the joystick to be pressed
+ ARGUMENTS: | Pointer to error string located in flash memory
+ RETURNS:   | None
+*/
 void MAIN_ShowError(const char *pFlashStr)
 {
 	char ErrorBuff[LCD_TEXTBUFFER_SIZE + 3];     // New buffer, LCD text buffer size plus space for the "E>" prefix and null-termination
@@ -388,8 +439,7 @@ void MAIN_ShowError(const char *pFlashStr)
 	ErrorBuff[0] = 'E';
 	ErrorBuff[1] = '>';
 
-	strcpy_P(&ErrorBuff[2], pFlashStr);          // WARNING: If flash error text is larger than TEXTBUFFER_SIZE,
-	                                             // this will overflow the buffer and crash the program!
+	strcpy_P(&ErrorBuff[2], pFlashStr);          // WARNING: If flash error text is larger than TEXTBUFFER_SIZE it will overflow the buffer
 
 	LCD_puts(ErrorBuff);
 	MAIN_SETSTATUSLED(MAIN_STATLED_RED);	
@@ -410,6 +460,12 @@ void MAIN_ShowError(const char *pFlashStr)
 
 // ======================================================================================
 
+/*
+ NAME:      | PCINT0_vect/PCINT1_vect (ISR, non-blocking, aliased)
+ PURPOSE:   | ISR to handle the changes of state of the Butterfly's onboard joystick
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 ISR_ALIAS_COMPAT(PCINT0_vect, PCINT1_vect);
 ISR(PCINT1_vect, ISR_NOBLOCK)                    // Joystick routine; PCINT0_vect is bound to this also
 {
@@ -419,6 +475,12 @@ ISR(PCINT1_vect, ISR_NOBLOCK)                    // Joystick routine; PCINT0_vec
 	TIMEOUT_SLEEP_TIMEOUT_RESET();
 }
 
+/*
+ NAME:      | BADISR_vect (ISR, naked)
+ PURPOSE:   | ISR to handle any unhandled ISRs - here for debugging
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 ISR(BADISR_vect, ISR_NAKED)                      // Bad ISR routine; should never be called, here for safety
 {
 	SPI_SPIOFF();
@@ -436,6 +498,12 @@ ISR(BADISR_vect, ISR_NAKED)                      // Bad ISR routine; should neve
 	};
 }
 
+/*
+ NAME:      | TIMER1_COMPA_vect (ISR, naked)
+ PURPOSE:   | ISR to handle the flashing of the red status LED during an error
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 ISR(TIMER1_COMPA_vect, ISR_NAKED)                // Used for status LED flashing during an error
 {
 	MAIN_TOGGLESTATUSLED(MAIN_STATLED_RED);      // Compiles down to a SBI - the PIN register toggles a bit on the MEGA169 if the bit is set as an output
@@ -444,9 +512,21 @@ ISR(TIMER1_COMPA_vect, ISR_NAKED)                // Used for status LED flashing
 
 // ======================================================================================
 
+/*
+ NAME:      | MAIN_SleepMode
+ PURPOSE:   | Powers down the Butterfly into a deep sleep until joystick is pushed upwards
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 void MAIN_SleepMode(void)
 {
-	LCDCRA |=  (1 << LCDBL);                     // Blank LCD to discharge all segments
+	ATOMIC_BLOCK(ATOMIC_FORCEON)
+	{
+		while (!(LCDCRA & (1<<LCDIF)));          // Wait for new frame
+		LCDCRA |= ((1 << LCDIF) | (1 << LCDBL)); // Blank LCD to discharge all segments and clear LCD interrupt flag
+		while (!(LCDCRA & (1<<LCDIF)));          // Wait for blanking to be effective
+	}
+
 	LCDCRA &= ~(1 << LCDEN);                     // Turn off LCD driver while sleeping
 	PRR    |=  (1 << PRLCD);                     // Enable LCD power reduction bit
 
@@ -466,12 +546,18 @@ void MAIN_SleepMode(void)
 	TG_PlayToneSeq(TONEGEN_SEQ_RESUME);
 
 	PRR    &= ~(1 << PRLCD);                     // Disable LCD power reduction bit
-	LCDCRA &= ~(1 << LCDBL);                     // Un-blank LCD to enable all segments
 	LCDCRA |=  (1 << LCDEN);                     // Re-enable LCD driver
+	LCDCRA &= ~(1 << LCDBL);                     // Un-blank LCD to enable all segments
 	
 	MAIN_WaitForJoyRelease();
 }
 
+/*
+ NAME:      | MAIN_ShowAbout (static)
+ PURPOSE:   | Shows the Buttload information strings onto the LCD (scroll via joytick up/down)
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 static void MAIN_ShowAbout(void)
 {
 	uint8_t InfoNum = 0;
@@ -498,6 +584,12 @@ static void MAIN_ShowAbout(void)
 	}
 }
 
+/*
+ NAME:      | MAIN_AVRISPMode (static)
+ PURPOSE:   | Enter AVRISP mode
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 static void MAIN_AVRISPMode(void)
 {
 	USART_Init();
@@ -506,6 +598,12 @@ static void MAIN_AVRISPMode(void)
 	V2P_RunStateMachine(AICI_InterpretPacket);
 }
 
+/*
+ NAME:      | MAIN_ProgramAVR (static)
+ PURPOSE:   | Enter PROGRAM AVR mode
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 static void MAIN_ProgramAVR(void)
 {
 	uint8_t ProgMode = 0;
@@ -543,6 +641,12 @@ static void MAIN_ProgramAVR(void)
 	}
 }
 
+/*
+ NAME:      | MAIN_StoreProgram (static)
+ PURPOSE:   | Enter STORE PRGM mode
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 static void MAIN_StoreProgram(void)
 {
 	SPI_SPIInit();
@@ -559,6 +663,12 @@ static void MAIN_StoreProgram(void)
 	SPI_SPIOFF();
 }
 
+/*
+ NAME:      | MAIN_ChangeSettings (static)
+ PURPOSE:   | Enters a submenu for viewing and changing ButtLoad's settings
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 static void MAIN_ChangeSettings(void)
 {
 	uint8_t CurrSFunc = 0;
@@ -590,6 +700,12 @@ static void MAIN_ChangeSettings(void)
 	}
 }
 
+/*
+ NAME:      | MAIN_ClearMem (static)
+ PURPOSE:   | Clears all ButtLoad settings (which change back to defaults)
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 static void MAIN_ClearMem(void)
 {
 	LCD_puts_f(PSTR("CONFIRM"));
@@ -627,6 +743,12 @@ static void MAIN_ClearMem(void)
 	LCD_WAIT_FOR_SCROLL_DONE();                  // Loop until the message has finished scrolling completely
 }
 
+/*
+ NAME:      | MAIN_SetContrast (static)
+ PURPOSE:   | Changes the LCD's contrast to the user's preference
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 static void MAIN_SetContrast(void)
 {
 	uint8_t Contrast = (eeprom_read_byte(&EEPROMVars.LCDContrast) & 0x0F); // Ranges from 0-15 so mask retuns 15 on blank EEPROM (0xFF)
@@ -670,6 +792,12 @@ static void MAIN_SetContrast(void)
 	}
 }
 
+/*
+ NAME:      | MAIN_SetISPSpeed (static)
+ PURPOSE:   | Changes the target connection ISP speed to the user's preference
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 static void MAIN_SetISPSpeed(void)
 {
 	uint8_t CurrSpeed = eeprom_read_byte(&EEPROMVars.SCKDuration);
@@ -707,6 +835,12 @@ static void MAIN_SetISPSpeed(void)
 	}
 }
 
+/*
+ NAME:      | MAIN_SetResetMode (static)
+ PURPOSE:   | Changes the target reset line inactive mode (LOGIC or FLOAT) to the user's preference
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 static void MAIN_SetResetMode(void)
 {
 	uint8_t CurrMode = (eeprom_read_byte(&EEPROMVars.SPIResetMode) & 0x01);
@@ -724,7 +858,7 @@ static void MAIN_SetResetMode(void)
 			else if (JoyStatus & JOY_LEFT)
 			{
 				eeprom_write_byte(&EEPROMVars.SPIResetMode, CurrMode);
-				MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE);
+				MAIN_SetTargetResetLine(MAIN_RESET_INACTIVE);
 				return;
 			}
 			
@@ -738,6 +872,12 @@ static void MAIN_SetResetMode(void)
 	}
 }
 
+/*
+ NAME:      | MAIN_SetFirmMinorVer (static)
+ PURPOSE:   | Changes the returned firmware revision number to the user's preference
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 static void MAIN_SetFirmMinorVer(void)
 {
 	uint8_t VerMinor = eeprom_read_byte(&EEPROMVars.FirmVerMinor);
@@ -782,6 +922,12 @@ static void MAIN_SetFirmMinorVer(void)
 	}	
 }
 
+/*
+ NAME:      | MAIN_SetAutoSleepTimeOut (static)
+ PURPOSE:   | Changes the length of time of inactivity before entering sleep mode to the user's preference
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 static void MAIN_SetAutoSleepTimeOut(void)
 {
 	uint8_t SleepVal = eeprom_read_byte(&EEPROMVars.AutoSleepValIndex);
@@ -831,6 +977,12 @@ static void MAIN_SetAutoSleepTimeOut(void)
 	}	
 }
 
+/*
+ NAME:      | MAIN_SetToneVol (static)
+ PURPOSE:   | Changes the tone volume to the user's preference
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 static void MAIN_SetToneVol(void)
 {
 	char VolBuffer[5];
@@ -879,6 +1031,12 @@ static void MAIN_SetToneVol(void)
 	}	
 }
 
+/*
+ NAME:      | MAIN_SetStartupMode (static)
+ PURPOSE:   | Changes the startup mode to the user's preference
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 static void MAIN_SetStartupMode(void)
 {
 	uint8_t StartupMode = eeprom_read_byte(&EEPROMVars.StartupMode);
@@ -915,6 +1073,12 @@ static void MAIN_SetStartupMode(void)
 	}	
 }
 
+/*
+ NAME:      | MAIN_StorageInfo (static)
+ PURPOSE:   | Enters a submenu which gives information about the data currently stored in the onboard dataflash
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 static void MAIN_StorageInfo(void)
 {
 	uint8_t SelectedItem = 0;
@@ -965,11 +1129,20 @@ static void MAIN_StorageInfo(void)
 	}
 }
 
+/*
+ NAME:      | MAIN_GoBootloader (static)
+ PURPOSE:   | Enables JTAG when joystick held down, and jumps to bootloader when joystick is released
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 static void MAIN_GoBootloader(void)
 {
-	volatile uint8_t MD = (MCUCR & ~(1 << JTD)); // Forces compiler to use IN, AND plus two OUTs rather than two lots of IN/AND/OUTs
-	MCUCR = MD;                                  // Turn on JTAG via code
-	MCUCR = MD;
+	ATOMIC_BLOCK(ATOMIC_FORCEON)
+	{
+		register volatile uint8_t MD asm("r24") = (MCUCR & ~(1 << JTD)); // Forces compiler to use IN, AND plus two OUTs rather than two lots of IN/AND/OUTs
+		MCUCR = MD;                              // Turn on JTAG via code
+		MCUCR = MD;
+	}
 
 	SecsBeforeAutoSleep = 0;
 	TIMEOUT_SLEEP_TIMER_OFF();
@@ -979,8 +1152,9 @@ static void MAIN_GoBootloader(void)
 	MAIN_WaitForJoyRelease();
 
 	WDTCR = ((1<<WDCE) | (1<<WDE));              // Enable Watchdog Timer to give reset after minimum timeout
-	for (;;) {};                                 // Eternal loop - when watchdog resets the AVR it will enter the bootloader,
-	                                             // assuming the BOOTRST fuse is programmed (otherwise app will just restart)
+
+	for (;;)                                     // Eternal loop - when watchdog resets the AVR it will enter the bootloader,
+	  SLEEPCPU(SLEEP_POWERSAVE);                 // assuming the BOOTRST fuse is programmed (otherwise app will just restart)
 }
 
 // ======================================================================================
@@ -1004,7 +1178,7 @@ static void MAIN_GoBootloader(void)
 		   bitshifts to save on flash. In the event of a misconfiguration, the Butterfly's speaker will
 		   play tone on a perpetual loop and fail to start.                                              */
 	
-		uint8_t Success  = FALSE;
+		uint8_t Success = FALSE;
 		
 		union
 		{
@@ -1027,25 +1201,5 @@ static void MAIN_GoBootloader(void)
 			for (;;)
 			  TG_PlayToneSeq(TONEGEN_SEQ_SLEEP);
 		}
-	}
-#endif
-
-#ifdef DEBUG_SERIALTRANS
-	void MAIN_Util_SerialTrans(void)
-	{
-		/* Debugging aid. Sends out a known string on startup to diagnose serial connection problems. */
-		
-		char* StringByte = BUTTTAG_Title.TagData;
-		
-		OSCCAL_Calibrate();
-		USART_Init();
-		
-		while (*StringByte)
-		{
-			USART_Tx(*StringByte);
-			StringByte++;
-		}
-		
-		USART_OFF();
 	}
 #endif

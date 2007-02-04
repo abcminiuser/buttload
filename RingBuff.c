@@ -15,6 +15,12 @@ volatile uint8_t OutPos                   = 0;
 
 // ======================================================================================
 
+/*
+ NAME:      | USART0_RX_vect (ISR, blocking)
+ PURPOSE:   | ISR to handle the reception of serial data, placing recieved bytes into a ring buffer
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 ISR(USART0_RX_vect, ISR_BLOCK)
 {
 	RingBuffer[InPos] = UDR;                   // Store the data
@@ -28,7 +34,13 @@ ISR(USART0_RX_vect, ISR_BLOCK)
 
 // ======================================================================================
 
-void BUFF_InitialiseBuffer(void)
+/*
+ NAME:      | BUFF_InitializeBuffer
+ PURPOSE:   | Resets and initializes the ring buffer ready for byte storage
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
+void BUFF_InitializeBuffer(void)
 {
 	ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
 	{
@@ -36,14 +48,22 @@ void BUFF_InitialiseBuffer(void)
 		OutPos = 0;                            // Set up the OUT counter to the start of the buffer
 		BuffElements = 0;                      // Reset the buffer elements counter
 	}
-	END_ATOMIC_BLOCK
 }
 
+/*
+ NAME:      | BUFF_GetBuffByte
+ PURPOSE:   | Returns the next byte in the FIFO ring buffer
+ ARGUMENTS: | None
+ RETURNS:   | Next bytes in the ring buffer
+*/
 uint8_t BUFF_GetBuffByte(void)
 {
 	uint8_t RetrievedData;
 
-	ATOMIC_BLOCK(ATOMIC_ASSUMEON)
+	if (!(BuffElements))                       // Return 0 if nothing in the buffer
+	  return 0;
+
+	ATOMIC_BLOCK(ATOMIC_FORCEON)
 	{
 		RetrievedData = RingBuffer[OutPos];    // Grab the stored byte into a temp variable
 		BuffElements--;                        // Decrement the total elements variable
@@ -53,7 +73,6 @@ uint8_t BUFF_GetBuffByte(void)
 		if (OutPos == BUFF_BUFFLEN)            // Increment and wrap pointer if end of array reached
 		  OutPos = 0;
 	}
-	END_ATOMIC_BLOCK
 		
 	return RetrievedData;                      // Return the retrieved data
 }

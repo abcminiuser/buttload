@@ -18,9 +18,16 @@ volatile uint8_t  SecsBeforeAutoSleep = 0;
 
 // ======================================================================================
 
-// Packet Timeout: 32Hz
+/*
+ NAME:      | TIMER0_COMP_vect (ISR, non-blocking)
+ PURPOSE:   | ISR to manage a timeout for recieving V2Protocol packets
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 ISR(TIMER0_COMP_vect, ISR_NOBLOCK)
 {
+	// Packet Timeout: 32Hz
+	
 	if (PacketTimeOutTicks++ == TIMEOUT_PACKET_TIMEOUTTICKS)
 	{
 		PacketTimeOutTicks = 0;
@@ -28,9 +35,16 @@ ISR(TIMER0_COMP_vect, ISR_NOBLOCK)
 	}
 }
 
-// Autosleep Timeout: 1Hz
+/*
+ NAME:      | TIMER2_COMP_vect (ISR, non-blocking)
+ PURPOSE:   | ISR to manage a timeout for automatically sleeping after periods of user inactivity
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 ISR(TIMER2_COMP_vect, ISR_NOBLOCK)
 {
+	// Autosleep Timeout: 1Hz
+
 	if (((SecsBeforeAutoSleep) && (SleepTimeOutSecs++ == SecsBeforeAutoSleep))
 	   || (AN_GetADCValue(AN_CHANNEL_SLEEP) > AN_SLEEP_TRIGGER_VALUE))
 	{
@@ -40,6 +54,12 @@ ISR(TIMER2_COMP_vect, ISR_NOBLOCK)
 
 // ======================================================================================
 
+/*
+ NAME:      | TOUT_SetupSleepTimer
+ PURPOSE:   | Configures timer and globals and starts timer for automatically sleeping after user inactivity
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 void TOUT_SetupSleepTimer(void)
 {
 	uint8_t NewTicksIndex = eeprom_read_byte(&EEPROMVars.AutoSleepValIndex);

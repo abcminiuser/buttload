@@ -60,13 +60,5 @@
 	#define ATTR_NO_RETURN            __attribute__ ((noreturn))
 	#define ATTR_INIT_SECTION(x)      __attribute__ ((naked, section (".init" #x )))
 	#define ATTR_WARN_UNUSED_RESULT   __attribute__ ((warn_unused_result))
-
-	// Other General Macros:
-	#define ATOMIC_BLOCK(exitmode)   do { exitmode cli();
-	#define END_ATOMIC_BLOCK         } while (0);
 	
-	#define ATOMIC_RESTORESTATE      inline void __irestore(const uint8_t *s) { SREG = *s; }         \
-	                                 const uint8_t __isave __attribute__((__cleanup__(__irestore))) = SREG;
-	#define ATOMIC_ASSUMEON          inline void __irestore(const uint8_t *s) { sei(); (void)s; }     \
-	                                 const uint8_t __isave __attribute__((__cleanup__(__irestore))) = 0;
 #endif

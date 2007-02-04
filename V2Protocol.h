@@ -12,7 +12,7 @@
 	// INCLUDES:
 	#include <avr/io.h>
 	#include <avr/pgmspace.h>
-	#include <util/delay.h>
+	#include <Delay.h>
 	
 	#include "AVRISPCommandBytes.h"
 	#include "AVRISPCommandInterpreter.h"
@@ -64,6 +64,7 @@
 
 	#if defined(INC_FROM_V2P)
 	  static uint8_t V2P_GetChecksum(void) ATTR_WARN_UNUSED_RESULT;
+	  static void    V2P_ProcessPacketData(FuncPtr PacketDecodeFunction);
 	  static void    V2P_GetSetParameter(void);
 	#endif
 	

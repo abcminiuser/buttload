@@ -14,6 +14,12 @@ uint32_t DFDataBytesLeft = 0x00000000;
 
 // ======================================================================================
 
+/*
+ NAME:      | TM_ShowTags
+ PURPOSE:   | Manages the showing of tags in the stored program data (if present) onto the Butterfly's LCD
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 void TM_ShowTags(void)
 {
 	DF_ContinuousReadEnable(0, 0);
@@ -22,10 +28,7 @@ void TM_ShowTags(void)
 
 	TM_FindNextTag();
 	if (!(TagExists))
-	{
-		DF_ENABLEDATAFLASH(FALSE);
 		return;
-	}
 
 	for (;;)
 	{
@@ -41,10 +44,14 @@ void TM_ShowTags(void)
 
 		SLEEPCPU(SLEEP_POWERSAVE);
 	}
-	
-	DF_ENABLEDATAFLASH(FALSE);
 }
 
+/*
+ NAME:      | TM_FindNextTag (static)
+ PURPOSE:   | Finds and displays the next tag in the stored program data (if present) - wraps to start if needed
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 static void TM_FindNextTag(void)
 {
 	char       Buffer[21];

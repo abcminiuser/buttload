@@ -23,12 +23,18 @@ uint8_t  Param_ControllerInit           = 0; // This is set to zero on reset, an
 
 // ======================================================================================
 
+/*
+ NAME:      | V2P_RunStateMachine
+ PURPOSE:   | Runs the master state machine for recieving and interpreting V2Protocol packets
+ ARGUMENTS: | Pointer to secondary interpreter function for mode-specific commands
+ RETURNS:   | None
+*/
 void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 {
 	uint8_t  V2PState           = V2P_STATE_IDLE;
 	uint16_t CurrentMessageByte = 0;
 
-	BUFF_InitialiseBuffer();	
+	BUFF_InitializeBuffer();	
 	TIMEOUT_SLEEP_TIMER_OFF();
 	
 	InProgrammingMode = FALSE;
@@ -44,9 +50,8 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 		switch (V2PState)
 		{
 			case V2P_STATE_IDLE:
-
 				if (BuffElements)                 // Serial data recieved in FIFO buffer
-					  V2PState = V2P_STATE_START;
+				  V2PState = V2P_STATE_START;
 				
 				if ((JoyStatus & JOY_LEFT) && !(InProgrammingMode))
 				{
@@ -78,15 +83,12 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 			case V2P_STATE_GETMESSAGESIZE2:
 				MessageSize |= USART_Rx();         // Get the second byte of the message size				
 
+				CurrentMessageByte = 0;
+
 				if (MessageSize < V2P_MAXBUFFSIZE) // Safety; only continue if packet size is less than buffer size
-				{	
-					V2PState = V2P_STATE_GETTOKEN;
-					CurrentMessageByte = 0;
-				}
+				  V2PState = V2P_STATE_GETTOKEN;
 				else
-				{
-					V2PState = V2P_STATE_PACKERR;
-				}
+				  V2PState = V2P_STATE_PACKERR;
 
 				break;
 			case V2P_STATE_GETTOKEN:
@@ -108,63 +110,7 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 				{
 					if (V2P_GetChecksum() == USART_Rx()) // If checksum is ok, process the packet
 					{
-						switch (PacketBytes[0])    // \/ Look for generic commands which can be interpreted here, 
-						{                          //  \ otherwise run the custom interpret routine
-							case AICB_CMD_SIGN_ON:
-								MessageSize = 11;
-
-								for (uint8_t SOByte = 0; SOByte < 11; SOByte++) // Load the sign-on sequence from program memory
-								  PacketBytes[SOByte] = pgm_read_byte(&SignonResponse[SOByte]);
-
-								V2P_SendPacket();
-								break;
-							case AICB_CMD_FIRMWARE_UPGRADE:
-								MessageSize = 2;
-			
-								PacketBytes[1] = AICB_STATUS_CMD_FAILED;  // Return failed (no automatic firmware upgrades)
-			
-								V2P_SendPacket();
-								break;				
-							case AICB_CMD_LOAD_ADDRESS:
-								MessageSize = 2;
-
-								union
-								{
-									uint8_t  Bytes[4];
-									uint32_t UnsignedLong;
-								} Conv;
-								
-								#if (COMP_BYTE_ORDER == COMP_ORDER_LITTLE)
-									Conv.Bytes[0] = PacketBytes[4];
-									Conv.Bytes[1] = PacketBytes[3];
-									Conv.Bytes[2] = PacketBytes[2];
-									Conv.Bytes[3] = PacketBytes[1];
-								#else
-									Conv.Bytes[3] = PacketBytes[4];
-									Conv.Bytes[2] = PacketBytes[3];
-									Conv.Bytes[1] = PacketBytes[2];
-									Conv.Bytes[0] = PacketBytes[1];								
-								#endif
-								
-								CurrAddress = Conv.UnsignedLong;
-
-								if (PacketDecodeFunction == AICI_InterpretPacket)
-								  V2P_CheckForExtendedAddress();
-								else
-								  VAMM_SetAddress();
-								
-								PacketBytes[1] = AICB_STATUS_CMD_OK;
-
-								V2P_SendPacket();
-								break;			
-							case AICB_CMD_GET_PARAMETER:
-							case AICB_CMD_SET_PARAMETER:						
-								V2P_GetSetParameter();
-								break;
-							default:
-								((FuncPtr)PacketDecodeFunction)();        // Run the interpret packet routine as set by the pointer
-						}
-
+						V2P_ProcessPacketData(PacketDecodeFunction);
 						V2PState = V2P_STATE_PACKOK;
 					}
 					else
@@ -190,7 +136,7 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 				// Fall through to V2P_STATE_PACKOK
 			case V2P_STATE_PACKOK:
 				PacketTimeOut = FALSE;
-				BUFF_InitialiseBuffer();           // Flush the ringbuffer
+				BUFF_InitializeBuffer();           // Flush the ringbuffer
 				TIMEOUT_PACKET_TIMER_OFF();
 
 				V2PState = V2P_STATE_IDLE;
@@ -198,6 +144,12 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 	}	
 }
 
+/*
+ NAME:      | V2P_SendPacket
+ PURPOSE:   | Transmits the V2Protocol packet stored in PacketBytes global, complete with header and checksum
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 void V2P_SendPacket(void)
 {
 	USART_Tx(AICB_MESSAGE_START);
@@ -207,14 +159,17 @@ void V2P_SendPacket(void)
 	USART_Tx(AICB_TOKEN);
 
 	for (uint16_t SentBytes = 0; SentBytes < MessageSize; SentBytes++)
-		USART_Tx(PacketBytes[SentBytes]);
+	  USART_Tx(PacketBytes[SentBytes]);
 
 	USART_Tx(V2P_GetChecksum());
-
-	SequenceNum++;
 }
 
-
+/*
+ NAME:      | V2P_IncrementCurrAddress
+ PURPOSE:   | Increments the current target memory address
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 void V2P_IncrementCurrAddress(void)
 {
 	// Incrementing a 32-bit unsigned variable takes a lot of code. Because much of the code is
@@ -225,6 +180,12 @@ void V2P_IncrementCurrAddress(void)
 	CurrAddress++;
 }
 
+/*
+ NAME:      | V2P_CheckForExtendedAddress
+ PURPOSE:   | Checks the current address to see if an extended address command needs to be sent, and if so sends it
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 void V2P_CheckForExtendedAddress(void)
 {
 	if (CurrAddress & V2P_LOAD_EXTENDED_ADDR_FLAG)     // MSB set of the address, indicates a LOAD_EXTENDED_ADDRESS must be executed
@@ -238,6 +199,12 @@ void V2P_CheckForExtendedAddress(void)
 	}
 }
 
+/*
+ NAME:      | V2P_GetChecksum (static)
+ PURPOSE:   | Calculates the V2Protocol checksum for the packet stored in the PacketBytes global
+ ARGUMENTS: | None
+ RETURNS:   | Checksum for the packet
+*/
 static uint8_t V2P_GetChecksum(void)
 {
 	uint8_t CheckSumByte;
@@ -257,14 +224,86 @@ static uint8_t V2P_GetChecksum(void)
 	return CheckSumByte;
 }
 
+/*
+ NAME:      | V2P_ProcessPacketData (static)
+ PURPOSE:   | Processes generic V2Protocol commands, and passes along mode-specific commands to the second decoding routine
+ ARGUMENTS: | Pointer to the second (mode-specific) packet decoding routine
+ RETURNS:   | None
+*/
+static void V2P_ProcessPacketData(FuncPtr PacketDecodeFunction)
+{
+	switch (PacketBytes[0])                   // Look for generic commands which can be interpreted here, otherwise run the custom interpret routine
+	{ 
+		case AICB_CMD_SIGN_ON:
+			MessageSize = 11;
+
+			for (uint8_t SOByte = 0; SOByte < 11; SOByte++) // Load the sign-on sequence from program memory
+			  PacketBytes[SOByte] = pgm_read_byte(&SignonResponse[SOByte]);
+								  
+			V2P_SendPacket();
+			break;
+		case AICB_CMD_FIRMWARE_UPGRADE:
+			MessageSize = 2;
+			
+			PacketBytes[1] = AICB_STATUS_CMD_FAILED;  // Return failed (no automatic firmware upgrades)
+			
+			V2P_SendPacket();
+			break;				
+		case AICB_CMD_LOAD_ADDRESS:
+			MessageSize = 2;
+
+			union
+			{
+				uint8_t  Bytes[4];
+				uint32_t UnsignedLong;
+			} Conv;
+								
+			#if (COMP_BYTE_ORDER == COMP_ORDER_LITTLE)
+				Conv.Bytes[0] = PacketBytes[4];
+				Conv.Bytes[1] = PacketBytes[3];
+				Conv.Bytes[2] = PacketBytes[2];
+				Conv.Bytes[3] = PacketBytes[1];
+			#else
+				Conv.Bytes[3] = PacketBytes[4];
+				Conv.Bytes[2] = PacketBytes[3];
+				Conv.Bytes[1] = PacketBytes[2];
+				Conv.Bytes[0] = PacketBytes[1];								
+			#endif
+								
+			CurrAddress = Conv.UnsignedLong;
+
+			if (PacketDecodeFunction == AICI_InterpretPacket)
+			  V2P_CheckForExtendedAddress();
+			else
+			  VAMM_SetAddress();
+								
+			PacketBytes[1] = AICB_STATUS_CMD_OK;
+
+			V2P_SendPacket();
+			break;			
+		case AICB_CMD_GET_PARAMETER:
+		case AICB_CMD_SET_PARAMETER:						
+			V2P_GetSetParameter();
+			break;
+		default:
+			((FuncPtr)PacketDecodeFunction)(); // Run the interpret packet routine as set by the pointer
+	}
+}
+
+/*
+ NAME:      | V2P_GetSetParameter (static)
+ PURPOSE:   | Manages get/set parameter V2Protocol packets
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 static void V2P_GetSetParameter(void)
 {
-	uint8_t Param_Name = PacketBytes[1];    // Save the parameter number
+	uint8_t Param_Name = PacketBytes[1];      // Save the parameter number
 
-	MessageSize = 3;                        // Set the default response message size to 3 bytes     
-	PacketBytes[1] = AICB_STATUS_CMD_OK;    // Set the default response to OK
+	MessageSize = 3;                          // Set the default response message size to 3 bytes     
+	PacketBytes[1] = AICB_STATUS_CMD_OK;      // Set the default response to OK
 
-	switch (Param_Name)                     // Switch based on the recieved parameter byte
+	switch (Param_Name)                       // Switch based on the recieved parameter byte
 	{
 		case AICB_PARAM_BUILD_NUMBER_LOW:
 			PacketBytes[2] = VERSION_MINOR;
@@ -327,7 +366,7 @@ static void V2P_GetSetParameter(void)
 			{
 				MessageSize = 2;
 				eeprom_write_byte(&EEPROMVars.ResetPolarity, PacketBytes[2]);
-				MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE); // Change takes effect immediatly
+				MAIN_SetTargetResetLine(MAIN_RESET_INACTIVE); // Change takes effect immediatly
 			}
 			
 			break;

@@ -17,8 +17,6 @@
 	#include "DataflashCommandBytes.h"
 	
 	// TYPE DEFINITIONS:
-	typedef unsigned char (*SPIFuncPtr)(unsigned char);
-	
 	typedef struct
 	{
 		uint16_t   CurrPageAddress;
@@ -49,7 +47,7 @@
 	void    DF_BufferWriteEnable(const uint16_t BuffAddress);
 
 	#if defined(INC_FROM_DF)
-	  void    DF_WaitWhileBusy(void);
+	  static void  DF_WaitWhileBusy(void);
 	#endif
 	
 #endif

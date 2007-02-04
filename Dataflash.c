@@ -20,6 +20,12 @@ DFinfo         DataflashInfo            = {CurrPageAddress: 0, CurrBuffByte: 0};
 
 // ======================================================================================
 
+/*
+ NAME:      | DF_CheckCorrectOnboardChip
+ PURPOSE:   | Checks for the existance and expected type of the onboard dataflash chip
+ ARGUMENTS: | None
+ RETURNS:   | Boolean flag for whether the dataflash is valid and present
+*/
 uint8_t DF_CheckCorrectOnboardChip(void)          // Ensures onboard Butterfly dataflash is working and the correct type
 {
 	DF_TOGGLEENABLE();
@@ -40,6 +46,12 @@ uint8_t DF_CheckCorrectOnboardChip(void)          // Ensures onboard Butterfly d
 	}
 }
 
+/*
+ NAME:      | DF_CopyPage
+ PURPOSE:   | Copys a page to or from the dataflash's internal buffer
+ ARGUMENTS: | Page address to copy to/from, operation to perform (DF_BUFFER_TO_FLASH or DF_FLASH_TO_BUFFER)
+ RETURNS:   | None
+*/
 void DF_CopyPage(const uint16_t PageAddress, uint8_t Operation)
 {
 	DF_TOGGLEENABLE();
@@ -52,6 +64,12 @@ void DF_CopyPage(const uint16_t PageAddress, uint8_t Operation)
 	DF_WaitWhileBusy();
 }
 
+/*
+ NAME:      | DF_BufferWriteEnable
+ PURPOSE:   | Prepares the dataflash's internal buffer for write operations
+ ARGUMENTS: | Address in the dataflash's buffer to begin writing from
+ RETURNS:   | None
+*/
 void DF_BufferWriteEnable(const uint16_t BuffAddress)
 {
 	DF_TOGGLEENABLE();
@@ -62,6 +80,12 @@ void DF_BufferWriteEnable(const uint16_t BuffAddress)
 	SPI_SPITransmit((uint8_t)(BuffAddress));
 }
 
+/*
+ NAME:      | DF_ContinuousReadEnable
+ PURPOSE:   | Prepares the dataflash's flash memory for read operations
+ ARGUMENTS: | Address in the dataflash's flash memory, address within the selected page to being reading from
+ RETURNS:   | None
+*/
 void DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddress)
 {
 	DF_TOGGLEENABLE();
@@ -75,7 +99,13 @@ void DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddr
 	  SPI_SPITransmit(0x00);
 }
 
-void DF_WaitWhileBusy(void)
+/*
+ NAME:      | DF_WaitWhileBusy (static)
+ PURPOSE:   | Performs an infinite loop while the dataflash is busy completing an operation
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
+static void DF_WaitWhileBusy(void)
 {
 	DF_TOGGLEENABLE();
 	

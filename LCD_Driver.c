@@ -87,6 +87,12 @@ const    uint16_t LCD_SegTable[] PROGMEM =
 
 // ======================================================================================
 
+/*
+ NAME:      | LCD_Init
+ PURPOSE:   | Initializes the Butterfly's LCD for correct operation, ready to display data
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 void LCD_Init(void)
 {
 	// Set the initial contrast level to maximum:
@@ -96,12 +102,18 @@ void LCD_Init(void)
     LCDCRB  = (1<<LCDCS) | (3<<LCDMUX0) | (7<<LCDPM0);
 
     // Set LCD prescaler to give a framerate of 32Hz:
-    LCDFRR  = (7<<LCDCD0);    
+    LCDFRR  = (0<<LCDPS0) | (7<<LCDCD0);    
 
 	// Enable LCD and set low power waveform, enable start of frame interrupt:
     LCDCRA  = (1<<LCDEN) | (1<<LCDAB) | (1<<LCDIE);
 }
 
+/*
+ NAME:      | LCD_puts_f
+ PURPOSE:   | Displays a string from flash onto the Butterfly's LCD
+ ARGUMENTS: | Pointer to the start of the flash string
+ RETURNS:   | None
+*/
 void LCD_puts_f(const char *FlashData)
 {
 	/* Rather than create a new buffer here (wasting RAM), the TextBuffer global
@@ -113,6 +125,12 @@ void LCD_puts_f(const char *FlashData)
 	LCD_puts((char*)&TextBuffer[0]);
 }
 
+/*
+ NAME:      | LCD_puts
+ PURPOSE:   | Displays a string from SRAM onto the Butterfly's LCD
+ ARGUMENTS: | Pointer to the start of the SRAM string
+ RETURNS:   | None
+*/
 void LCD_puts(const char *Data)
 {
 	uint8_t LoadB       = 0;
@@ -149,6 +167,12 @@ void LCD_puts(const char *Data)
 	UpdateDisplay = TRUE;
 }
 
+/*
+ NAME:      | LCD_vect (ISR, blocking)
+ PURPOSE:   | ISR to handle the display and scrolling of the current display string onto the LCD
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 ISR(LCD_vect, ISR_BLOCK)
 {
 	if (ScrollFlags & LCD_FLAG_SCROLL)
@@ -172,7 +196,7 @@ ISR(LCD_vect, ISR_BLOCK)
 			LCD_WriteChar(TextBuffer[Byte], Character);
 		}
 		
-		if ((StrStart + (LCD_DISPLAY_SIZE + 1)) == StrEnd)
+		if ((StrStart + (LCD_DISPLAY_SIZE + 1)) == StrEnd) // Done scrolling message on LCD once
 		  ScrollFlags |= LCD_FLAG_SCROLL_DONE;
 		
 		if (StrStart++ == StrEnd)
@@ -182,6 +206,12 @@ ISR(LCD_vect, ISR_BLOCK)
 	}
 }
 
+/*
+ NAME:      | LCD_WriteChar (static, inline)
+ PURPOSE:   | Routine to write a character to the correct LCD registers for display
+ ARGUMENTS: | Character to display, LCD character number to display character on
+ RETURNS:   | None
+*/
 static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit)
 {
 	uint16_t SegData  = 0x0000;
@@ -193,7 +223,7 @@ static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit)
 	{
 		uint8_t *BuffPtr      = (uint8_t*)(LCD_LCDREGS_START + (5 * BNib) + (Digit >> 1));
 		uint8_t MaskedSegData = (SegData & 0x0000F);
-	
+
 		if (Digit & 0x01)
 		  *BuffPtr = ((*BuffPtr & 0x0F) | (MaskedSegData << 4));
 		else

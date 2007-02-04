@@ -14,6 +14,12 @@ const char ProgTypes[4][5] PROGMEM = {"DATA", "EPRM", "FUSE", "LOCK"};
 
 // ======================================================================================
 
+/*
+ NAME:      | PM_ShowStoredItemSizes
+ PURPOSE:   | Shows the size of the various data types stored in the dataflash onto the LCD
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 void PM_ShowStoredItemSizes(void)
 {
 	char    Buffer[14];
@@ -62,6 +68,12 @@ void PM_ShowStoredItemSizes(void)
 	}
 }
 
+/*
+ NAME:      | PM_StartProgAVR
+ PURPOSE:   | Begins programming a target AVR from data stored in the dataflash
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 void PM_StartProgAVR(void)
 {
 	uint8_t StoredLocksFuses;
@@ -82,7 +94,7 @@ void PM_StartProgAVR(void)
 	TIMEOUT_SLEEP_TIMER_OFF();
 
 	USI_SPIInitMaster();
-	MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE);       // Capture the RESET line of the slave AVR
+	MAIN_SetTargetResetLine(MAIN_RESET_ACTIVE);        // Capture the RESET line of the slave AVR
 			
 	for (uint8_t PacketB = 0; PacketB < 12; PacketB++) // Read the enter programming mode command bytes
 	  PacketBytes[PacketB] = eeprom_read_byte(&EEPROMVars.EnterProgMode[PacketB]);
@@ -158,9 +170,9 @@ void PM_StartProgAVR(void)
 		{
 			if (ProgOptions & PM_OPT_FUSE)               // If fusebytes have already been written, we need to re-enter programming mode to latch them
 			{
-				MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE); // Release the RESET line of the slave AVR
+				MAIN_SetTargetResetLine(MAIN_RESET_INACTIVE); // Release the RESET line of the slave AVR
 				MAIN_Delay10MS(1);
-				MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE);   // Capture the RESET line of the slave AVR
+				MAIN_SetTargetResetLine(MAIN_RESET_ACTIVE);   // Capture the RESET line of the slave AVR
 				ISPCC_EnterChipProgrammingMode();        // Try to sync with the slave AVR
 			}
 
@@ -203,13 +215,19 @@ void PM_StartProgAVR(void)
 	}
 	
 	TOUT_SetupSleepTimer();
-	MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE);     // Release the RESET line and allow the slave AVR to run	
+	MAIN_SetTargetResetLine(MAIN_RESET_INACTIVE); // Release the RESET line and allow the slave AVR to run	
 	USI_SPIOff();
 	DF_ENABLEDATAFLASH(FALSE);
 	SPI_SPIOFF();
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Set status LEDs to green (ready)
 }
 
+/*
+ NAME:      | PM_ChooseProgAVROpts
+ PURPOSE:   | Allows the user to select and deselect different data types for programming into a target AVR from the dataflash
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 void PM_ChooseProgAVROpts(void)
 {
 	char    Buffer[7];
@@ -262,6 +280,12 @@ void PM_ChooseProgAVROpts(void)
 	}
 }
 
+/*
+ NAME:      | PM_SetProgramDataType
+ PURPOSE:   | Toggles the selected flag for the specified datatype
+ ARGUMENTS: | Mask of the datatype flag to change (PM_OPT_FLASH, PM_OPT_EEPROM, PM_OPT_FUSE or PM_OPT_LOCK)
+ RETURNS:   | None
+*/
 void PM_SetProgramDataType(uint8_t Mask)
 {
 	uint8_t ProgOptions = eeprom_read_byte(&EEPROMVars.PGOptions);
@@ -277,6 +301,12 @@ void PM_SetProgramDataType(uint8_t Mask)
 	eeprom_write_byte(&EEPROMVars.PGOptions, ProgOptions);
 }
 
+/*
+ NAME:      | PM_SendFuseLockBytes (static)
+ PURPOSE:   | Programs either the stored fuse or stored lock bytes into the target AVR
+ ARGUMENTS: | Type of bytes to program (TYPE_FUSE or TYPE_LOCK)
+ RETURNS:   | None
+*/
 static void PM_SendFuseLockBytes(const uint8_t Type)
 {
 	uint8_t  TotalBytes;
@@ -307,6 +337,12 @@ static void PM_SendFuseLockBytes(const uint8_t Type)
 	}
 }
 
+/*
+ NAME:      | PM_SendEraseCommand (static)
+ PURPOSE:   | Erases the target AVR via the stored erase command
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 static void PM_SendEraseCommand(void)
 {			
 	for (uint8_t B = 3; B < 7 ; B++)                                    // Read out the erase chip command bytes
@@ -332,6 +368,12 @@ static void PM_SendEraseCommand(void)
 	}
 }
 
+/*
+ NAME:      | PM_CreateProgrammingPackets (static)
+ PURPOSE:   | Builds V2Protocol compatible programming packets from the stored flash or EEPROM data
+ ARGUMENTS: | Type of stored data to program into target AVR (TYPE_FLASH or TYPE_EEPROM)
+ RETURNS:   | None
+*/
 static void PM_CreateProgrammingPackets(const uint8_t Type)
 {			
 	uint32_t BytesRead        = 0;

@@ -12,6 +12,12 @@ const char AVRISPModeMessage[] PROGMEM = "*ATAVRISP MODE*";
 
 // ======================================================================================
 
+/*
+ NAME:      | AICI_InterpretPacket
+ PURPOSE:   | Manages the interpretation of V2Protocol packets for AVRISP mode operation
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 void AICI_InterpretPacket(void)
 {
 	switch (PacketBytes[0])
@@ -22,8 +28,8 @@ void AICI_InterpretPacket(void)
 			USI_SPIInitMaster();
 			ProgrammingFault = ISPCC_NO_FAULT;
 
-			MAIN_ResetCSLine(MAIN_RESETCS_ACTIVE);     // Pull the slave AVR's RESET line to active
-			ISPCC_EnterChipProgrammingMode();          // Run the Enter Programming Mode routine
+			MAIN_SetTargetResetLine(MAIN_RESET_ACTIVE); // Pull the slave AVR's RESET line to active
+			ISPCC_EnterChipProgrammingMode();           // Run the Enter Programming Mode routine
 
 			if (InProgrammingMode)
 			  LCD_puts_f(AVRISPModeMessage);
@@ -39,7 +45,7 @@ void AICI_InterpretPacket(void)
 
 			MAIN_Delay1MS(PacketBytes[1]);             // Wait for the "PreDelay" amount specified in the packet
 			InProgrammingMode = FALSE;
-			MAIN_ResetCSLine(MAIN_RESETCS_INACTIVE);   // Release the RESET line and allow the slave AVR to run
+			MAIN_SetTargetResetLine(MAIN_RESET_INACTIVE); // Release the RESET line and allow the slave AVR to run
 			MAIN_Delay1MS(PacketBytes[2]);             // Wait for the "PostDelay" amount specified in the packet
 			
 			USI_SPIOff();

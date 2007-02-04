@@ -49,19 +49,6 @@ MCU = atmega169
 #     processor frequency. You can then use this symbol in your source code to 
 #     calculate timings. Do NOT tack on a 'UL' at the end, this will be done
 #     automatically to create a 32-bit value in your source code.
-#     Typical values are:
-#         F_CPU =  1000000
-#         F_CPU =  1843200
-#         F_CPU =  2000000
-#         F_CPU =  3686400
-#         F_CPU =  4000000
-#         F_CPU =  7372800
-#         F_CPU =  8000000
-#         F_CPU = 11059200
-#         F_CPU = 14745600
-#         F_CPU = 16000000
-#         F_CPU = 18432000
-#         F_CPU = 20000000
 F_CPU = 7372800
 
 
@@ -98,9 +85,6 @@ SRC =	Analogue.c                   \
 		USI.c                        \
 		V2Protocol.c                 \
 		VirtualAVRMemManager.c
-
-# List C++ source files here. (C dependencies are automatically generated.)
-CPPSRC = 
 
 
 # List Assembler source files here.
@@ -145,13 +129,6 @@ CSTANDARD = -std=gnu99
 CDEFS = -DF_CPU=$(F_CPU)UL
 
 
-# Place -D or -U options here for C++ sources
-CPPDEFS = -DF_CPU=$(F_CPU)UL
-#CPPDEFS += -D__STDC_LIMIT_MACROS
-#CPPDEFS += -D__STDC_CONSTANT_MACROS
-
-
-
 #---------------- Compiler Options C ----------------
 #  -g*:          generate debugging information
 #  -O*:          optimization level
@@ -168,41 +145,20 @@ CFLAGS += -fpack-struct
 CFLAGS += -fshort-enums
 CFLAGS += -Wall
 CFLAGS += -Wstrict-prototypes
-#CFLAGS += -mshort-calls
-#CFLAGS += -fno-unit-at-a-time
 CFLAGS += -Wundef
-#CFLAGS += -Wunreachable-code
+
 CFLAGS += -Wsign-compare
+CFLAGS += -Winit-self
+CFLAGS += -Wswitch-enum
+CFLAGS += -Wunused
+CFLAGS += -Wextra
+CFLAGS += -Wfloat-equal
+CFLAGS += -Wpointer-arith
+CFLAGS += -Wmissing-field-initializers
+
 CFLAGS += -Wa,-adhlns=$(<:%.c=$(OBJDIR)/%.lst)
 CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
 CFLAGS += $(CSTANDARD)
-
-
-#---------------- Compiler Options C++ ----------------
-#  -g*:          generate debugging information
-#  -O*:          optimization level
-#  -f...:        tuning, see GCC manual and avr-libc documentation
-#  -Wall...:     warning level
-#  -Wa,...:      tell GCC to pass this to the assembler.
-#    -adhlns...: create assembler listing
-CPPFLAGS = -g$(DEBUG)
-CPPFLAGS += $(CPPDEFS)
-CPPFLAGS += -O$(OPT)
-CPPFLAGS += -funsigned-char
-CPPFLAGS += -funsigned-bitfields
-CPPFLAGS += -fpack-struct
-CPPFLAGS += -fshort-enums
-CPPFLAGS += -fno-exceptions
-CPPFLAGS += -Wall
-CFLAGS += -Wundef
-#CPPFLAGS += -mshort-calls
-#CPPFLAGS += -fno-unit-at-a-time
-#CPPFLAGS += -Wstrict-prototypes
-#CPPFLAGS += -Wunreachable-code
-#CPPFLAGS += -Wsign-compare
-CPPFLAGS += -Wa,-adhlns=$(<:%.cpp=$(OBJDIR)/%.lst)
-CPPFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
-#CPPFLAGS += $(CSTANDARD)
 
 
 #---------------- Assembler Options ----------------
@@ -245,28 +201,6 @@ SCANF_LIB =
 MATH_LIB = -lm
 
 
-# List any extra directories to look for libraries here.
-#     Each directory must be seperated by a space.
-#     Use forward slashes for directory separators.
-#     For a directory that has spaces, enclose it in quotes.
-EXTRALIBDIRS = 
-
-
-
-#---------------- External Memory Options ----------------
-
-# 64 KB of external RAM, starting after internal RAM (ATmega128!),
-# used for variables (.data/.bss) and heap (malloc()).
-#EXTMEMOPTS = -Wl,-Tdata=0x801100,--defsym=__heap_end=0x80ffff
-
-# 64 KB of external RAM, starting after internal RAM (ATmega128!),
-# only used for heap (malloc()).
-#EXTMEMOPTS = -Wl,--section-start,.data=0x801100,--defsym=__heap_end=0x80ffff
-
-EXTMEMOPTS =
-
-
-
 #---------------- Linker Options ----------------
 #  -Wl,...:     tell GCC to pass this to linker.
 #    -Map:      create map file
@@ -275,8 +209,6 @@ LDFLAGS = -Wl,-Map=$(TARGET).map,--cref
 LDFLAGS += $(EXTMEMOPTS)
 LDFLAGS += $(patsubst %,-L%,$(EXTRALIBDIRS))
 LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
-#LDFLAGS += -T linker_script.x
-
 
 
 #---------------- Programming Options (avrdude) ----------------
@@ -379,7 +311,6 @@ MSG_EXTENDED_LISTING = Creating Extended Listing:
 MSG_SYMBOL_TABLE = Creating Symbol Table:
 MSG_LINKING = Linking:
 MSG_COMPILING = Compiling C:
-MSG_COMPILING_CPP = Compiling C++:
 MSG_ASSEMBLING = Assembling:
 MSG_CLEANING = Cleaning project:
 MSG_CREATING_LIBRARY = Creating library:
@@ -388,10 +319,10 @@ MSG_CREATING_LIBRARY = Creating library:
 
 
 # Define all object files.
-OBJ = $(SRC:%.c=$(OBJDIR)/%.o) $(CPPSRC:%.cpp=$(OBJDIR)/%.o) $(ASRC:%.S=$(OBJDIR)/%.o) 
+OBJ = $(SRC:%.c=$(OBJDIR)/%.o) $(ASRC:%.S=$(OBJDIR)/%.o) 
 
 # Define all listing files.
-LST = $(SRC:%.c=$(OBJDIR)/%.lst) $(CPPSRC:%.cpp=$(OBJDIR)/%.lst) $(ASRC:%.S=$(OBJDIR)/%.lst) 
+LST = $(SRC:%.c=$(OBJDIR)/%.lst) $(ASRC:%.S=$(OBJDIR)/%.lst) 
 
 
 # Compiler flags to generate dependency files.
@@ -401,7 +332,6 @@ GENDEPFLAGS = -MMD -MP -MF .dep/$(@F).d
 # Combine all necessary flags and optional flags.
 # Add target processor to flags.
 ALL_CFLAGS = -mmcu=$(MCU) -I. $(CFLAGS) $(GENDEPFLAGS)
-ALL_CPPFLAGS = -mmcu=$(MCU) -I. -x c++ $(CPPFLAGS) $(GENDEPFLAGS)
 ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 
 
@@ -567,21 +497,9 @@ $(OBJDIR)/%.o : %.c
 	$(CC) -c $(ALL_CFLAGS) $< -o $@ 
 
 
-# Compile: create object files from C++ source files.
-$(OBJDIR)/%.o : %.cpp
-	@echo
-	@echo $(MSG_COMPILING_CPP) $<
-	$(CC) -c $(ALL_CPPFLAGS) $< -o $@ 
-
-
 # Compile: create assembler files from C source files.
 %.s : %.c
 	$(CC) -S $(ALL_CFLAGS) $< -o $@
-
-
-# Compile: create assembler files from C++ source files.
-%.s : %.cpp
-	$(CC) -S $(ALL_CPPFLAGS) $< -o $@
 
 
 # Assemble: create object files from assembler source files.

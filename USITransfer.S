@@ -38,6 +38,11 @@
 #define  USI_XH_ASM_REG        XH
 #define  USI_USICR_PTR_ASM_REG X
 
+
+; NAME:      | USI_SPITransmit
+; PURPOSE:   | Transmits and recieves a single byte via the USI subsystem (in SPI mode)
+; ARGUMENTS: | None
+; RETURNS:   | None
 USI_SPITransmit:
 	sts  MEM_ADDR(USIDR), USI_PARAM_ASM_REG                       ; Input uint8_t stored in R24, place in USI data register
 	

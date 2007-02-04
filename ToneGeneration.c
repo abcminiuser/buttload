@@ -7,6 +7,12 @@
 */
 
 #include "ToneGeneration.h"
+
+/* Tone values are compressed to save on space at the expense of resolution.
+   When played, the tone value is expanded to 16-bit and shifted left 5 times
+   to give 11 bits of resolution. As the exact frequency of the tones isn't
+   important, this is an acceptable tradeoff. Lower values = higher tone.     */
+
                                           // Tone1,......,ToneN, 0x00
 const uint8_t ToneSeq_Startup[]  PROGMEM = {156, 125,  94,  63, 0x00};
 const uint8_t ToneSeq_SyncFail[] PROGMEM = { 94, 156,           0x00};
@@ -21,6 +27,12 @@ uint8_t ToneVol = 0;
 
 // ======================================================================================
 
+/*
+ NAME:      | TG_PlayToneSeq
+ PURPOSE:   | Plays the passed tone sequence out of the Butterfly's piezo speaker
+ ARGUMENTS: | Pointer to the desired tone sequence array
+ RETURNS:   | None
+*/
 void TG_PlayToneSeq(const uint8_t* Sequence)
 {
 	if (!(ToneVol))                               // If no volume (off), skip tone playing

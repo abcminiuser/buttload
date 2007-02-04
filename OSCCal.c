@@ -8,42 +8,47 @@
 
 #include "OSCCal.h"
 
+// ======================================================================================
+
+/*
+ NAME:      | OSCCAL_Calibrate
+ PURPOSE:   | Recalibrates the internal RC oscillator to 7.372800MHz for 115200 baud serial communications
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 void OSCCAL_Calibrate(void)
 {
 	uint8_t LoopCount = (0x7F / 2); // Maximum range is 128, and starts from the middle, so 64 is the max number of iterations required
 
+	// Make sure all clock division is turned off (8MHz RC clock)
+	CLKPR  = (1 << CLKPCE);
+	CLKPR  = 0x00;
+	
+	// Inital OSCCAL of half its maximum
+	OSCCAL = (0x7F / 2);
+	
+	// Disable timer interrupts
+	TIMSK1 = 0;
+	TIMSK2 = 0;
+			
+	// Set timer 2 to asyncronous mode (32.768KHz crystal)
+	ASSR   = (1 << AS2);
+	
+	// Ensure timer 1 control register A is cleared
+	TCCR1A = 0;
+	
+	// Start both counters with no prescaling
+	TCCR1B = (1 << CS10);
+	TCCR2A = (1 << CS20);
+			 
+	// Wait until timer 2's external 32.768KHz crystal is stable
+	while (ASSR & ((1 << TCN2UB) | (1 << TCR2UB) | (1 << OCR2UB)));
+		
 	ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
 	{
-		// Make sure all clock division is turned off (8MHz RC clock)
-		CLKPR  = (1 << CLKPCE);
-		CLKPR  = 0x00;
-	
-		// Inital OSCCAL of half its maximum
-		OSCCAL = (0x7F / 2);
-		
-		// Disable timer interrupts
-		TIMSK1 = 0;
-		TIMSK2 = 0;
-			
-		// Set timer 2 to asyncronous mode (32.768KHz crystal)
-		ASSR   = (1 << AS2);
-	
-		// Ensure timer 1 control register A is cleared
-		TCCR1A = 0;
-	
-		// Start both counters with no prescaling
-		TCCR1B = (1 << CS10);
-		TCCR2A = (1 << CS20);
-			 
-		// Wait until timer 2's external 32.768KHz crystal is stable
-		while (ASSR & ((1 << TCN2UB) | (1 << TCR2UB) | (1 << OCR2UB)));
-		
 		// Clear the timer values
 		TCNT1  = 0;
 		TCNT2  = 0;
-		
-		// Kill interrupts to prevent them from messing with the results
-		cli();
 	
 		while (LoopCount--)
 		{
@@ -69,15 +74,14 @@ void OSCCAL_Calibrate(void)
 			TCNT1  = 0;
 			TCNT2  = 0;
 		}
-	
+
 		// Stop the timers
 		TCCR1B = 0x00;
 		TCCR2A = 0x00;
-	
-		// Turn off timer 2 asynchronous mode
-		ASSR  &= ~(1 << AS2);
 	}	
-	END_ATOMIC_BLOCK
+	
+	// Turn off timer 2 asynchronous mode
+	ASSR  &= ~(1 << AS2);
 	
 	return;
 }

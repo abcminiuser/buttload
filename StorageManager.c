@@ -19,6 +19,12 @@ const char StorageText[] PROGMEM = "*STORAGE MODE*";
 
 // ======================================================================================
 
+/*
+ NAME:      | SM_GetStoredDataSize
+ PURPOSE:   | Returns the size of the requested stored data type
+ ARGUMENTS: | Type of data to get the size of (TYPE_FLASH, TYPE_EEPROM, TYPE_FUSE, TYPE_LOCK)
+ RETURNS:   | Size of requested data type in bytes
+*/
 uint32_t SM_GetStoredDataSize(const uint8_t Type)
 {
 	uint32_t ProgDataSize = 0;
@@ -58,6 +64,12 @@ uint32_t SM_GetStoredDataSize(const uint8_t Type)
 	return ProgDataSize;
 }
 
+/*
+ NAME:      | SM_InterpretAVRISPPacket
+ PURPOSE:   | Manages the interpretation of V2Protocol packets for STORE PRGM mode operation
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 void SM_InterpretAVRISPPacket(void)
 {
 	uint8_t* EEPROMAddress;
@@ -277,6 +289,12 @@ void SM_InterpretAVRISPPacket(void)
 	}
 }
 
+/*
+ NAME:      | SM_CheckEndOfFuseLockData (static)
+ PURPOSE:   | Checks if last operation was the writing of fuse/lock bytes and if so writes total stored bytes to EEPROM
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 static void SM_CheckEndOfFuseLockData(void)
 {
 	if (CurrentMode == SM_LOCKFUSEBITS_WRITE)

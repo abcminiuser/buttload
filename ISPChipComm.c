@@ -13,6 +13,12 @@ const char SyncErrorMessage[] PROGMEM = "SYNC ERROR";
 
 // ======================================================================================
 
+/*
+ NAME:      | ISPCC_EnterChipProgrammingMode
+ PURPOSE:   | Attempts to sync with a target AVR, and enters programming mode in the target
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 void ISPCC_EnterChipProgrammingMode(void)
 {
 	uint8_t ByteDelay = PacketBytes[5];
@@ -63,6 +69,12 @@ void ISPCC_EnterChipProgrammingMode(void)
 	TG_PlayToneSeq(TONEGEN_SEQ_SYNCFAIL);
 }
 
+/*
+ NAME:      | ISPCC_ProgramChip
+ PURPOSE:   | Programs a target with the data located in PacketBytes (must be well formed V2Protocol programming packet)
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
 void ISPCC_ProgramChip(void)
 {
 	uint16_t PollAddress  = 0;
@@ -158,6 +170,12 @@ void ISPCC_ProgramChip(void)
 	}
 }
 
+/*
+ NAME:      | ISPCC_PollForProgComplete (static)
+ PURPOSE:   | Polls the target AVR with the requested polling method to wait until the target is ready for more data
+ ARGUMENTS: | Polling type in the form of a V2Procol programming packet poll byte, polling address
+ RETURNS:   | None
+*/
 static void ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr)
 {
 	uint8_t PollType;

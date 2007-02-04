@@ -10,11 +10,17 @@
 
 // ======================================================================================
 
+/*
+ NAME:      | AN_GetADCValue
+ PURPOSE:   | Enables, reads and disables a requested ADC channel and returns its 10-bit value
+ ARGUMENTS: | Channel: Channel number to read
+ RETURNS:   | 16 bit ADC value
+*/
 uint16_t AN_GetADCValue(const uint8_t Channel)
 {
 	uint16_t ADCResult = 0;
 
-	ATOMIC_BLOCK(ATOMIC_ASSUMEON)
+	ATOMIC_BLOCK(ATOMIC_FORCEON)
 	{
 		PORTF  |= (1 << 3);                   // Enable VCP (analogue circuitry power)
 		PRR    &= ~(1 << PRADC);              // Enable ADC circuitry
@@ -37,7 +43,6 @@ uint16_t AN_GetADCValue(const uint8_t Channel)
 		PORTF  &= ~(1 << 3);                  // Disable VCP (analogue circuitry power)
 
 	}
-	END_ATOMIC_BLOCK
 
 	return ADCResult;                         // Return result
 }

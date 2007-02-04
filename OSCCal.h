@@ -14,6 +14,7 @@
 	#include <avr/interrupt.h>
 
 	#include "GlobalMacros.h"
+	#include "Atomic.h"
 
 	// DEFINES:
 	#define OSCCAL_TARGETCOUNT         (uint16_t)(F_CPU / (32768 / 256)) // (Target Freq / Reference Freq)	

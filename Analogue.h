@@ -15,6 +15,7 @@
 
 	#include "Main.h"
 	#include "GlobalMacros.h"
+	#include "Atomic.h"
 	
 	// PROTOTYPES:
 	uint16_t AN_GetADCValue(const uint8_t Channel) ATTR_WARN_UNUSED_RESULT;
