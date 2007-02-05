@@ -269,6 +269,11 @@ void SM_InterpretAVRISPPacket(void)
 			{
 				SM_CheckEndOfFuseLockData();                            // Check for remaining bytes to be stored and general cleanup				
 				CurrentMode = SM_DATAFLASH_READ;
+
+				if (PacketBytes[0] == AICB_CMD_READ_FLASH_ISP)          // Flash reading mode
+				  MemoryType = TYPE_FLASH;
+				else                                                    // EEPROM reading mode
+				  MemoryType = TYPE_EEPROM;
 			}
 
 			uint16_t BytesToRead = ((uint16_t)PacketBytes[1] << 8)      // \. Load in the number of bytes that is to
