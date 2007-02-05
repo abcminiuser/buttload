@@ -221,8 +221,8 @@ static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit)
 
 	for (uint8_t BNib = 0; BNib < 4; BNib++)
 	{
-		uint8_t *BuffPtr      = (uint8_t*)(LCD_LCDREGS_START + (5 * BNib) + (Digit >> 1));
-		uint8_t MaskedSegData = (SegData & 0x0000F);
+		uint8_t* BuffPtr       = (uint8_t*)(LCD_LCDREGS_START + (5 * BNib) + (Digit >> 1));
+		uint8_t  MaskedSegData = (SegData & 0x0000F);
 
 		if (Digit & 0x01)
 		  *BuffPtr = ((*BuffPtr & 0x0F) | (MaskedSegData << 4));

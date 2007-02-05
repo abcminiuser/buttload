@@ -45,9 +45,6 @@ uint32_t SM_GetStoredDataSize(const uint8_t Type)
 		PageLength = eeprom_read_word(&EEPROMVars.EPageLength);
 	}
 
-	SPI_SPIInit();
-	DF_ENABLEDATAFLASH(TRUE);
-
 	DF_ContinuousReadEnable((DF_DATAFLASH_PAGES - 1), 0);               // Last dataflash page contains the erased page flag array
 
 	for (uint8_t EEPageBlock = BlockStart; EEPageBlock < BlockEnd; EEPageBlock++)
@@ -65,9 +62,6 @@ uint32_t SM_GetStoredDataSize(const uint8_t Type)
 	}
 	
 	ProgDataSize -= (ProgDataSize % PageLength);                        // Get data size to nearest page
-
-	DF_ENABLEDATAFLASH(FALSE);
-	SPI_SPIOFF();
 
 	return ProgDataSize;
 }

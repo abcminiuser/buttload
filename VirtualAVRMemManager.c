@@ -52,6 +52,9 @@ void VAMM_ExitStorageMode(void)
 
 		DF_CopyPage((DF_DATAFLASH_PAGES - 1), DF_BUFFER_TO_FLASH); // Last dataflash page contains the erased page flag array
 	}
+	
+	SPI_SPIOFF();
+	DF_ENABLEDATAFLASH(FALSE);
 }
 
 /*
@@ -170,6 +173,38 @@ uint8_t VAMM_ReadByte(void)
 
 	if ((DataflashInfo.CurrBuffByte & 0x01) || (MemoryType == TYPE_EEPROM))
 	  V2P_IncrementCurrAddress();
+
+	DataflashInfo.CurrBuffByte++;
+
+	return ((CurrPageCleared)? 0xFF : SPI_SPITransmit(0x00));
+}
+
+/*
+ NAME:      | VAMM_ReadConsec
+ PURPOSE:   | Reads bytes consecutively from the dataflash, without modifying CurrAddress
+ ARGUMENTS: | None
+ RETURNS:   | Byte at next address within the dataflash
+*/
+uint8_t VAMM_ReadConsec(void)
+{
+	if (VAMMSetup != VAMM_SETUP_READ)
+	{
+		VAMM_SetAddress();
+		VAMMSetup = VAMM_SETUP_READ;
+
+		DF_ContinuousReadEnable(DataflashInfo.CurrPageAddress, DataflashInfo.CurrBuffByte);
+
+		CurrPageCleared = VAMM_CheckSetCurrPageCleared(VAMM_FLAG_CHECK);
+	}	
+
+
+	if (DataflashInfo.CurrBuffByte == DF_INTERNALDF_BUFFBYTES)
+	{
+		DataflashInfo.CurrPageAddress++;
+		DataflashInfo.CurrBuffByte = 0;
+
+		CurrPageCleared = VAMM_CheckSetCurrPageCleared(VAMM_FLAG_CHECK);
+	}
 
 	DataflashInfo.CurrBuffByte++;
 

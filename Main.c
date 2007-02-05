@@ -790,18 +790,6 @@ static void MAIN_ClearMem(void)
 	
 	eeprom_write_word(&EEPROMVars.MagicNumber, MAGIC_NUM);
 
-/* \/\/\/ TEMP - REMOVE FOR RELEASE!!! \/\/\/ */
-	SPI_SPIInit();
-	DF_ENABLEDATAFLASH(TRUE);
-	if (DF_CheckCorrectOnboardChip())
-	{
-		for (uint16_t Block = 0; Block < DF_DATAFLASH_BLOCKS; Block++)
-			DF_EraseBlock(Block);
-	}
-	DF_ENABLEDATAFLASH(FALSE);
-	SPI_SPIOFF();
-/* /\/\/\ TEMP - REMOVE FOR RELEASE!!! /\/\/\ */
-
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Set status LEDs to green (ready)
 	LCD_puts_f(PSTR("MEM CLEARED"));
 	LCD_WAIT_FOR_SCROLL_DONE();                  // Loop until the message has finished scrolling completely

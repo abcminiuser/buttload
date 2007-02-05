@@ -75,7 +75,7 @@ static void TM_FindNextTag(void)
 					TagByte = TM_GetNextByte();
 					Buffer[BuffPos] = TagByte;
 					
-					if (TagByte == 0x00)
+					if (TagByte == '\0')
 					  break;
 				}
 				

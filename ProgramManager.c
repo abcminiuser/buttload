@@ -41,6 +41,9 @@ void PM_ShowStoredItemSizes(void)
 		
 			strcpy_P(Buffer, ProgTypes[ItemInfoIndex]);
 
+			SPI_SPIInit();
+			DF_ENABLEDATAFLASH(TRUE);
+
 			switch (ItemInfoIndex)
 			{
 				case 0:
@@ -57,6 +60,9 @@ void PM_ShowStoredItemSizes(void)
 					TempB = eeprom_read_byte(&EEPROMVars.TotalLockBytes);
 					ultoa(((TempB == 0xFF)? 0x00 : TempB), &Buffer[5], 10);
 			}
+
+			DF_ENABLEDATAFLASH(FALSE);
+			SPI_SPIOFF();
 	
 			Buffer[4] = '-';
 			LCD_puts(Buffer);
@@ -86,6 +92,7 @@ void PM_StartProgAVR(void)
 	}
 
 	LCD_puts_f(WaitText);
+	
 	DF_ENABLEDATAFLASH(TRUE);
 	SPI_SPIInit();
 	
@@ -132,7 +139,8 @@ void PM_StartProgAVR(void)
 			}
 			else
 			{
-				PM_CreateProgrammingPackets(TYPE_FLASH);
+				MemoryType = TYPE_FLASH;
+				PM_CreateProgrammingPackets();
 			}
 		}
 	
@@ -147,7 +155,8 @@ void PM_StartProgAVR(void)
 			}
 			else
 			{
-				PM_CreateProgrammingPackets(TYPE_EEPROM);
+				MemoryType = TYPE_EEPROM;
+				PM_CreateProgrammingPackets();
 			}
 		}
 
@@ -270,7 +279,7 @@ void PM_ChooseProgAVROpts(void)
 			strcpy_P(Buffer, ProgTypes[SelectedOpt]);
 			Buffer[4] = '>';
 			Buffer[5] = ((ProgOptions & SelectedOptMask) ? 'Y' : 'N');
-			Buffer[6] = 0x00;
+			Buffer[6] = '\0';
 
 			LCD_puts(Buffer);
 
@@ -375,31 +384,28 @@ static void PM_SendEraseCommand(void)
  ARGUMENTS: | Type of stored data to program into target AVR (TYPE_FLASH or TYPE_EEPROM)
  RETURNS:   | None
 */
-static void PM_CreateProgrammingPackets(const uint8_t Type)
+static void PM_CreateProgrammingPackets(void)
 {			
 	uint32_t BytesRead        = 0;
-	uint32_t BytesToRead      = SM_GetStoredDataSize(Type);             // Get the byte size of the stored program
-	uint16_t BytesPerProgram;
-	uint16_t PageLength       = eeprom_read_word((Type == TYPE_FLASH)? &EEPROMVars.PageLength : &EEPROMVars.EPageLength);
+	uint32_t BytesToRead      = SM_GetStoredDataSize(MemoryType);       // Get the byte size of the stored program
+	uint16_t BytesPerProgram  = (((uint16_t)PacketBytes[1] << 8) | PacketBytes[2]);
+	uint16_t PageLength       = eeprom_read_word((MemoryType == TYPE_FLASH)? &EEPROMVars.PageLength : &EEPROMVars.EPageLength);
 	uint16_t BytesPerProgress = (BytesToRead / (LCD_BARGRAPH_SIZE - 1));
 	uint8_t  ContinuedPage    = FALSE;
 	uint8_t* EEPROMAddress;
-
+	
 	CurrAddress = 0;
 
 	VAMM_EnterStorageMode();                                            // Prepare virtual AVR memory for readback
-	VAMM_SetAddress();                                                  // Set virtual AVR memory read location to 0
 
-	if (Type == TYPE_FLASH)
+	if (MemoryType == TYPE_FLASH)
 	{
 		EEPROMAddress = (uint8_t*)&EEPROMVars.WriteProgram;             // Set the EEPROM pointer to the write flash command bytes location
-		DF_ContinuousReadEnable(0, 0);
 		PacketBytes[0] = AICB_CMD_PROGRAM_FLASH_ISP;
 	}
 	else
 	{
 		EEPROMAddress = (uint8_t*)&EEPROMVars.WriteEEPROM;              // Set the EEPROM pointer to the write EEPROM command bytes location
-		DF_ContinuousReadEnable(SM_EEPROM_OFFSET / DF_INTERNALDF_BUFFBYTES, SM_EEPROM_OFFSET % DF_INTERNALDF_BUFFBYTES); // Start read from the EEPROM offset location
 		PacketBytes[0] = AICB_CMD_PROGRAM_EEPROM_ISP;
 	}
 
@@ -408,31 +414,28 @@ static void PM_CreateProgrammingPackets(const uint8_t Type)
 		PacketBytes[B] = eeprom_read_byte(EEPROMAddress);               // Synthesise a write packet header
 		EEPROMAddress++;                                                // Increment the EEPROM location counter
 	}
-	
-	BytesPerProgram = ((uint16_t)PacketBytes[1] << 8)
-	                | PacketBytes[2];
 
 	while (BytesRead < BytesToRead)
 	{
 		if (PacketBytes[3] & ISPCC_PROG_MODE_PAGE)
 		{
-			if (PageLength > 160)                                       // Max 160 bytes at a time
+			if (PageLength > PM_LARGE_PAGE_LENGTH)                      // Max 160 bytes at a time
 			{
 				if (!(ContinuedPage))                                   // Start of a new page, program in the first 160 bytes
 				{
-					BytesPerProgram  = 160;
-					PacketBytes[3]  &= ~ISPCC_PROG_MODE_PAGEDONE;		
+					BytesPerProgram  = PM_LARGE_PAGE_LENGTH;
+					PacketBytes[3]  &= ~ISPCC_PROG_MODE_PAGEDONE;
 					ContinuedPage    = TRUE;
 				}
 				else                                                    // Middle of a page, program in the remainder
 				{
-					BytesPerProgram  = PageLength - 160;
+					BytesPerProgram  = (PageLength - PM_LARGE_PAGE_LENGTH);
 					PacketBytes[3]  |= ISPCC_PROG_MODE_PAGEDONE;
 					ContinuedPage    = FALSE;
 				}
 				
 				for (uint16_t LoadB = 0; LoadB < BytesPerProgram; LoadB++)
-				  PacketBytes[10 + LoadB] = VAMM_ReadByte();            // Load in the page				
+				  PacketBytes[10 + LoadB] = VAMM_ReadConsec();          // Load in the page				
 
 				PacketBytes[1] = (uint8_t)(BytesPerProgram >> 8);
 				PacketBytes[2] = (uint8_t)(BytesPerProgram);
@@ -442,7 +445,7 @@ static void PM_CreateProgrammingPackets(const uint8_t Type)
 			else
 			{
 				for (uint16_t LoadB = 0; LoadB < PageLength; LoadB++)
-				  PacketBytes[10 + LoadB] = VAMM_ReadByte();            // Load in the page
+				  PacketBytes[10 + LoadB] = VAMM_ReadConsec();          // Load in the page
 			
 				PacketBytes[1]  = (uint8_t)(PageLength >> 8);
 				PacketBytes[2]  = (uint8_t)(PageLength);
@@ -455,13 +458,13 @@ static void PM_CreateProgrammingPackets(const uint8_t Type)
 		{
 			if ((BytesRead + BytesPerProgram) > BytesToRead)            // Less than a whole BytesPerProgram left of data to write
 			{
-				BytesPerProgram = BytesToRead - BytesRead;              // Next lot of bytes will be the remaining data length
+				BytesPerProgram = (BytesToRead - BytesRead);            // Next lot of bytes will be the remaining data length
 				PacketBytes[1]  = (uint8_t)(BytesPerProgram >> 8);      // \. Save the new length
 				PacketBytes[2]  = (uint8_t)(BytesPerProgram);           // /  into the data packet
 			}
 
 			for (uint16_t LoadB = 0; LoadB < BytesPerProgram; LoadB++)
-			  PacketBytes[10 + LoadB] = VAMM_ReadByte();                // Load in the page
+			  PacketBytes[10 + LoadB] = VAMM_ReadConsec();              // Load in the page
 		
 			BytesRead += BytesPerProgram;                               // Increment the counter
 		}
@@ -479,10 +482,10 @@ static void PM_CreateProgrammingPackets(const uint8_t Type)
 
 		if (ProgrammingFault)                                           // Error out early if there's a problem such as a timeout
 		{
-			VAMM_ExitStorageMode();                                     // Cleanup virtual AVR memory manager
+			VAMM_ExitStorageMode();
 			return;
 		}
 	}
 	
-	VAMM_ExitStorageMode();                                             // Cleanup virtual AVR memory manager
+	VAMM_ExitStorageMode();
 }

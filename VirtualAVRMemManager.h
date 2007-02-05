@@ -38,6 +38,7 @@
 
 	void    VAMM_StoreByte(const uint8_t Data);
 	uint8_t VAMM_ReadByte(void) ATTR_WARN_UNUSED_RESULT;
+	uint8_t VAMM_ReadConsec(void) ATTR_WARN_UNUSED_RESULT;
 
 	#if defined(INC_FROM_VAMM) 
 	  static uint8_t VAMM_CheckSetCurrPageCleared(const uint8_t ClearPageErasedFlag);
