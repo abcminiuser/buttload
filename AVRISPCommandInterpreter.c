@@ -87,16 +87,16 @@ void AICI_InterpretPacket(void)
 						
 			break;
 		case AICB_CMD_SPI_MULTI:
-			MessageSize = (3 + PacketBytes[2]);    // Number of recieved bytes, plus two OKs and the command byte
+			MessageSize = (3 + PacketBytes[2]);        // Number of recieved bytes, plus two OKs and the command byte
 	
-			uint8_t TxBytes      = PacketBytes[1]; // \. The packet data is overwritten during the transfer. Because
-			uint8_t RxStartByte  = PacketBytes[2]; // |  of this each data byte must be stored into temp variables
-			uint8_t RxBytes      = PacketBytes[3]; // /  so that their contents are not lost.
+			uint8_t TxBytes      = PacketBytes[1];     // \. The packet data is overwritten during the transfer. Because
+			uint8_t RxStartByte  = PacketBytes[2];     // |  of this each data byte must be stored into temp variables
+			uint8_t RxBytes      = PacketBytes[3];     // /  so that their contents are not lost.
 			uint8_t RxByteNum    = 0;
 			uint8_t TxByteNum    = 0;
 			uint8_t RecievedByte = 0;
 
-			while (TxByteNum++ < TxBytes)          // Still bytes to transfer
+			while (TxByteNum++ < TxBytes)              // Still bytes to transfer
 			{
 				RecievedByte = USI_SPITransmit(PacketBytes[3 + TxByteNum]); // Transmit the byte, store the answer
 
