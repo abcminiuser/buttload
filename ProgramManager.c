@@ -90,6 +90,11 @@ void PM_StartProgAVR(void)
 		MAIN_ShowError(PSTR("NOTHING SELECTED"));
 		return;
 	}
+	else if (eeprom_read_byte(&EEPROMVars.SCKDuration) == 6) // Recovery ISP speed
+	{
+		MAIN_ShowError(PSTR("RECOVERY MODE"));
+		return;		
+	}
 
 	LCD_puts_f(WaitText);
 	

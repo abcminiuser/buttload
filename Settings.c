@@ -10,9 +10,9 @@
 
 const char    OffText[]                         PROGMEM = "OFF";
 
-const char    USISpeeds[USI_PRESET_SPEEDS][11]  PROGMEM = {"1843200 HZ", " 921600 HZ", " 230400 HZ", " 115200 HZ", "  57600 HZ", "  28800 HZ"};
-const char    USISpeedVals[]                    PROGMEM = {           0,            0,            1,            1,            2,            3}; // Translate from stored SCK value to nearest AVRStudio SCK value
-const char    USISpeedIndex[]                   PROGMEM = {                         1,            2,                          4,            5}; // Translate from recieved AVRStudio SCK value to nearest Buttload SCK value
+const char    USISpeeds[USI_PRESET_SPEEDS][11]  PROGMEM = {"1843200 HZ", " 921600 HZ", " 230400 HZ", " 115200 HZ", "  57600 HZ", "  28800 HZ",  "RECOVERY"};
+const char    USISpeedVals[]                    PROGMEM = {           0,            0,            1,            1,            2,            3,           3}; // Translate from stored SCK value to nearest AVRStudio SCK value
+const char    USISpeedIndex[]                   PROGMEM = {                         1,            2,                          4,            5,           6}; // Translate from recieved AVRStudio SCK value to nearest Buttload SCK value
 
 const char    SPIResetModes[2][6]               PROGMEM = {"LOGIC", "FLOAT"};
 const char    StartupModes[3][11]               PROGMEM = {"NORMAL", "PRODUCTION", "AVRISP"};

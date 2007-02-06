@@ -62,7 +62,7 @@
 			Pin 1  (PF4) - Green (active-high) lead of a Bicolour LED (optional)
 			Pin 5  (PF5) - Red (active-high) lead of a Bicolour LED (optional)
 			Pin 3  (PF6) - /RESET line of slave AVR
-			Pin 9  (PF7) - Butterfly battery voltage detection (optional)
+			Pin 9  (PF7) - Recovery mode target clock out
 			Pin 10 (GND) - Status LED ground if used (optional)			
 			
 		USART Interface
@@ -194,7 +194,7 @@ int main(void)
 	ACSR    = (1 << ACD);                        // Disable the unused Analogue Comparitor to save power
 	PRR     = ((1 << PRADC) | (1 << PRSPI) | (1 << PRUSART0)); // Disable subsystems (for now) to save power
 	
-	DDRF    = ((1 << 4) | (1 << 5) | (1 << 3));  // Set status LEDs and VCP as outputs, rest as inputs
+	DDRF    = ((1 << 4) | (1 << 5) | (1 << 3) | (1 << 7)); // Set status LEDs, VCP and target clock out as outputs, rest as inputs
 	DDRB    = ((1 << 0) | (1 << 1) | (1 << 2) | (1 << 5)); // On-board dataflash /CS, ISP MOSI/SCK and beeper as outputs
 	PORTB   = ((1 << 0) | (1 << 1) | (1 << 2) | (1 << 3)   // Set SPI pins to high/pullups, and disable dataflash (send /CS high)
 	        | JOY_BMASK);                        // \ Turn joystick
