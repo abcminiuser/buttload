@@ -2,8 +2,9 @@
              BUTTLOAD - Butterfly ISP Programmer
 
               Copyright (C) Dean Camera, 2007.
-                  dean_camera@hotmail.com
-            http://home.pacific.net.au/~sthelena/
+              
+			  dean_camera@fourwalledcubicle.com
+                  www.fourwalledcubicle.com
 */
 
 /* Must be included after avr/interrupt.h. This file re-defines the new

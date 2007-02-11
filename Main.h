@@ -2,8 +2,9 @@
              BUTTLOAD - Butterfly ISP Programmer
 
               Copyright (C) Dean Camera, 2007.
-                  dean_camera@hotmail.com
-            http://home.pacific.net.au/~sthelena/
+              
+			  dean_camera@fourwalledcubicle.com
+                  www.fourwalledcubicle.com
 */
 
 #ifndef MAIN_H
@@ -79,6 +80,8 @@
 	#define MAIN_RESET_INACTIVE        1
 		
 	// PROTOTYPES:
+	int  main(void) ATTR_NAKED; // Remove main prologue designed to allow for recursive use of main (not needed)
+
 	void MAIN_SetTargetResetLine(const uint8_t ActiveInactive);
 	void MAIN_WaitForJoyRelease(void);
 	void MAIN_IntToStr(uint16_t IntV, char *Buff);

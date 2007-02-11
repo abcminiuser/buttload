@@ -2,8 +2,9 @@
              BUTTLOAD - Butterfly ISP Programmer
 
               Copyright (C) Dean Camera, 2007.
-                  dean_camera@hotmail.com
-            http://home.pacific.net.au/~sthelena/
+              
+			  dean_camera@fourwalledcubicle.com
+                  www.fourwalledcubicle.com
 */
 
 // This file originally by Atmel, modified by Martin Thomas and Dean Camera.

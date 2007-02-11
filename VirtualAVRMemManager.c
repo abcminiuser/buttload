@@ -2,8 +2,9 @@
              BUTTLOAD - Butterfly ISP Programmer
 
               Copyright (C) Dean Camera, 2007.
-                  dean_camera@hotmail.com
-            http://home.pacific.net.au/~sthelena/
+              
+			  dean_camera@fourwalledcubicle.com
+                  www.fourwalledcubicle.com
 */
 
 #define  INC_FROM_VAMM
@@ -51,10 +52,7 @@ void VAMM_ExitStorageMode(void)
 		  SPI_SPITransmit(PageErasedFlags[ByteNum]);
 
 		DF_CopyPage((DF_DATAFLASH_PAGES - 1), DF_BUFFER_TO_FLASH); // Last dataflash page contains the erased page flag array
-	}
-	
-	SPI_SPIOFF();
-	DF_ENABLEDATAFLASH(FALSE);
+	}	
 }
 
 /*

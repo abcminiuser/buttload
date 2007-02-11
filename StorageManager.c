@@ -2,8 +2,9 @@
              BUTTLOAD - Butterfly ISP Programmer
 
               Copyright (C) Dean Camera, 2007.
-                  dean_camera@hotmail.com
-            http://home.pacific.net.au/~sthelena/
+              
+			  dean_camera@fourwalledcubicle.com
+                  www.fourwalledcubicle.com
 */
 
 #define  INC_FROM_SM
@@ -31,6 +32,7 @@ uint32_t SM_GetStoredDataSize(const uint8_t Type)
 	uint16_t PageLength;
 	uint8_t  BlockStart;
 	uint8_t  BlockEnd;
+	uint16_t BytesInLastPage;
 
 	if (Type == TYPE_FLASH)
 	{
@@ -47,7 +49,7 @@ uint32_t SM_GetStoredDataSize(const uint8_t Type)
 
 	DF_ContinuousReadEnable((DF_DATAFLASH_PAGES - 1), 0);               // Last dataflash page contains the erased page flag array
 
-	for (uint8_t EEPageBlock = BlockStart; EEPageBlock < BlockEnd; EEPageBlock++)
+	for (uint8_t DFPageBlock = BlockStart; DFPageBlock < BlockEnd; DFPageBlock++)
 	{
 		uint8_t Mask      = (1 << 7);
 		uint8_t BlockData = SPI_SPITransmit(0x00);                      // Fetch next erased page flag byte
@@ -61,7 +63,10 @@ uint32_t SM_GetStoredDataSize(const uint8_t Type)
 		}
 	}
 	
-	ProgDataSize -= (ProgDataSize % PageLength);                        // Get data size to nearest page
+	BytesInLastPage = (ProgDataSize % PageLength);
+
+	if (BytesInLastPage)                                                // If size is more than an equal number of pages in length
+	  ProgDataSize += (PageLength - BytesInLastPage);                   // Increase size to the next page in length
 
 	return ProgDataSize;
 }
@@ -84,6 +89,9 @@ void SM_InterpretAVRISPPacket(void)
 			for (uint8_t PacketB = 0; PacketB < 12; PacketB++)          // Save the enter programming mode command bytes
 			  eeprom_write_byte(&EEPROMVars.EnterProgMode[PacketB], PacketBytes[PacketB]);
 			
+			DF_ENABLEDATAFLASH(TRUE);
+			SPI_SPIInit();
+
 			InProgrammingMode = TRUE;                                   // Set the flag, prevent the user from exiting the V2P state machine			
 			CurrentMode = SM_NO_SETUP;                                  // Clear the current mode variable
 			WriteCmdStored = 0;                                         // lear Flash/EEPROM write command stored flag
@@ -97,7 +105,7 @@ void SM_InterpretAVRISPPacket(void)
 			break;			
 		case AICB_CMD_LEAVE_PROGMODE_ISP:
 			MessageSize = 2;
-
+			
 			SM_CheckEndOfFuseLockData();                                // Check for remaining bytes to be stored and general cleanup
 			VAMM_ExitStorageMode();
 
@@ -106,6 +114,7 @@ void SM_InterpretAVRISPPacket(void)
 			InProgrammingMode = FALSE;                                  // Clear the flag, allow the user to exit the V2P state machine
 
 			DF_ENABLEDATAFLASH(FALSE);
+			SPI_SPIOFF();
 
 			MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);
 			PacketBytes[1] = AICB_STATUS_CMD_OK;

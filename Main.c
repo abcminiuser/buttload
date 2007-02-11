@@ -2,11 +2,12 @@
              BUTTLOAD - Butterfly ISP Programmer
 
               Copyright (C) Dean Camera, 2007.
-                  dean_camera@hotmail.com
-            http://home.pacific.net.au/~sthelena/
+              
+			  dean_camera@fourwalledcubicle.com
+                  www.fourwalledcubicle.com
 
-  Requires: AVR-GCC 3.4.3 or above, AVRLibC version 1.4.1 or above.
-            Compile in GNU99 standards mode, with optimization -0s.
+   Requires AVR-GCC 3.4.3 or above, AVRLibC version 1.4.1 or
+ above. Compile in GNU99 standards mode, with optimization -0s.
 */
 
 /*

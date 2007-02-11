@@ -2,8 +2,9 @@
 ;             BUTTLOAD - Butterfly ISP Programmer
 ;
 ;              Copyright (C) Dean Camera, 2007.
-;                  dean_camera@hotmail.com
-;            http://home.pacific.net.au/~sthelena/
+;
+;			  dean_camera@fourwalledcubicle.com
+;                  www.fourwalledcubicle.com
 ;
 
 ; Routine sends a byte in the SPI format via the USI subsystem. Routine sets and returns the
@@ -95,14 +96,14 @@ SlowTransfer:
 	nop                                                            ; use the same amount of clock cycles as
 	nop                                                            ; the DEC and BRNE at the end of the loop
 
-TimeLoop:
+  TimeLoop:
 	dec   USI_SCRATCH_ASM_REG
 	brne  TimeLoop
 
 	st	  USI_USICR_PTR_ASM_REG, USI_CONTROLCK_ASM_REG
 	mov   USI_SCRATCH_ASM_REG, USI_DELAYCNT_ASM_REG
 
-TimeLoop2:
+  TimeLoop2:
 	dec   USI_SCRATCH_ASM_REG
 	brne  TimeLoop2
 
@@ -147,48 +148,50 @@ SuperFastTransfer:
 
 ; CLOCKING LOOP
 ClockingTransfer:	
-	; Cycle-counted to ensure 50% duty cycle per clock; equates to 42 cycles between toggles
+	; Cycle-counted to ensure 50% duty cycle per clock; equates to 9 cycles between toggles
 
 	ldi   USI_DELAYCNT_ASM_REG, 7
 
-ClockingLoop:
+  ClockingLoop:
 	sbi   IO_ADDR(USI_CLOCK_OUT_PORT), USI_CLOCK_BIT
-	ldi   USI_SCRATCH_ASM_REG, 10
-	nop
-	rcall ClockingWaitLoop
-
 	dec   USI_DELAYCNT_ASM_REG
-	brne  ClockingLoop
 
+	ldi   USI_SCRATCH_ASM_REG, 1
+  ClockingDelayLoop1:
+	dec   USI_SCRATCH_ASM_REG
+	brne  ClockingDelayLoop1
+
+	brne  ClockingLoop
+	nop
+	
 	sbi   IO_ADDR(USI_CLOCK_OUT_PORT), USI_CLOCK_BIT
 	st    USI_USICR_PTR_ASM_REG, USI_CONTROL_ASM_REG
-	ldi   USI_SCRATCH_ASM_REG, 10
-	rcall ClockingWaitLoop
 
+	ldi   USI_SCRATCH_ASM_REG, 1
+  ClockingDelayLoop2:
+	dec   USI_SCRATCH_ASM_REG
+	brne  ClockingDelayLoop2
 	ldi   USI_DELAYCNT_ASM_REG, 7
 
-ClockingLoop2:
+  ClockingLoop2:
 	sbi   IO_ADDR(USI_CLOCK_OUT_PORT), USI_CLOCK_BIT
-	ldi   USI_SCRATCH_ASM_REG, 10
-	rcall ClockingWaitLoop
-
 	dec   USI_DELAYCNT_ASM_REG
+
+	ldi   USI_SCRATCH_ASM_REG, 1
+  ClockingDelayLoop3:
+	dec   USI_SCRATCH_ASM_REG
+	brne  ClockingDelayLoop3
+
 	brne  ClockingLoop2
+	nop
 
 	sbi   IO_ADDR(USI_CLOCK_OUT_PORT), USI_CLOCK_BIT
 	st    USI_USICR_PTR_ASM_REG, USI_CONTROLCK_ASM_REG
-	ldi   USI_SCRATCH_ASM_REG, 9
-	rcall ClockingWaitLoop
 
 	dec   USI_BITSREM_ASM_REG
 	brne  ClockingTransfer
 		
 	rjmp  Epilogue
-
-ClockingWaitLoop:
-	dec   USI_SCRATCH_ASM_REG
-	brne  ClockingWaitLoop
-	ret
 ; END CLOCKING LOOP
 
 Epilogue:
