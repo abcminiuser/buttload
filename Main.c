@@ -200,7 +200,6 @@ int main(void)
 	PORTB   = ((1 << 0) | (1 << 1) | (1 << 2) | (1 << 3)   // Set SPI pins to high/pullups, and disable dataflash (send /CS high)
 	        | JOY_BMASK);                        // \ Turn joystick
 	PORTE   = JOY_EMASK;                         // /  pullups on
-	PORTF   = (1 << 7);                          // Enable PORTF pullup on unused PORTF pin to save power
 		  
 	PCMSK0  = JOY_EMASK;                         // \.
 	PCMSK1  = JOY_BMASK;                         // | Turn on joystick
@@ -229,7 +228,7 @@ int main(void)
 	TOUT_SetupSleepTimer();                      // Set up and start the auto-sleep timer
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);	     // Set status LEDs to green (ready)	
 	
-	TONEGEN_GET_TONE_VOL();
+	TONEGEN_GET_TONE_VOL();                      // Setup the tone generator's volume
 	TG_PlayToneSeq(TONEGEN_SEQ_STARTUP);         // Play startup tone
 
 	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
@@ -424,7 +423,7 @@ void MAIN_ShowProgType(const uint8_t Letter)
 
 /*
  NAME:      | MAIN_ShowError
- PURPOSE:   | Shows the specified error text to the LCD, prepended by "E>", and waits for the joystick to be pressed
+ PURPOSE:   | Shows the specified error text to the LCD, prefixed by "E>", and waits for the joystick to be pressed
  ARGUMENTS: | Pointer to error string located in flash memory
  RETURNS:   | None
 */

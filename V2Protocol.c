@@ -343,7 +343,7 @@ static void V2P_GetSetParameter(void)
 		case AICB_PARAM_SCK_DURATION:
 			if (PacketBytes[0] == AICB_CMD_GET_PARAMETER)
 			{
-				PacketBytes[2] = pgm_read_byte(USISpeedVals[eeprom_read_byte(&EEPROMVars.SCKDuration)]);
+				PacketBytes[2] = pgm_read_byte(&USISpeedVals[eeprom_read_byte(&EEPROMVars.SCKDuration)]);
 				if (PacketBytes[2] > USI_PRESET_SPEEDS)
 				  PacketBytes[2] = 0;
 			}
@@ -354,7 +354,7 @@ static void V2P_GetSetParameter(void)
 				if (PacketBytes[2] >= USI_STUDIO_SPEEDS) // Bounds check
 				  PacketBytes[2] = USI_STUDIO_SPEEDS - 1;
 
-				eeprom_write_byte(&EEPROMVars.SCKDuration, pgm_read_byte(USISpeedIndex[PacketBytes[2]]));
+				eeprom_write_byte(&EEPROMVars.SCKDuration, pgm_read_byte(&USISpeedIndex[PacketBytes[2]]));
 
 				USI_SPIInitMaster();          // Re-Initialise the USI system with the new frequency
 			}
