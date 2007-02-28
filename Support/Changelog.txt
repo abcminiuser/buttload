@@ -13,7 +13,6 @@ Current Version: Public Release 2.1
 	  * Fixed incorrect message size on CMD_UNKNOWN return in ProgramManager
 	  * Fixed SPI_MULTI bounds error (off by one)
 	  * Changed strings to use char rather than uint8_t, allowing for a generic makefile without GCC4.x specific flags
-	  * Vin pin is now an external sleep input pin - pull high externally to initate sleep
 	  * PROGRAM AVR mode now allows for arbitrary combinations of programming options
 	  * Added in new startup mode settings option
 	  * Programming a data type in STORAGE MODE now automatically enables that data type for programming in PROGRAM AVR mode
@@ -43,6 +42,8 @@ Current Version: Public Release 2.1
 	  * Progressbar while programming from dataflash now gives full range while programming
 	  * Moved individual settings functions to new Settings.c source file
 	  * Added recovery ISP speed mode to repair mis-configured AVR fuses by providing an external clock to the target
+	  * Fixed SET FIRM VERSION error that would cause ButtLoad to send the incorrect version back to the PC if changed
+	  * Added in Dataflash page to buffer compare, so that the dataflash pages are only updated if the new data differs
 	  
 	IN PUBLIC RELEASE 2.0:
 	=======================================

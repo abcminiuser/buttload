@@ -15,7 +15,6 @@
 	#include <avr/interrupt.h>
 	#include <avr/pgmspace.h>
 	
-	#include "Analogue.h"
 	#include "GlobalMacros.h"
 	#include "ISRMacro.h"
 	#include "Main.h"

@@ -18,6 +18,7 @@
 	#include "GlobalMacros.h"
 	#include "Main.h"
 	#include "SPI.h"
+	#include "StorageManager.h"
 	
 	// PROTOTYPES:
 	void   TM_ShowTags(void);

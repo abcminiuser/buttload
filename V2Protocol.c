@@ -14,11 +14,12 @@
 const uint8_t SignonResponse[]  PROGMEM = {AICB_CMD_SIGN_ON, AICB_STATUS_CMD_OK, 8, 'A', 'V', 'R', 'I', 'S', 'P', '_', '2', 0x00};
 
 // GLOBAL VARIABLES:
-uint8_t  PacketBytes[V2P_MAXBUFFSIZE]   = {};
-uint8_t  SequenceNum                    = 0;
-uint16_t MessageSize                    = 0;
-uint8_t  InProgrammingMode              = FALSE;
-uint32_t CurrAddress                    = 0;
+       uint8_t  PacketBytes[V2P_MAXBUFFSIZE]   = {};
+static uint8_t  SequenceNum                    = 0;
+       uint16_t MessageSize                    = 0;
+
+       uint8_t  InProgrammingMode              = FALSE;
+       uint32_t CurrAddress                    = 0;
 
 uint8_t  Param_ControllerInit           = 0; // This is set to zero on reset, and can be written to or read by the computer
 
@@ -260,7 +261,7 @@ static void V2P_ProcessPacketData(FuncPtr PacketDecodeFunction)
 
 			typedef struct
 			{
-				uint8_t  Bytes[4];
+				uint8_t Bytes[4];
 			} ByteArray;
 			
 			#if (COMP_BYTE_ORDER == COMP_ORDER_LITTLE)
@@ -325,7 +326,10 @@ static void V2P_GetSetParameter(void)
 
 			break;
 		case AICB_PARAM_SW_MINOR:
-			PacketBytes[2] = ((eeprom_read_byte(&EEPROMVars.FirmVerMinor) != 0xFF)? /* No value, see GCC extention at http://tinyurl.com/yjj737 */ : V2P_SW_VERSION_MINOR_DEFAULT);
+			PacketBytes[2] = eeprom_read_byte(&EEPROMVars.FirmVerMinor);
+			
+			if (PacketBytes[2] == 0xFF)
+			  PacketBytes[2] = V2P_SW_VERSION_MINOR_DEFAULT;
 
 			break;
 		case AICB_PARAM_CONTROLLER_INIT:

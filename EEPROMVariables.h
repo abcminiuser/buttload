@@ -41,6 +41,7 @@
 		uint8_t  StartupMode;
 
 		uint16_t MagicNumber;
+		uint8_t  VersionNumber;
 	} EEPROMVarsType;
 	
 #endif

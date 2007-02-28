@@ -46,11 +46,8 @@ ISR(TIMER2_COMP_vect, ISR_NOBLOCK)
 {
 	// Autosleep Timeout: 1Hz
 
-	if (((SecsBeforeAutoSleep) && (SleepTimeOutSecs++ == SecsBeforeAutoSleep))
-	   || (AN_GetADCValue(AN_CHANNEL_SLEEP) > AN_SLEEP_TRIGGER_VALUE))
-	{
-		MAIN_SleepMode();
-	}
+	if ((SecsBeforeAutoSleep) && (SleepTimeOutSecs++ == SecsBeforeAutoSleep))
+	  MAIN_SleepMode();
 }
 
 // ======================================================================================

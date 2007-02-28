@@ -20,13 +20,13 @@
 #define INC_FROM_DRIVER
 #include "LCD_Driver.h"
 
-//                           LCD Text            + Nulls for scrolling + Null Termination
-volatile char     TextBuffer[LCD_TEXTBUFFER_SIZE + LCD_DISPLAY_SIZE    + 1] = {};
-volatile uint8_t  StrStart        = 0;
-volatile uint8_t  StrEnd          = 0;
-volatile uint8_t  ScrollFlags     = 0;
-volatile uint8_t  ScrollCount     = 0;
-volatile uint8_t  UpdateDisplay   = FALSE;
+//                                  LCD Text            + Nulls for scrolling + Null Termination
+static volatile char     TextBuffer[LCD_TEXTBUFFER_SIZE + LCD_DISPLAY_SIZE    + 1] = {};
+static volatile uint8_t  StrStart        = 0;
+static volatile uint8_t  StrEnd          = 0;
+static volatile uint8_t  ScrollCount     = 0;
+static volatile uint8_t  UpdateDisplay   = FALSE;
+       volatile uint8_t  ScrollFlags     = 0;
 
 const    uint16_t LCD_SegTable[] PROGMEM =
 {

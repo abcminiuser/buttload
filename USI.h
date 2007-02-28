@@ -29,6 +29,7 @@
 		#include "GlobalMacros.h"
 		#include "ISRMacro.h"
 		#include "Main.h"
+		#include "Settings.h"
 			
 		// USI PORT DEFINES:
 		#define USI_CLOCK_PIN	   4

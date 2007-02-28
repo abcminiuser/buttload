@@ -71,10 +71,6 @@
 			Pin 2        - Transmit relative to Butterfly
 			Pin 3        - Ground
 
-		External Vin Interface
-			Pin 1        - External sleep input (active high)
-			Pin 2        - Ground
-
 	 * Level shifting circuitry must be employed that can translate the 3.3V Butterfly
 	 signals to the target AVR's voltage and vice-versa AT SUFFICIENT CURRENT.
 */
@@ -121,9 +117,6 @@
    of AVRFreaks for their ideas.
 
 --------------------------------------------------------------------------------------------------------
-
-	Note: Almost all the 3rd party code has been modified in some way for this project. Please use the
-	original code for each file if you intend to use any of the 3rd party code in you own project.
 */
 
 #define  INC_FROM_MAIN
@@ -134,8 +127,6 @@ BUTTLOADTAG(Title,     "BUTTLOAD AVRISP");
 BUTTLOADTAG(Version,   VERSION_VSTRING);
 BUTTLOADTAG(Author,    "BY DEAN CAMERA");
 BUTTLOADTAG(Copyright, "<C> 2007 - GPL");
-BUTTLOADTAG(BuildTime, "BTIME: " __TIME__);
-BUTTLOADTAG(BuildDate, "BDATE: " __DATE__);
 
 // PROGMEM CONSTANTS:
 const char*   AboutTextPtrs[]                   PROGMEM = {BUTTTAG_Title.TagData, BUTTTAG_Version.TagData, BUTTTAG_Author.TagData, BUTTTAG_Copyright.TagData};
@@ -214,12 +205,13 @@ int main(void)
 	LCD_Init();
 	LCD_puts_f(WaitText);
 	
-	if (eeprom_read_word(&EEPROMVars.MagicNumber) != MAGIC_NUM)       // Check if first ButtLoad run
+	if ((eeprom_read_word(&EEPROMVars.MagicNumber) != MAGIC_NUM) || (eeprom_read_byte(&EEPROMVars.VersionNumber) != ((VERSION_MAJOR << 4) | VERSION_MINOR)))
 	{
 		for (uint16_t EAddr = 0; EAddr < sizeof(EEPROMVars); EAddr++) // Clear the EEPROM if first run
 		  eeprom_write_byte((uint8_t*)EAddr, 0xFF);
 
 		eeprom_write_word(&EEPROMVars.MagicNumber, MAGIC_NUM);
+		eeprom_write_byte(&EEPROMVars.VersionNumber, ((VERSION_MAJOR << 4) | VERSION_MINOR));
 	}
 	
 	LCD_CONTRAST_LEVEL(eeprom_read_byte(&EEPROMVars.LCDContrast));
@@ -260,8 +252,6 @@ int main(void)
 
 		SLEEPCPU(SLEEP_POWERSAVE);
 	}
-
-	return 0;
 }
 
 // ======================================================================================
@@ -317,7 +307,7 @@ void MAIN_SetTargetResetLine(const uint8_t ActiveInactive)
 	
 	switch (ActiveInactive)
 	{
-		case MAIN_RESET_ACTIVE:                // The target RESET line may be either active high or low.
+		case MAIN_RESET_ACTIVE:                  // The target RESET line may be either active high or low.
 			DDRF |= (1 << 6);
 		
 			if (ResetPolarity)                   // Translate to correct active logic level for target device type
@@ -326,7 +316,7 @@ void MAIN_SetTargetResetLine(const uint8_t ActiveInactive)
 			  PORTF |=  (1 << 6);
 		
 			break;
-		case MAIN_RESET_INACTIVE:              // Must determine what to do for inactive RESET.
+		case MAIN_RESET_INACTIVE:                // Must determine what to do for inactive RESET.
 			if (ResetMode)                       // FLOAT mode reset
 			{
 				DDRF  &= ~(1 << 6);

@@ -27,7 +27,9 @@ void USART_Init(void)
 	PRR &= ~(1 << PRUSART0);
 	
     // Set baud rate
-    UBRRH = (uint8_t)(USART_BAUDVALUE >> 8);
+	#if (USART_BAUDVALUE >> 8)
+		UBRRH = (uint8_t)(USART_BAUDVALUE >> 8);
+	#endif
     UBRRL = (uint8_t)(USART_BAUDVALUE);
 
 	// Reset UCSRA to clear any pre-set bits

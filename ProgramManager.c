@@ -488,10 +488,12 @@ static void PM_CreateProgrammingPackets(void)
 
 		if (ProgrammingFault)                                           // Error out early if there's a problem such as a timeout
 		{
+			LCD_BARGRAPH(0);
 			VAMM_ExitStorageMode();
 			return;
 		}
 	}
 	
+	LCD_BARGRAPH(0);
 	VAMM_ExitStorageMode();
 }

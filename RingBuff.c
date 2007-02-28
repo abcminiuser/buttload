@@ -9,10 +9,10 @@
 
 #include "RingBuff.h"
 
-volatile uint8_t RingBuffer[BUFF_BUFFLEN] = {};
-volatile uint8_t BuffElements             = 0;
-volatile uint8_t InPos                    = 0;
-volatile uint8_t OutPos                   = 0;
+static volatile uint8_t RingBuffer[BUFF_BUFFLEN] = {};
+static volatile uint8_t InPos                    = 0;
+static volatile uint8_t OutPos                   = 0;
+       volatile uint8_t BuffElements             = 0;
 
 // ======================================================================================
 

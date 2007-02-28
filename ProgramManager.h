@@ -18,7 +18,12 @@
 	
 	#include "Dataflash.h"
 	#include "EEPROMVariables.h"
+	#include "ISPChipComm.h"
 	#include "Main.h"
+	#include "StorageManager.h"
+	#include "Timeout.h"
+	#include "USI.h"
+	#include "V2Protocol.h"
 	
 	// DEFINES:
 	#define PM_OPT_CLEARFLAGS      (1 << 7)

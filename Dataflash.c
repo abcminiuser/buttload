@@ -66,24 +66,6 @@ void DF_CopyPage(const uint16_t PageAddress, uint8_t Operation)
 }
 
 /*
- NAME:      | DF_EraseBlock
- PURPOSE:   | Erases a block of 8 pages in the dataflash
- ARGUMENTS: | Block number to erase
- RETURNS:   | None
-*/
-void DF_EraseBlock(const uint16_t BlockNumber)
-{
-	DF_TOGGLEENABLE();
-
-	SPI_SPITransmit(DFCB_BLOCKERASE);                   // Send block erase command
-	SPI_SPITransmit((uint8_t)(BlockNumber >> 8));
-	SPI_SPITransmit((uint8_t)(BlockNumber));
-	SPI_SPITransmit(0x00);
-
-	DF_WaitWhileBusy();
-}
-
-/*
  NAME:      | DF_BufferWriteEnable
  PURPOSE:   | Prepares the dataflash's internal buffer for write operations
  ARGUMENTS: | Address in the dataflash's buffer to begin writing from
@@ -116,6 +98,34 @@ void DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddr
 	
 	for (uint8_t DByte = 0; DByte < 4; DByte++)  // Perform 4 dummy writes to intiate the DataFlash address pointers
 	  SPI_SPITransmit(0x00);
+}
+
+/*
+ NAME:      | DF_BufferCompare
+ PURPOSE:   | Compares a page in dataflash memory with the contents of the dataflash's internal buffer
+ ARGUMENTS: | Page address to compare with
+ RETURNS:   | DF_COMPARE_MATCH if identical, otherwise DF_COMPARE_MISMATCH
+*/
+uint8_t DF_BufferCompare(const uint16_t PageAddress)
+{
+	uint8_t DFStatus = 0x00;
+
+	DF_TOGGLEENABLE();
+	
+	SPI_SPITransmit(DFCB_FLASHTOBUF1COMPARE);	
+	SPI_SPITransmit((uint8_t)(PageAddress >> DF_PAGESHIFT_HIGH));
+	SPI_SPITransmit((uint8_t)(PageAddress << DF_PAGESHIFT_LOW));
+	SPI_SPITransmit(0x00);
+
+	DF_TOGGLEENABLE();
+
+	SPI_SPITransmit(DFCB_STATUSREG);	
+
+	do
+		DFStatus = SPI_SPITransmit(0x00);
+	while (!(DFStatus & DF_BUSYMASK));
+
+	return (DFStatus & DF_COMPAREMASK);
 }
 
 /*

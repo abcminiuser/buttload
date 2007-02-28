@@ -22,25 +22,27 @@
 	#include <avr/pgmspace.h>
 	#include <avr/version.h>
 
-	#include "Analogue.h"
-	#include "Dataflash.h"
-	#include "Delay.h"	
 	#include "EEPROMVariables.h"
 	#include "GlobalMacros.h"
-	#include "ISRMacro.h"
-	#include "LCD_Driver.h"
-	#include "OSCCal.h"
-	#include "ProgramManager.h"
-	#include "Settings.h"
-	#include "SPI.h"
-	#include "StorageManager.h"
-	#include "Support/ButtLoadTag.h"
-	#include "TagManager.h"
-	#include "ToneGeneration.h"
-	#include "USART.h"
-	#include "USI.h"
-	#include "V2Protocol.h"
-	#include "VirtualAVRMemManager.h"
+
+	#if defined(INC_FROM_MAIN)
+		#include "Dataflash.h"
+		#include "Delay.h"
+		#include "ISRMacro.h"
+		#include "LCD_Driver.h"
+		#include "OSCCal.h"
+		#include "ProgramManager.h"
+		#include "Settings.h"
+		#include "SPI.h"
+		#include "StorageManager.h"
+		#include "Support/ButtLoadTag.h"
+		#include "TagManager.h"
+		#include "ToneGeneration.h"
+		#include "USART.h"
+		#include "USI.h"
+		#include "V2Protocol.h"
+		#include "VirtualAVRMemManager.h"
+	#endif
 	
 	#if defined(INC_FROM_MAIN)
 		// LIB C VERSION CHECK:
@@ -80,7 +82,7 @@
 	#define MAIN_RESET_INACTIVE        1
 		
 	// PROTOTYPES:
-	int  main(void) ATTR_NAKED; // Remove main prologue designed to allow for recursive use of main (not needed)
+	int  main(void) ATTR_NO_RETURN; // Remove main prologue designed to allow for recursive use of main (not needed)
 
 	void MAIN_SetTargetResetLine(const uint8_t ActiveInactive);
 	void MAIN_WaitForJoyRelease(void);

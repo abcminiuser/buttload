@@ -15,6 +15,7 @@
 	#include <avr/pgmspace.h>
 	
 	#include "AVRISPCommandBytes.h"
+	#include "AVRISPCommandInterpreter.h"
 	#include "Delay.h"
 	#include "LCD_Driver.h"
 	#include "Main.h"

@@ -10,8 +10,8 @@
 #define  INC_FROM_TM
 #include "TagManager.h"
 
-uint8_t  TagExists       = FALSE;
-uint32_t DFDataBytesLeft = 0x00000000;
+static uint8_t  TagExists       = FALSE;
+static uint32_t DFDataBytesLeft = 0x00000000;
 
 // ======================================================================================
 
@@ -82,7 +82,7 @@ static void TM_FindNextTag(void)
 				
 				Buffer[20] = '\0';             // Make sure string is null-terminated
 
-				TagExists   = TRUE;
+				TagExists  = TRUE;
 
 				LCD_puts(Buffer);
 				MAIN_SETSTATUSLED(MAIN_STATLED_GREEN); // Green = ready

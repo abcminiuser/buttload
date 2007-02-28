@@ -67,8 +67,7 @@ OBJDIR = ./.obj
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC =	Analogue.c                   \
-		AVRISPCommandInterpreter.c   \
+SRC =	AVRISPCommandInterpreter.c   \
 		Dataflash.c                  \
 		ISPChipComm.c                \
 		LCD_Driver.c                 \

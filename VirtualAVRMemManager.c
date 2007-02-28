@@ -11,9 +11,9 @@
 #include "VirtualAVRMemManager.h"
 
 volatile uint8_t  VAMMSetup                            = VAMM_SETUP_NA;
-uint8_t           CurrPageCleared                      = FALSE;
-uint8_t           EraseFlagsTransReq                   = FALSE;
-uint8_t           PageErasedFlags[DF_DATAFLASH_BLOCKS] = {};
+static   uint8_t  CurrPageCleared                      = FALSE;
+         uint8_t  PageErasedFlags[DF_DATAFLASH_BLOCKS] = {};
+         uint8_t  EraseFlagsTransReq                   = FALSE;
 
 // ======================================================================================
 
@@ -51,7 +51,8 @@ void VAMM_ExitStorageMode(void)
 		for (uint16_t ByteNum = 0; ByteNum < sizeof(PageErasedFlags); ByteNum++)
 		  SPI_SPITransmit(PageErasedFlags[ByteNum]);
 
-		DF_CopyPage((DF_DATAFLASH_PAGES - 1), DF_BUFFER_TO_FLASH); // Last dataflash page contains the erased page flag array
+		if (DF_BufferCompare((DF_DATAFLASH_PAGES - 1)) != DF_COMPARE_MATCH) // Compare so that write is only executed if page data is different
+		  DF_CopyPage((DF_DATAFLASH_PAGES - 1), DF_BUFFER_TO_FLASH); // Last dataflash page contains the erased page flag array
 	}	
 }
 
@@ -122,7 +123,7 @@ void VAMM_StoreByte(const uint8_t Data)
 	{
 		VAMM_SetAddress();
 
-		CurrPageCleared = VAMM_CheckSetCurrPageCleared(VAMM_FLAG_CHECK);
+		VAMM_CheckSetCurrPageCleared(VAMM_FLAG_CHECK);
 
 		if (CurrPageCleared)                                // Page is erased, so clear the buffer
 		{
@@ -163,7 +164,7 @@ uint8_t VAMM_ReadByte(void)
 	{
 		VAMM_SetAddress();
 
-		CurrPageCleared = VAMM_CheckSetCurrPageCleared(VAMM_FLAG_CHECK);
+		VAMM_CheckSetCurrPageCleared(VAMM_FLAG_CHECK);
 		DF_ContinuousReadEnable(DataflashInfo.CurrPageAddress, DataflashInfo.CurrBuffByte);
 		
 		VAMMSetup = VAMM_SETUP_READ;
@@ -188,20 +189,19 @@ uint8_t VAMM_ReadConsec(void)
 	if (VAMMSetup != VAMM_SETUP_READ)
 	{
 		VAMM_SetAddress();
-		VAMMSetup = VAMM_SETUP_READ;
 
+		VAMM_CheckSetCurrPageCleared(VAMM_FLAG_CHECK);
 		DF_ContinuousReadEnable(DataflashInfo.CurrPageAddress, DataflashInfo.CurrBuffByte);
 
-		CurrPageCleared = VAMM_CheckSetCurrPageCleared(VAMM_FLAG_CHECK);
+		VAMMSetup = VAMM_SETUP_READ;
 	}	
-
 
 	if (DataflashInfo.CurrBuffByte == DF_INTERNALDF_BUFFBYTES)
 	{
 		DataflashInfo.CurrPageAddress++;
 		DataflashInfo.CurrBuffByte = 0;
 
-		CurrPageCleared = VAMM_CheckSetCurrPageCleared(VAMM_FLAG_CHECK);
+		VAMM_CheckSetCurrPageCleared(VAMM_FLAG_CHECK);
 	}
 
 	DataflashInfo.CurrBuffByte++;
@@ -215,21 +215,19 @@ uint8_t VAMM_ReadConsec(void)
  ARGUMENTS: | Boolean flag; set if erased flag should be cleared
  RETURNS:   | Boolean flag; set if current dataflash page is cleared
 */
-static uint8_t VAMM_CheckSetCurrPageCleared(const uint8_t ClearPageErasedFlag)
+static void VAMM_CheckSetCurrPageCleared(const uint8_t ClearPageErasedFlag)
 {
-	uint16_t PageBlock   = (DataflashInfo.CurrPageAddress >> 3);
-	uint8_t  BlockBit    = pgm_read_byte(&BitTable[DataflashInfo.CurrPageAddress & 0x07]);
+	uint8_t* BlockPointer = &PageErasedFlags[DataflashInfo.CurrPageAddress >> 3];
+	uint8_t  BlockBit     = pgm_read_byte(&BitTable[DataflashInfo.CurrPageAddress & 0x07]);
 
 	if (ClearPageErasedFlag)
 	{
-		PageErasedFlags[PageBlock] &= ~BlockBit;
+		*BlockPointer &= ~BlockBit;
 		EraseFlagsTransReq = TRUE;
-
-		return TRUE;
 	}
 	else
 	{
-		return ((PageErasedFlags[PageBlock] & BlockBit)? TRUE : FALSE);
+		CurrPageCleared = (*BlockPointer & BlockBit);
 	}
 }
 
@@ -242,7 +240,10 @@ static uint8_t VAMM_CheckSetCurrPageCleared(const uint8_t ClearPageErasedFlag)
 static void VAMM_Cleanup(void)
 {
 	if (VAMMSetup == VAMM_SETUP_WRITE)                      // Save partially written page if in write mode
-	  DF_CopyPage(DataflashInfo.CurrPageAddress, DF_BUFFER_TO_FLASH);
+	{
+		if (DF_BufferCompare(DataflashInfo.CurrPageAddress) != DF_COMPARE_MATCH) // Compare so that write is only executed if page data is different
+		  DF_CopyPage(DataflashInfo.CurrPageAddress, DF_BUFFER_TO_FLASH);
+	}
 
 	VAMMSetup = VAMM_SETUP_NA;
 }

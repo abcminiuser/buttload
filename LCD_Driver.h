@@ -56,7 +56,11 @@
 	                                 		LCDDR0 |= (1 << 5);    \
 	                                 	case 1:                    \
 	                                 		LCDDR0 |= (1 << 1);    \
+											break;                 \
 										case 0:                    \
+	                                 		LCDDR3 &= ~(1 << 0);   \
+	                                 		LCDDR1 &= ~((1 << 6) | (1 << 2)); \
+	                                 		LCDDR0 &= ~(1 << 1);   \
 											break;                 \
 	                                  }                            \
 									  }MACROE
