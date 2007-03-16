@@ -209,10 +209,8 @@ static void ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr)
 						
 			break;
 		case ISPCC_POLLTYPE_READY:
-			do
-			  USI_SPITransmitWord(0xF000);
-			while ((USI_SPITransmitWord(0x0000) & ISPCC_POLL_BUSYFLAG) && (TCNT1 < ISPCC_COMM_TIMEOUT));
-
+			PM_WaitWhileTargetBusy();
+				
 			break;
 		default:                                      // Default is Wait polling
 			MAIN_Delay1MS(PacketBytes[4]);	

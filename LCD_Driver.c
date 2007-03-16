@@ -102,8 +102,8 @@ void LCD_Init(void)
     // Select asynchronous clock source, enable all COM pins and enable all segment pins:
     LCDCRB  = (1<<LCDCS) | (3<<LCDMUX0) | (7<<LCDPM0);
 
-    // Set LCD prescaler to give a framerate of 32Hz:
-    LCDFRR  = (0<<LCDPS0) | (7<<LCDCD0);    
+    // Set LCD prescaler to give a framerate of 64Hz:
+    LCDFRR  = (0<<LCDPS0) | (3<<LCDCD0);    
 
 	// Enable LCD and set low power waveform, enable start of frame interrupt:
     LCDCRA  = (1<<LCDEN) | (1<<LCDAB) | (1<<LCDIE);

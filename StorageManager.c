@@ -49,7 +49,7 @@ uint32_t SM_GetStoredDataSize(const uint8_t Type)
 		PageLength = eeprom_read_word(&EEPROMVars.EPageLength);
 	}
 
-	for (uint8_t DFPageBlock = BlockEnd; DFPageBlock == BlockStart; DFPageBlock--)
+	for (uint8_t DFPageBlock = BlockEnd; DFPageBlock >= BlockStart; DFPageBlock--)
 	{
 		if (PageErasedFlags[DFPageBlock] != 0xFF)                                              // Find first non-erased block, staring from the end of memory
 		{

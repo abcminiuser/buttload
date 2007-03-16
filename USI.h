@@ -16,6 +16,8 @@
 	// DEFINES:
 	#define USIDelay              GPIOR0 // Psudo-variable, GPIO register for speed
 	#define USICONTROLREGS        ((1 << USIWM0) | (1 << USITC))
+	#define USI_CLOCK_OUT_PORT    PINF   // PIN register - toggles pin when written to on the M169 if pin is an output
+	#define USI_CLOCK_BIT         7
 
 	#ifndef __ASSEMBLER__
 	

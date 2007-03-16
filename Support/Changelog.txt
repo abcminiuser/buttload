@@ -1,7 +1,8 @@
 Current Version: Public Release 2.1
-
-* SPI being called in storage mode when SPI subsystem off, leads to freeze on any command
-* Update web address in file headers
+	
+	TODO:
+	 1) Add button beeps
+	 2) Programming from a non-consec file results in invalid offsets, which causes wrapping to occur
 	
 	IN PUBLIC RELEASE 2.1:
 	=======================================
@@ -18,7 +19,7 @@ Current Version: Public Release 2.1
 	  * Programming a data type in STORAGE MODE now automatically enables that data type for programming in PROGRAM AVR mode
 	  * Fixed EEPROM programming very slow in all modes
 	  * Returned firmware version can now be set up to V2.20
-	  * Target busy-wait loops now have timeouts of 100 milliseconds
+	  * Target busy-wait loops now have timeouts of 100 milliseconds, moved busy-wait to its own routine for size
 	  * 921600Hz programming speed is now correct (was actually double that due to a mis-calculation)
 	  * New programming speeds (accessable via settings menu only) added - 115200Hz and 1843200Hz options
 	  * RingBuffer access is now protected against race-conditions (atomic access)
@@ -44,6 +45,7 @@ Current Version: Public Release 2.1
 	  * Added recovery ISP speed mode to repair mis-configured AVR fuses by providing an external clock to the target
 	  * Fixed SET FIRM VERSION error that would cause ButtLoad to send the incorrect version back to the PC if changed
 	  * Added in Dataflash page to buffer compare, so that the dataflash pages are only updated if the new data differs
+	  * Changed LCD refresh rate from 32Hz to 64Hz, to work with the newer Butterflies
 	  
 	IN PUBLIC RELEASE 2.0:
 	=======================================

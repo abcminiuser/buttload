@@ -28,9 +28,6 @@
 #define  XL                    r26
 #define  XH                    r27
 
-#define  USI_CLOCK_OUT_PORT    PINF
-#define  USI_CLOCK_BIT         7
-
 ; REGISTER ALLOCATIONS (all call-saved):
 #define  USI_SCRATCH_ASM_REG   r20
 #define  USI_CONTROL_ASM_REG   r21
@@ -190,7 +187,7 @@ ClockingTransfer:
 
 	dec   USI_BITSREM_ASM_REG
 	brne  ClockingTransfer
-		
+	
 	rjmp  Epilogue
 ; END CLOCKING LOOP
 

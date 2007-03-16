@@ -17,6 +17,7 @@
 	#include "LCD_Driver.h"
 	#include "RingBuff.h"
 	#include "Timeout.h"
+	#include "OSCCAL.h"
 	
 	// MACROS AND DEFINES:	
 	#define USART_BAUDRATE        115200UL

@@ -457,7 +457,7 @@ ISR(PCINT1_vect, ISR_NOBLOCK)                    // Joystick routine; PCINT0_vec
 {
 	JoyStatus = (~PINB & JOY_BMASK)
 	          | (~PINE & JOY_EMASK);
-			  
+
 	TIMEOUT_SLEEP_TIMEOUT_RESET();
 }
 
