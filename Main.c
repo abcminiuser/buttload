@@ -93,7 +93,6 @@
 		GlobalMacros.h                           | By Dean Camera
 		ISPChipComm.c + Header file              | By Dean Camera
 		ISRMacro.h                               | By Dean Camera
-		JoystickInterrupt.S                      | By Dean Camera
 		LCD_Driver.c + Header file               | By Dean Camera
 		Main.c + Header file                     | By Dean Camera
 		OSCCal.c + Header file                   | By Dean Camera, based on sample code by Colin Oflynn
@@ -103,6 +102,7 @@
 		Settings.c + Header file                 | By Dean Camera
 		StorageManager.c + Header file           | By Dean Camera
 		TagManager.c + Header file               | By Dean Camera
+		TargetCal.S                              | By Dean Camera
 		Timeout.c + Header file                  | By Dean Camera
 		ToneGeneration.c + Header file           | By Dean Camera
 		USART.c + Header file                    | By Dean Camera
@@ -112,9 +112,9 @@
 		VirtualAVRMemManager.c + Header file     | By Dean Camera
 -------------------------------------------------+-----------------------------------------------------
 
-   Special thanks to Barry, Nard Awater and Scott Coppersmith of AVRFreaks, for without their equipment
-   and wisdom in debugging this monstrocity I'd still be working on it. Also thanks to the other members
-   of AVRFreaks for their ideas.
+   Special thanks to Barry, Mike Henning, Nard Awater and Scott Coppersmith of AVRFreaks, for without
+   their equipment and wisdom in debugging this monstrocity I'd still be working on it. Also thanks to
+   the other members of AVRFreaks for their ideas.
 
 --------------------------------------------------------------------------------------------------------
 */
@@ -139,9 +139,9 @@ const char    Func_PRGMAVR[]                    PROGMEM = "PROGRAM AVR";
 const char    Func_PRGMSTOREINFO[]              PROGMEM = "DATAFLASH STATS";
 const char    Func_SETTINGS[]                   PROGMEM = "SETTINGS";
 const char    Func_SLEEP[]                      PROGMEM = "SLEEP MODE";
-	
-const char*   MainFunctionNames[]               PROGMEM = {Func_ISPPRGM  , Func_STOREPRGM  , Func_PRGMAVR  , Func_PRGMSTOREINFO, Func_SETTINGS      , Func_SLEEP};
-const FuncPtr MainFunctionPtrs[]                PROGMEM = {MAIN_AVRISPMode, MAIN_StoreProgram, MAIN_ProgramAVR, MAIN_StorageInfo   , MAIN_ChangeSettings , MAIN_SleepMode};
+
+const char*   MainFunctionNames[]               PROGMEM = {Func_ISPPRGM   , Func_STOREPRGM   , Func_PRGMAVR   , Func_PRGMSTOREINFO, Func_SETTINGS      , Func_SLEEP};
+const FuncPtr MainFunctionPtrs[]                PROGMEM = {MAIN_AVRISPMode, MAIN_StoreProgram, MAIN_ProgramAVR, MAIN_StorageInfo  , MAIN_ChangeSettings, MAIN_SleepMode};
 
 const char    SFunc_SETCONTRAST[]               PROGMEM = "SET CONTRAST";
 const char    SFunc_SETSPISPEED[]               PROGMEM = "SET ISP SPEED";
@@ -153,8 +153,8 @@ const char    SFunc_SETSTARTUP[]                PROGMEM = "SET STARTUP MODE";
 const char    SFunc_CLEARMEM[]                  PROGMEM = "CLEAR SETTINGS";
 const char    SFunc_GOBOOTLOADER[]              PROGMEM = "JUMP TO BOOTLOADER";
 
-const char*   SettingFunctionNames[]            PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_SETRESETMODE, SFunc_SETFIRMMINOR  , SFunc_SETAUTOSLEEPTO    , SFunc_SETTONEVOL, SFunc_SETSTARTUP   , SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
-const FuncPtr SettingFunctionPtrs[]             PROGMEM = {SET_SetContrast , SET_SetISPSpeed , SET_SetResetMode , SET_SetFirmMinorVer, SET_SetAutoSleepTimeOut, SET_SetToneVol , SET_SetStartupMode, MAIN_ClearMem , MAIN_GoBootloader};
+const char*   SettingFunctionNames[]            PROGMEM = {SFunc_SETCONTRAST, SFunc_SETSPISPEED, SFunc_SETRESETMODE, SFunc_SETFIRMMINOR , SFunc_SETAUTOSLEEPTO   , SFunc_SETTONEVOL, SFunc_SETSTARTUP  , SFunc_CLEARMEM, SFunc_GOBOOTLOADER};
+const FuncPtr SettingFunctionPtrs[]             PROGMEM = {SET_SetContrast  , SET_SetISPSpeed  , SET_SetResetMode  , SET_SetFirmMinorVer, SET_SetAutoSleepTimeOut, SET_SetToneVol  , SET_SetStartupMode, MAIN_ClearMem , MAIN_GoBootloader};
 
 const char    ProgramAVROptions[2][8]           PROGMEM = {"START", "OPTIONS"};
 const char    SIFONames[2][15]                  PROGMEM = {"STORAGE SIZES", "VIEW DATA TAGS"};
@@ -203,7 +203,7 @@ int main(void)
 	sei();                                       // Enable interrupts
 
 	LCD_Init();
-	LCD_puts_f(WaitText);
+	LCD_PutStr_f(WaitText);
 	
 	if ((eeprom_read_word(&EEPROMVars.MagicNumber) != MAGIC_NUM) || (eeprom_read_byte(&EEPROMVars.VersionNumber) != ((VERSION_MAJOR << 4) | VERSION_MINOR)))
 	{
@@ -245,13 +245,13 @@ int main(void)
 			  MAIN_ShowAbout();
 
 			// Show current setting function onto the LCD:
-			LCD_puts_f((char*)pgm_read_word(&MainFunctionNames[CurrFunc]));
+			LCD_PutStr_f((char*)pgm_read_word(&MainFunctionNames[CurrFunc]));
 
 			MAIN_WaitForJoyRelease();
 		}
 
-		SLEEPCPU(SLEEP_POWERSAVE);
-	}
+		MAIN_MenuSleep();
+	}	
 }
 
 // ======================================================================================
@@ -408,7 +408,7 @@ void MAIN_ShowProgType(const uint8_t Letter)
 	strcpy_P(ProgTypeBuffer, PSTR("PRG>  "));
 	ProgTypeBuffer[5] = Letter;
 	
-	LCD_puts(ProgTypeBuffer);
+	LCD_PutStr(ProgTypeBuffer);
 }
 
 /*
@@ -419,21 +419,20 @@ void MAIN_ShowProgType(const uint8_t Letter)
 */
 void MAIN_ShowError(const char *pFlashStr)
 {
-	char ErrorBuff[LCD_TEXTBUFFER_SIZE + 3];     // New buffer, LCD text buffer size plus space for the "E>" prefix and null-termination
+	char    ErrorBuff[LCD_TEXTBUFFER_SIZE + 3];  // New buffer, LCD text buffer size plus space for the "E>" prefix and null-termination
 	uint8_t CurrLedStatus = (MAIN_STATUSLED_PORT & MAIN_STATLED_ORANGE);
 	
 	ErrorBuff[0] = 'E';
 	ErrorBuff[1] = '>';
 
-	strcpy_P(&ErrorBuff[2], pFlashStr);          // WARNING: If flash error text is larger than TEXTBUFFER_SIZE it will overflow the buffer
-
-	LCD_puts(ErrorBuff);
+	strcpy_P(&ErrorBuff[2], pFlashStr);
+	
+	LCD_PutStr(ErrorBuff);
 	MAIN_SETSTATUSLED(MAIN_STATLED_RED);	
 	TG_PlayToneSeq(TONEGEN_SEQ_ERROR);
 	
 	TIMSK1 = (1 << OCIE1A);                      // Enable compare match channel A interrupt
 	OCR1A  = TIMEOUT_HZ_TO_COMP(8, TIMEOUT_SRC_CPU, 1024); // Compare rate of 8Hz at 7372800Hz system clock, 1024 prescaler
-	TCCR1A = 0;
 	TCCR1B = ((1 << WGM12) | (1 << CS12) | (1 << CS10));   // Start timer at Fcpu/1024 speed in CTC mode, flash the red status LED
 	
 	MAIN_WaitForJoyRelease();
@@ -441,6 +440,7 @@ void MAIN_ShowError(const char *pFlashStr)
 	MAIN_WaitForJoyRelease();
 
 	TCCR1B = 0;                                  // Turn off timer 1
+	TIMSK1 = 0;                                  // Turn off compare match interrupt
 	MAIN_SETSTATUSLED(CurrLedStatus);            // Restore previous LED status
 }
 
@@ -462,29 +462,6 @@ ISR(PCINT1_vect, ISR_NOBLOCK)                    // Joystick routine; PCINT0_vec
 }
 
 /*
- NAME:      | BADISR_vect (ISR, naked)
- PURPOSE:   | ISR to handle any unhandled ISRs - here for debugging
- ARGUMENTS: | None
- RETURNS:   | None
-*/
-ISR(BADISR_vect, ISR_NAKED)                      // Bad ISR routine; should never be called, here for safety
-{
-	SPI_SPIOFF();
-	USI_SPIOff();
-	USART_OFF();
-	TIMEOUT_PACKET_TIMER_OFF();
-	TIMEOUT_SLEEP_TIMER_OFF();
-
-	MAIN_SETSTATUSLED(MAIN_STATLED_RED);
-		
-	for (;;)
-	{
-		MAIN_ShowError(PSTR("BADISR"));
-		SLEEPCPU(SLEEP_POWERSAVE);
-	};
-}
-
-/*
  NAME:      | TIMER1_COMPA_vect (ISR, naked)
  PURPOSE:   | ISR to handle the flashing of the red status LED during an error
  ARGUMENTS: | None
@@ -497,6 +474,20 @@ ISR(TIMER1_COMPA_vect, ISR_NAKED)                // Used for status LED flashing
 }
 
 // ======================================================================================
+
+/*
+ NAME:      | MAIN_MenuSleep
+ PURPOSE:   | Checks to see if deep sleep (timeout exceeded) is required, else does a light sleep
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
+void MAIN_MenuSleep(void)
+{
+	if (SecsBeforeAutoSleep && (SleepTimeOutSecs >= SecsBeforeAutoSleep)) // Check to see if timeout has expired
+	  MAIN_SleepMode();                          // Deep sleep
+	else
+	  SLEEPCPU(SLEEP_POWERSAVE);                 // Light sleep while awating input
+}
 
 /*
  NAME:      | MAIN_SleepMode
@@ -561,12 +552,12 @@ static void MAIN_ShowAbout(void)
 			else if (JoyStatus & JOY_LEFT)
 			  return;
 
-			LCD_puts_f((char*)pgm_read_word(&AboutTextPtrs[InfoNum]));
+			LCD_PutStr_f((char*)pgm_read_word(&AboutTextPtrs[InfoNum]));
 
 			MAIN_WaitForJoyRelease();
 		}
 
-		SLEEPCPU(SLEEP_POWERSAVE);
+		MAIN_MenuSleep();
 	}
 }
 
@@ -579,7 +570,7 @@ static void MAIN_ShowAbout(void)
 static void MAIN_AVRISPMode(void)
 {
 	USART_Init();
-	LCD_puts_f(AVRISPModeMessage);
+	LCD_PutStr_f(AVRISPModeMessage);
 	
 	V2P_RunStateMachine(AICI_InterpretPacket);
 }
@@ -618,12 +609,12 @@ static void MAIN_ProgramAVR(void)
 				return;
 			}
 
-			LCD_puts_f(ProgramAVROptions[ProgMode]);
+			LCD_PutStr_f(ProgramAVROptions[ProgMode]);
 
 			MAIN_WaitForJoyRelease();
 		}
 
-		SLEEPCPU(SLEEP_POWERSAVE);
+		MAIN_MenuSleep();
 	}
 }
 
@@ -642,7 +633,7 @@ static void MAIN_StoreProgram(void)
 	  return;
 			
 	USART_Init();
-	LCD_puts_f(StorageText);
+	LCD_PutStr_f(StorageText);
 	V2P_RunStateMachine(SM_InterpretAVRISPPacket);
 	
 	DF_ENABLEDATAFLASH(FALSE);
@@ -677,12 +668,12 @@ static void MAIN_ChangeSettings(void)
 			  return;
 		
 			// Show current function onto the LCD:
-			LCD_puts_f((char*)pgm_read_word(&SettingFunctionNames[CurrSFunc]));
+			LCD_PutStr_f((char*)pgm_read_word(&SettingFunctionNames[CurrSFunc]));
 
 			MAIN_WaitForJoyRelease();
 		}
 
-		SLEEPCPU(SLEEP_POWERSAVE);
+		MAIN_MenuSleep();
 	}
 }
 
@@ -733,12 +724,12 @@ static void MAIN_StorageInfo(void)
 				}
 			}
 			
-			LCD_puts_f(SIFONames[SelectedItem]);
+			LCD_PutStr_f(SIFONames[SelectedItem]);
 
 			MAIN_WaitForJoyRelease();
 		}
 
-		SLEEPCPU(SLEEP_POWERSAVE);
+		MAIN_MenuSleep();
 	}
 }
 
@@ -750,10 +741,10 @@ static void MAIN_StorageInfo(void)
 */
 static void MAIN_ClearMem(void)
 {
-	LCD_puts_f(PSTR("CONFIRM"));
+	LCD_PutStr_f(PSTR("CONFIRM"));
 	LCD_WAIT_FOR_SCROLL_DONE();                  // Loop until the message has finished scrolling completely
 
-	LCD_puts_f(PSTR("<N Y>"));
+	LCD_PutStr_f(PSTR("<N Y>"));
 
 	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
 	                                             // name of the default command onto the LCD	
@@ -767,12 +758,12 @@ static void MAIN_ClearMem(void)
 			  break;
 		}
 
-		SLEEPCPU(SLEEP_POWERSAVE);
+		MAIN_MenuSleep();
 	}
 
 	MAIN_WaitForJoyRelease();
 
-	LCD_puts_f(WaitText);
+	LCD_PutStr_f(WaitText);
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);      // Set status LEDs to orange (busy)
 
 	for (uint16_t EAddr = 0; EAddr < sizeof(EEPROMVars); EAddr++)
@@ -781,7 +772,7 @@ static void MAIN_ClearMem(void)
 	eeprom_write_word(&EEPROMVars.MagicNumber, MAGIC_NUM);
 
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Set status LEDs to green (ready)
-	LCD_puts_f(PSTR("MEM CLEARED"));
+	LCD_PutStr_f(PSTR("MEM CLEARED"));
 	LCD_WAIT_FOR_SCROLL_DONE();                  // Loop until the message has finished scrolling completely
 }
 
@@ -800,10 +791,9 @@ static void MAIN_GoBootloader(void)
 		MCUCR = MD;
 	}
 
-	SecsBeforeAutoSleep = 0;
 	TIMEOUT_SLEEP_TIMER_OFF();
 	
-	LCD_puts_f(PSTR("*JTAG ON*"));
+	LCD_PutStr_f(PSTR("*JTAG ON*"));
 	
 	MAIN_WaitForJoyRelease();
 
@@ -820,42 +810,29 @@ static void MAIN_GoBootloader(void)
 	{
 		/* Debugging aid. Fills ram up with the recognisable constant DC (my initials) on program start.
 		   this makes it easier to look for stack overflows and other memory related problems.           */
+
+		extern uint8_t __data_start; // Linker variable - filled at compile time
 	
-		for (uint16_t RamLoc = 0x0100; RamLoc < RAMEND; RamLoc++)
-		  *((uint8_t*)RamLoc) = 0xDC;
+		for (uint8_t* RamLoc = (uint8_t*)&__data_start; RamLoc < (uint8_t*)RAMEND; RamLoc++)
+		  *RamLoc = 0xDC;
 	}
 #endif
 
-#ifdef DEBUG_BYTEORDERTEST
-	void MAIN_Util_ByteOrderTest(void)
+#ifdef DEBUG_ISRCATCHALL
+	ISR(BADISR_vect, ISR_NAKED)                      // Bad ISR routine; should never be called, here for safety
 	{
-		/* Debugging aid. Ensures that the selected byte ordering (in GlobalMacros.h) is correct. This
-		   prevents corruption issues when converting between data types using unions rather than normal
-		   bitshifts to save on flash. In the event of a misconfiguration, the Butterfly's speaker will
-		   play tone on a perpetual loop and fail to start.                                              */
+		SPI_SPIOFF();
+		USI_SPIOff();
+		USART_OFF();
+		TIMEOUT_PACKET_TIMER_OFF();
+		TIMEOUT_SLEEP_TIMER_OFF();
 	
-		uint8_t Success = FALSE;
-		
-		union
-		{
-			uint8_t  Bytes[2];
-			uint16_t UnsignedInt;
-		} UnionTest = { UnsignedInt: 0x00FF };
-		
-		#if (COMP_BYTE_ORDER == COMP_ORDER_LITTLE)
-			if (UnionTest.Bytes[0] == 0xFF)
-			  Success = TRUE;
-		#else
-			if (UnionTest.Bytes[1] == 0xFF)
-			  Success = TRUE;
-		#endif
-		
-		if (Success == FALSE)
-		{
-			DDRB = (1 << 5);
+		MAIN_SETSTATUSLED(MAIN_STATLED_RED);
 			
-			for (;;)
-			  TG_PlayToneSeq(TONEGEN_SEQ_SLEEP);
-		}
+		for (;;)
+		{
+			MAIN_ShowError(PSTR("BADISR"));
+			SLEEPCPU(SLEEP_POWERSAVE);
+		};
 	}
 #endif
