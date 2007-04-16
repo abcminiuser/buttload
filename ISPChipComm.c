@@ -26,11 +26,11 @@ void ISPCC_EnterChipProgrammingMode(void)
 	uint8_t Attempts  = PacketBytes[4];
 	uint8_t Response;
 
-	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE); // Orange = Busy
+	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);               // Orange = Busy
 
-	MAIN_Delay1MS(PacketBytes[2]);          // Wait before continuing, amount specified in the packet
+	MAIN_Delay1MS(PacketBytes[2]);                        // Wait before continuing, amount specified in the packet
 
-	if ((!(Attempts)) || (Attempts > 100))  // If no attempts or too high a value is specified, a fixed number is chosen
+	if ((!(Attempts)) || (Attempts > 100))                // If no attempts or too high a value is specified, a fixed number is chosen
 	   Attempts = 24;
 		
 	while (Attempts--)
@@ -58,7 +58,7 @@ void ISPCC_EnterChipProgrammingMode(void)
 		}
 		
 		MAIN_Delay1MS(ByteDelay);
-		USI_SPIToggleClock();               // Out of sync, shift in one bit and try again
+		USI_SPIToggleClock();                             // Out of sync, shift in one bit and try again
 	}
 
 	// If function hasn't returned by now, all the attempts have failed. Show this by
@@ -120,19 +120,19 @@ void ISPCC_ProgramChip(void)
 
 		PollType = ProgMode;
 
-		if (ProgMode & ISPCC_PROG_MODE_PAGEDONE)         // If this packet is the end of a page, we need to send the program page command
+		if (ProgMode & ISPCC_PROG_MODE_PAGEDONE)          // If this packet is the end of a page, we need to send the program page command
 		{
-			USI_SPITransmit(PacketBytes[6]);             // Send the write program memory page command
-			USI_SPITransmitWord(StartAddress);           // Send the page address word
+			USI_SPITransmit(PacketBytes[6]);              // Send the write program memory page command
+			USI_SPITransmitWord(StartAddress);            // Send the page address word
 			USI_SPITransmit(0x00);
 
-			if (!(PollAddress))                          // No polling address
+			if (!(PollAddress))                           // No polling address
 			  PollType = ((ProgMode & ~ISPCC_PAGE_POLLTYPE_MASK) | ISPCC_PAGE_POLLTYPE_WAIT);
 
 			ISPCC_PollForProgComplete(PollType, PollAddress);
 		}
 	}
-	else                                                 // Flash Word writing mode or EEPROM byte writing mode
+	else                                                  // Flash Word writing mode or EEPROM byte writing mode
 	{
 		for (uint16_t WriteByte = 0; ((WriteByte < BytesToWrite) && !(ProgrammingFault)); WriteByte++)
 		{
@@ -173,7 +173,7 @@ void ISPCC_ProgramChip(void)
 /*
  NAME:      | ISPCC_PollForProgComplete (static)
  PURPOSE:   | Polls the target AVR with the requested polling method to wait until the target is ready for more data
- ARGUMENTS: | Polling type in the form of a V2Procol programming packet poll byte, polling address
+ ARGUMENTS: | Polling type in the form of a V2Protocol programming packet poll byte, polling address
  RETURNS:   | None
 */
 static void ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr)
@@ -181,9 +181,6 @@ static void ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr)
 	uint8_t PollType;
 	uint8_t ProgCommand;
 	
-	TCNT1  = 0;                                      // Clear timer 1
-	TCCR1B = ((1 << CS12) | (1 << CS10));            // Start timer 1 with a Fcpu/1024 clock
-
 	if (PollData & ISPCC_PROG_MODE_PAGE)
 	  PollType = ((PollData & ISPCC_PAGE_POLLTYPE_MASK) >> ISPCC_PAGE_POLLTYPE_MASKSHIFT);
 	else
@@ -200,24 +197,24 @@ static void ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr)
 				PollAddr    >>= 1;
 			}
 
+			TCNT1  = 0;                                   // Clear timer 1
+			TCCR1B = ((1 << CS12) | (1 << CS10));         // Start timer 1 with a Fcpu/1024 clock
+
 			do
 			{
 				USI_SPITransmit(ProgCommand);
 				USI_SPITransmitWord(PollAddr);
 			}
 			while ((USI_SPITransmit(0x00) == PacketBytes[8]) && (TCNT1 < ISPCC_COMM_TIMEOUT));
+
+			TCCR1B = 0;                                   // Stop timer 1
 						
 			break;
 		case ISPCC_POLLTYPE_READY:
 			PM_WaitWhileTargetBusy();
 				
 			break;
-		default:                                      // Default is Wait polling
+		default:                                          // Default is Wait polling
 			MAIN_Delay1MS(PacketBytes[4]);	
 	}
-
-	if (TCNT1 >= ISPCC_COMM_TIMEOUT)
-	  ProgrammingFault = ISPCC_FAULT_TIMEOUT;
-	
-	TCCR1B = 0;                                       // Stop timer 1
 }

@@ -58,14 +58,14 @@ void SET_SetContrast(void)
 			Buffer[2] = ' ';
 
 			MAIN_IntToStr((uint16_t)Contrast, &Buffer[3]);
-			LCD_puts(Buffer);
+			LCD_PutStr(Buffer);
 
 			LCD_CONTRAST_LEVEL(Contrast);
 
 			MAIN_WaitForJoyRelease();
 		}
 
-		SLEEPCPU(SLEEP_POWERSAVE);
+		MAIN_MenuSleep();
 	}
 }
 
@@ -103,12 +103,12 @@ void SET_SetISPSpeed(void)
 			}
 			
 			// Show selected USI speed value onto the LCD:
-			LCD_puts_f(USISpeeds[CurrSpeed]);
+			LCD_PutStr_f(USISpeeds[CurrSpeed]);
 
 			MAIN_WaitForJoyRelease();
 		}
 
-		SLEEPCPU(SLEEP_POWERSAVE);
+		MAIN_MenuSleep();
 	}
 }
 
@@ -140,12 +140,12 @@ void SET_SetResetMode(void)
 			}
 			
 			// Show selected USI speed value onto the LCD:
-			LCD_puts_f(SPIResetModes[CurrMode]);
+			LCD_PutStr_f(SPIResetModes[CurrMode]);
 
 			MAIN_WaitForJoyRelease();
 		}
 
-		SLEEPCPU(SLEEP_POWERSAVE);
+		MAIN_MenuSleep();
 	}
 }
 
@@ -190,12 +190,12 @@ void SET_SetFirmMinorVer(void)
 			
 			MAIN_IntToStr(VerMinor, &VerBuffer[2]);
 			VerBuffer[2] = '-';
-			LCD_puts(VerBuffer);
+			LCD_PutStr(VerBuffer);
 
 			MAIN_WaitForJoyRelease();
 		}
 
-		SLEEPCPU(SLEEP_POWERSAVE);
+		MAIN_MenuSleep();
 	}	
 }
 
@@ -238,19 +238,19 @@ void SET_SetAutoSleepTimeOut(void)
 
 			if (!(SleepVal))
 			{
-				LCD_puts_f(OffText);
+				LCD_PutStr_f(OffText);
 			}
 			else
 			{
 				MAIN_IntToStr(pgm_read_byte(&AutoSleepTOValues[SleepVal]), SleepTxtBuffer);
-				SleepTxtBuffer[3] = ' ';         // Remove the auto-string termination from the buffer
-				LCD_puts(SleepTxtBuffer);
+				SleepTxtBuffer[3] = ' ';         // Remove the auto-string termination from the buffer that was added by MAIN_IntToStr
+				LCD_PutStr(SleepTxtBuffer);
 			}
 
 			MAIN_WaitForJoyRelease();
 		}
 
-		SLEEPCPU(SLEEP_POWERSAVE);
+		MAIN_MenuSleep();
 	}	
 }
 
@@ -292,19 +292,19 @@ void SET_SetToneVol(void)
 
 			if (!(ToneVolLcl))
 			{
-				LCD_puts_f(OffText);
+				LCD_PutStr_f(OffText);
 			}
 			else
 			{
 				TG_PlayToneSeq(TONEGEN_SEQ_VOLTEST);
 				MAIN_IntToStr((ToneVol >> 3), &VolBuffer[1]);
-				LCD_puts(VolBuffer);				
+				LCD_PutStr(VolBuffer);				
 			}
 
 			MAIN_WaitForJoyRelease();
 		}
 
-		SLEEPCPU(SLEEP_POWERSAVE);
+		MAIN_MenuSleep();
 	}	
 }
 
@@ -341,11 +341,11 @@ void SET_SetStartupMode(void)
 				return;
 			}
 
-			LCD_puts_f(StartupModes[StartupMode]);
+			LCD_PutStr_f(StartupModes[StartupMode]);
 
 			MAIN_WaitForJoyRelease();
 		}
 
-		SLEEPCPU(SLEEP_POWERSAVE);
+		MAIN_MenuSleep();
 	}	
 }

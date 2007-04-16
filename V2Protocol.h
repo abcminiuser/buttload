@@ -24,9 +24,6 @@
 	#include "Timeout.h"
 	#include "USART.h"
 
-	// TYPE DEFINITIONS:
-	typedef void (*FuncPtr)(void);
-	
 	// DEFINES AND MACROS:
 	#define V2P_MAXBUFFSIZE              275 // Maximum message size length (275 is the same as the STK500)
 	
@@ -43,17 +40,14 @@
 	#define V2P_STATE_PACKERR            10
 	#define V2P_STATE_PACKOK             11
 	
-	#define V2P_LOAD_EXTENDED_ADDR_FLAG  (1UL << 31)
 	#define V2P_LOAD_EXTENDED_ADDR_CMD   0x4D
-	#define V2P_LOAD_EXTENDED_ADDR_MASK  0x00FF0000UL
-	#define V2P_LOAD_EXTENDED_ADDR_SHIFT 16
+	
+	#define V2P_CMD_DUMP_DATAFLASH       0xA0
+	#define V2P_CMD_DUMP_DATAFLASH_RAW   0xA1
 	
 	#define V2P_HW_VERSION               2
 	#define V2P_SW_VERSION_MAJOR         2
 	#define V2P_SW_VERSION_MINOR_DEFAULT 10
-	
-	#define V2P_CMD_DUMP_DATAFLASH       0xA0
-	#define V2P_CMD_DUMP_DATAFLASH_RAW   0xA1
 	
 	// EXTERNAL VARIABLES:
 	extern uint8_t   PacketBytes[V2P_MAXBUFFSIZE];
@@ -62,14 +56,14 @@
 	extern uint32_t  CurrAddress;
 	
 	// PROTOTYPES:
-	void    V2P_RunStateMachine(FuncPtr PacketDecodeFunction);
+	void    V2P_RunStateMachine(FuncPtr PacketDecodeFunction) ATTR_NON_NULL_PTR_ARGS(1);
 	void    V2P_SendPacket(void);
 	void    V2P_IncrementCurrAddress(void);
 	void    V2P_CheckForExtendedAddress(void);
 
 	#if defined(INC_FROM_V2P)
 	  static uint8_t V2P_GetChecksum(void) ATTR_WARN_UNUSED_RESULT;
-	  static void    V2P_ProcessPacketData(FuncPtr PacketDecodeFunction);
+	  static void    V2P_ProcessPacketData(FuncPtr PacketDecodeFunction) ATTR_NON_NULL_PTR_ARGS(1);
 	  static void    V2P_GetSetParameter(void);
 	#endif
 	

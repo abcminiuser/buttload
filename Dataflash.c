@@ -29,9 +29,7 @@ DFinfo         DataflashInfo            = {CurrPageAddress: 0, CurrBuffByte: 0};
 */
 uint8_t DF_CheckCorrectOnboardChip(void)          // Ensures onboard Butterfly dataflash is working and the correct type
 {
-	DF_TOGGLEENABLE();
-	
-	SPI_SPITransmit(DFCB_STATUSREG);              // Send the Get Status Register command
+	DF_WaitWhileBusy();
 	
 	if (((SPI_SPITransmit(0x00) & DF_DFINFOMASK)) != (3 << 3)) // Bits 3, 4 and 5 contain the dataflash type info
 	{
@@ -55,14 +53,13 @@ uint8_t DF_CheckCorrectOnboardChip(void)          // Ensures onboard Butterfly d
 */
 void DF_CopyPage(const uint16_t PageAddress, uint8_t Operation)
 {
+	DF_WaitWhileBusy();
 	DF_TOGGLEENABLE();
 	
 	SPI_SPITransmit(Operation);
 	SPI_SPITransmit((uint8_t)(PageAddress >> DF_PAGESHIFT_HIGH));
 	SPI_SPITransmit((uint8_t)(PageAddress << DF_PAGESHIFT_LOW));
-	SPI_SPITransmit(0x00);
-		
-	DF_WaitWhileBusy();
+	SPI_SPITransmit(0x00);		
 }
 
 /*
@@ -73,6 +70,7 @@ void DF_CopyPage(const uint16_t PageAddress, uint8_t Operation)
 */
 void DF_BufferWriteEnable(const uint16_t BuffAddress)
 {
+	DF_WaitWhileBusy();
 	DF_TOGGLEENABLE();
 
 	SPI_SPITransmit(DFCB_BUF1WRITE);
@@ -89,11 +87,12 @@ void DF_BufferWriteEnable(const uint16_t BuffAddress)
 */
 void DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddress)
 {
+	DF_WaitWhileBusy();
 	DF_TOGGLEENABLE();
 	
 	SPI_SPITransmit(DFCB_CONTARRAYREAD);
 	SPI_SPITransmit((uint8_t)(PageAddress >> DF_PAGESHIFT_HIGH));
-	SPI_SPITransmit((uint8_t)((PageAddress << DF_PAGESHIFT_LOW) + (BuffAddress >> 8)));
+	SPI_SPITransmit((uint8_t)((PageAddress << DF_PAGESHIFT_LOW) | (BuffAddress >> DF_BUFFERSHIFT)));
 	SPI_SPITransmit((uint8_t)(BuffAddress));
 	
 	for (uint8_t DByte = 0; DByte < 4; DByte++)  // Perform 4 dummy writes to intiate the DataFlash address pointers
@@ -108,8 +107,7 @@ void DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddr
 */
 uint8_t DF_BufferCompare(const uint16_t PageAddress)
 {
-	uint8_t DFStatus = 0x00;
-
+	DF_WaitWhileBusy();
 	DF_TOGGLEENABLE();
 	
 	SPI_SPITransmit(DFCB_FLASHTOBUF1COMPARE);	
@@ -117,15 +115,9 @@ uint8_t DF_BufferCompare(const uint16_t PageAddress)
 	SPI_SPITransmit((uint8_t)(PageAddress << DF_PAGESHIFT_LOW));
 	SPI_SPITransmit(0x00);
 
-	DF_TOGGLEENABLE();
+	DF_WaitWhileBusy();
 
-	SPI_SPITransmit(DFCB_STATUSREG);	
-
-	do
-		DFStatus = SPI_SPITransmit(0x00);
-	while (!(DFStatus & DF_BUSYMASK));
-
-	return (DFStatus & DF_COMPAREMASK);
+	return (SPI_SPITransmit(0x00) & DF_COMPAREMASK);
 }
 
 /*

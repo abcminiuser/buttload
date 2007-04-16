@@ -20,7 +20,7 @@
 void USART_Init(void)
 {
 	// Calibrate the internal RC oscilator
-	LCD_puts_f(WaitText);
+	LCD_PutStr_f(WaitText);
 	OSCCAL_Calibrate();
 
 	// Enable USART subsystem

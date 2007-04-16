@@ -55,7 +55,7 @@ uint32_t SM_GetStoredDataSize(const uint8_t Type)
 		{
 			uint8_t Mask = (1 << 7);
 
-			ProgDataSize = ((BlockEnd - BlockStart - 1) * DF_INTERNALDF_BUFFBYTES);
+			ProgDataSize = ((DFPageBlock - BlockStart - 1) * DF_INTERNALDF_BUFFBYTES);
 
 			while (Mask)
 			{

@@ -17,6 +17,7 @@
 	#define AICB_CMD_SIGN_ON               0x01
 	#define AICB_CMD_SET_PARAMETER         0x02
 	#define AICB_CMD_GET_PARAMETER         0x03
+	#define AICB_CMD_OSCCAL                0x05
 	#define AICB_CMD_LOAD_ADDRESS          0x06
 	#define AICB_CMD_FIRMWARE_UPGRADE      0x07
 	#define AICB_CMD_ENTER_PROGMODE_ISP    0x10

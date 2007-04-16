@@ -25,6 +25,7 @@
 	extern const char AVRISPModeMessage[] PROGMEM;
 	
 	// PROTOTYPES:
-	void AICI_InterpretPacket(void);
+	       void    AICI_InterpretPacket(void);
+	extern uint8_t AICI_SendCalibrationClocks(void);
 	
 #endif

@@ -44,6 +44,6 @@
 	extern uint8_t  ToneVol;
 	
 	// PROTOTYPES:
-	void TG_PlayToneSeq(const uint8_t* Sequence);
+	void TG_PlayToneSeq(const uint8_t* Sequence) ATTR_NON_NULL_PTR_ARGS(1);
 
 #endif

@@ -34,7 +34,7 @@
 	
 	#define SM_EEPROM_OFFSET        ((1024UL * 257UL) + (8 * DF_INTERNALDF_BUFFBYTES)) // Offset at the 257Kb in dataflash, plus one block
 	
-	#define SM_BYTES_TO_BLOCKNUM(b) ROUND_UP(((b / DF_INTERNALDF_BUFFBYTES) >> 3))
+	#define SM_BYTES_TO_BLOCKNUM(b) ROUND_UP(((b / DF_INTERNALDF_BUFFBYTES) / 8))
 	
 	// EXTERNAL VARIABLES:
 	extern uint8_t  MemoryType;

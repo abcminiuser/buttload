@@ -46,6 +46,9 @@ Current Version: Public Release 2.1
 	  * Fixed SET FIRM VERSION error that would cause ButtLoad to send the incorrect version back to the PC if changed
 	  * Added in Dataflash page to buffer compare, so that the dataflash pages are only updated if the new data differs
 	  * Changed LCD refresh rate from 32Hz to 64Hz, to work with the newer Butterflies
+	  * Moved dataflash busywait loops to before each datflash operation, allowing for other code to be executed until dataflash is needed again
+	  * Added support to calibrate a target's OSCCAL value via the AICB_CMD_READ_OSCCAL_ISP command
+	  * Fixed sleep timeout too short due to power down sleep mode exposing a chip bug (miscounts)
 	  
 	IN PUBLIC RELEASE 2.0:
 	=======================================

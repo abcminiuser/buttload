@@ -51,7 +51,7 @@
 	#define ISPCC_FAULT_NODATATYPE            2
 	#define ISPCC_FAULT_TIMEOUT               3
 	
-	#define ISPCC_COMM_TIMEOUT                0x0E10 // 500ms timeout at 7372800Hz
+	#define ISPCC_COMM_TIMEOUT                0x02D0 // 100ms timeout at 7372800Hz, 1024 prescaler
 	
 	// EXTERNAL VARIABLES:
 	extern const char SyncErrorMessage[] PROGMEM;

@@ -37,6 +37,7 @@
 
 	#define DF_PAGESHIFT_HIGH        (16 - 9)
 	#define DF_PAGESHIFT_LOW         ( 9 - 8)
+	#define DF_BUFFERSHIFT           8
 	
 	#define DF_BUFFER_TO_FLASH       DFCB_BUF1TOFLASHWE
 	#define DF_FLASH_TO_BUFFER       DFCB_FLASHTOBUF1TRANSFER

@@ -34,12 +34,12 @@ void AICI_InterpretPacket(void)
 
 			if (InProgrammingMode)
 			{
-				LCD_puts_f(AVRISPModeMessage);
+				LCD_PutStr_f(AVRISPModeMessage);
 				PacketBytes[1] = AICB_STATUS_CMD_OK;
 			}
 			else
 			{
-				LCD_puts_f(SyncErrorMessage);
+				LCD_PutStr_f(SyncErrorMessage);
 				PacketBytes[1] = AICB_STATUS_CMD_FAILED;
 			}
 
@@ -148,13 +148,9 @@ void AICI_InterpretPacket(void)
 			for (uint16_t ReadByte = 0; ReadByte < BytesToRead; ReadByte++)
 			{
 				if (PacketBytes[0] == AICB_CMD_READ_FLASH_ISP)  // Flash read mode - word addresses so MSB/LSB masking nessesary
-				{
-					USI_SPITransmit(ReadCommand | ((ReadByte & 0x01)? ISPCC_HIGH_BYTE_READ : ISPCC_LOW_BYTE_READ));
-				}
+				  USI_SPITransmit(ReadCommand | ((ReadByte & 0x01)? ISPCC_HIGH_BYTE_READ : ISPCC_LOW_BYTE_READ));
 				else                                   // EEPROM read mode, address is in bytes and so no masking nessesary
-				{
-					USI_SPITransmit(ReadCommand);
-				}
+				  USI_SPITransmit(ReadCommand);
 				
 				USI_SPITransmitWord(CurrAddress);      // Transmit the current address to the slave AVR
 
@@ -166,9 +162,11 @@ void AICI_InterpretPacket(void)
 				}
 				else
 				{
-					if ((CurrAddress & V2P_LOAD_EXTENDED_ADDR_MASK) && !(CurrAddress & 0x0000FFFF))
+					V2P_CheckForExtendedAddress();
+
+					if (BYTE(CurrAddress, 2) && !(BYTE(CurrAddress, 0) | BYTE(CurrAddress, 1)))
 					{
-						CurrAddress |= V2P_LOAD_EXTENDED_ADDR_FLAG; // Set MSB set of the address, indicates a LOAD_EXTENDED_ADDRESS must be executed
+						BYTE(CurrAddress, 3) = (1 << 7); // Set MSB set of the address, indicates a LOAD_EXTENDED_ADDRESS must be executed			  
 						V2P_CheckForExtendedAddress();
 					}
 				}
@@ -186,6 +184,22 @@ void AICI_InterpretPacket(void)
 
 			PacketBytes[1] = ((ProgrammingFault == ISPCC_NO_FAULT) ? AICB_STATUS_CMD_OK : AICB_STATUS_CMD_TOUT);
 			
+			break;
+		case AICB_CMD_OSCCAL:
+			MessageSize = 2;
+
+			MAIN_SetTargetResetLine(MAIN_RESET_INACTIVE);
+			
+			USICR = 0;                                 // Disable USI while calibration sequence runs
+			PacketBytes[1] = (AICI_SendCalibrationClocks() ? AICB_STATUS_CMD_OK : AICB_STATUS_CMD_FAILED);
+			USI_SPIInitMaster();                       // Re-enable USI subsystem
+			
+			if (InProgrammingMode)                     // Was previously in programming mode, re-enter in preparation of future commands
+			{
+				MAIN_SetTargetResetLine(MAIN_RESET_ACTIVE);
+				ISPCC_EnterChipProgrammingMode();
+			}
+
 			break;
 		default:                                       // Unknown command, return error
 			MessageSize = 2;

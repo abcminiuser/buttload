@@ -28,7 +28,7 @@ static volatile uint8_t  ScrollCount     = 0;
 static volatile uint8_t  UpdateDisplay   = FALSE;
        volatile uint8_t  ScrollFlags     = 0;
 
-const    uint16_t LCD_SegTable[] PROGMEM =
+const           uint16_t LCD_SegTable[] PROGMEM =
 {
     0xEAA8,     // '*'
     0x2A80,     // '+'
@@ -110,12 +110,12 @@ void LCD_Init(void)
 }
 
 /*
- NAME:      | LCD_puts_f
+ NAME:      | LCD_PutStr_f
  PURPOSE:   | Displays a string from flash onto the Butterfly's LCD
  ARGUMENTS: | Pointer to the start of the flash string
  RETURNS:   | None
 */
-void LCD_puts_f(const char *FlashData)
+void LCD_PutStr_f(const char *FlashData)
 {
 	/* Rather than create a new buffer here (wasting RAM), the TextBuffer global
 	   is re-used as a temp buffer. Once the ASCII data is loaded in to TextBuffer,
@@ -123,16 +123,16 @@ void LCD_puts_f(const char *FlashData)
 	   LCD interrupt.                                                                */
 
 	strcpy_P((char*)&TextBuffer[0], FlashData);
-	LCD_puts((char*)&TextBuffer[0]);
+	LCD_PutStr((char*)&TextBuffer[0]);
 }
 
 /*
- NAME:      | LCD_puts
+ NAME:      | LCD_PutStr
  PURPOSE:   | Displays a string from SRAM onto the Butterfly's LCD
  ARGUMENTS: | Pointer to the start of the SRAM string
  RETURNS:   | None
 */
-void LCD_puts(const char *Data)
+void LCD_PutStr(const char *Data)
 {
 	uint8_t LoadB       = 0;
 	uint8_t CurrByte;
@@ -148,8 +148,7 @@ void LCD_puts(const char *Data)
 				break;
 			case 0x00:                         // Null termination of the string - ignore for now so the nulls can be appended below
 				break;
-			case ' ':                          // Space or invalid character, use 0xFF to display a blank
-			default:
+			default:                           // Space or invalid character, use 0xFF to display a blank
 				TextBuffer[LoadB++] = LCD_SPACE_OR_INVALID_CHAR;
 		}
 	}
