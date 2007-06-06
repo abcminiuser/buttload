@@ -33,7 +33,7 @@
 	#define DF_DFINFOMASK            0x38
 	#define DF_INTERNALDF_BUFFBYTES  264
 	#define DF_DATAFLASH_PAGES       2048
-	#define DF_DATAFLASH_BLOCKS      (DF_DATAFLASH_PAGES / 8UL)
+	#define DF_DATAFLASH_BLOCKS      256
 
 	#define DF_PAGESHIFT_HIGH        (16 - 9)
 	#define DF_PAGESHIFT_LOW         ( 9 - 8)
@@ -50,6 +50,7 @@
 	
 	// PROTOTYPES:
 	uint8_t DF_CheckCorrectOnboardChip(void) ATTR_WARN_UNUSED_RESULT;
+	void    DF_EraseBlock(const uint16_t BlockToErase);
 	void    DF_CopyPage(const uint16_t PageAddress, uint8_t Operation);
 	void    DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddress);
 	void    DF_BufferWriteEnable(const uint16_t BuffAddress);

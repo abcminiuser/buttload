@@ -782,17 +782,6 @@ static void MAIN_ClearMem(void)
 	
 	eeprom_write_word(&EEPROMVars.MagicNumber, MAGIC_NUM);
 
-	SPI_SPIInit();
-	DF_ENABLEDATAFLASH(TRUE);
-	DF_BufferWriteEnable(0);	
-
-	for (uint16_t ByteNum = 0; ByteNum < DF_INTERNALDF_BUFFBYTES; ByteNum++)
-	  SPI_SPITransmit(PageErasedFlags[ByteNum]);
-	DF_CopyPage(VAMM_PAGEERASED_DF_PAGE, DF_BUFFER_TO_FLASH);
-
-	SPI_SPIOFF();
-	DF_ENABLEDATAFLASH(FALSE);
-
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Set status LEDs to green (ready)
 	LCD_PutStr_f(PSTR("MEM CLEARED"));
 	LCD_WAIT_FOR_SCROLL_DONE();

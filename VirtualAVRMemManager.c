@@ -7,57 +7,11 @@
                   www.fourwalledcubicle.com
 */
 
-#define  INC_FROM_VAMM
 #include "VirtualAVRMemManager.h"
 
-static volatile uint8_t  VAMMSetup                            = VAMM_SETUP_NA;
-static          uint8_t  CurrPageCleared                      = FALSE;
-                uint8_t  PageErasedFlags[DF_DATAFLASH_BLOCKS] = {};
-                uint8_t  EraseFlagsTransReq                   = FALSE;
+static volatile uint8_t  VAMMSetup = VAMM_SETUP_NA;
 
 // ======================================================================================
-
-/*
- NAME:      | VAMM_EnterStorageMode
- PURPOSE:   | Prepares abstraction layer when storage mode is entered for the managing of data
- ARGUMENTS: | None
- RETURNS:   | None
-*/
-void VAMM_EnterStorageMode(void)
-{
-	EraseFlagsTransReq = FALSE;
-	VAMMSetup = VAMM_SETUP_NA;
-
-	DF_ContinuousReadEnable(VAMM_PAGEERASED_DF_PAGE, 0); // Last dataflash page contains the erased page flag array
-
-	for (uint16_t ByteNum = 0; ByteNum < sizeof(PageErasedFlags); ByteNum++)
-	  PageErasedFlags[ByteNum] = SPI_SPITransmit(0x00);
-}
-
-/*
- NAME:      | VAMM_ExitStorageMode
- PURPOSE:   | Performs commands neccesary when storage mode is exited
- ARGUMENTS: | None
- RETURNS:   | None
-*/
-void VAMM_ExitStorageMode(void)
-{
-	VAMM_Cleanup();
-
-	if (EraseFlagsTransReq)
-	{
-		DF_BufferWriteEnable(0);
-		
-		for (uint16_t ByteNum = 0; ByteNum < sizeof(PageErasedFlags); ByteNum++)
-		  SPI_SPITransmit(PageErasedFlags[ByteNum]);
-
-		for (uint16_t ByteNum = 0; ByteNum < (DF_INTERNALDF_BUFFBYTES - sizeof(PageErasedFlags)); ByteNum++)
-		  SPI_SPITransmit(0xFF);                            // Fill remainder of buffer with 0xFFs so that compare can execute correctly
-
-		if (DF_BufferCompare(VAMM_PAGEERASED_DF_PAGE) != DF_COMPARE_MATCH) // Compare so that write is only executed if page data is different
-		  DF_CopyPage(VAMM_PAGEERASED_DF_PAGE, DF_BUFFER_TO_FLASH); // Last dataflash page contains the erased page flag array
-	}	
-}
 
 /*
  NAME:      | VAMM_EraseAVRMemory
@@ -72,10 +26,8 @@ void VAMM_EraseAVRMemory(void)
 
 	eeprom_write_byte(&EEPROMVars.EraseCmdStored, TRUE);
 
-	EraseFlagsTransReq = TRUE;
-
-	for (uint16_t CurrPageBlock = 0; CurrPageBlock < sizeof(PageErasedFlags); CurrPageBlock++)
-	  PageErasedFlags[CurrPageBlock] = 0xFF;                // Set all page erased flags in each block
+	for (uint16_t CurrBlock = 0; CurrBlock < DF_DATAFLASH_BLOCKS; CurrBlock++)
+	  DF_EraseBlock(CurrBlock);
 }
 
 /*
@@ -118,22 +70,7 @@ void VAMM_StoreByte(const uint8_t Data)
 	{
 		VAMM_SetAddress();
 
-		VAMM_CheckSetCurrPageCleared(VAMM_FLAG_CHECK);
-
-		if (CurrPageCleared)                                // Page is erased, so clear the buffer
-		{
-			DF_BufferWriteEnable(0);
-		
-			for (uint16_t ClearByte = 0; ClearByte < DF_INTERNALDF_BUFFBYTES; ClearByte++) // Clear the Dataflash buffer
-			  SPI_SPITransmit(0xFF);
-
-			VAMM_CheckSetCurrPageCleared(VAMM_FLAG_CLEAR);
-		}
-		else
-		{
-			DF_CopyPage(DataflashInfo.CurrPageAddress, DF_FLASH_TO_BUFFER); // Page contains data already, copy it into the buffer
-		}
-
+		DF_CopyPage(DataflashInfo.CurrPageAddress, DF_FLASH_TO_BUFFER); // Page contains data already, copy it into the buffer
 		DF_BufferWriteEnable(DataflashInfo.CurrBuffByte);   // Set write point to the correct address in the current page
 
 		VAMMSetup = VAMM_SETUP_WRITE;
@@ -159,7 +96,6 @@ uint8_t VAMM_ReadByte(void)
 	{
 		VAMM_SetAddress();
 
-		VAMM_CheckSetCurrPageCleared(VAMM_FLAG_CHECK);
 		DF_ContinuousReadEnable(DataflashInfo.CurrPageAddress, DataflashInfo.CurrBuffByte);
 		
 		VAMMSetup = VAMM_SETUP_READ;
@@ -170,7 +106,7 @@ uint8_t VAMM_ReadByte(void)
 
 	DataflashInfo.CurrBuffByte++;
 
-	return ((CurrPageCleared)? 0xFF : SPI_SPITransmit(0x00));
+	return SPI_SPITransmit(0x00);
 }
 
 /*
@@ -185,7 +121,6 @@ uint8_t VAMM_ReadConsec(void)
 	{
 		VAMM_SetAddress();
 
-		VAMM_CheckSetCurrPageCleared(VAMM_FLAG_CHECK);
 		DF_ContinuousReadEnable(DataflashInfo.CurrPageAddress, DataflashInfo.CurrBuffByte);
 
 		VAMMSetup = VAMM_SETUP_READ;
@@ -195,35 +130,11 @@ uint8_t VAMM_ReadConsec(void)
 	{
 		DataflashInfo.CurrPageAddress++;
 		DataflashInfo.CurrBuffByte = 0;
-
-		VAMM_CheckSetCurrPageCleared(VAMM_FLAG_CHECK);
 	}
 
 	DataflashInfo.CurrBuffByte++;
 
-	return ((CurrPageCleared)? 0xFF : SPI_SPITransmit(0x00));
-}
-
-/*
- NAME:      | VAMM_CheckSetCurrPageCleared
- PURPOSE:   | Checks or sets the flag corresponding to if the current dataflash page is empty
- ARGUMENTS: | Boolean flag; set if erased flag should be cleared
- RETURNS:   | Boolean flag; set if current dataflash page is cleared
-*/
-static void VAMM_CheckSetCurrPageCleared(const uint8_t ClearPageErasedFlag)
-{
-	uint8_t* BlockPointer = &PageErasedFlags[DataflashInfo.CurrPageAddress >> 3];
-	uint8_t  BlockBit     = pgm_read_byte(&BitTable[DataflashInfo.CurrPageAddress & 0x07]);
-
-	if (ClearPageErasedFlag)
-	{
-		*BlockPointer &= ~BlockBit;
-		EraseFlagsTransReq = TRUE;
-	}
-	else
-	{
-		CurrPageCleared = (*BlockPointer & BlockBit);
-	}
+	return SPI_SPITransmit(0x00);
 }
 
 /*
@@ -232,7 +143,7 @@ static void VAMM_CheckSetCurrPageCleared(const uint8_t ClearPageErasedFlag)
  ARGUMENTS: | None
  RETURNS:   | None
 */
-static void VAMM_Cleanup(void)
+void VAMM_Cleanup(void)
 {
 	if (VAMMSetup == VAMM_SETUP_WRITE)                      // Save partially written page if in write mode
 	{

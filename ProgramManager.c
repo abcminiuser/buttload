@@ -424,7 +424,6 @@ static void PM_CreateProgrammingPackets(void)
 	uint8_t* EEPROMAddress;
 	
 	V2P_ClearCurrAddress();
-	VAMM_EnterStorageMode();                                            // Prepare virtual AVR memory for readback
 
 	if (MemoryType == TYPE_FLASH)
 	{
@@ -513,5 +512,5 @@ static void PM_CreateProgrammingPackets(void)
 	}
 	
 	LCD_BARGRAPH(0);
-	VAMM_ExitStorageMode();
+	VAMM_Cleanup();
 }

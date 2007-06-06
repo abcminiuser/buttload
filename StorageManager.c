@@ -29,49 +29,43 @@ const char StorageText[] PROGMEM    = "*STORAGE MODE*";
 */
 uint32_t SM_GetStoredDataSize(const uint8_t Type)
 {
-	uint32_t ProgDataSize;
+	uint16_t TargetPageLength;
 	uint16_t PagesUsed = 0;
-	uint16_t PageLength;
-	uint8_t  BlockStart;
-	uint8_t  BlockEnd;
+	uint16_t PageStart;
+	uint16_t PageEnd;
+	uint32_t ProgDataSize;
+	
+	DF_BufferWriteEnable(0);
 
-	VAMM_EnterStorageMode();
+	for (uint16_t b = 0; b < DF_INTERNALDF_BUFFBYTES; b++)
+	  SPI_SPITransmit(0xFF);
 
 	if (Type == TYPE_FLASH)
 	{
-		BlockStart = SM_BYTES_TO_BLOCKNUM(0);
-		BlockEnd   = SM_BYTES_TO_BLOCKNUM((unsigned long)(1024UL * 256));
-		PageLength = eeprom_read_word(&EEPROMVars.PageLength);
+		PageStart = 0;
+		PageEnd   = ((DF_DATAFLASH_PAGES / 2) - 1);
+		TargetPageLength = eeprom_read_word(&EEPROMVars.PageLength);
 	}
 	else
 	{
-		BlockStart = SM_BYTES_TO_BLOCKNUM(SM_EEPROM_OFFSET);
-		BlockEnd   = SM_BYTES_TO_BLOCKNUM((unsigned long)(SM_EEPROM_OFFSET + (1024UL * 250)));
-		PageLength = eeprom_read_word(&EEPROMVars.EPageLength);
+		PageStart = (DF_DATAFLASH_PAGES / 2);
+		PageEnd   = (DF_DATAFLASH_PAGES - 1);
+		TargetPageLength = eeprom_read_word(&EEPROMVars.EPageLength);
 	}
 
-	for (uint16_t DFPageBlock = BlockEnd; DFPageBlock >= BlockStart; DFPageBlock--)
+	for (uint16_t CheckPage = PageEnd; CheckPage >= PageStart; CheckPage--)
 	{
-		uint8_t  CurrentBlock = ~PageErasedFlags[DFPageBlock];          // Inverted so that each set bit equates to one dataflash page used
-		uint8_t  PagesInLastBlock;
-		
-		if (CurrentBlock)                                               // Find first non-erased block, staring from the end of memory
+		if (DF_BufferCompare(CheckPage) != DF_COMPARE_MATCH)
 		{
-			for (PagesInLastBlock = 0; CurrentBlock; PagesInLastBlock++)
-			  CurrentBlock &= (CurrentBlock - 1);                       // Clear LSb - K&R's way of finding total number of set bits
-
-			PagesUsed = (((uint16_t)(DFPageBlock - BlockStart - 1) << 3) + PagesInLastBlock); // Find dataflash pages used
-
+			PagesUsed = ((CheckPage + 1) - PageStart);
 			break;
 		}
 	}
 	
 	ProgDataSize  = ((uint32_t)PagesUsed * DF_INTERNALDF_BUFFBYTES);    // Translate pages used into bytes used
-	ProgDataSize += (ProgDataSize % PageLength);                        // Round up to nearest page size
+	ProgDataSize += (ProgDataSize % TargetPageLength);                  // Round up to nearest page size
 
-	// No VAMM_ExitStorageMode call here since no changes are made to the dataflash
-
-	return ProgDataSize;
+	return PagesUsed; //ProgDataSize;
 }
 
 /*
@@ -100,8 +94,6 @@ void SM_InterpretAVRISPPacket(void)
 			WriteCmdStored = FALSE;
 			V2P_ClearCurrAddress();
 
-			VAMM_EnterStorageMode();
-
 			MAIN_SETSTATUSLED(MAIN_STATLED_RED);
 			PacketBytes[1] = AICB_STATUS_CMD_OK;
 
@@ -110,7 +102,7 @@ void SM_InterpretAVRISPPacket(void)
 			MessageSize = 2;
 			
 			SM_CheckEndOfFuseLockData();                                // Check for remaining bytes to be stored and general cleanup
-			VAMM_ExitStorageMode();
+			VAMM_Cleanup();
 
 			TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);
 		

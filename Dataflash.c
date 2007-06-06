@@ -46,6 +46,23 @@ uint8_t DF_CheckCorrectOnboardChip(void)
 }
 
 /*
+ NAME:      | DF_EraseBlock
+ PURPOSE:   | Erases a block of dataflash memory (8 pages)
+ ARGUMENTS: | Block address to erase
+ RETURNS:   | None
+*/
+void DF_EraseBlock(const uint16_t BlockToErase)
+{
+	DF_WaitWhileBusy();
+	DF_TOGGLEENABLE();
+
+	SPI_SPITransmit(DFCB_BLOCKERASE);
+	SPI_SPITransmit((uint8_t)(BlockToErase >> 8));
+	SPI_SPITransmit((uint8_t)(BlockToErase));
+	SPI_SPITransmit(0x00);
+}
+
+/*
  NAME:      | DF_CopyPage
  PURPOSE:   | Copys a page to or from the dataflash's internal buffer
  ARGUMENTS: | Page address to copy to/from, operation to perform (DF_BUFFER_TO_FLASH or DF_FLASH_TO_BUFFER)
