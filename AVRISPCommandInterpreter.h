@@ -18,6 +18,7 @@
 	#include "Delay.h"
 	#include "ISPChipComm.h"
 	#include "LCD_Driver.h"
+	#include "ToneGeneration.h"
 	#include "V2Protocol.h"
 	
 	// EXTERNAL VARIABLES:

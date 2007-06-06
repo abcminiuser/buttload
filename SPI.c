@@ -21,8 +21,7 @@ void SPI_SPIInit(void)
 {
 	PRR &= ~(1 << PRSPI);              // Enable the SPI system by clearing the power save register SPI disable bit
 
-	// Master, Sample falling edge (setup rising), Fcpu/16 speed (7.3MHz/16 = 467KHz)
-	SPCR = ((1 << SPE) | (1 << MSTR) | (1 << CPHA) | (1 << CPOL) | (1 << SPR0));
+	SPCR = ((1 << SPE) | (1 << MSTR) | (1 << CPHA) | (1 << CPOL) | (1 << SPR0)); // Master, Sample falling edge (setup rising), Fcpu/16 speed (7.3MHz/16 = 467KHz)
 }
 
 /*

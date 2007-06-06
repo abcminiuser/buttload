@@ -318,6 +318,27 @@ void PM_SetProgramDataType(uint8_t Mask)
 }
 
 /*
+ NAME:      | PM_WaitWhileTargetBusy
+ PURPOSE:   | Busy-waits (with timeout) while target's status is busy
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
+void PM_WaitWhileTargetBusy(void)
+{
+	TCNT1  = 0;                                                     // Clear timer 1
+	TCCR1B = ((1 << CS12) | (1 << CS10));                           // Start timer 1 with a Fcpu/1024 clock
+
+	do
+	  USI_SPITransmitWord(0xF000);
+	while ((USI_SPITransmitWord(0x0000) & 0x01) && (TCNT1 < ISPCC_COMM_TIMEOUT));
+
+	if (TCNT1 >= ISPCC_COMM_TIMEOUT)
+	  ProgrammingFault = ISPCC_FAULT_TIMEOUT;
+	
+	TCCR1B = 0;                                                     // Stop timer 1
+}
+
+/*
  NAME:      | PM_SendFuseLockBytes (static)
  PURPOSE:   | Programs either the stored fuse or stored lock bytes into the target AVR
  ARGUMENTS: | Type of bytes to program (TYPE_FUSE or TYPE_LOCK)
@@ -361,27 +382,13 @@ static void PM_SendFuseLockBytes(const uint8_t Type)
 */
 static void PM_SendEraseCommand(void)
 {			
-	for (uint8_t B = 3; B < 7 ; B++)                                    // Read out the erase chip command bytes
-	  USI_SPITransmit(eeprom_read_byte(&EEPROMVars.EraseChip[B]));      // Send the erase chip commands
+	for (uint8_t EraseByte = 3; EraseByte < 7 ; EraseByte++)               // Read out the erase chip command bytes
+	  USI_SPITransmit(eeprom_read_byte(&EEPROMVars.EraseChip[EraseByte])); // Send the erase chip commands
 			
 	if (eeprom_read_byte(&EEPROMVars.EraseChip[2]))                     // Value of 1 indicates a busy flag test
-	{
-		TCNT1  = 0;                                                     // Clear timer 1
-		TCCR1B = ((1 << CS12) | (1 << CS10));                           // Start timer 1 with a Fcpu/1024 clock
-
-		do
-		  USI_SPITransmitWord(0xF000);
-		while ((USI_SPITransmitWord(0x0000) & 0x01) && (TCNT1 < ISPCC_COMM_TIMEOUT));
-
-		if (TCNT1 >= ISPCC_COMM_TIMEOUT)
-		  ProgrammingFault = ISPCC_FAULT_TIMEOUT;
-	
-		TCCR1B = 0;                                                     // Stop timer 1
-	}
+	  PM_WaitWhileTargetBusy();
 	else                                                                // Cleared flag means use a predefined delay
-	{		
-		MAIN_Delay1MS(eeprom_read_byte(&EEPROMVars.EraseChip[1]));      // Wait the erase delay
-	}
+	  MAIN_Delay1MS(eeprom_read_byte(&EEPROMVars.EraseChip[1]));        // Wait the erase delay
 }
 
 /*
@@ -415,9 +422,9 @@ static void PM_CreateProgrammingPackets(void)
 		PacketBytes[0] = AICB_CMD_PROGRAM_EEPROM_ISP;
 	}
 
-	for (uint8_t B = 0; B < 10; B++)                                    // Load in the write data command bytes
+	for (uint8_t HeaderByte = 0; HeaderByte < 10; HeaderByte++)         // Load in the write data command bytes
 	{
-		PacketBytes[B] = eeprom_read_byte(EEPROMAddress);               // Synthesise a write packet header
+		PacketBytes[HeaderByte] = eeprom_read_byte(EEPROMAddress);      // Synthesise a write packet header
 		EEPROMAddress++;                                                // Increment the EEPROM location counter
 	}
 
@@ -487,11 +494,7 @@ static void PM_CreateProgrammingPackets(void)
 		LCD_BARGRAPH((uint8_t)(BytesRead / BytesPerProgress));          // Show the progress onto the LCD
 
 		if (ProgrammingFault)                                           // Error out early if there's a problem such as a timeout
-		{
-			LCD_BARGRAPH(0);
-			VAMM_ExitStorageMode();
-			return;
-		}
+		  break;
 	}
 	
 	LCD_BARGRAPH(0);

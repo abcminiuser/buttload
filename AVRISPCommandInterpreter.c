@@ -69,16 +69,10 @@ void AICI_InterpretPacket(void)
 
 			if (PacketBytes[2])                        // Poll mode, value of 1 indicates a busy flag wait
 			{
-				TCNT1  = 0;                            // Clear timer 1
-				TCCR1B = ((1 << CS12) | (1 << CS10));  // Start timer 1 with a Fcpu/1024 clock
+				ProgrammingFault = ISPCC_NO_FAULT;
+				PM_WaitWhileTargetBusy();
 
-				do
-				  USI_SPITransmitWord(0xF000);
-				while ((USI_SPITransmitWord(0x0000) & 0x01) && (TCNT1 < ISPCC_COMM_TIMEOUT));
-
-				TCCR1B = 0;                            // Stop timer 1
-
-				PacketBytes[1] = ((TCNT1 < ISPCC_COMM_TIMEOUT)? AICB_STATUS_CMD_OK : AICB_STATUS_CMD_TOUT);
+				PacketBytes[1] = ((ProgrammingFault == ISPCC_NO_FAULT)? AICB_STATUS_CMD_OK : AICB_STATUS_CMD_TOUT);
 			}
 			else                                       // Poll mode flag of 0 indicates a predefined delay
 			{

@@ -18,7 +18,12 @@
 	
 	#include "Dataflash.h"
 	#include "EEPROMVariables.h"
+	#include "ISPChipComm.h"
 	#include "Main.h"
+	#include "StorageManager.h"
+	#include "Timeout.h"
+	#include "USI.h"
+	#include "V2Protocol.h"
 	
 	// DEFINES:
 	#define PM_OPT_CLEARFLAGS      (1 << 7)
@@ -34,6 +39,7 @@
 	void   PM_StartProgAVR(void);
 	void   PM_ChooseProgAVROpts(void);
 	void   PM_SetProgramDataType(uint8_t Mask);
+	void   PM_WaitWhileTargetBusy(void);
 
 	#if defined(INC_FROM_PM)
 	  static void   PM_SendFuseLockBytes(const uint8_t Type);

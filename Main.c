@@ -71,10 +71,6 @@
 			Pin 2        - Transmit relative to Butterfly
 			Pin 3        - Ground
 
-		External Vin Interface
-			Pin 1        - External sleep input (active high)
-			Pin 2        - Ground
-
 	 * Level shifting circuitry must be employed that can translate the 3.3V Butterfly
 	 signals to the target AVR's voltage and vice-versa AT SUFFICIENT CURRENT.
 */
@@ -461,7 +457,7 @@ ISR(PCINT1_vect, ISR_NOBLOCK)                    // Joystick routine; PCINT0_vec
 {
 	JoyStatus = (~PINB & JOY_BMASK)
 	          | (~PINE & JOY_EMASK);
-			  
+
 	TIMEOUT_SLEEP_TIMEOUT_RESET();
 }
 

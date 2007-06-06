@@ -11,7 +11,10 @@
 #include "V2Protocol.h"
 
 // PROGMEM CONSTANTS:
-const uint8_t SignonResponse[]  PROGMEM = {AICB_CMD_SIGN_ON, AICB_STATUS_CMD_OK, 8, 'A', 'V', 'R', 'I', 'S', 'P', '_', '2', 0x00};
+const struct {
+	uint8_t Header[3];
+	uint8_t Desc[];
+} SignonResponse PROGMEM = {Header: {AICB_CMD_SIGN_ON, AICB_STATUS_CMD_OK, (sizeof(V2P_SIGNON_NAME) - 1)}, Desc: V2P_SIGNON_NAME};
 
 // GLOBAL VARIABLES:
        uint8_t  PacketBytes[V2P_MAXBUFFSIZE]   = {};
@@ -21,7 +24,7 @@ static uint8_t  SequenceNum                    = 0;
        uint8_t  InProgrammingMode              = FALSE;
        uint32_t CurrAddress                    = 0;
 
-uint8_t  Param_ControllerInit           = 0; // This is set to zero on reset, and can be written to or read by the computer
+static uint8_t  Param_ControllerInit           = 0; // This is set to zero on reset, and can be written to or read by the computer
 
 // ======================================================================================
 
@@ -35,6 +38,7 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 {
 	uint8_t  V2PState           = V2P_STATE_IDLE;
 	uint16_t CurrentMessageByte = 0;
+	uint8_t  StartByte          = 0;
 
 	BUFF_InitializeBuffer();	
 	TIMEOUT_SLEEP_TIMER_OFF();
@@ -65,8 +69,10 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 				SLEEPCPU(SLEEP_IDLE);             // Can idle here, since USART or Joystick interrupt will cause execution to continue
 
 				break;
-			case V2P_STATE_START:			
-				if (USART_Rx() == AICB_MESSAGE_START)  // Start bit is always 0x1B
+			case V2P_STATE_START:
+				StartByte = USART_Rx();
+				
+				if (StartByte == AICB_MESSAGE_START) // Start bit is always 0x1B
 				  V2PState = V2P_STATE_GETSEQUENCENUM;
 				else
 				  V2PState = V2P_STATE_PACKERR;
@@ -237,10 +243,10 @@ static void V2P_ProcessPacketData(FuncPtr PacketDecodeFunction)
 	switch (PacketBytes[0])                   // Look for generic commands which can be interpreted here, otherwise run the custom interpret routine
 	{ 
 		case AICB_CMD_SIGN_ON:
-			MessageSize = 11;
+			MessageSize = V2P_SIGNON_RESPONSE_SIZE;
 
-			for (uint8_t SOByte = 0; SOByte < 11; SOByte++) // Load the sign-on sequence from program memory
-			  PacketBytes[SOByte] = pgm_read_byte(&SignonResponse[SOByte]);
+			for (uint8_t SOByte = 0; SOByte < V2P_SIGNON_RESPONSE_SIZE; SOByte++) // Load the sign-on sequence from program memory
+			  PacketBytes[SOByte] = pgm_read_byte((uint8_t*)(&SignonResponse + SOByte));
 								  
 			V2P_SendPacket();
 			break;
@@ -284,11 +290,44 @@ static void V2P_ProcessPacketData(FuncPtr PacketDecodeFunction)
 			PacketBytes[1] = AICB_STATUS_CMD_OK;
 
 			V2P_SendPacket();
-			break;			
+			break;
 		case AICB_CMD_GET_PARAMETER:
 		case AICB_CMD_SET_PARAMETER:						
 			V2P_GetSetParameter();
 			break;
+		case V2P_CMD_DUMP_DATAFLASH:           // Buttload-only command - dump empty-page corrected dataflash contents
+			DF_ENABLEDATAFLASH(TRUE);
+			SPI_SPIInit();
+
+			VAMM_EnterStorageMode();
+			CurrAddress = 0;
+
+			for (uint16_t DFPage = 0; DFPage < DF_DATAFLASH_PAGES; DFPage++)
+			{
+				for (uint16_t DFByte = 0; DFByte < DF_INTERNALDF_BUFFBYTES; DFByte++)
+				  USART_Tx(VAMM_ReadConsec());
+			}
+			
+			VAMM_ExitStorageMode();
+			
+			SPI_SPIOFF();			
+			DF_ENABLEDATAFLASH(FALSE);
+			
+			break;
+		case V2P_CMD_DUMP_DATAFLASH_RAW:           // Buttload-only command - dump raw dataflash contents
+			DF_ENABLEDATAFLASH(TRUE);
+			SPI_SPIInit();
+
+			DF_ContinuousReadEnable(0, 0);
+
+			for (uint16_t DFPage = 0; DFPage < DF_DATAFLASH_PAGES; DFPage++)
+			{
+				for (uint16_t DFByte = 0; DFByte < DF_INTERNALDF_BUFFBYTES; DFByte++)
+				  USART_Tx(SPI_SPITransmit(0x00));
+			}
+			
+			SPI_SPIOFF();			
+			DF_ENABLEDATAFLASH(FALSE);		
 		default:
 			((FuncPtr)PacketDecodeFunction)(); // Run the interpret packet routine as set by the pointer
 	}

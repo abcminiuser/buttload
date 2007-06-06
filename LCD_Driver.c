@@ -28,7 +28,7 @@ static volatile uint8_t  ScrollCount     = 0;
 static volatile uint8_t  UpdateDisplay   = FALSE;
        volatile uint8_t  ScrollFlags     = 0;
 
-const    uint16_t LCD_SegTable[] PROGMEM =
+const           uint16_t LCD_SegTable[] PROGMEM =
 {
     0xEAA8,     // '*'
     0x2A80,     // '+'
@@ -102,8 +102,8 @@ void LCD_Init(void)
     // Select asynchronous clock source, enable all COM pins and enable all segment pins:
     LCDCRB  = (1<<LCDCS) | (3<<LCDMUX0) | (7<<LCDPM0);
 
-    // Set LCD prescaler to give a framerate of 32Hz:
-    LCDFRR  = (0<<LCDPS0) | (7<<LCDCD0);    
+    // Set LCD prescaler to give a framerate of 64Hz:
+    LCDFRR  = (0<<LCDPS0) | (3<<LCDCD0);    
 
 	// Enable LCD and set low power waveform, enable start of frame interrupt:
     LCDCRA  = (1<<LCDEN) | (1<<LCDAB) | (1<<LCDIE);
@@ -148,8 +148,7 @@ void LCD_puts(const char *Data)
 				break;
 			case 0x00:                         // Null termination of the string - ignore for now so the nulls can be appended below
 				break;
-			case ' ':                          // Space or invalid character, use 0xFF to display a blank
-			default:
+			default:                           // Space or invalid character, use 0xFF to display a blank
 				TextBuffer[LoadB++] = LCD_SPACE_OR_INVALID_CHAR;
 		}
 	}

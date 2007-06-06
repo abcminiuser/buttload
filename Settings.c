@@ -341,7 +341,7 @@ void SET_SetStartupMode(void)
 				return;
 			}
 
-			LCD_puts_f(StartupModes[StartupMode]);			
+			LCD_puts_f(StartupModes[StartupMode]);
 
 			MAIN_WaitForJoyRelease();
 		}

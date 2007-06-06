@@ -17,6 +17,7 @@
 	#include "LCD_Driver.h"
 	#include "Dataflash.h"
 	#include "EEPROMVariables.h"
+	#include "V2Protocol.h"
 
 	// DEFINES:
 	#define VAMM_SETUP_NA          0
@@ -29,6 +30,7 @@
 
 	// EXTERNAL VARIABLES:
 	extern uint8_t EraseFlagsTransReq;
+	extern uint8_t PageErasedFlags[DF_DATAFLASH_BLOCKS];
 	
 	// PROTOTYPES:
 	void    VAMM_EnterStorageMode(void);

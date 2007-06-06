@@ -48,12 +48,9 @@
 	
 	#define JOY_BMASK                 ((1 << 4) | (1 << 6) | (1 << 7))
 	#define JOY_EMASK                 ((1 << 2) | (1 << 3))
-		
-	// ASM Macros:
-	#define SLEEP()                   MACROS{ asm volatile ("sleep" ::); }MACROE
 
 	// Sleep Macros:
-	#define SLEEPCPU(mode)            MACROS{ SMCR = mode; SLEEP(); }MACROE
+	#define SLEEPCPU(mode)            MACROS{ SMCR = mode; asm volatile ("sleep" ::); }MACROE
 
 	#define SLEEP_IDLE                (1 << SE)
 	#define SLEEP_POWERDOWN           ((1 << SE) | (1 << SM1))

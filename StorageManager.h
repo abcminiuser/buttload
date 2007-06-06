@@ -18,6 +18,7 @@
 	#include "Dataflash.h"
 	#include "EEPROMVariables.h"
 	#include "GlobalMacros.h"
+	#include "V2Protocol.h"
 	#include "VirtualAVRMemManager.h"
 	
 	// DEFINES:
@@ -31,7 +32,7 @@
 	
 	#define SM_MAX_FUSELOCKBITS     20
 	
-	#define SM_EEPROM_OFFSET        (1024UL * 257UL)
+	#define SM_EEPROM_OFFSET        ((1024UL * 257UL) + (8 * DF_INTERNALDF_BUFFBYTES)) // Offset at the 257Kb in dataflash, plus one block
 	
 	#define SM_BYTES_TO_BLOCKNUM(b) ROUND_UP(((b / DF_INTERNALDF_BUFFBYTES) >> 3))
 	
