@@ -3,7 +3,7 @@
 
               Copyright (C) Dean Camera, 2007.
               
-			  dean_camera@fourwalledcubicle.com
+             dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
 */
 
@@ -24,12 +24,12 @@ static volatile uint8_t OutPos                   = 0;
 */
 ISR(USART0_RX_vect, ISR_BLOCK)
 {
-	RingBuffer[InPos] = UDR;                   // Store the data
-	BuffElements++;                            // Increment the total elements variable
+	RingBuffer[InPos] = UDR;
+	BuffElements++;
 
 	InPos++;
 
-	if (InPos == BUFF_BUFFLEN)                 // Wrap counter if end of array reached
+	if (InPos == BUFF_BUFFLEN)
 	  InPos = 0;
 }	
 
@@ -45,9 +45,9 @@ void BUFF_InitializeBuffer(void)
 {
 	ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
 	{
-		InPos  = 0;                            // Set up the IN counter to the start of the buffer
-		OutPos = 0;                            // Set up the OUT counter to the start of the buffer
-		BuffElements = 0;                      // Reset the buffer elements counter
+		InPos  = 0;
+		OutPos = 0;
+		BuffElements = 0;
 	}
 }
 
@@ -61,19 +61,19 @@ char BUFF_GetBuffByte(void)
 {
 	uint8_t RetrievedData;
 
-	if (!(BuffElements))                       // Return 0 if nothing in the buffer
+	if (!(BuffElements))
 	  return 0;
 
 	ATOMIC_BLOCK(ATOMIC_FORCEON)
 	{
-		RetrievedData = RingBuffer[OutPos];    // Grab the stored byte into a temp variable
-		BuffElements--;                        // Decrement the total elements variable
+		RetrievedData = RingBuffer[OutPos];
+		BuffElements--;
 		
 		OutPos++;
 		
-		if (OutPos == BUFF_BUFFLEN)            // Increment and wrap pointer if end of array reached
+		if (OutPos == BUFF_BUFFLEN)
 		  OutPos = 0;
 	}
 		
-	return RetrievedData;                      // Return the retrieved data
+	return RetrievedData;
 }

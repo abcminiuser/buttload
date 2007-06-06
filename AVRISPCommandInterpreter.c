@@ -3,7 +3,7 @@
 
               Copyright (C) Dean Camera, 2007.
               
-			  dean_camera@fourwalledcubicle.com
+             dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
 */
 
@@ -152,7 +152,7 @@ void AICI_InterpretPacket(void)
 				else                                   // EEPROM read mode, address is in bytes and so no masking nessesary
 				  USI_SPITransmit(ReadCommand);
 				
-				USI_SPITransmitWord(CurrAddress);
+				USI_SPITransmitWord(CurrAddress & 0xFFFF);
 
 				PacketBytes[2 + ReadByte] = USI_SPITransmit(0x00); // Read in the byte stored at the requested location
 

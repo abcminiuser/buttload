@@ -3,7 +3,7 @@
 
               Copyright (C) Dean Camera, 2007.
               
-			  dean_camera@fourwalledcubicle.com
+             dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
 */
 
@@ -27,9 +27,7 @@ void USART_Init(void)
 	PRR &= ~(1 << PRUSART0);
 	
     // Set baud rate
-	#if (USART_BAUDVALUE >> 8)
-		UBRRH = (uint8_t)(USART_BAUDVALUE >> 8);
-	#endif
+	UBRRH = (uint8_t)(USART_BAUDVALUE >> 8);
     UBRRL = (uint8_t)(USART_BAUDVALUE);
 
 	// Reset UCSRA to clear any pre-set bits
@@ -41,7 +39,6 @@ void USART_Init(void)
     // Async. mode, 8N1
     UCSRC = (3 << UCSZ0);
 	 
-	// Initalise ringbuffer
 	BUFF_InitializeBuffer();
 }
 

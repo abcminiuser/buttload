@@ -3,7 +3,7 @@
 
               Copyright (C) Dean Camera, 2007.
               
-			  dean_camera@fourwalledcubicle.com
+             dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
 */
 
@@ -113,7 +113,7 @@ void PM_StartProgAVR(void)
 	for (uint8_t PacketB = 0; PacketB < 12; PacketB++) // Read the enter programming mode command bytes
 	  PacketBytes[PacketB] = eeprom_read_byte(&EEPROMVars.EnterProgMode[PacketB]);
 		
-	CurrAddress      = 0;
+	V2P_ClearCurrAddress();
 	ProgrammingFault = ISPCC_NO_FAULT;
 	
 	ISPCC_EnterChipProgrammingMode();            // Try to sync with the slave AVR
@@ -186,23 +186,30 @@ void PM_StartProgAVR(void)
 		{
 			if (ProgOptions & PM_OPT_FUSE)               // If fusebytes have already been written, we need to re-enter programming mode to latch them
 			{
-				MAIN_SetTargetResetLine(MAIN_RESET_INACTIVE); // Release the RESET line of the slave AVR
+				MAIN_SetTargetResetLine(MAIN_RESET_INACTIVE);
 				MAIN_Delay10MS(1);
-				MAIN_SetTargetResetLine(MAIN_RESET_ACTIVE);   // Capture the RESET line of the slave AVR
-				ISPCC_EnterChipProgrammingMode();        // Try to sync with the slave AVR
+				MAIN_SetTargetResetLine(MAIN_RESET_ACTIVE);
+				ISPCC_EnterChipProgrammingMode();
 			}
 
-			MAIN_ShowProgType('L');
-		
-			StoredLocksFuses = eeprom_read_byte(&EEPROMVars.TotalLockBytes);
-			if (!(StoredLocksFuses) || (StoredLocksFuses == 0xFF))
+			if (InProgrammingMode)
 			{
-				ProgrammingFault = ISPCC_FAULT_NODATATYPE;
-				MAIN_ShowError(PSTR("NO LOCK BYTES"));
+				MAIN_ShowProgType('L');
+			
+				StoredLocksFuses = eeprom_read_byte(&EEPROMVars.TotalLockBytes);
+				if (!(StoredLocksFuses) || (StoredLocksFuses == 0xFF))
+				{
+					ProgrammingFault = ISPCC_FAULT_NODATATYPE;
+					MAIN_ShowError(PSTR("NO LOCK BYTES"));
+				}
+				else
+				{
+					PM_SendFuseLockBytes(TYPE_LOCK);
+				}
 			}
 			else
 			{
-				PM_SendFuseLockBytes(TYPE_LOCK);
+				MAIN_ShowError(SyncErrorMessage);
 			}
 		}
 
@@ -213,7 +220,7 @@ void PM_StartProgAVR(void)
 		{
 			if (ProgrammingFault != ISPCC_NO_FAULT)
 			{
-				TIMSK1 = (1 << OCIE1A);                  // Enable compare match channel A interrupt
+				TIMSK1 = (1 << OCIE1A);
 				OCR1A  = TIMEOUT_HZ_TO_COMP(8, TIMEOUT_SRC_CPU, 1024); // Compare rate of 8Hz at 7372800Hz system clock, 1024 prescaler
 				TCCR1B = ((1 << WGM12) | (1 << CS12) | (1 << CS10));   // Start timer at Fcpu/1024 speed in CTC mode, flash the red status LED
 
@@ -228,10 +235,10 @@ void PM_StartProgAVR(void)
 				TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);		
 			}
 	
-			LCD_WAIT_FOR_SCROLL_DONE();                  // Loop until the message has finished scrolling completely
+			LCD_WAIT_FOR_SCROLL_DONE();
 
-			TCCR1B = 0;                                  // Turn off timer 1
-			TIMSK1 = 0;                                  // Turn off compare match interrupt
+			TCCR1B = 0;
+			TIMSK1 = 0;
 		}
 	}
 	else
@@ -240,7 +247,7 @@ void PM_StartProgAVR(void)
 	}
 	
 	TOUT_SetupSleepTimer();
-	MAIN_SetTargetResetLine(MAIN_RESET_INACTIVE);       // Release the RESET line and allow the slave AVR to run	
+	MAIN_SetTargetResetLine(MAIN_RESET_INACTIVE);
 	USI_SPIOff();
 	DF_ENABLEDATAFLASH(FALSE);
 	SPI_SPIOFF();
@@ -334,7 +341,7 @@ void PM_SetProgramDataType(uint8_t Mask)
 */
 void PM_WaitWhileTargetBusy(void)
 {
-	TCNT1  = 0;                                                     // Clear timer 1
+	TCNT1  = 0;
 	TCCR1B = ((1 << CS12) | (1 << CS10));                           // Start timer 1 with a Fcpu/1024 clock
 
 	do
@@ -344,7 +351,7 @@ void PM_WaitWhileTargetBusy(void)
 	if (TCNT1 >= ISPCC_COMM_TIMEOUT)
 	  ProgrammingFault = ISPCC_FAULT_TIMEOUT;
 	
-	TCCR1B = 0;                                                     // Stop timer 1
+	TCCR1B = 0;
 }
 
 /*
@@ -369,9 +376,9 @@ static void PM_SendFuseLockBytes(const uint8_t Type)
 		EEPROMAddress = &EEPROMVars.LockBytes[0][0];	
 	}
 
-	while (TotalBytes--)                                                // Write each of the fuse/lock bytes stored in memory to the target AVR
+	while (TotalBytes--)
 	{
-		for (uint8_t CommandByte = 0; CommandByte < 4; CommandByte++)   // Write each individual command byte
+		for (uint8_t CommandByte = 0; CommandByte < 4; CommandByte++)
 		{
 			USI_SPITransmit(eeprom_read_byte(EEPROMAddress));
 			EEPROMAddress++;
@@ -390,14 +397,14 @@ static void PM_SendFuseLockBytes(const uint8_t Type)
  RETURNS:   | None
 */
 static void PM_SendEraseCommand(void)
-{			
-	for (uint8_t EraseByte = 3; EraseByte < 7 ; EraseByte++)               // Read out the erase chip command bytes
-	  USI_SPITransmit(eeprom_read_byte(&EEPROMVars.EraseChip[EraseByte])); // Send the erase chip commands
+{
+	for (uint8_t EraseByte = 2; EraseByte < 6 ; EraseByte++)            // Read out the erase chip command bytes
+	  USI_SPITransmit(eeprom_read_byte(&EEPROMVars.EraseChip[EraseByte]));
 			
-	if (eeprom_read_byte(&EEPROMVars.EraseChip[2]))                     // Value of 1 indicates a busy flag test
+	if (eeprom_read_byte(&EEPROMVars.EraseChip[1]))                     // Value of 1 indicates a busy flag test
 	  PM_WaitWhileTargetBusy();
 	else                                                                // Cleared flag means use a predefined delay
-	  MAIN_Delay1MS(eeprom_read_byte(&EEPROMVars.EraseChip[1]));        // Wait the erase delay
+	  MAIN_Delay1MS(eeprom_read_byte(&EEPROMVars.EraseChip[0]));
 }
 
 /*
@@ -409,25 +416,24 @@ static void PM_SendEraseCommand(void)
 static void PM_CreateProgrammingPackets(void)
 {			
 	uint32_t BytesRead        = 0;
-	uint32_t BytesToRead      = SM_GetStoredDataSize(MemoryType);       // Get the byte size of the stored program
+	uint32_t BytesToRead      = SM_GetStoredDataSize(MemoryType);
 	uint16_t BytesPerProgram  = (((uint16_t)PacketBytes[1] << 8) | PacketBytes[2]);
 	uint16_t PageLength       = eeprom_read_word((MemoryType == TYPE_FLASH)? &EEPROMVars.PageLength : &EEPROMVars.EPageLength);
 	uint16_t BytesPerProgress = (BytesToRead / (LCD_BARGRAPH_SIZE - 1));
 	uint8_t  ContinuedPage    = FALSE;
 	uint8_t* EEPROMAddress;
 	
-	CurrAddress = 0;
-
+	V2P_ClearCurrAddress();
 	VAMM_EnterStorageMode();                                            // Prepare virtual AVR memory for readback
 
 	if (MemoryType == TYPE_FLASH)
 	{
-		EEPROMAddress = (uint8_t*)&EEPROMVars.WriteProgram;             // Set the EEPROM pointer to the write flash command bytes location
+		EEPROMAddress = (uint8_t*)&EEPROMVars.WriteProgram;
 		PacketBytes[0] = AICB_CMD_PROGRAM_FLASH_ISP;
 	}
 	else
 	{
-		EEPROMAddress = (uint8_t*)&EEPROMVars.WriteEEPROM;              // Set the EEPROM pointer to the write EEPROM command bytes location
+		EEPROMAddress = (uint8_t*)&EEPROMVars.WriteEEPROM;
 		PacketBytes[0] = AICB_CMD_PROGRAM_EEPROM_ISP;
 	}
 

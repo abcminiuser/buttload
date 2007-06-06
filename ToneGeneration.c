@@ -3,7 +3,7 @@
 
               Copyright (C) Dean Camera, 2007.
               
-			  dean_camera@fourwalledcubicle.com
+             dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
 */
 
@@ -45,13 +45,13 @@ void TG_PlayToneSeq(const uint8_t* Sequence)
 
 	OCR1A  = ToneVol;                             // Set the tone volume via the global register
 	TCCR1A = (1 << COM1A1);                       // OC1A set when counting up, cleared when counting down
-	TCCR1B = ((1 << WGM13) | (1 << CS10));        // Phase/Freq correct PWM mode, turn on with prescaler of 1
+	TCCR1B = ((1 << WGM13) | (1 << CS10));        // Phase/Freq correct PWM mode, turn on with prescale of 1
 	
 	for (;;)
 	{	
 		uint8_t Tone = pgm_read_byte(Sequence++); // Fetch the next tone from the table
 
-		TCNT1 = 0;                                // Clear count value
+		TCNT1 = 0;
 		ICR1  = ((uint16_t)Tone << 5);            // Set the ICR register - play the tone
 
 		if (!(Tone))                              // Having the end tone check here ensures that ICR1 and TCNT1 are cleared on exit due to 0x00 terminator
@@ -60,6 +60,6 @@ void TG_PlayToneSeq(const uint8_t* Sequence)
 		MAIN_Delay10MS(15);                       // Delay between tones - 150ms
 	}
 
-	TCCR1A = 0;                                   // Turn off compare output
-	TCCR1B = 0;                                   // Timer off
+	TCCR1A = 0;
+	TCCR1B = 0;
 }

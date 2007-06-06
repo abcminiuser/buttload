@@ -3,7 +3,7 @@
 ;
 ;              Copyright (C) Dean Camera, 2007.
 ;
-;			  dean_camera@fourwalledcubicle.com
+;            dean [at] fourwalledcubicle [dot] com
 ;                  www.fourwalledcubicle.com
 ;
 
@@ -79,11 +79,11 @@ USI_SPITransmit:
 	cpi   USI_SCRATCH_ASM_REG, 3                                   ; Test for 115200 Hz frequency
 	breq  SlowTransfer
 
-	ldi   USI_DELAYCNT_ASM_REG, (((F_CPU / 57600) - 6) / 3)
+	ldi   USI_DELAYCNT_ASM_REG, (((F_CPU /  57600) - 6) / 3)
 	cpi   USI_SCRATCH_ASM_REG, 4                                   ; Test for 57600 Hz frequency
 	breq  SlowTransfer
 
-	ldi   USI_DELAYCNT_ASM_REG, (((F_CPU / 28800) - 6) / 3)
+	ldi   USI_DELAYCNT_ASM_REG, (((F_CPU /  28800) - 6) / 3)
 	cpi   USI_SCRATCH_ASM_REG, 5                                   ; Test for 28800 Hz frequency
 	breq  SlowTransfer
 
@@ -157,10 +157,10 @@ SuperFastTransfer:
 
 ; CLOCKING LOOP
 ClockingTransfer:
-	; Cycle-counted to ensure 50% duty cycle per clock; equates to 10 cycles between chip clock
-	; toggles and approx 80 cycles between SCK toggles, 8:1 ratio of chip clocks to SCK clocks
+	; Cycle-counted to ensure 50% duty cycle per clock; equates to 10 cycles between CLKOUT toggles
+	; and approx 80 cycles between USI clock toggles, 8:1 ratio of CLKOUT clocks to USI clocks
 
-	ldi   USI_DELAYCNT_ASM_REG, 8
+	ldi   USI_DELAYCNT_ASM_REG, 24 ; CLKOUT gives 16 extra clocks at start to ensure target is ready
 
   ClockingLoop:
 	sbi   IO_ADDR(USI_CLOCK_OUT_PORT), USI_CLOCK_BIT

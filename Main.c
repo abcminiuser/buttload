@@ -3,7 +3,7 @@
 
               Copyright (C) Dean Camera, 2007.
               
-			  dean_camera@fourwalledcubicle.com
+             dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
 
    Requires AVR-GCC 3.4.3 or above, AVRLibC version 1.4.1 or
@@ -257,7 +257,7 @@ int main(void)
 		}
 
 		MAIN_MenuSleep();
-	}	
+	}
 }
 
 // ======================================================================================
@@ -442,7 +442,7 @@ void MAIN_ShowError(const char *pFlashStr)
 	TCCR1B = ((1 << WGM12) | (1 << CS12) | (1 << CS10));   // Start timer at Fcpu/1024 speed in CTC mode, flash the red status LED
 	
 	MAIN_WaitForJoyRelease();
-	while (!(JoyStatus & JOY_PRESS)) { SLEEPCPU(SLEEP_POWERSAVE); }; // Wait until center button pushed before continuing
+	while (!(JoyStatus & JOY_PRESS)) { SLEEPCPU(SLEEP_IDLE); }; // Wait until center button pushed before continuing
 	MAIN_WaitForJoyRelease();
 
 	TCCR1B = 0;                                  // Turn off timer 1
@@ -458,7 +458,12 @@ void MAIN_ShowError(const char *pFlashStr)
  ARGUMENTS: | None
  RETURNS:   | None
 */
-ISR_ALIAS_COMPAT(PCINT0_vect, PCINT1_vect);
+
+#if defined(ISR_ALIASOF)
+  ISR(PCINT0_vect, ISR_ALIASOF(PCINT1_vect));
+#else
+  ISR_ALIAS_COMPAT(PCINT0_vect, PCINT1_vect);
+#endif
 ISR(PCINT1_vect, ISR_NOBLOCK)                    // Joystick routine; PCINT0_vect is bound to this also
 {
 	JoyStatus = (~PINB & JOY_BMASK)
@@ -748,7 +753,7 @@ static void MAIN_StorageInfo(void)
 static void MAIN_ClearMem(void)
 {
 	LCD_PutStr_f(PSTR("CONFIRM"));
-	LCD_WAIT_FOR_SCROLL_DONE();                  // Loop until the message has finished scrolling completely
+	LCD_WAIT_FOR_SCROLL_DONE();
 
 	LCD_PutStr_f(PSTR("<N Y>"));
 
@@ -790,7 +795,7 @@ static void MAIN_ClearMem(void)
 
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Set status LEDs to green (ready)
 	LCD_PutStr_f(PSTR("MEM CLEARED"));
-	LCD_WAIT_FOR_SCROLL_DONE();                  // Loop until the message has finished scrolling completely
+	LCD_WAIT_FOR_SCROLL_DONE();
 }
 
 /*
@@ -843,8 +848,6 @@ static void MAIN_GoBootloader(void)
 		USART_OFF();
 		TIMEOUT_PACKET_TIMER_OFF();
 		TIMEOUT_SLEEP_TIMER_OFF();
-	
-		MAIN_SETSTATUSLED(MAIN_STATLED_RED);
 			
 		for (;;)
 		{

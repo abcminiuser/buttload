@@ -3,7 +3,7 @@
 
               Copyright (C) Dean Camera, 2007.
               
-			  dean_camera@fourwalledcubicle.com
+             dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
 */
 
@@ -59,6 +59,7 @@
 	void    V2P_RunStateMachine(FuncPtr PacketDecodeFunction) ATTR_NON_NULL_PTR_ARGS(1);
 	void    V2P_SendPacket(void);
 	void    V2P_CheckForExtendedAddress(void);
+	void    V2P_ClearCurrAddress(void);
 
 	#if defined(INC_FROM_V2P)
 	  static uint8_t V2P_GetChecksum(void) ATTR_WARN_UNUSED_RESULT;

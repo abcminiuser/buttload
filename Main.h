@@ -3,7 +3,7 @@
 
               Copyright (C) Dean Camera, 2007.
               
-			  dean_camera@fourwalledcubicle.com
+             dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
 */
 
@@ -11,7 +11,7 @@
 #define MAIN_H
 
 	// DEBUG SWITCHES
-	 #define DEBUG_JTAGON
+	 //#define DEBUG_JTAGON
 	 #define DEBUG_MEMFILLON
 	 //#define DEBUG_DFDUMPCMDS
 	 //#define DEBUG_ISRCATCHALL
@@ -82,7 +82,7 @@
 	#define MAIN_RESET_INACTIVE        1
 		
 	// PROTOTYPES:
-	int  main(void) ATTR_NO_RETURN; // Remove main prologue designed to allow for recursive use of main (not needed)
+	int main(void) ATTR_NO_RETURN; // Remove main prologue designed to allow for recursive use of main (not needed)
 
 	void MAIN_SetTargetResetLine(const uint8_t ActiveInactive);
 	void MAIN_WaitForJoyRelease(void);

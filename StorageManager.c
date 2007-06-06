@@ -3,7 +3,7 @@
 
               Copyright (C) Dean Camera, 2007.
               
-			  dean_camera@fourwalledcubicle.com
+             dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
 */
 
@@ -96,9 +96,9 @@ void SM_InterpretAVRISPPacket(void)
 			SPI_SPIInit();
 
 			InProgrammingMode = TRUE;                                   // Set the flag, prevent the user from exiting the V2P state machine			
-			CurrentMode = SM_NO_SETUP;                                  // Clear the current mode variable
-			WriteCmdStored = FALSE;                                     // Clear Flash/EEPROM write command stored flag
-			CurrAddress = 0;
+			CurrentMode = SM_NO_SETUP;
+			WriteCmdStored = FALSE;
+			V2P_ClearCurrAddress();
 
 			VAMM_EnterStorageMode();
 
@@ -144,7 +144,7 @@ void SM_InterpretAVRISPPacket(void)
 			MessageSize = 4;
 
 			PacketBytes[1] = AICB_STATUS_CMD_OK;                        // Data byte is encased in CMD_OKs
-			PacketBytes[2] = 0x00;                                      // Return 0x00 for the OSCCAL byte
+			PacketBytes[2] = 0x00;                                      // Return 0x00 for the OSCCAL byte in storage mode
 			PacketBytes[3] = AICB_STATUS_CMD_OK;                        // Data byte is encased in CMD_OKs
 
 			break;
@@ -224,13 +224,13 @@ void SM_InterpretAVRISPPacket(void)
 			{
 				if (PacketBytes[0] == AICB_CMD_PROGRAM_FLASH_ISP)       // Flash programming mode
 				{
-					EEPROMAddress = (uint8_t*)&EEPROMVars.WriteProgram; // Set the eeprom address to the Program command bytes location
+					EEPROMAddress = (uint8_t*)&EEPROMVars.WriteProgram;
 					PM_SetProgramDataType(PM_OPT_FLASH);
 					MemoryType  = TYPE_FLASH;
 				}
 				else                                                    // EEPROM programming mode
 				{
-					EEPROMAddress = (uint8_t*)&EEPROMVars.WriteEEPROM;  // Set the eeprom address to the EEPROM command bytes location
+					EEPROMAddress = (uint8_t*)&EEPROMVars.WriteEEPROM;
 					PM_SetProgramDataType(PM_OPT_EEPROM);
 					MemoryType  = TYPE_EEPROM;
 				}

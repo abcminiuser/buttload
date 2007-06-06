@@ -3,7 +3,7 @@
 
               Copyright (C) Dean Camera, 2007.
               
-			  dean_camera@fourwalledcubicle.com
+             dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
 */
 
@@ -68,7 +68,7 @@ void VAMM_ExitStorageMode(void)
 void VAMM_EraseAVRMemory(void)
 {
 	for (uint8_t PacketB = 1; PacketB < 7; PacketB++)       // Save the erase chip command bytes to EEPROM
-	  eeprom_write_byte(&EEPROMVars.EraseChip[PacketB], PacketBytes[PacketB]);
+	  eeprom_write_byte(&EEPROMVars.EraseChip[PacketB - 1], PacketBytes[PacketB]);
 
 	eeprom_write_byte(&EEPROMVars.EraseCmdStored, TRUE);
 
@@ -86,26 +86,22 @@ void VAMM_EraseAVRMemory(void)
 */
 void VAMM_SetAddress(void)
 {
-	union
-	{
-		uint8_t  Bytes[4];
-		uint32_t UnsignedLong;
-	} StartAddress;
-
-	StartAddress.UnsignedLong = CurrAddress;
+	uint32_t StartAddress;
 	
-	// Upper byte is for flags only (lower 24 bits contains the address). Clear the flag byte here:
-	StartAddress.Bytes[3] = 0x00;
+	BYTE(StartAddress, 0) = BYTE(CurrAddress, 0);           // Only need the lower 24 bits (address portion)
+	BYTE(StartAddress, 1) = BYTE(CurrAddress, 1);           // So save time and space by only copying the
+	BYTE(StartAddress, 2) = BYTE(CurrAddress, 2);           // needed bytes
+	BYTE(StartAddress, 3) = 0x00;
 
 	VAMM_Cleanup();
 
 	if (MemoryType == TYPE_FLASH)                           // Type 1 = Flash
-	  StartAddress.UnsignedLong <<= 1;                      // Convert flash word address to byte address
+	  StartAddress <<= 1;                                   // Convert flash word address to byte address
 	else                                                    // Type 2 = EEPROM
-	  StartAddress.UnsignedLong  += SM_EEPROM_OFFSET;       // EEPROM uses byte addresses, and starts at the 257th kilobyte in Dataflash
+	  StartAddress  += SM_EEPROM_OFFSET;                    // EEPROM uses byte addresses, and starts at the 257th kilobyte in Dataflash
 
-	DataflashInfo.CurrPageAddress = (uint16_t)(StartAddress.UnsignedLong / DF_INTERNALDF_BUFFBYTES);
-	DataflashInfo.CurrBuffByte    = (uint16_t)(StartAddress.UnsignedLong % DF_INTERNALDF_BUFFBYTES);
+	DataflashInfo.CurrPageAddress = (uint16_t)(StartAddress / DF_INTERNALDF_BUFFBYTES);
+	DataflashInfo.CurrBuffByte    = (uint16_t)(StartAddress % DF_INTERNALDF_BUFFBYTES);
 
 	VAMMSetup = VAMM_SETUP_ADDR_DONE;
 }

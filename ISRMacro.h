@@ -3,7 +3,7 @@
 
               Copyright (C) Dean Camera, 2007.
               
-			  dean_camera@fourwalledcubicle.com
+             dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
 */
 
@@ -53,7 +53,7 @@
       #define ISR_NOBLOCK    __attribute__((interrupt, used, externally_visible))
       #define ISR_BLOCK      __attribute__((signal, used, externally_visible))
       #define ISR_NAKED      __attribute__((signal, naked, used, externally_visible))
-      #define ISR_ALIASOF(v) __attribute__((alias(#v))) // GCC 4.2 and greater only!
+      #define ISR_ALIASOF(v) __attribute__((alias(__replace_and_string(v)))) // GCC 4.2 and greater only!
    #else
       #define ISR_NOBLOCK   __attribute__((interrupt))
       #define ISR_BLOCK     __attribute__((signal))

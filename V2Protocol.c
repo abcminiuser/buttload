@@ -3,7 +3,7 @@
 
               Copyright (C) Dean Camera, 2007.
               
-			  dean_camera@fourwalledcubicle.com
+             dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
 */
 
@@ -40,29 +40,29 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 	TIMEOUT_SLEEP_TIMER_OFF();
 	
 	InProgrammingMode = FALSE;
-	CurrAddress       = 0;
+	V2P_ClearCurrAddress();
 
 	for (;;)
 	{
-		if (PacketTimeOut == TRUE)                // Packet has timed out waiting for data
+		if (PacketTimeOut == TRUE)                 // Packet has timed out waiting for data
 		  V2PState = V2P_STATE_TIMEOUT;
 		else if (V2PState != V2P_STATE_IDLE)
-		  TIMEOUT_PACKET_TIMER_ON();              // Reset the timer on each loop if not in idle mode
+		  TIMEOUT_PACKET_TIMER_ON();               // Reset the timer on each loop if not in idle mode
 		
 		switch (V2PState)
 		{
 			case V2P_STATE_IDLE:
-				if (BuffElements)                 // Serial data recieved in FIFO buffer
+				if (BuffElements)                  // Serial data recieved in FIFO buffer
 				  V2PState = V2P_STATE_START;
 				
 				if ((JoyStatus & JOY_LEFT) && !(InProgrammingMode))
 				{
 					USART_OFF();
-					TOUT_SetupSleepTimer();       // Re-setup and start the auto-sleep timer
+					TOUT_SetupSleepTimer();        // Re-setup and start the auto-sleep timer
 					return;
 				}
 								
-				SLEEPCPU(SLEEP_IDLE);             // Can idle here, since USART or Joystick interrupt will cause execution to continue
+				SLEEPCPU(SLEEP_IDLE);              // Can idle here, since USART or Joystick interrupt will cause execution to continue
 
 				break;
 			case V2P_STATE_START:			
@@ -104,11 +104,11 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 				if (CurrentMessageByte == MessageSize) // Packet reception complete
 				  V2PState = V2P_STATE_GETCHECKSUM;
 				else
-				  PacketBytes[CurrentMessageByte++] = USART_Rx(); // Store the byte
+				  PacketBytes[CurrentMessageByte++] = USART_Rx();
 	
 				break;
 			case V2P_STATE_GETCHECKSUM:
-				if  (!(PacketTimeOut))             // Only try to process the packet if there is no timeout
+				if  (!(PacketTimeOut))        // Only try to process the packet if there is no timeout
 				{
 					if (V2P_GetChecksum() == USART_Rx()) // If checksum is ok, process the packet
 					{
@@ -148,7 +148,7 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 				break;
 			case V2P_STATE_PACKOK:
 				PacketTimeOut = FALSE;
-				BUFF_InitializeBuffer();           // Flush the ringbuffer
+				BUFF_InitializeBuffer();      // Flush the ringbuffer
 				TIMEOUT_PACKET_TIMER_OFF();
 
 				V2PState = V2P_STATE_IDLE;
@@ -184,15 +184,26 @@ void V2P_SendPacket(void)
 */
 void V2P_CheckForExtendedAddress(void)
 {
-	if (BYTE(CurrAddress, 3))
+	if (BYTE(CurrAddress, 3))                 // MSb in the long indicates the need for sending a Load Extended Address command
 	{
-		USI_SPITransmit(V2P_LOAD_EXTENDED_ADDR_CMD);   // Load extended address command
+		USI_SPITransmit(V2P_LOAD_EXTENDED_ADDR_CMD);
 		USI_SPITransmit(0x00);
 		USI_SPITransmit(BYTE(CurrAddress, 2));
 		USI_SPITransmit(0x00);
 		
-		BYTE(CurrAddress, 3) = 0;                      // Clear the flag
+		BYTE(CurrAddress, 3) = 0;             // Clear the flag
 	}
+}
+
+/*
+ NAME:      | V2P_ClearCurrAddress
+ PURPOSE:   | Clears the Current Address variable (saves flash by placing it into its own function)
+ ARGUMENTS: | None
+ RETURNS:   | None
+*/
+void V2P_ClearCurrAddress(void)
+{
+	CurrAddress = 0;
 }
 
 /*
@@ -274,8 +285,8 @@ static void V2P_ProcessPacketData(FuncPtr PacketDecodeFunction)
 			
 			break;
 #ifdef DEBUG_DFDUMPCMDS
-		case V2P_CMD_DUMP_DATAFLASH:           // Buttload-only command - dump empty-page corrected dataflash contents
-		case V2P_CMD_DUMP_DATAFLASH_RAW:       // Buttload-only command - dump raw dataflash contents
+		case V2P_CMD_DUMP_DATAFLASH:          // Buttload-only command - dump empty-page corrected dataflash contents
+		case V2P_CMD_DUMP_DATAFLASH_RAW:      // Buttload-only command - dump raw dataflash contents
 			DF_ENABLEDATAFLASH(TRUE);
 			SPI_SPIInit();
 
@@ -284,7 +295,7 @@ static void V2P_ProcessPacketData(FuncPtr PacketDecodeFunction)
 			if (PacketBytes[0] == V2P_CMD_DUMP_DATAFLASH)
 			{
 				VAMM_EnterStorageMode();
-				CurrAddress = 0;
+				V2P_ClearCurrAddress();
 	
 				for (uint16_t DFPage = 0; DFPage < DF_DATAFLASH_PAGES; DFPage++)
 				{
@@ -330,7 +341,7 @@ static void V2P_GetSetParameter(void)
 	MessageSize = 3;                          // Set the default response message size to 3 bytes     
 	PacketBytes[1] = AICB_STATUS_CMD_OK;      // Set the default response to OK
 
-	switch (Param_Name)                       // Switch based on the recieved parameter byte
+	switch (Param_Name)
 	{
 		case AICB_PARAM_BUILD_NUMBER_LOW:
 			PacketBytes[2] = VERSION_MINOR;

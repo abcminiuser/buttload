@@ -3,14 +3,14 @@
 
               Copyright (C) Dean Camera, 2007.
               
-			  dean_camera@fourwalledcubicle.com
+             dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
 */
 
 #define  INC_FROM_TM
 #include "TagManager.h"
 
-static bool     TagExists          = FALSE;
+static uint8_t  TagExists          = FALSE;
 static uint32_t DFDataBytesLeft    = 0x00000000;
 
 // ======================================================================================
@@ -25,7 +25,7 @@ void TM_ShowTags(void)
 {
 	DF_ContinuousReadEnable(0, 0);
 	TagExists = FALSE;
-	DFDataBytesLeft    = SM_GetStoredDataSize(TYPE_FLASH);
+	DFDataBytesLeft = SM_GetStoredDataSize(TYPE_FLASH);
 
 	TM_FindNextTag();
 	if (!(TagExists))
@@ -35,7 +35,7 @@ void TM_ShowTags(void)
 	{
 		if (JoyStatus)                         // Joystick is in the non-center position
 		{
-			if (JoyStatus & JOY_DOWN)          // Next tag
+			if (JoyStatus & JOY_DOWN)
 			  TM_FindNextTag();
 			else if (JoyStatus & JOY_LEFT)
 			  break;
@@ -60,11 +60,11 @@ static void TM_FindNextTag(void)
 	char       TagByte;
 	uint8_t    TotalOkHeadBytes = 0;
 	
-	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);    // Orange = busy
+	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);
 
 	while (DFDataBytesLeft)
 	{		
-		TagByte = TM_GetNextByte();            // Get next byte from dataflash
+		TagByte = TM_GetNextByte();
 		
 		if (TagByte == HeadBuff[TotalOkHeadBytes++])
 		{
@@ -84,7 +84,7 @@ static void TM_FindNextTag(void)
 				TagExists  = TRUE;
 
 				LCD_PutStr(Buffer);
-				MAIN_SETSTATUSLED(MAIN_STATLED_GREEN); // Green = ready
+				MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);
 				return;
 			}
 		}

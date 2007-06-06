@@ -3,7 +3,7 @@
 
               Copyright (C) Dean Camera, 2007.
               
-			  dean_camera@fourwalledcubicle.com
+             dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
 */
 
@@ -24,7 +24,7 @@
 		uint8_t  WriteProgram[10];
 		uint8_t  WriteEEPROM[10];
 		uint8_t  EraseCmdStored;
-		uint8_t  EraseChip[7];
+		uint8_t  EraseChip[6];
 		uint8_t  EnterProgMode[12];
 		uint8_t  TotalFuseBytes;
 		uint8_t  TotalLockBytes;

@@ -3,7 +3,7 @@
 
               Copyright (C) Dean Camera, 2007.
               
-			  dean_camera@fourwalledcubicle.com
+             dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
 */
 
@@ -28,7 +28,7 @@ const char    StartupModes[3][11]               PROGMEM = {"NORMAL", "PRODUCTION
 */
 void SET_SetContrast(void)
 {
-	uint8_t Contrast = (eeprom_read_byte(&EEPROMVars.LCDContrast) & 0x0F); // Ranges from 0-15 so mask retuns 15 on blank EEPROM (0xFF)
+	uint8_t Contrast = (eeprom_read_byte(&EEPROMVars.LCDContrast) & 0x0F); // Ranges from 0-15 so mask retuns 15 (darkest) on blank EEPROM (0xFF)
 	char Buffer[6];
 	
 	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
@@ -101,8 +101,7 @@ void SET_SetISPSpeed(void)
 				eeprom_write_byte(&EEPROMVars.SCKDuration, CurrSpeed);
 				return;
 			}
-			
-			// Show selected USI speed value onto the LCD:
+
 			LCD_PutStr_f(USISpeeds[CurrSpeed]);
 
 			MAIN_WaitForJoyRelease();
@@ -138,8 +137,7 @@ void SET_SetResetMode(void)
 				MAIN_SetTargetResetLine(MAIN_RESET_INACTIVE);
 				return;
 			}
-			
-			// Show selected USI speed value onto the LCD:
+
 			LCD_PutStr_f(SPIResetModes[CurrMode]);
 
 			MAIN_WaitForJoyRelease();

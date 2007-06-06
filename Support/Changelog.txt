@@ -1,8 +1,7 @@
 Current Version: Public Release 2.1
 	
 	TODO:
-	 1) Add button beeps
-	 2) Programming from a non-consec file results in invalid offsets, which causes wrapping to occur
+	 1) Programming from a non-consec file results in invalid offsets, which causes wrapping to occur
 	
 	IN PUBLIC RELEASE 2.1:
 	=======================================
@@ -51,6 +50,9 @@ Current Version: Public Release 2.1
 	  * Fixed sleep timeout too short due to power down sleep mode exposing a chip bug (miscounts)
 	  * ButtTags with lowercase characters are now supported
 	  * Red status LED now flashes (indicating error state) when programming fails in PROGRAM AVR mode
+	  * SYNC ERROR message now displayed when programming both lock and fuse bytes from PROGRAM AVR mode, and the re-sync fails
+	  * Most of the comments removed, leaving only the important ones to clean up the code a bit
+	  * VirtualAVRMemMamager now saves the Erase Chip command bytes without wasting EEPROM saving the V2Protocol command
 	  
 	IN PUBLIC RELEASE 2.0:
 	=======================================
