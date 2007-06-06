@@ -18,14 +18,12 @@
 	#include "Delay.h"
 	#include "ISPChipComm.h"
 	#include "LCD_Driver.h"
-	#include "ToneGeneration.h"
 	#include "V2Protocol.h"
 	
 	// EXTERNAL VARIABLES:
 	extern const char AVRISPModeMessage[] PROGMEM;
 	
 	// PROTOTYPES:
-	       void    AICI_InterpretPacket(void);
-	extern uint8_t AICI_SendCalibrationClocks(void);
+	void AICI_InterpretPacket(void);
 	
 #endif

@@ -26,6 +26,6 @@
 
 	// PROTOTYPES:
 	void     BUFF_InitializeBuffer(void);
-	char     BUFF_GetBuffByte(void) ATTR_WARN_UNUSED_RESULT;
+	uint8_t  BUFF_GetBuffByte(void) ATTR_WARN_UNUSED_RESULT;
 	
 #endif

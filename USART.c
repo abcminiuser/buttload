@@ -20,16 +20,16 @@
 void USART_Init(void)
 {
 	// Calibrate the internal RC oscilator
-	LCD_PutStr_f(WaitText);
+	LCD_puts_f(WaitText);
 	OSCCAL_Calibrate();
 
 	// Enable USART subsystem
 	PRR &= ~(1 << PRUSART0);
 	
     // Set baud rate
-	#if (USART_BAUDVALUE >> 8)
-		UBRRH = (uint8_t)(USART_BAUDVALUE >> 8);
-	#endif
+#if (USART_BAUDVALUE >> 8)
+    UBRRH = (uint8_t)(USART_BAUDVALUE >> 8);
+#endif
     UBRRL = (uint8_t)(USART_BAUDVALUE);
 
 	// Reset UCSRA to clear any pre-set bits

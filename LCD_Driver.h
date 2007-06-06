@@ -28,8 +28,8 @@
 	#define LCD_CONTRAST_LEVEL(level)  MACROS{ LCDCCR = (0x0F & level); }MACROE
 	#define LCD_WAIT_FOR_SCROLL_DONE() MACROS{ while (!(ScrollFlags & LCD_FLAG_SCROLL_DONE)) {} }MACROE	
 	
-	#define LCD_SCROLLCOUNT_DEFAULT    6
-	#define LCD_DELAYCOUNT_DEFAULT     20
+	#define LCD_SCROLLCOUNT_DEFAULT    3
+	#define LCD_DELAYCOUNT_DEFAULT     10
 	#define LCD_TEXTBUFFER_SIZE        20
 	#define LCD_SEGBUFFER_SIZE         19
 	#define LCD_DISPLAY_SIZE           6
@@ -60,14 +60,14 @@
 										case 0:                    \
 	                                 		LCDDR3 &= ~(1 << 0);   \
 	                                 		LCDDR1 &= ~((1 << 6) | (1 << 2)); \
-	                                 		LCDDR0 &= ~((1 << 5) | (1 << 1)); \
+	                                 		LCDDR0 &= ~(1 << 1);   \
 											break;                 \
 	                                  }                            \
 									  }MACROE
 
 	// PROTOTYPES:
-	void LCD_PutStr_f(const char *FlashData) ATTR_NON_NULL_PTR_ARGS(1);
-	void LCD_PutStr(const char *Data) ATTR_NON_NULL_PTR_ARGS(1);
+	void LCD_puts(const char *Data);
+	void LCD_puts_f(const char *FlashData);
 	void LCD_Init(void);
 	
 	#if defined(INC_FROM_DRIVER)

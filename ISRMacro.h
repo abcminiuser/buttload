@@ -60,7 +60,7 @@
       #define ISR_NAKED     __attribute__((signal, naked))
    #endif
 
-   // GCC 3.x compatible alias macro. Works with GCC 4.1 also:
+   // GCC 3.x compatible alias macro. Works will GCC 4.1 also:
    #define ISR_ALIAS_COMPAT(vector, aliasof)      \
       void vector (void) ISR_NAKED;               \
       void vector (void) { asm volatile ("jmp " __replace_and_string(aliasof) ::); }

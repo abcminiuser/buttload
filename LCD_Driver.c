@@ -28,7 +28,7 @@ static volatile uint8_t  ScrollCount     = 0;
 static volatile uint8_t  UpdateDisplay   = FALSE;
        volatile uint8_t  ScrollFlags     = 0;
 
-const           uint16_t LCD_SegTable[] PROGMEM =
+const    uint16_t LCD_SegTable[] PROGMEM =
 {
     0xEAA8,     // '*'
     0x2A80,     // '+'
@@ -102,20 +102,20 @@ void LCD_Init(void)
     // Select asynchronous clock source, enable all COM pins and enable all segment pins:
     LCDCRB  = (1<<LCDCS) | (3<<LCDMUX0) | (7<<LCDPM0);
 
-    // Set LCD prescaler to give a framerate of 64Hz:
-    LCDFRR  = (0<<LCDPS0) | (3<<LCDCD0);    
+    // Set LCD prescaler to give a framerate of 32Hz:
+    LCDFRR  = (0<<LCDPS0) | (7<<LCDCD0);    
 
 	// Enable LCD and set low power waveform, enable start of frame interrupt:
     LCDCRA  = (1<<LCDEN) | (1<<LCDAB) | (1<<LCDIE);
 }
 
 /*
- NAME:      | LCD_PutStr_f
+ NAME:      | LCD_puts_f
  PURPOSE:   | Displays a string from flash onto the Butterfly's LCD
  ARGUMENTS: | Pointer to the start of the flash string
  RETURNS:   | None
 */
-void LCD_PutStr_f(const char *FlashData)
+void LCD_puts_f(const char *FlashData)
 {
 	/* Rather than create a new buffer here (wasting RAM), the TextBuffer global
 	   is re-used as a temp buffer. Once the ASCII data is loaded in to TextBuffer,
@@ -123,16 +123,16 @@ void LCD_PutStr_f(const char *FlashData)
 	   LCD interrupt.                                                                */
 
 	strcpy_P((char*)&TextBuffer[0], FlashData);
-	LCD_PutStr((char*)&TextBuffer[0]);
+	LCD_puts((char*)&TextBuffer[0]);
 }
 
 /*
- NAME:      | LCD_PutStr
+ NAME:      | LCD_puts
  PURPOSE:   | Displays a string from SRAM onto the Butterfly's LCD
  ARGUMENTS: | Pointer to the start of the SRAM string
  RETURNS:   | None
 */
-void LCD_PutStr(const char *Data)
+void LCD_puts(const char *Data)
 {
 	uint8_t LoadB       = 0;
 	uint8_t CurrByte;
@@ -148,7 +148,8 @@ void LCD_PutStr(const char *Data)
 				break;
 			case 0x00:                         // Null termination of the string - ignore for now so the nulls can be appended below
 				break;
-			default:                           // Space or invalid character, use 0xFF to display a blank
+			case ' ':                          // Space or invalid character, use 0xFF to display a blank
+			default:
 				TextBuffer[LoadB++] = LCD_SPACE_OR_INVALID_CHAR;
 		}
 	}

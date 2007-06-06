@@ -43,7 +43,7 @@ void TM_ShowTags(void)
 			MAIN_WaitForJoyRelease();
 		}
 
-		MAIN_MenuSleep();
+		SLEEPCPU(SLEEP_POWERSAVE);
 	}
 }
 
@@ -61,7 +61,7 @@ static void TM_FindNextTag(void)
 	uint8_t    TotalOkHeadBytes = 0;
 	
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);    // Orange = busy
-	LCD_PutStr_f(WaitText);
+	LCD_puts_f(WaitText);
 
 	while (DFDataBytesLeft)
 	{		
@@ -84,7 +84,7 @@ static void TM_FindNextTag(void)
 
 				TagExists  = TRUE;
 
-				LCD_PutStr(Buffer);
+				LCD_puts(Buffer);
 				MAIN_SETSTATUSLED(MAIN_STATLED_GREEN); // Green = ready
 				return;
 			}
@@ -100,6 +100,7 @@ static void TM_FindNextTag(void)
 	
 	if (TagExists == FALSE)
 	{
+		MAIN_SETSTATUSLED(MAIN_STATLED_GREEN); // Green = ready
 		MAIN_ShowError(PSTR("NO TAGS"));
 	}
 	else

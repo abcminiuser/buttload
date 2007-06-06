@@ -9,7 +9,7 @@
 
 #include "RingBuff.h"
 
-static volatile char    RingBuffer[BUFF_BUFFLEN] = {};
+static volatile uint8_t RingBuffer[BUFF_BUFFLEN] = {};
 static volatile uint8_t InPos                    = 0;
 static volatile uint8_t OutPos                   = 0;
        volatile uint8_t BuffElements             = 0;
@@ -57,7 +57,7 @@ void BUFF_InitializeBuffer(void)
  ARGUMENTS: | None
  RETURNS:   | Next bytes in the ring buffer
 */
-char BUFF_GetBuffByte(void)
+uint8_t BUFF_GetBuffByte(void)
 {
 	uint8_t RetrievedData;
 

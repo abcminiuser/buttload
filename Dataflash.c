@@ -29,7 +29,9 @@ DFinfo         DataflashInfo            = {CurrPageAddress: 0, CurrBuffByte: 0};
 */
 uint8_t DF_CheckCorrectOnboardChip(void)          // Ensures onboard Butterfly dataflash is working and the correct type
 {
-	DF_WaitWhileBusy();
+	DF_TOGGLEENABLE();
+	
+	SPI_SPITransmit(DFCB_STATUSREG);              // Send the Get Status Register command
 	
 	if (((SPI_SPITransmit(0x00) & DF_DFINFOMASK)) != (3 << 3)) // Bits 3, 4 and 5 contain the dataflash type info
 	{
@@ -53,13 +55,32 @@ uint8_t DF_CheckCorrectOnboardChip(void)          // Ensures onboard Butterfly d
 */
 void DF_CopyPage(const uint16_t PageAddress, uint8_t Operation)
 {
-	DF_WaitWhileBusy();
 	DF_TOGGLEENABLE();
 	
 	SPI_SPITransmit(Operation);
 	SPI_SPITransmit((uint8_t)(PageAddress >> DF_PAGESHIFT_HIGH));
 	SPI_SPITransmit((uint8_t)(PageAddress << DF_PAGESHIFT_LOW));
-	SPI_SPITransmit(0x00);		
+	SPI_SPITransmit(0x00);
+		
+	DF_WaitWhileBusy();
+}
+
+/*
+ NAME:      | DF_EraseBlock
+ PURPOSE:   | Erases a block of 8 pages in the dataflash
+ ARGUMENTS: | Block number to erase
+ RETURNS:   | None
+*/
+void DF_EraseBlock(const uint16_t BlockNumber)
+{
+	DF_TOGGLEENABLE();
+
+	SPI_SPITransmit(DFCB_BLOCKERASE);                   // Send block erase command
+	SPI_SPITransmit((uint8_t)(BlockNumber >> 8));
+	SPI_SPITransmit((uint8_t)(BlockNumber));
+	SPI_SPITransmit(0x00);
+
+	DF_WaitWhileBusy();
 }
 
 /*
@@ -70,7 +91,6 @@ void DF_CopyPage(const uint16_t PageAddress, uint8_t Operation)
 */
 void DF_BufferWriteEnable(const uint16_t BuffAddress)
 {
-	DF_WaitWhileBusy();
 	DF_TOGGLEENABLE();
 
 	SPI_SPITransmit(DFCB_BUF1WRITE);
@@ -87,37 +107,15 @@ void DF_BufferWriteEnable(const uint16_t BuffAddress)
 */
 void DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddress)
 {
-	DF_WaitWhileBusy();
 	DF_TOGGLEENABLE();
 	
 	SPI_SPITransmit(DFCB_CONTARRAYREAD);
 	SPI_SPITransmit((uint8_t)(PageAddress >> DF_PAGESHIFT_HIGH));
-	SPI_SPITransmit((uint8_t)((PageAddress << DF_PAGESHIFT_LOW) | (BuffAddress >> DF_BUFFERSHIFT)));
+	SPI_SPITransmit((uint8_t)((PageAddress << DF_PAGESHIFT_LOW) + (BuffAddress >> 8)));
 	SPI_SPITransmit((uint8_t)(BuffAddress));
 	
 	for (uint8_t DByte = 0; DByte < 4; DByte++)  // Perform 4 dummy writes to intiate the DataFlash address pointers
 	  SPI_SPITransmit(0x00);
-}
-
-/*
- NAME:      | DF_BufferCompare
- PURPOSE:   | Compares a page in dataflash memory with the contents of the dataflash's internal buffer
- ARGUMENTS: | Page address to compare with
- RETURNS:   | DF_COMPARE_MATCH if identical, otherwise DF_COMPARE_MISMATCH
-*/
-uint8_t DF_BufferCompare(const uint16_t PageAddress)
-{
-	DF_WaitWhileBusy();
-	DF_TOGGLEENABLE();
-	
-	SPI_SPITransmit(DFCB_FLASHTOBUF1COMPARE);	
-	SPI_SPITransmit((uint8_t)(PageAddress >> DF_PAGESHIFT_HIGH));
-	SPI_SPITransmit((uint8_t)(PageAddress << DF_PAGESHIFT_LOW));
-	SPI_SPITransmit(0x00);
-
-	DF_WaitWhileBusy();
-
-	return (SPI_SPITransmit(0x00) & DF_COMPAREMASK);
 }
 
 /*

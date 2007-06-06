@@ -32,9 +32,7 @@ uint32_t SM_GetStoredDataSize(const uint8_t Type)
 	uint16_t PageLength;
 	uint8_t  BlockStart;
 	uint8_t  BlockEnd;
-	uint16_t BytesInLastPage;	
-
-	VAMM_EnterStorageMode();
+	uint16_t BytesInLastPage;
 
 	if (Type == TYPE_FLASH)
 	{
@@ -49,23 +47,19 @@ uint32_t SM_GetStoredDataSize(const uint8_t Type)
 		PageLength = eeprom_read_word(&EEPROMVars.EPageLength);
 	}
 
-	for (uint8_t DFPageBlock = BlockEnd; DFPageBlock >= BlockStart; DFPageBlock--)
+	DF_ContinuousReadEnable((DF_DATAFLASH_PAGES - 1), 0);               // Last dataflash page contains the erased page flag array
+
+	for (uint8_t DFPageBlock = BlockStart; DFPageBlock < BlockEnd; DFPageBlock++)
 	{
-		if (PageErasedFlags[DFPageBlock] != 0xFF)                                              // Find first non-erased block, staring from the end of memory
+		uint8_t Mask      = (1 << 7);
+		uint8_t BlockData = SPI_SPITransmit(0x00);                      // Fetch next erased page flag byte
+
+		while (Mask)
 		{
-			uint8_t Mask = (1 << 7);
+			if (!(BlockData & Mask))                                    // Check if page not empty
+			  ProgDataSize += DF_INTERNALDF_BUFFBYTES;
 
-			ProgDataSize = ((DFPageBlock - BlockStart - 1) * DF_INTERNALDF_BUFFBYTES);
-
-			while (Mask)
-			{
-				if (!(PageErasedFlags[DFPageBlock] & Mask))                                    // Check if page not empty
-				  ProgDataSize += DF_INTERNALDF_BUFFBYTES;
-	
-				Mask >>= 1;
-			}
-			
-			break;
+			Mask >>= 1;
 		}
 	}
 	
@@ -73,8 +67,6 @@ uint32_t SM_GetStoredDataSize(const uint8_t Type)
 
 	if (BytesInLastPage)                                                // If size is more than an equal number of pages in length
 	  ProgDataSize += (PageLength - BytesInLastPage);                   // Increase size to the next page in length
-
-	// No VAMM_ExitStorageMode call here since no changes are made to the dataflash
 
 	return ProgDataSize;
 }

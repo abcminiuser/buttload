@@ -10,14 +10,6 @@
 #ifndef GLOBALMACROS_H
 #define GLOBALMACROS_H
 
-	// Typedefs:
-	typedef struct
-	{
-		uint8_t Bytes[4];
-	} ByteArray;
-	
-	typedef void (*FuncPtr)(void);
-	
 	// Version Macros:
 	#define VERSION_MAJOR             2
 	#define VERSION_MINOR             1
@@ -39,10 +31,12 @@
 	
 	#define MACROS                    do
 	#define MACROE                    while (0)
+
+	#define COMP_BYTE_ORDER           COMP_ORDER_LITTLE
+	#define COMP_ORDER_LITTLE         0
+	#define COMP_ORDER_BIG            1
 	
 	#define ROUND_UP(x)               (unsigned long)(((float)x) + .5)
-
-	#define BYTE(x,y)                 ((ByteArray*)&x)->Bytes[y]
 
 	// Joystick Macros:
 	#define JOY_LEFT                  (1 << 2)
@@ -54,17 +48,21 @@
 	
 	#define JOY_BMASK                 ((1 << 4) | (1 << 6) | (1 << 7))
 	#define JOY_EMASK                 ((1 << 2) | (1 << 3))
+		
+	// ASM Macros:
+	#define SLEEP()                   MACROS{ asm volatile ("sleep" ::); }MACROE
 
 	// Sleep Macros:
-	#define SLEEPCPU(mode)            MACROS{ SMCR = mode; asm volatile ("sleep" ::); }MACROE
+	#define SLEEPCPU(mode)            MACROS{ SMCR = mode; SLEEP(); }MACROE
 
 	#define SLEEP_IDLE                (1 << SE)
 	#define SLEEP_POWERDOWN           ((1 << SE) | (1 << SM1))
 	#define SLEEP_POWERSAVE           ((1 << SE) | (1 << SM1) | (1 << SM0))
 
 	// Function attributes:
+	#define ATTR_NAKED                __attribute__ ((naked))
 	#define ATTR_NO_RETURN            __attribute__ ((noreturn))
 	#define ATTR_INIT_SECTION(x)      __attribute__ ((naked, section (".init" #x )))
 	#define ATTR_WARN_UNUSED_RESULT   __attribute__ ((warn_unused_result))
-	#define ATTR_NON_NULL_PTR_ARGS(x) __attribute__ ((nonnull (x)))
+	
 #endif

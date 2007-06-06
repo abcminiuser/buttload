@@ -13,8 +13,7 @@
 	// DEBUG SWITCHES
 	 //#define DEBUG_JTAGON
 	 //#define DEBUG_MEMFILLON
-	 //#define DEBUG_DFDUMPCMDS
-	 //#define DEBUG_ISRCATCHALL
+	 //#define DEBUG_BYTEORDERTEST
 	// END DEBUG SWITCHES
 	
 	// INCLUDES:
@@ -23,32 +22,30 @@
 	#include <avr/pgmspace.h>
 	#include <avr/version.h>
 
+	#include "Analogue.h"
+	#include "Dataflash.h"
+	#include "Delay.h"	
 	#include "EEPROMVariables.h"
 	#include "GlobalMacros.h"
-
-	#if defined(INC_FROM_MAIN)
-		#include "Dataflash.h"
-		#include "Delay.h"
-		#include "ISRMacro.h"
-		#include "LCD_Driver.h"
-		#include "OSCCal.h"
-		#include "ProgramManager.h"
-		#include "Settings.h"
-		#include "SPI.h"
-		#include "StorageManager.h"
-		#include "Support/ButtLoadTag.h"
-		#include "TagManager.h"
-		#include "ToneGeneration.h"
-		#include "USART.h"
-		#include "USI.h"
-		#include "V2Protocol.h"
-		#include "VirtualAVRMemManager.h"
-	#endif
+	#include "ISRMacro.h"
+	#include "LCD_Driver.h"
+	#include "OSCCal.h"
+	#include "ProgramManager.h"
+	#include "Settings.h"
+	#include "SPI.h"
+	#include "StorageManager.h"
+	#include "Support/ButtLoadTag.h"
+	#include "TagManager.h"
+	#include "ToneGeneration.h"
+	#include "USART.h"
+	#include "USI.h"
+	#include "V2Protocol.h"
+	#include "VirtualAVRMemManager.h"
 	
 	#if defined(INC_FROM_MAIN)
 		// LIB C VERSION CHECK:
 		#if (!defined(__AVR_LIBC_VERSION__) || (__AVR_LIBC_VERSION__ < 10401UL)) // In future AVRLibC version requirements may be increased with changes
-			#error avr-libc version 1.4.1 or higher is required to compile this project.
+			#error AVRLibC Version 1.4.1 or higher is required to compile this project.
 		#endif
 	
 		// DEBUG MODE CHECKS:
@@ -64,8 +61,9 @@
 	#define JoyStatus                  GPIOR1 // Psudo-variable, GPIO register for speed
 
 	extern EEPROMVarsType EEPROMVars   EEMEM;
-	extern const uint8_t  BitTable[]   PROGMEM;
-	
+
+	extern const uint8_t BitTable[]    PROGMEM;
+
 	// DEFINES AND MACROS:
 	#define MAIN_STATUSLED_PORT        PORTF
 	#define MAIN_STATUSLED_PIN         PINF
@@ -86,14 +84,13 @@
 
 	void MAIN_SetTargetResetLine(const uint8_t ActiveInactive);
 	void MAIN_WaitForJoyRelease(void);
-	void MAIN_IntToStr(uint16_t IntV, char *Buff) ATTR_NON_NULL_PTR_ARGS(2);
+	void MAIN_IntToStr(uint16_t IntV, char *Buff);
 	void MAIN_ShowProgType(const uint8_t Letter);
-	void MAIN_ShowError(const char *pFlashStr) ATTR_NON_NULL_PTR_ARGS(1);
+	void MAIN_ShowError(const char *pFlashStr);
 	
 	void MAIN_Delay10MS(uint8_t loops);
 	void MAIN_Delay1MS(uint8_t loops);
 	
-	void MAIN_MenuSleep(void);
 	void MAIN_SleepMode(void);
 
 	#if defined(INC_FROM_MAIN)
@@ -111,4 +108,5 @@
 	#endif
 
 	void MAIN_Util_RAMFill(void) ATTR_INIT_SECTION(0);
+	void MAIN_Util_ByteOrderTest(void) ATTR_INIT_SECTION(3);
 #endif

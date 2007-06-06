@@ -34,12 +34,12 @@ void AICI_InterpretPacket(void)
 
 			if (InProgrammingMode)
 			{
-				LCD_PutStr_f(AVRISPModeMessage);
+				LCD_puts_f(AVRISPModeMessage);
 				PacketBytes[1] = AICB_STATUS_CMD_OK;
 			}
 			else
 			{
-				LCD_PutStr_f(SyncErrorMessage);
+				LCD_puts_f(SyncErrorMessage);
 				PacketBytes[1] = AICB_STATUS_CMD_FAILED;
 			}
 
@@ -69,10 +69,16 @@ void AICI_InterpretPacket(void)
 
 			if (PacketBytes[2])                        // Poll mode, value of 1 indicates a busy flag wait
 			{
-				ProgrammingFault = ISPCC_NO_FAULT;
-				PM_WaitWhileTargetBusy();
+				TCNT1  = 0;                            // Clear timer 1
+				TCCR1B = ((1 << CS12) | (1 << CS10));  // Start timer 1 with a Fcpu/1024 clock
 
-				PacketBytes[1] = ((ProgrammingFault == ISPCC_NO_FAULT)? AICB_STATUS_CMD_OK : AICB_STATUS_CMD_TOUT);
+				do
+				  USI_SPITransmitWord(0xF000);
+				while ((USI_SPITransmitWord(0x0000) & 0x01) && (TCNT1 < ISPCC_COMM_TIMEOUT));
+
+				TCCR1B = 0;                            // Stop timer 1
+
+				PacketBytes[1] = ((TCNT1 < ISPCC_COMM_TIMEOUT)? AICB_STATUS_CMD_OK : AICB_STATUS_CMD_TOUT);
 			}
 			else                                       // Poll mode flag of 0 indicates a predefined delay
 			{
@@ -148,9 +154,13 @@ void AICI_InterpretPacket(void)
 			for (uint16_t ReadByte = 0; ReadByte < BytesToRead; ReadByte++)
 			{
 				if (PacketBytes[0] == AICB_CMD_READ_FLASH_ISP)  // Flash read mode - word addresses so MSB/LSB masking nessesary
-				  USI_SPITransmit(ReadCommand | ((ReadByte & 0x01)? ISPCC_HIGH_BYTE_READ : ISPCC_LOW_BYTE_READ));
+				{
+					USI_SPITransmit(ReadCommand | ((ReadByte & 0x01)? ISPCC_HIGH_BYTE_READ : ISPCC_LOW_BYTE_READ));
+				}
 				else                                   // EEPROM read mode, address is in bytes and so no masking nessesary
-				  USI_SPITransmit(ReadCommand);
+				{
+					USI_SPITransmit(ReadCommand);
+				}
 				
 				USI_SPITransmitWord(CurrAddress);      // Transmit the current address to the slave AVR
 
@@ -162,11 +172,9 @@ void AICI_InterpretPacket(void)
 				}
 				else
 				{
-					V2P_CheckForExtendedAddress();
-
-					if (BYTE(CurrAddress, 2) && !(BYTE(CurrAddress, 0) | BYTE(CurrAddress, 1)))
+					if ((CurrAddress & V2P_LOAD_EXTENDED_ADDR_MASK) && !(CurrAddress & 0x0000FFFF))
 					{
-						BYTE(CurrAddress, 3) = (1 << 7); // Set MSB set of the address, indicates a LOAD_EXTENDED_ADDRESS must be executed			  
+						CurrAddress |= V2P_LOAD_EXTENDED_ADDR_FLAG; // Set MSB set of the address, indicates a LOAD_EXTENDED_ADDRESS must be executed
 						V2P_CheckForExtendedAddress();
 					}
 				}
@@ -184,22 +192,6 @@ void AICI_InterpretPacket(void)
 
 			PacketBytes[1] = ((ProgrammingFault == ISPCC_NO_FAULT) ? AICB_STATUS_CMD_OK : AICB_STATUS_CMD_TOUT);
 			
-			break;
-		case AICB_CMD_OSCCAL:
-			MessageSize = 2;
-
-			MAIN_SetTargetResetLine(MAIN_RESET_INACTIVE);
-			
-			USICR = 0;                                 // Disable USI while calibration sequence runs
-			PacketBytes[1] = (AICI_SendCalibrationClocks() ? AICB_STATUS_CMD_OK : AICB_STATUS_CMD_FAILED);
-			USI_SPIInitMaster();                       // Re-enable USI subsystem
-			
-			if (InProgrammingMode)                     // Was previously in programming mode, re-enter in preparation of future commands
-			{
-				MAIN_SetTargetResetLine(MAIN_RESET_ACTIVE);
-				ISPCC_EnterChipProgrammingMode();
-			}
-
 			break;
 		default:                                       // Unknown command, return error
 			MessageSize = 2;

@@ -66,12 +66,12 @@ void PM_ShowStoredItemSizes(void)
 			SPI_SPIOFF();
 	
 			Buffer[4] = '-';
-			LCD_PutStr(Buffer);
+			LCD_puts(Buffer);
 
 			MAIN_WaitForJoyRelease();
 		}
 
-		MAIN_MenuSleep();
+		SLEEPCPU(SLEEP_POWERSAVE);
 	}
 }
 
@@ -97,7 +97,7 @@ void PM_StartProgAVR(void)
 		return;		
 	}
 
-	LCD_PutStr(WaitText);
+	LCD_puts_f(WaitText);
 	
 	DF_ENABLEDATAFLASH(TRUE);
 	SPI_SPIInit();
@@ -213,12 +213,12 @@ void PM_StartProgAVR(void)
 		{
 			if (ProgrammingFault != ISPCC_NO_FAULT)
 			{
-				LCD_PutStr_f(PSTR("PROG FAILED"));
+				LCD_puts_f(PSTR("PROG FAILED"));
 				TG_PlayToneSeq(TONEGEN_SEQ_PROGFAIL);
 			}
 			else
 			{
-				LCD_PutStr_f(PSTR("PROG DONE"));
+				LCD_puts_f(PSTR("PROG DONE"));
 				TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);		
 			}
 	
@@ -287,12 +287,12 @@ void PM_ChooseProgAVROpts(void)
 			Buffer[5] = ((ProgOptions & SelectedOptMask) ? 'Y' : 'N');
 			Buffer[6] = '\0';
 
-			LCD_PutStr(Buffer);
+			LCD_puts(Buffer);
 
 			MAIN_WaitForJoyRelease();
 		}
 
-		MAIN_MenuSleep();
+		SLEEPCPU(SLEEP_POWERSAVE);
 	}
 }
 
@@ -315,27 +315,6 @@ void PM_SetProgramDataType(uint8_t Mask)
 	  ProgOptions |= Mask;
 	  
 	eeprom_write_byte(&EEPROMVars.PGOptions, ProgOptions);
-}
-
-/*
- NAME:      | PM_WaitWhileTargetBusy
- PURPOSE:   | Busy-waits (with timeout) while target's status is busy
- ARGUMENTS: | None
- RETURNS:   | None
-*/
-void PM_WaitWhileTargetBusy(void)
-{
-	TCNT1  = 0;                                                     // Clear timer 1
-	TCCR1B = ((1 << CS12) | (1 << CS10));                           // Start timer 1 with a Fcpu/1024 clock
-
-	do
-	  USI_SPITransmitWord(0xF000);
-	while ((USI_SPITransmitWord(0x0000) & 0x01) && (TCNT1 < ISPCC_COMM_TIMEOUT));
-
-	if (TCNT1 >= ISPCC_COMM_TIMEOUT)
-	  ProgrammingFault = ISPCC_FAULT_TIMEOUT;
-	
-	TCCR1B = 0;                                                     // Stop timer 1
 }
 
 /*
@@ -370,7 +349,7 @@ static void PM_SendFuseLockBytes(const uint8_t Type)
 		
 		// Add some delay before programming next byte, if there is one:
 		if (TotalBytes)
-		  MAIN_Delay10MS(2);
+		  MAIN_Delay10MS(5);
 	}
 }
 
@@ -382,13 +361,27 @@ static void PM_SendFuseLockBytes(const uint8_t Type)
 */
 static void PM_SendEraseCommand(void)
 {			
-	for (uint8_t EraseByte = 3; EraseByte < 7 ; EraseByte++)               // Read out the erase chip command bytes
-	  USI_SPITransmit(eeprom_read_byte(&EEPROMVars.EraseChip[EraseByte])); // Send the erase chip commands
+	for (uint8_t B = 3; B < 7 ; B++)                                    // Read out the erase chip command bytes
+	  USI_SPITransmit(eeprom_read_byte(&EEPROMVars.EraseChip[B]));      // Send the erase chip commands
 			
 	if (eeprom_read_byte(&EEPROMVars.EraseChip[2]))                     // Value of 1 indicates a busy flag test
-	  PM_WaitWhileTargetBusy();
+	{
+		TCNT1  = 0;                                                     // Clear timer 1
+		TCCR1B = ((1 << CS12) | (1 << CS10));                           // Start timer 1 with a Fcpu/1024 clock
+
+		do
+		  USI_SPITransmitWord(0xF000);
+		while ((USI_SPITransmitWord(0x0000) & 0x01) && (TCNT1 < ISPCC_COMM_TIMEOUT));
+
+		if (TCNT1 >= ISPCC_COMM_TIMEOUT)
+		  ProgrammingFault = ISPCC_FAULT_TIMEOUT;
+	
+		TCCR1B = 0;                                                     // Stop timer 1
+	}
 	else                                                                // Cleared flag means use a predefined delay
-	  MAIN_Delay1MS(eeprom_read_byte(&EEPROMVars.EraseChip[1]));        // Wait the erase delay
+	{		
+		MAIN_Delay1MS(eeprom_read_byte(&EEPROMVars.EraseChip[1]));      // Wait the erase delay
+	}
 }
 
 /*
@@ -422,9 +415,9 @@ static void PM_CreateProgrammingPackets(void)
 		PacketBytes[0] = AICB_CMD_PROGRAM_EEPROM_ISP;
 	}
 
-	for (uint8_t HeaderByte = 0; HeaderByte < 10; HeaderByte++)         // Load in the write data command bytes
+	for (uint8_t B = 0; B < 10; B++)                                    // Load in the write data command bytes
 	{
-		PacketBytes[HeaderByte] = eeprom_read_byte(EEPROMAddress);      // Synthesise a write packet header
+		PacketBytes[B] = eeprom_read_byte(EEPROMAddress);               // Synthesise a write packet header
 		EEPROMAddress++;                                                // Increment the EEPROM location counter
 	}
 
@@ -494,7 +487,11 @@ static void PM_CreateProgrammingPackets(void)
 		LCD_BARGRAPH((uint8_t)(BytesRead / BytesPerProgress));          // Show the progress onto the LCD
 
 		if (ProgrammingFault)                                           // Error out early if there's a problem such as a timeout
-		  break;
+		{
+			LCD_BARGRAPH(0);
+			VAMM_ExitStorageMode();
+			return;
+		}
 	}
 	
 	LCD_BARGRAPH(0);

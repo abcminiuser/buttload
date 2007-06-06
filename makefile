@@ -67,7 +67,8 @@ OBJDIR = ./.obj
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC =	AVRISPCommandInterpreter.c   \
+SRC =	Analogue.c                   \
+		AVRISPCommandInterpreter.c   \
 		Dataflash.c                  \
 		ISPChipComm.c                \
 		LCD_Driver.c                 \
@@ -94,8 +95,7 @@ SRC =	AVRISPCommandInterpreter.c   \
 #     Even though the DOS/Win* filesystem matches both .s and .S the same,
 #     it will preserve the spelling of the filenames, and gcc itself does
 #     care about how the name is spelled on its command-line.
-ASRC =  TargetCal.S                 \
-        USITransfer.S
+ASRC =  USITransfer.S
 
 
 # Optimization level, can be [0, 1, 2, 3, s]. 
@@ -128,10 +128,6 @@ CSTANDARD = -std=gnu99
 
 # Place -D or -U options here for C sources
 CDEFS = -DF_CPU=$(F_CPU)UL
-
-
-# Place -D or -U options here for ASM sources
-ADEFS = -DF_CPU=$(F_CPU)
 
 
 #---------------- Compiler Options C ----------------
@@ -175,7 +171,7 @@ CFLAGS += $(CSTANDARD)
 #             files -- see avr-libc docs [FIXME: not yet described there]
 #  -listing-cont-lines: Sets the maximum number of continuation lines of hex 
 #       dump that will be displayed for a given single line of source input.
-ASFLAGS = $(ADEFS) -Wa,-adhlns=$(<:%.S=$(OBJDIR)/%.lst),-gstabs,--listing-cont-lines=100
+ASFLAGS = -Wa,-adhlns=$(<:.S=$(OBJDIR)/%.lst),-gstabs,--listing-cont-lines=100
 
 
 #---------------- Library Options ----------------
