@@ -66,12 +66,12 @@ void PM_ShowStoredItemSizes(void)
 			SPI_SPIOFF();
 	
 			Buffer[4] = '-';
-			LCD_puts(Buffer);
+			LCD_PutStr(Buffer);
 
 			MAIN_WaitForJoyRelease();
 		}
 
-		SLEEPCPU(SLEEP_POWERSAVE);
+		MAIN_MenuSleep();
 	}
 }
 
@@ -97,7 +97,7 @@ void PM_StartProgAVR(void)
 		return;		
 	}
 
-	LCD_puts_f(WaitText);
+	LCD_PutStr(WaitText);
 	
 	DF_ENABLEDATAFLASH(TRUE);
 	SPI_SPIInit();
@@ -213,12 +213,12 @@ void PM_StartProgAVR(void)
 		{
 			if (ProgrammingFault != ISPCC_NO_FAULT)
 			{
-				LCD_puts_f(PSTR("PROG FAILED"));
+				LCD_PutStr_f(PSTR("PROG FAILED"));
 				TG_PlayToneSeq(TONEGEN_SEQ_PROGFAIL);
 			}
 			else
 			{
-				LCD_puts_f(PSTR("PROG DONE"));
+				LCD_PutStr_f(PSTR("PROG DONE"));
 				TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);		
 			}
 	
@@ -287,12 +287,12 @@ void PM_ChooseProgAVROpts(void)
 			Buffer[5] = ((ProgOptions & SelectedOptMask) ? 'Y' : 'N');
 			Buffer[6] = '\0';
 
-			LCD_puts(Buffer);
+			LCD_PutStr(Buffer);
 
 			MAIN_WaitForJoyRelease();
 		}
 
-		SLEEPCPU(SLEEP_POWERSAVE);
+		MAIN_MenuSleep();
 	}
 }
 
@@ -370,7 +370,7 @@ static void PM_SendFuseLockBytes(const uint8_t Type)
 		
 		// Add some delay before programming next byte, if there is one:
 		if (TotalBytes)
-		  MAIN_Delay10MS(5);
+		  MAIN_Delay10MS(2);
 	}
 }
 

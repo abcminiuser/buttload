@@ -92,7 +92,7 @@ void DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddr
 	
 	SPI_SPITransmit(DFCB_CONTARRAYREAD);
 	SPI_SPITransmit((uint8_t)(PageAddress >> DF_PAGESHIFT_HIGH));
-	SPI_SPITransmit((uint8_t)((PageAddress << DF_PAGESHIFT_LOW) + (BuffAddress >> 8)));
+	SPI_SPITransmit((uint8_t)((PageAddress << DF_PAGESHIFT_LOW) | (BuffAddress >> DF_BUFFERSHIFT)));
 	SPI_SPITransmit((uint8_t)(BuffAddress));
 	
 	for (uint8_t DByte = 0; DByte < 4; DByte++)  // Perform 4 dummy writes to intiate the DataFlash address pointers

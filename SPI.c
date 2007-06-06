@@ -34,6 +34,7 @@ uint8_t SPI_SPITransmit(const uint8_t Data)
 {
 	SPDR = Data;                       // Loading a byte into the data register, data is shifted out automatically
 	while (!(SPSR & (1 << SPIF)));     // Wait until transmission completed
+
 	return SPDR;
 }
 
@@ -45,6 +46,13 @@ uint8_t SPI_SPITransmit(const uint8_t Data)
 */
 uint8_t SPI_SPITransmitWord(const uint16_t Data)
 {
-	SPI_SPITransmit((Data >> 8));
-	return SPI_SPITransmit(Data);
+	// Routine repeats code in SPI_SPITransmit rather than calling it to increase speed
+
+	SPDR = (Data >> 8);                // Load high byte into the data register, data is shifted out automatically
+	while (!(SPSR & (1 << SPIF)));     // Wait until transmission completed
+
+	SPDR = (Data & 0xFF);              // Load low byte into the data register, data is shifted out automatically
+	while (!(SPSR & (1 << SPIF)));     // Wait until transmission completed
+
+	return SPDR;
 }

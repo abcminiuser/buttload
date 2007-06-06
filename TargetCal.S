@@ -8,7 +8,8 @@
 ;
 
 ; Routine provides a 32.768KHz clock to the target via the MOSI line, while listening for clocks on the
-; MISO line. This is used to calibrate the target's OSCCAL value - see AVR053 for more details.
+; MISO line. This is used to calibrate the target's OSCCAL value - see AVR053 for more details. Routine
+; times out after a maximum of 1024 clocks.
 
 #include "USI.h"
 
@@ -48,7 +49,7 @@ AICI_SendCalibrationClocks:
 	ldi  PL(CAL_CLOCKSREM_ASM_REG), LOW(1024 * 2)
 	ldi  PH(CAL_CLOCKSREM_ASM_REG), HIGH(1024 * 2)
 
-	ldi  CAL_RETCLOCKREM_ASM_REG, 4
+	ldi  CAL_RETCLOCKREM_ASM_REG, (2 * 2)
 
 	cli
 

@@ -66,8 +66,8 @@
 									  }MACROE
 
 	// PROTOTYPES:
-	void LCD_puts(const char *Data);
-	void LCD_puts_f(const char *FlashData);
+	void LCD_PutStr_f(const char *FlashData) ATTR_NON_NULL_PTR_ARGS(1);
+	void LCD_PutStr(const char *Data) ATTR_NON_NULL_PTR_ARGS(1);
 	void LCD_Init(void);
 	
 	#if defined(INC_FROM_DRIVER)

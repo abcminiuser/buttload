@@ -21,12 +21,12 @@
 #include "LCD_Driver.h"
 
 //                                  LCD Text            + Nulls for scrolling + Null Termination
-static volatile char     TextBuffer[LCD_TEXTBUFFER_SIZE + LCD_DISPLAY_SIZE    + 1] = {};
-static volatile uint8_t  StrStart        = 0;
-static volatile uint8_t  StrEnd          = 0;
-static volatile uint8_t  ScrollCount     = 0;
-static volatile uint8_t  UpdateDisplay   = FALSE;
-       volatile uint8_t  ScrollFlags     = 0;
+static          char    TextBuffer[LCD_TEXTBUFFER_SIZE + LCD_DISPLAY_SIZE    + 1] = {};
+static          uint8_t StrStart        = 0;
+static volatile uint8_t StrEnd          = 0; // Volatile here because it saves space in the ISR
+static          uint8_t ScrollCount     = 0;
+static volatile uint8_t UpdateDisplay    = FALSE;
+       volatile uint8_t ScrollFlags      = 0;
 
 const           uint16_t LCD_SegTable[] PROGMEM =
 {
@@ -110,12 +110,12 @@ void LCD_Init(void)
 }
 
 /*
- NAME:      | LCD_puts_f
+ NAME:      | LCD_PutStr_f
  PURPOSE:   | Displays a string from flash onto the Butterfly's LCD
  ARGUMENTS: | Pointer to the start of the flash string
  RETURNS:   | None
 */
-void LCD_puts_f(const char *FlashData)
+void LCD_PutStr_f(const char *FlashData)
 {
 	/* Rather than create a new buffer here (wasting RAM), the TextBuffer global
 	   is re-used as a temp buffer. Once the ASCII data is loaded in to TextBuffer,
@@ -123,16 +123,16 @@ void LCD_puts_f(const char *FlashData)
 	   LCD interrupt.                                                                */
 
 	strcpy_P((char*)&TextBuffer[0], FlashData);
-	LCD_puts((char*)&TextBuffer[0]);
+	LCD_PutStr((char*)&TextBuffer[0]);
 }
 
 /*
- NAME:      | LCD_puts
+ NAME:      | LCD_PutStr
  PURPOSE:   | Displays a string from SRAM onto the Butterfly's LCD
  ARGUMENTS: | Pointer to the start of the SRAM string
  RETURNS:   | None
 */
-void LCD_puts(const char *Data)
+void LCD_PutStr(const char *Data)
 {
 	uint8_t LoadB       = 0;
 	uint8_t CurrByte;
@@ -143,12 +143,14 @@ void LCD_puts(const char *Data)
 		
 		switch (CurrByte)
 		{
-			case '*'...'z':	                   // Valid character, load it into the array
+			case 'a'...'z':
+				CurrByte &= ~(1 << 5);                   // Translate to upper-case character
+			case '*'...'_':	                             // Valid character, load it into the array
 				TextBuffer[LoadB++] = (CurrByte - '*');
 				break;
-			case 0x00:                         // Null termination of the string - ignore for now so the nulls can be appended below
+			case 0x00:                                   // Null termination of the string - ignore for now so the nulls can be appended below
 				break;
-			default:                           // Space or invalid character, use 0xFF to display a blank
+			default:                                     // Space or invalid character, use 0xFF to display a blank
 				TextBuffer[LoadB++] = LCD_SPACE_OR_INVALID_CHAR;
 		}
 	}
@@ -156,15 +158,43 @@ void LCD_puts(const char *Data)
 
 	ScrollFlags = ((LoadB > LCD_DISPLAY_SIZE)? LCD_FLAG_SCROLL : 0x00);
 
-	for (uint8_t Nulls = 0; Nulls < 7; Nulls++)
-	  TextBuffer[LoadB++] = LCD_SPACE_OR_INVALID_CHAR; // Load in nulls to ensure that when scrolling, the display clears before wrapping
+	for (uint8_t Nulls = 0; (Nulls < LCD_DISPLAY_SIZE + 1); Nulls++)
+	  TextBuffer[LoadB++] = LCD_SPACE_OR_INVALID_CHAR;  // Load in nulls to ensure that when scrolling, the display clears before wrapping
 	
-	TextBuffer[LoadB] = 0x00;                  // Null-terminate string
+	TextBuffer[LoadB] = 0x00;                           // Null-terminate string
 	
 	StrStart      = 0;
 	StrEnd        = LoadB;
 	ScrollCount   = LCD_SCROLLCOUNT_DEFAULT + LCD_DELAYCOUNT_DEFAULT;
 	UpdateDisplay = TRUE;
+}
+
+/*
+ NAME:      | LCD_WriteChar (static, inline)
+ PURPOSE:   | Routine to write a character to the correct LCD registers for display
+ ARGUMENTS: | Character to display, LCD character number to display character on
+ RETURNS:   | None
+*/
+static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit)
+{
+	uint8_t* BuffPtr = (uint8_t*)(LCD_LCDREGS_START + (Digit >> 1));
+	uint16_t SegData = 0x0000;
+
+	if (Byte != LCD_SPACE_OR_INVALID_CHAR)              // Null indicates invalid character or space
+	  SegData = pgm_read_word(&LCD_SegTable[Byte]);	
+
+	for (uint8_t BNib = 0; BNib < 4; BNib++)
+	{
+		uint8_t MaskedSegData = (SegData & 0x0000F);
+
+		if (Digit & 0x01)
+		  *BuffPtr = ((*BuffPtr & 0x0F) | (MaskedSegData << 4));
+		else
+		  *BuffPtr = ((*BuffPtr & 0xF0) | MaskedSegData);
+
+		BuffPtr  += 5;
+		SegData >>= 4;
+	}	
 }
 
 /*
@@ -196,39 +226,15 @@ ISR(LCD_vect, ISR_BLOCK)
 			LCD_WriteChar(TextBuffer[Byte], Character);
 		}
 		
-		if ((StrStart + (LCD_DISPLAY_SIZE + 1)) == StrEnd) // Done scrolling message on LCD once
+		if ((StrStart + LCD_DISPLAY_SIZE) == StrEnd)    // Done scrolling message on LCD once
 		  ScrollFlags |= LCD_FLAG_SCROLL_DONE;
 		
-		if (StrStart++ == StrEnd)
-		  StrStart     = 1;
+		if (StrStart == StrEnd)
+		  StrStart = 1;
+		else
+		  StrStart++;
 
 		UpdateDisplay  = FALSE;                         // Clear LCD management flags, LCD update is complete
 	}
 }
 
-/*
- NAME:      | LCD_WriteChar (static, inline)
- PURPOSE:   | Routine to write a character to the correct LCD registers for display
- ARGUMENTS: | Character to display, LCD character number to display character on
- RETURNS:   | None
-*/
-static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit)
-{
-	uint16_t SegData  = 0x0000;
-
-	if (Byte != LCD_SPACE_OR_INVALID_CHAR)     // Null indicates invalid character or space
-	  SegData = pgm_read_word(&LCD_SegTable[Byte]);	
-
-	for (uint8_t BNib = 0; BNib < 4; BNib++)
-	{
-		uint8_t* BuffPtr       = (uint8_t*)(LCD_LCDREGS_START + (5 * BNib) + (Digit >> 1));
-		uint8_t  MaskedSegData = (SegData & 0x0000F);
-
-		if (Digit & 0x01)
-		  *BuffPtr = ((*BuffPtr & 0x0F) | (MaskedSegData << 4));
-		else
-		  *BuffPtr = ((*BuffPtr & 0xF0) | MaskedSegData);
-
-		SegData >>= 4;
-	}	
-}

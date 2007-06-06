@@ -10,10 +10,10 @@
 #define  INC_FROM_VAMM
 #include "VirtualAVRMemManager.h"
 
-volatile uint8_t  VAMMSetup                            = VAMM_SETUP_NA;
-static   uint8_t  CurrPageCleared                      = FALSE;
-         uint8_t  PageErasedFlags[DF_DATAFLASH_BLOCKS] = {};
-         uint8_t  EraseFlagsTransReq                   = FALSE;
+static volatile uint8_t  VAMMSetup                            = VAMM_SETUP_NA;
+static          uint8_t  CurrPageCleared                      = FALSE;
+                uint8_t  PageErasedFlags[DF_DATAFLASH_BLOCKS] = {};
+                uint8_t  EraseFlagsTransReq                   = FALSE;
 
 // ======================================================================================
 
@@ -106,7 +106,7 @@ void VAMM_SetAddress(void)
 
 	DataflashInfo.CurrPageAddress = (uint16_t)(StartAddress.UnsignedLong / DF_INTERNALDF_BUFFBYTES);
 	DataflashInfo.CurrBuffByte    = (uint16_t)(StartAddress.UnsignedLong % DF_INTERNALDF_BUFFBYTES);
-	
+
 	VAMMSetup = VAMM_SETUP_ADDR_DONE;
 }
 

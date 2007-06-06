@@ -11,7 +11,7 @@
 
 /* Tone values are compressed to save on space at the expense of resolution.
    When played, the tone value is expanded to 16-bit and shifted left 5 times
-   to give 11 bits of resolution. As the exact frequency of the tones isn't
+   to give 8 bits of resolution. As the exact frequency of the tones isn't
    important, this is an acceptable tradeoff. Lower values = higher tone. Note
    that the tone generation is syncronous; program execution halts while the
    tone plays.                                                                 */
@@ -43,7 +43,6 @@ void TG_PlayToneSeq(const uint8_t* Sequence)
 	else if (ToneVol > 80)
 	  ToneVol = 80;
 
-	TIMSK1 = 0;                                   // Turn off timer interrupts
 	OCR1A  = ToneVol;                             // Set the tone volume via the global register
 	TCCR1A = (1 << COM1A1);                       // OC1A set when counting up, cleared when counting down
 	TCCR1B = ((1 << WGM13) | (1 << CS10));        // Phase/Freq correct PWM mode, turn on with prescaler of 1

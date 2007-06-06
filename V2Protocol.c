@@ -11,17 +11,17 @@
 #include "V2Protocol.h"
 
 // PROGMEM CONSTANTS:
-const uint8_t SignonResponse[]          PROGMEM = {AICB_CMD_SIGN_ON, AICB_STATUS_CMD_OK, 8, 'A', 'V', 'R', 'I', 'S', 'P', '_', '2', 0x00};
+const  uint8_t SignonResponse[]        PROGMEM = {AICB_CMD_SIGN_ON, AICB_STATUS_CMD_OK, 8, 'A', 'V', 'R', 'I', 'S', 'P', '_', '2', 0x00};
 
 // GLOBAL VARIABLES:
-        uint8_t  PacketBytes[V2P_MAXBUFFSIZE]   = {};
-static  uint8_t  SequenceNum                    = 0;
-        uint16_t MessageSize                    = 0;
+       uint8_t  PacketBytes[V2P_MAXBUFFSIZE]   = {};
+static uint8_t  SequenceNum                    = 0;
+       uint16_t MessageSize                    = 0;
 
-        uint8_t  InProgrammingMode              = FALSE;
-        uint32_t CurrAddress                    = 0;
+       uint8_t  InProgrammingMode              = FALSE;
+       uint32_t CurrAddress                    = 0;
 
-static  uint8_t  Param_ControllerInit           = 0; // This is set to zero on reset, and can be written to or read by the computer
+static uint8_t  Param_ControllerInit           = 0; // This is set to zero on reset, and can be written to or read by the computer
 
 // ======================================================================================
 
@@ -123,19 +123,29 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 
 				break;
 			case V2P_STATE_BADCHKSUM:
-			case V2P_STATE_TIMEOUT:
-			case V2P_STATE_PACKERR:
-				if (V2PState == V2P_STATE_BADCHKSUM)
-				  PacketBytes[1] = AICB_STATUS_CKSUM_ERROR;
-				else if (V2PState == V2P_STATE_TIMEOUT)
-				  PacketBytes[1] = AICB_STATUS_CMD_TOUT;
-				else
-				  PacketBytes[1] = AICB_STATUS_CMD_FAILED;
+				PacketBytes[1] = AICB_STATUS_CKSUM_ERROR;
 
 				MessageSize = 2;
 				V2P_SendPacket();
 
-				// Fall through to V2P_STATE_PACKOK
+				V2PState = V2P_STATE_PACKOK;
+				break;
+			case V2P_STATE_TIMEOUT:
+				PacketBytes[1] = AICB_STATUS_CMD_TOUT;
+
+				MessageSize = 2;
+				V2P_SendPacket();
+				
+				V2PState = V2P_STATE_PACKOK;
+				break;
+			case V2P_STATE_PACKERR:
+				PacketBytes[1] = AICB_STATUS_CMD_FAILED;
+
+				MessageSize = 2;
+				V2P_SendPacket();
+
+				V2PState = V2P_STATE_PACKOK;
+				break;
 			case V2P_STATE_PACKOK:
 				PacketTimeOut = FALSE;
 				BUFF_InitializeBuffer();           // Flush the ringbuffer

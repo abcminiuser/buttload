@@ -56,14 +56,14 @@
 	extern uint32_t  CurrAddress;
 	
 	// PROTOTYPES:
-	void    V2P_RunStateMachine(FuncPtr PacketDecodeFunction);
+	void    V2P_RunStateMachine(FuncPtr PacketDecodeFunction) ATTR_NON_NULL_PTR_ARGS(1);
 	void    V2P_SendPacket(void);
 	void    V2P_IncrementCurrAddress(void);
 	void    V2P_CheckForExtendedAddress(void);
 
 	#if defined(INC_FROM_V2P)
 	  static uint8_t V2P_GetChecksum(void) ATTR_WARN_UNUSED_RESULT;
-	  static void    V2P_ProcessPacketData(FuncPtr PacketDecodeFunction);
+	  static void    V2P_ProcessPacketData(FuncPtr PacketDecodeFunction) ATTR_NON_NULL_PTR_ARGS(1);
 	  static void    V2P_GetSetParameter(void);
 	#endif
 	

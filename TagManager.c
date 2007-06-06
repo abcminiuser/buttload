@@ -43,7 +43,7 @@ void TM_ShowTags(void)
 			MAIN_WaitForJoyRelease();
 		}
 
-		SLEEPCPU(SLEEP_POWERSAVE);
+		MAIN_MenuSleep();
 	}
 }
 
@@ -61,7 +61,7 @@ static void TM_FindNextTag(void)
 	uint8_t    TotalOkHeadBytes = 0;
 	
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);    // Orange = busy
-	LCD_puts_f(WaitText);
+	LCD_PutStr_f(WaitText);
 
 	while (DFDataBytesLeft)
 	{		
@@ -84,7 +84,7 @@ static void TM_FindNextTag(void)
 
 				TagExists  = TRUE;
 
-				LCD_puts(Buffer);
+				LCD_PutStr(Buffer);
 				MAIN_SETSTATUSLED(MAIN_STATLED_GREEN); // Green = ready
 				return;
 			}
