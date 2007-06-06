@@ -28,7 +28,7 @@ void VAMM_EnterStorageMode(void)
 	EraseFlagsTransReq = FALSE;
 	VAMMSetup = VAMM_SETUP_NA;
 
-	DF_ContinuousReadEnable((DF_DATAFLASH_PAGES - 1), 0); // Last dataflash page contains the erased page flag array
+	DF_ContinuousReadEnable(VAMM_PAGEERASED_DF_PAGE, 0); // Last dataflash page contains the erased page flag array
 
 	for (uint16_t ByteNum = 0; ByteNum < sizeof(PageErasedFlags); ByteNum++)
 	  PageErasedFlags[ByteNum] = SPI_SPITransmit(0x00);
@@ -47,12 +47,15 @@ void VAMM_ExitStorageMode(void)
 	if (EraseFlagsTransReq)
 	{
 		DF_BufferWriteEnable(0);
-
+		
 		for (uint16_t ByteNum = 0; ByteNum < sizeof(PageErasedFlags); ByteNum++)
 		  SPI_SPITransmit(PageErasedFlags[ByteNum]);
 
-		if (DF_BufferCompare((DF_DATAFLASH_PAGES - 1)) != DF_COMPARE_MATCH) // Compare so that write is only executed if page data is different
-		  DF_CopyPage((DF_DATAFLASH_PAGES - 1), DF_BUFFER_TO_FLASH); // Last dataflash page contains the erased page flag array
+		for (uint16_t ByteNum = 0; ByteNum < (DF_INTERNALDF_BUFFBYTES - sizeof(PageErasedFlags)); ByteNum++)
+		  SPI_SPITransmit(0xFF); // Fill remainder of buffer with 0xFFs so that compare can execute correctly
+
+		if (DF_BufferCompare(VAMM_PAGEERASED_DF_PAGE) != DF_COMPARE_MATCH) // Compare so that write is only executed if page data is different
+		  DF_CopyPage(VAMM_PAGEERASED_DF_PAGE, DF_BUFFER_TO_FLASH); // Last dataflash page contains the erased page flag array
 	}	
 }
 
@@ -92,11 +95,7 @@ void VAMM_SetAddress(void)
 	StartAddress.UnsignedLong = CurrAddress;                // Load the 32-bit CurrAddress variable into the union
 
 	// Upper byte is for flags only (lower 24 bits contains the address). Clear the flag byte here:
-	#if (COMP_BYTE_ORDER == COMP_ORDER_LITTLE)
-		StartAddress.Bytes[3] = 0x00;
-	#else
-		StartAddress.Bytes[0] = 0x00;								
-	#endif
+	StartAddress.Bytes[3] = 0x00;
 
 	VAMM_Cleanup();
 

@@ -29,9 +29,7 @@ DFinfo         DataflashInfo            = {CurrPageAddress: 0, CurrBuffByte: 0};
 */
 uint8_t DF_CheckCorrectOnboardChip(void)          // Ensures onboard Butterfly dataflash is working and the correct type
 {
-	DF_TOGGLEENABLE();
-	
-	SPI_SPITransmit(DFCB_STATUSREG);              // Send the Get Status Register command
+	DF_WaitWhileBusy();
 	
 	if (((SPI_SPITransmit(0x00) & DF_DFINFOMASK)) != (3 << 3)) // Bits 3, 4 and 5 contain the dataflash type info
 	{
@@ -109,6 +107,7 @@ void DF_ContinuousReadEnable(const uint16_t PageAddress, const uint16_t BuffAddr
 */
 uint8_t DF_BufferCompare(const uint16_t PageAddress)
 {
+	DF_WaitWhileBusy();
 	DF_TOGGLEENABLE();
 	
 	SPI_SPITransmit(DFCB_FLASHTOBUF1COMPARE);	

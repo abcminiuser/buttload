@@ -24,15 +24,9 @@
 	#include "Timeout.h"
 	#include "USART.h"
 
-	// TYPE DEFINITIONS:
-	typedef void (*FuncPtr)(void);
-	
 	// DEFINES AND MACROS:
 	#define V2P_MAXBUFFSIZE              275 // Maximum message size length (275 is the same as the STK500)
-
-	#define V2P_SIGNON_NAME              "AVRISP_2"
-	#define V2P_SIGNON_RESPONSE_SIZE     (sizeof(V2P_SIGNON_NAME) + sizeof(SignonResponse.Header) - 1)
-
+	
 	#define V2P_STATE_IDLE               0
 	#define V2P_STATE_START              1
 	#define V2P_STATE_GETSEQUENCENUM     2
@@ -46,17 +40,14 @@
 	#define V2P_STATE_PACKERR            10
 	#define V2P_STATE_PACKOK             11
 	
-	#define V2P_LOAD_EXTENDED_ADDR_FLAG  (1UL << 31)
 	#define V2P_LOAD_EXTENDED_ADDR_CMD   0x4D
-	#define V2P_LOAD_EXTENDED_ADDR_MASK  0x00FF0000UL
-	#define V2P_LOAD_EXTENDED_ADDR_SHIFT 16
+	
+	#define V2P_CMD_DUMP_DATAFLASH       0xA0
+	#define V2P_CMD_DUMP_DATAFLASH_RAW   0xA1
 	
 	#define V2P_HW_VERSION               2
 	#define V2P_SW_VERSION_MAJOR         2
 	#define V2P_SW_VERSION_MINOR_DEFAULT 10
-	
-	#define V2P_CMD_DUMP_DATAFLASH       0xA0
-	#define V2P_CMD_DUMP_DATAFLASH_RAW   0xA1
 	
 	// EXTERNAL VARIABLES:
 	extern uint8_t   PacketBytes[V2P_MAXBUFFSIZE];

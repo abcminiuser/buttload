@@ -10,6 +10,14 @@
 #ifndef GLOBALMACROS_H
 #define GLOBALMACROS_H
 
+	// Typedefs:
+	typedef struct
+	{
+		uint8_t Bytes[4];
+	} ByteArray;
+	
+	typedef void (*FuncPtr)(void);
+	
 	// Version Macros:
 	#define VERSION_MAJOR             2
 	#define VERSION_MINOR             1
@@ -31,12 +39,10 @@
 	
 	#define MACROS                    do
 	#define MACROE                    while (0)
-
-	#define COMP_BYTE_ORDER           COMP_ORDER_LITTLE
-	#define COMP_ORDER_LITTLE         0
-	#define COMP_ORDER_BIG            1
 	
 	#define ROUND_UP(x)               (unsigned long)(((float)x) + .5)
+
+	#define BYTE(x,y)                 ((ByteArray*)&x)->Bytes[y]
 
 	// Joystick Macros:
 	#define JOY_LEFT                  (1 << 2)
@@ -60,6 +66,7 @@
 	#define ATTR_NAKED                __attribute__ ((naked))
 	#define ATTR_NO_RETURN            __attribute__ ((noreturn))
 	#define ATTR_INIT_SECTION(x)      __attribute__ ((naked, section (".init" #x )))
+	#define ATTR_ALWAYS_INLINE        __attribute__ ((always_inline))
 	#define ATTR_WARN_UNUSED_RESULT   __attribute__ ((warn_unused_result))
 	
 #endif

@@ -11,20 +11,17 @@
 #include "V2Protocol.h"
 
 // PROGMEM CONSTANTS:
-const struct {
-	uint8_t Header[3];
-	uint8_t Desc[];
-} SignonResponse PROGMEM = {Header: {AICB_CMD_SIGN_ON, AICB_STATUS_CMD_OK, (sizeof(V2P_SIGNON_NAME) - 1)}, Desc: V2P_SIGNON_NAME};
+const uint8_t SignonResponse[]          PROGMEM = {AICB_CMD_SIGN_ON, AICB_STATUS_CMD_OK, 8, 'A', 'V', 'R', 'I', 'S', 'P', '_', '2', 0x00};
 
 // GLOBAL VARIABLES:
-       uint8_t  PacketBytes[V2P_MAXBUFFSIZE]   = {};
-static uint8_t  SequenceNum                    = 0;
-       uint16_t MessageSize                    = 0;
+        uint8_t  PacketBytes[V2P_MAXBUFFSIZE]   = {};
+static  uint8_t  SequenceNum                    = 0;
+        uint16_t MessageSize                    = 0;
 
-       uint8_t  InProgrammingMode              = FALSE;
-       uint32_t CurrAddress                    = 0;
+        uint8_t  InProgrammingMode              = FALSE;
+        uint32_t CurrAddress                    = 0;
 
-static uint8_t  Param_ControllerInit           = 0; // This is set to zero on reset, and can be written to or read by the computer
+static  uint8_t  Param_ControllerInit           = 0; // This is set to zero on reset, and can be written to or read by the computer
 
 // ======================================================================================
 
@@ -38,7 +35,6 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 {
 	uint8_t  V2PState           = V2P_STATE_IDLE;
 	uint16_t CurrentMessageByte = 0;
-	uint8_t  StartByte          = 0;
 
 	BUFF_InitializeBuffer();	
 	TIMEOUT_SLEEP_TIMER_OFF();
@@ -69,10 +65,8 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 				SLEEPCPU(SLEEP_IDLE);             // Can idle here, since USART or Joystick interrupt will cause execution to continue
 
 				break;
-			case V2P_STATE_START:
-				StartByte = USART_Rx();
-				
-				if (StartByte == AICB_MESSAGE_START) // Start bit is always 0x1B
+			case V2P_STATE_START:			
+				if (USART_Rx() == AICB_MESSAGE_START) // Start bit is always 0x1B
 				  V2PState = V2P_STATE_GETSEQUENCENUM;
 				else
 				  V2PState = V2P_STATE_PACKERR;
@@ -180,12 +174,22 @@ void V2P_SendPacket(void)
 */
 void V2P_IncrementCurrAddress(void)
 {
-	// Incrementing a 32-bit unsigned variable takes a lot of code. Because much of the code is
-	// not very time critical (much of it is waiting for the hardware), I've chosen to waste a
-	// few extra cycles per increment and save a good 60 bytes or so of code space by putting the
-	// increment inside its own function.
+	/* Since CurrAddress is incremented often (and requires many bytes to do so), I've opted
+	   to place the code inside its own function to save space. In order to cut down on the
+	   overhead I've used inline assembly to do the increment, so only the lower 24 bits (that
+	   are used, upper byte is for flags) are loaded, incremented and stored back to SRAM.     */
 
-	CurrAddress++;
+	uint16_t TempWord;
+
+	asm volatile ( "LD	  r24, %a1+            \n\t"
+	               "LD	  r25, %a1+            \n\t"
+	               "LD	  r23, %a1+            \n\t"
+	               "ADIW  r24, 0x01            \n\t"
+	               "ADC	  r23, __zero_reg__    \n\t"
+	               "ST	 -%a1, r23             \n\t"
+	               "ST	 -%a1, r25             \n\t"
+	               "ST	 -%a1, r24             \n\t"
+				   : "=&w" (TempWord) : "e" (&CurrAddress) : "r23", "r24", "r25" );
 }
 
 /*
@@ -196,14 +200,14 @@ void V2P_IncrementCurrAddress(void)
 */
 void V2P_CheckForExtendedAddress(void)
 {
-	if (CurrAddress & V2P_LOAD_EXTENDED_ADDR_FLAG)     // MSB set of the address, indicates a LOAD_EXTENDED_ADDRESS must be executed
+	if (BYTE(CurrAddress, 3))
 	{
 		USI_SPITransmit(V2P_LOAD_EXTENDED_ADDR_CMD);   // Load extended address command
 		USI_SPITransmit(0x00);
-		USI_SPITransmit((CurrAddress & V2P_LOAD_EXTENDED_ADDR_MASK) >> V2P_LOAD_EXTENDED_ADDR_SHIFT);
+		USI_SPITransmit(BYTE(CurrAddress, 2));
 		USI_SPITransmit(0x00);
 		
-		CurrAddress &= ~(V2P_LOAD_EXTENDED_ADDR_FLAG); // Clear the flag
+		BYTE(CurrAddress, 3) = 0;                      // Clear the flag
 	}
 }
 
@@ -218,7 +222,7 @@ static uint8_t V2P_GetChecksum(void)
 	uint8_t CheckSumByte;
 	
 	/* Checksum for the V2 protocol is comprised of an XOR of all the packet 
-      bytes, including the start, sequence number, size and token bytes.    */
+       bytes, including the start, sequence number, size and token bytes.    */
 	
 	CheckSumByte  = AICB_MESSAGE_START;
 	CheckSumByte ^= SequenceNum;
@@ -243,12 +247,13 @@ static void V2P_ProcessPacketData(FuncPtr PacketDecodeFunction)
 	switch (PacketBytes[0])                   // Look for generic commands which can be interpreted here, otherwise run the custom interpret routine
 	{ 
 		case AICB_CMD_SIGN_ON:
-			MessageSize = V2P_SIGNON_RESPONSE_SIZE;
+			MessageSize = 11;
 
-			for (uint8_t SOByte = 0; SOByte < V2P_SIGNON_RESPONSE_SIZE; SOByte++) // Load the sign-on sequence from program memory
-			  PacketBytes[SOByte] = pgm_read_byte((uint8_t*)(&SignonResponse + SOByte));
+			for (uint8_t SOByte = 0; SOByte < 11; SOByte++) // Load the sign-on sequence from program memory
+			  PacketBytes[SOByte] = pgm_read_byte(&SignonResponse[SOByte]);
 								  
 			V2P_SendPacket();
+			
 			break;
 		case AICB_CMD_FIRMWARE_UPGRADE:
 			MessageSize = 2;
@@ -256,6 +261,7 @@ static void V2P_ProcessPacketData(FuncPtr PacketDecodeFunction)
 			PacketBytes[1] = AICB_STATUS_CMD_FAILED;  // Return failed (no automatic firmware upgrades)
 			
 			V2P_SendPacket();
+			
 			break;				
 		case AICB_CMD_LOAD_ADDRESS:
 			MessageSize = 2;
@@ -264,23 +270,9 @@ static void V2P_ProcessPacketData(FuncPtr PacketDecodeFunction)
 			   to ensure portability wastes a LOT of code, so I've opted for the voodoo here. The CurrAddress
 			   variable is cast to a byte array structure, allowing the loading of the bytes to be controlled
 			   by a preprocessor define. This ensures optimal code is produced, saving time and flash space.  */
-
-			typedef struct
-			{
-				uint8_t Bytes[4];
-			} ByteArray;
 			
-			#if (COMP_BYTE_ORDER == COMP_ORDER_LITTLE)
-				((ByteArray*)&CurrAddress)->Bytes[0] = PacketBytes[4];
-				((ByteArray*)&CurrAddress)->Bytes[1] = PacketBytes[3];
-				((ByteArray*)&CurrAddress)->Bytes[2] = PacketBytes[2];
-				((ByteArray*)&CurrAddress)->Bytes[3] = PacketBytes[1];
-			#else
-				((ByteArray*)&CurrAddress)->Bytes[3] = PacketBytes[4];
-				((ByteArray*)&CurrAddress)->Bytes[2] = PacketBytes[3];
-				((ByteArray*)&CurrAddress)->Bytes[1] = PacketBytes[2];
-				((ByteArray*)&CurrAddress)->Bytes[0] = PacketBytes[1];								
-			#endif
+			for (uint8_t ByteNum = 0; ByteNum < 4; ByteNum++)
+			  BYTE(CurrAddress, ByteNum) = PacketBytes[4 - ByteNum];
 
 			if (PacketDecodeFunction == AICI_InterpretPacket)
 			  V2P_CheckForExtendedAddress();
@@ -290,44 +282,52 @@ static void V2P_ProcessPacketData(FuncPtr PacketDecodeFunction)
 			PacketBytes[1] = AICB_STATUS_CMD_OK;
 
 			V2P_SendPacket();
-			break;
+			
+			break;			
 		case AICB_CMD_GET_PARAMETER:
 		case AICB_CMD_SET_PARAMETER:						
 			V2P_GetSetParameter();
+			
 			break;
+#ifdef DEBUG_DFDUMPCMDS
 		case V2P_CMD_DUMP_DATAFLASH:           // Buttload-only command - dump empty-page corrected dataflash contents
+		case V2P_CMD_DUMP_DATAFLASH_RAW:       // Buttload-only command - dump raw dataflash contents
 			DF_ENABLEDATAFLASH(TRUE);
 			SPI_SPIInit();
 
-			VAMM_EnterStorageMode();
-			CurrAddress = 0;
+			MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);
 
-			for (uint16_t DFPage = 0; DFPage < DF_DATAFLASH_PAGES; DFPage++)
+			if (PacketBytes[0] == V2P_CMD_DUMP_DATAFLASH)
 			{
-				for (uint16_t DFByte = 0; DFByte < DF_INTERNALDF_BUFFBYTES; DFByte++)
-				  USART_Tx(VAMM_ReadConsec());
+				VAMM_EnterStorageMode();
+				CurrAddress = 0;
+	
+				for (uint16_t DFPage = 0; DFPage < DF_DATAFLASH_PAGES; DFPage++)
+				{
+					for (uint16_t DFByte = 0; DFByte < DF_INTERNALDF_BUFFBYTES; DFByte++)
+					  USART_Tx(VAMM_ReadConsec());
+				}
+				
+				VAMM_ExitStorageMode();			
+			}
+			else
+			{
+				DF_ContinuousReadEnable(0, 0);
+	
+				for (uint16_t DFPage = 0; DFPage < DF_DATAFLASH_PAGES; DFPage++)
+				{
+					for (uint16_t DFByte = 0; DFByte < DF_INTERNALDF_BUFFBYTES; DFByte++)
+					  USART_Tx(SPI_SPITransmit(0x00));
+				}
 			}
 			
-			VAMM_ExitStorageMode();
-			
+			MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);
+
 			SPI_SPIOFF();			
 			DF_ENABLEDATAFLASH(FALSE);
 			
 			break;
-		case V2P_CMD_DUMP_DATAFLASH_RAW:           // Buttload-only command - dump raw dataflash contents
-			DF_ENABLEDATAFLASH(TRUE);
-			SPI_SPIInit();
-
-			DF_ContinuousReadEnable(0, 0);
-
-			for (uint16_t DFPage = 0; DFPage < DF_DATAFLASH_PAGES; DFPage++)
-			{
-				for (uint16_t DFByte = 0; DFByte < DF_INTERNALDF_BUFFBYTES; DFByte++)
-				  USART_Tx(SPI_SPITransmit(0x00));
-			}
-			
-			SPI_SPIOFF();			
-			DF_ENABLEDATAFLASH(FALSE);		
+#endif
 		default:
 			((FuncPtr)PacketDecodeFunction)(); // Run the interpret packet routine as set by the pointer
 	}
@@ -371,18 +371,6 @@ static void V2P_GetSetParameter(void)
 			  PacketBytes[2] = V2P_SW_VERSION_MINOR_DEFAULT;
 
 			break;
-		case AICB_PARAM_CONTROLLER_INIT:
-			if (PacketBytes[0] == AICB_CMD_GET_PARAMETER)
-			{
-				PacketBytes[2] = Param_ControllerInit;
-			}
-			else
-			{
-				MessageSize = 2;
-				Param_ControllerInit = PacketBytes[2];
-			}
-			
-			break;
 		case AICB_PARAM_SCK_DURATION:
 			if (PacketBytes[0] == AICB_CMD_GET_PARAMETER)
 			{
@@ -395,7 +383,7 @@ static void V2P_GetSetParameter(void)
 				MessageSize = 2;
 				
 				if (PacketBytes[2] >= USI_STUDIO_SPEEDS) // Bounds check
-				  PacketBytes[2] = USI_STUDIO_SPEEDS - 1;
+				  PacketBytes[2] = (USI_STUDIO_SPEEDS - 1);
 
 				eeprom_write_byte(&EEPROMVars.SCKDuration, pgm_read_byte(&USISpeedIndex[PacketBytes[2]]));
 
@@ -416,16 +404,22 @@ static void V2P_GetSetParameter(void)
 			}
 			
 			break;
-		case AICB_PARAM_STATUS:
-		case AICB_PARAM_OSC_PSCALE:
-		case AICB_PARAM_OSC_CMATCH:
-		case AICB_PARAM_TOPCARD_DETECT:
-		case AICB_PARAM_VTARGET:
-		case AICB_PARAM_VADJUST:
-		case AICB_PARAM_DATA:
-		
-			/* Despite not supporting these parameters (STK500 only), the AVR Studio programmer
-			   seems to send them occasionally. A OK must be returned or the sequence will fail. */
+		case AICB_PARAM_CONTROLLER_INIT:
+			if (PacketBytes[0] == AICB_CMD_GET_PARAMETER)
+			{
+				PacketBytes[2] = Param_ControllerInit;
+			}
+			else
+			{
+				MessageSize = 2;
+				Param_ControllerInit = PacketBytes[2];
+			}
+			
+			break;
+		default:
+			/* Despite not supporting other parameters (STK500 only), the AVR Studio programmer
+			   seems to send them occasionally. A OK must be returned or the sequence will fail.
+			   Also send back dummy values in response to any invalid parameter requests.        */
 		
 			if (PacketBytes[0] == AICB_CMD_GET_PARAMETER)
 			  PacketBytes[2] = 0;             // If the command is a read, return a 0 for both parameters
@@ -433,9 +427,6 @@ static void V2P_GetSetParameter(void)
 			  MessageSize = 2;                // Otherwise just send back an OK if the command is a set		
 			
 			break;
-		default:                              // Unrecognised parameter
-			MessageSize = 2;
-			PacketBytes[1] = AICB_STATUS_CMD_FAILED;			
 	}
 	
 	V2P_SendPacket();

@@ -93,7 +93,6 @@
 		GlobalMacros.h                           | By Dean Camera
 		ISPChipComm.c + Header file              | By Dean Camera
 		ISRMacro.h                               | By Dean Camera
-		JoystickInterrupt.S                      | By Dean Camera
 		LCD_Driver.c + Header file               | By Dean Camera
 		Main.c + Header file                     | By Dean Camera
 		OSCCal.c + Header file                   | By Dean Camera, based on sample code by Colin Oflynn
@@ -112,9 +111,9 @@
 		VirtualAVRMemManager.c + Header file     | By Dean Camera
 -------------------------------------------------+-----------------------------------------------------
 
-   Special thanks to Barry, Nard Awater and Scott Coppersmith of AVRFreaks, for without their equipment
-   and wisdom in debugging this monstrocity I'd still be working on it. Also thanks to the other members
-   of AVRFreaks for their ideas.
+   Special thanks to Barry, Mike Henning, Nard Awater and Scott Coppersmith of AVRFreaks, for without
+   their equipment and wisdom in debugging this monstrocity I'd still be working on it. Also thanks to
+   the other members of AVRFreaks for their ideas.
 
 --------------------------------------------------------------------------------------------------------
 */
@@ -823,39 +822,5 @@ static void MAIN_GoBootloader(void)
 	
 		for (uint16_t RamLoc = 0x0100; RamLoc < RAMEND; RamLoc++)
 		  *((uint8_t*)RamLoc) = 0xDC;
-	}
-#endif
-
-#ifdef DEBUG_BYTEORDERTEST
-	void MAIN_Util_ByteOrderTest(void)
-	{
-		/* Debugging aid. Ensures that the selected byte ordering (in GlobalMacros.h) is correct. This
-		   prevents corruption issues when converting between data types using unions rather than normal
-		   bitshifts to save on flash. In the event of a misconfiguration, the Butterfly's speaker will
-		   play tone on a perpetual loop and fail to start.                                              */
-	
-		uint8_t Success = FALSE;
-		
-		union
-		{
-			uint8_t  Bytes[2];
-			uint16_t UnsignedInt;
-		} UnionTest = { UnsignedInt: 0x00FF };
-		
-		#if (COMP_BYTE_ORDER == COMP_ORDER_LITTLE)
-			if (UnionTest.Bytes[0] == 0xFF)
-			  Success = TRUE;
-		#else
-			if (UnionTest.Bytes[1] == 0xFF)
-			  Success = TRUE;
-		#endif
-		
-		if (Success == FALSE)
-		{
-			DDRB = (1 << 5);
-			
-			for (;;)
-			  TG_PlayToneSeq(TONEGEN_SEQ_SLEEP);
-		}
 	}
 #endif

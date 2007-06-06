@@ -65,19 +65,19 @@ USI_SPITransmit:
 	cpi   USI_SCRATCH_ASM_REG, 1                                   ; Test for 921600 Hz frequency
 	breq  FastTransfer
 
-	ldi   USI_DELAYCNT_ASM_REG, (((32 - 4) / 4) / 3)
+	ldi   USI_DELAYCNT_ASM_REG, ((32 - 6) / 3)
 	cpi   USI_SCRATCH_ASM_REG, 2                                   ; Test for 230400 Hz frequency
 	breq  SlowTransfer
 	
-	ldi   USI_DELAYCNT_ASM_REG, (((64 - 4) / 4) / 3)
+	ldi   USI_DELAYCNT_ASM_REG, ((64 - 6) / 3)
 	cpi   USI_SCRATCH_ASM_REG, 3                                   ; Test for 115200 Hz frequency
 	breq  SlowTransfer
 
-	ldi   USI_DELAYCNT_ASM_REG, (((128 - 4) / 4) / 3)
+	ldi   USI_DELAYCNT_ASM_REG, ((128 - 6) / 3)
 	cpi   USI_SCRATCH_ASM_REG, 4                                   ; Test for 57600 Hz frequency
 	breq  SlowTransfer
 
-	ldi   USI_DELAYCNT_ASM_REG, (((256 - 4) / 4) / 3)
+	ldi   USI_DELAYCNT_ASM_REG, ((256 - 6) / 3)
 	cpi   USI_SCRATCH_ASM_REG, 5                                   ; Test for 28800 Hz frequency
 	breq  SlowTransfer
 
@@ -86,6 +86,8 @@ USI_SPITransmit:
 	
 ; SLOW LOOP
 SlowTransfer:
+	; Cycle-counted to ensure 50% duty cycle per clock; equates to (6 + (3 * USI_DELAYCNT_ASM_REG)) cycles between toggles
+
 	st	  USI_USICR_PTR_ASM_REG, USI_CONTROL_ASM_REG
 	mov   USI_SCRATCH_ASM_REG, USI_DELAYCNT_ASM_REG
 
@@ -112,6 +114,8 @@ SlowTransfer:
 
 ; FAST LOOP
 FastTransfer:
+	; Cycle-counted to ensure 50% duty cycle per clock; equates to 4 cycles between toggles
+
 	st    USI_USICR_PTR_ASM_REG, USI_CONTROL_ASM_REG
 	nop                                                            ; NOP to maintain 50% duty cycle
 	dec   USI_BITSREM_ASM_REG                                      ; DEC can be executed here since ST doesn't modify the Z flag
@@ -123,6 +127,8 @@ FastTransfer:
 
 ; SUPER FAST LOOP
 SuperFastTransfer:
+	; Cycle-counted to ensure 50% duty cycle per clock; equates to 2 cycles between toggles
+
 	st    USI_USICR_PTR_ASM_REG, USI_CONTROL_ASM_REG
 	st    USI_USICR_PTR_ASM_REG, USI_CONTROLCK_ASM_REG
 	st    USI_USICR_PTR_ASM_REG, USI_CONTROL_ASM_REG
@@ -144,7 +150,7 @@ SuperFastTransfer:
 ; END SUPER FAST LOOP
 
 ; CLOCKING LOOP
-ClockingTransfer:	
+ClockingTransfer:
 	; Cycle-counted to ensure 50% duty cycle per clock; equates to 9 cycles between toggles
 
 	ldi   USI_DELAYCNT_ASM_REG, 7

@@ -100,7 +100,6 @@ static void TM_FindNextTag(void)
 	
 	if (TagExists == FALSE)
 	{
-		MAIN_SETSTATUSLED(MAIN_STATLED_GREEN); // Green = ready
 		MAIN_ShowError(PSTR("NO TAGS"));
 	}
 	else
