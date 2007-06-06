@@ -213,16 +213,25 @@ void PM_StartProgAVR(void)
 		{
 			if (ProgrammingFault != ISPCC_NO_FAULT)
 			{
+				TIMSK1 = (1 << OCIE1A);                  // Enable compare match channel A interrupt
+				OCR1A  = TIMEOUT_HZ_TO_COMP(8, TIMEOUT_SRC_CPU, 1024); // Compare rate of 8Hz at 7372800Hz system clock, 1024 prescaler
+				TCCR1B = ((1 << WGM12) | (1 << CS12) | (1 << CS10));   // Start timer at Fcpu/1024 speed in CTC mode, flash the red status LED
+
 				LCD_PutStr_f(PSTR("PROG FAILED"));
 				TG_PlayToneSeq(TONEGEN_SEQ_PROGFAIL);
 			}
 			else
 			{
+				MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);
+
 				LCD_PutStr_f(PSTR("PROG DONE"));
 				TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);		
 			}
 	
-			LCD_WAIT_FOR_SCROLL_DONE();          // Loop until the message has finished scrolling completely
+			LCD_WAIT_FOR_SCROLL_DONE();                  // Loop until the message has finished scrolling completely
+
+			TCCR1B = 0;                                  // Turn off timer 1
+			TIMSK1 = 0;                                  // Turn off compare match interrupt
 		}
 	}
 	else
@@ -231,11 +240,11 @@ void PM_StartProgAVR(void)
 	}
 	
 	TOUT_SetupSleepTimer();
-	MAIN_SetTargetResetLine(MAIN_RESET_INACTIVE); // Release the RESET line and allow the slave AVR to run	
+	MAIN_SetTargetResetLine(MAIN_RESET_INACTIVE);       // Release the RESET line and allow the slave AVR to run	
 	USI_SPIOff();
 	DF_ENABLEDATAFLASH(FALSE);
 	SPI_SPIOFF();
-	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);        // Set status LEDs to green (ready)
+	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);
 }
 
 /*

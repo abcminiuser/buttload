@@ -29,8 +29,8 @@ void AICI_InterpretPacket(void)
 			USI_SPIInitMaster();
 			ProgrammingFault = ISPCC_NO_FAULT;
 
-			MAIN_SetTargetResetLine(MAIN_RESET_ACTIVE); // Pull the slave AVR's RESET line to active
-			ISPCC_EnterChipProgrammingMode();           // Run the Enter Programming Mode routine
+			MAIN_SetTargetResetLine(MAIN_RESET_ACTIVE);
+			ISPCC_EnterChipProgrammingMode();
 
 			if (InProgrammingMode)
 			{
@@ -58,7 +58,7 @@ void AICI_InterpretPacket(void)
 			USI_SPIOff();
 
 			MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);     // Non programming mode = green status led
-			PacketBytes[1] = AICB_STATUS_CMD_OK;       // Return OK
+			PacketBytes[1] = AICB_STATUS_CMD_OK;
 
 			break;
 		case AICB_CMD_CHIP_ERASE_ISP:
@@ -77,7 +77,7 @@ void AICI_InterpretPacket(void)
 			else                                       // Poll mode flag of 0 indicates a predefined delay
 			{
 				MAIN_Delay1MS(PacketBytes[1]);         // Wait the specified interval to ensure erase complete
-				PacketBytes[1] = AICB_STATUS_CMD_OK;   // Always return OK
+				PacketBytes[1] = AICB_STATUS_CMD_OK;
 			}
 						
 			break;
@@ -86,7 +86,7 @@ void AICI_InterpretPacket(void)
 	
 			uint8_t TxBytes      = PacketBytes[1];     // \. The packet data is overwritten during the transfer. Because
 			uint8_t RxStartByte  = PacketBytes[2];     // |  of this each data byte must be stored into temp variables
-			uint8_t RxBytes      = PacketBytes[3];     // /  so that their contents are not lost.
+			uint8_t RxBytes      = PacketBytes[3];     // /  so that their values are not lost.
 			uint8_t RxByteNum    = 0;
 			uint8_t TxByteNum    = 0;
 			uint8_t RecievedByte = 0;
@@ -100,7 +100,7 @@ void AICI_InterpretPacket(void)
 			}
 
 			while (RxByteNum++ < RxBytes)                          // Still more bytes to recieve
-			  PacketBytes[2 + RxByteNum] = USI_SPITransmit(0x00);  // its answer to be recorded (or more bytes than sent need responses), send dummy bytes to fetch the response(s)
+			  PacketBytes[2 + RxByteNum] = USI_SPITransmit(0x00);  // Send dummy bytes to fetch the response(s)
 
 			PacketBytes[1]             = AICB_STATUS_CMD_OK; // Data should be encompassed
 			PacketBytes[3 + RxByteNum] = AICB_STATUS_CMD_OK; //  by STATS_CMD_OKs
@@ -121,7 +121,7 @@ void AICI_InterpretPacket(void)
 			}
 
 			PacketBytes[1] = AICB_STATUS_CMD_OK;       // Data byte is encased in CMD_OKs
-			PacketBytes[3] = AICB_STATUS_CMD_OK;       // Data byte is encased in CMD_OKs
+			PacketBytes[3] = AICB_STATUS_CMD_OK;
 
 			break;
 		case AICB_CMD_PROGRAM_FUSE_ISP:
@@ -132,7 +132,7 @@ void AICI_InterpretPacket(void)
 			  USI_SPITransmit(PacketBytes[PacketB]);
 
 			PacketBytes[1] = AICB_STATUS_CMD_OK;       // Two CMD_OKs are always returned
-			PacketBytes[2] = AICB_STATUS_CMD_OK;       // Two CMD_OKs are always returned
+			PacketBytes[2] = AICB_STATUS_CMD_OK;
 
 			break;
 		case AICB_CMD_READ_FLASH_ISP:
@@ -152,13 +152,13 @@ void AICI_InterpretPacket(void)
 				else                                   // EEPROM read mode, address is in bytes and so no masking nessesary
 				  USI_SPITransmit(ReadCommand);
 				
-				USI_SPITransmitWord(CurrAddress);      // Transmit the current address to the slave AVR
+				USI_SPITransmitWord(CurrAddress);
 
 				PacketBytes[2 + ReadByte] = USI_SPITransmit(0x00); // Read in the byte stored at the requested location
 
 				if ((ReadByte & 0x01) || (PacketBytes[0] == AICB_CMD_READ_EEPROM_ISP)) // Flash addresses are given in words; only increment on the odd byte if reading the flash.
 				{
-					V2P_IncrementCurrAddress();        // Increment the address counter
+					V2P_IncrementCurrAddress();
 				}
 				else
 				{
@@ -173,14 +173,14 @@ void AICI_InterpretPacket(void)
 			}
 			
 			PacketBytes[1]               = AICB_STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
-			PacketBytes[2 + BytesToRead] = AICB_STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs
+			PacketBytes[2 + BytesToRead] = AICB_STATUS_CMD_OK;
 
 			break;
 		case AICB_CMD_PROGRAM_FLASH_ISP:
 		case AICB_CMD_PROGRAM_EEPROM_ISP:
 			MessageSize = 2;
 
-			ISPCC_ProgramChip();                       // Program the bytes into the chip			
+			ISPCC_ProgramChip();	
 
 			PacketBytes[1] = ((ProgrammingFault == ISPCC_NO_FAULT) ? AICB_STATUS_CMD_OK : AICB_STATUS_CMD_TOUT);
 			
@@ -190,7 +190,7 @@ void AICI_InterpretPacket(void)
 
 			MAIN_SetTargetResetLine(MAIN_RESET_INACTIVE);
 			
-			USICR = 0;                                 // Disable USI while calibration sequence runs
+			USI_SPIOff();                              // Disable USI while calibration sequence runs
 			PacketBytes[1] = (AICI_SendCalibrationClocks() ? AICB_STATUS_CMD_OK : AICB_STATUS_CMD_FAILED);
 			USI_SPIInitMaster();                       // Re-enable USI subsystem
 			

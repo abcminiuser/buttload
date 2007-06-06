@@ -58,7 +58,6 @@
 	// PROTOTYPES:
 	void    V2P_RunStateMachine(FuncPtr PacketDecodeFunction) ATTR_NON_NULL_PTR_ARGS(1);
 	void    V2P_SendPacket(void);
-	void    V2P_IncrementCurrAddress(void);
 	void    V2P_CheckForExtendedAddress(void);
 
 	#if defined(INC_FROM_V2P)
@@ -66,5 +65,27 @@
 	  static void    V2P_ProcessPacketData(FuncPtr PacketDecodeFunction) ATTR_NON_NULL_PTR_ARGS(1);
 	  static void    V2P_GetSetParameter(void);
 	#endif
+
+	// PUBLIC INLINE FUNCTIONS:
+	static inline void V2P_IncrementCurrAddress(void);
+	static inline void V2P_IncrementCurrAddress(void)
+	{
+		/* Since CurrAddress is incremented often (and requires many bytes to do so), I've opted
+		   to cut down on the overhead via optimized inline assembly to do the increment, so only
+		   the lower 24 bits (that are used, upper byte is for flags) are loaded, incremented and
+		   stored back to SRAM.                                                                   */
+
+		uint16_t TempWord;
+	
+		asm volatile ( "LD	  r24, %a1+            \n\t"
+					   "LD	  r25, %a1+            \n\t"
+					   "LD	  r23, %a1+            \n\t"
+					   "ADIW  r24, 0x01            \n\t"
+					   "ADC	  r23, __zero_reg__    \n\t"
+					   "ST	 -%a1, r23             \n\t"
+					   "ST	 -%a1, r25             \n\t"
+					   "ST	 -%a1, r24             \n\t"
+					   : "=&w" (TempWord) : "e" (&CurrAddress) : "r23", "r24", "r25" );
+	}
 	
 #endif

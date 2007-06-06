@@ -28,11 +28,9 @@
 	#define SM_LOCKFUSEBITS_WRITE   3
 	#define SM_LOCKFUSEBITS_READ    4
 	
-	#define SM_PAGELENGTH_FOUNDBIT  (1 << 15)
-	
 	#define SM_MAX_FUSELOCKBITS     20
 	
-	#define SM_EEPROM_OFFSET        ((1024UL * 257UL) + (8 * DF_INTERNALDF_BUFFBYTES)) // Offset at the 257Kb in dataflash, plus one block
+	#define SM_EEPROM_OFFSET        ((1024UL * 256UL) + (8 * DF_INTERNALDF_BUFFBYTES)) // Offset at the 257Kb in dataflash, plus one block
 	
 	#define SM_BYTES_TO_BLOCKNUM(b) ROUND_UP(((b / DF_INTERNALDF_BUFFBYTES) / 8))
 	

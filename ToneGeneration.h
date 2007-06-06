@@ -13,6 +13,7 @@
 	// INCLUDES:
 	#include <avr/io.h>
 	#include <avr/pgmspace.h>
+	#include <stdbool.h>
 	
 	#include "EEPROMVariables.h"
 	#include "GlobalMacros.h"

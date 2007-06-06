@@ -10,8 +10,8 @@
 #define  INC_FROM_TM
 #include "TagManager.h"
 
-static uint8_t  TagExists       = FALSE;
-static uint32_t DFDataBytesLeft = 0x00000000;
+static bool     TagExists          = FALSE;
+static uint32_t DFDataBytesLeft    = 0x00000000;
 
 // ======================================================================================
 
@@ -25,7 +25,7 @@ void TM_ShowTags(void)
 {
 	DF_ContinuousReadEnable(0, 0);
 	TagExists = FALSE;
-	DFDataBytesLeft = SM_GetStoredDataSize(TYPE_FLASH);
+	DFDataBytesLeft    = SM_GetStoredDataSize(TYPE_FLASH);
 
 	TM_FindNextTag();
 	if (!(TagExists))
@@ -61,7 +61,6 @@ static void TM_FindNextTag(void)
 	uint8_t    TotalOkHeadBytes = 0;
 	
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);    // Orange = busy
-	LCD_PutStr_f(WaitText);
 
 	while (DFDataBytesLeft)
 	{		

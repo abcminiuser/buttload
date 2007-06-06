@@ -25,8 +25,8 @@ static          char    TextBuffer[LCD_TEXTBUFFER_SIZE + LCD_DISPLAY_SIZE    + 1
 static          uint8_t StrStart        = 0;
 static volatile uint8_t StrEnd          = 0; // Volatile here because it saves space in the ISR
 static          uint8_t ScrollCount     = 0;
-static volatile uint8_t UpdateDisplay    = FALSE;
-       volatile uint8_t ScrollFlags      = 0;
+static volatile uint8_t UpdateDisplay   = FALSE;
+       volatile uint8_t ScrollFlags     = 0;
 
 const           uint16_t LCD_SegTable[] PROGMEM =
 {

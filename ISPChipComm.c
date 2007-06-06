@@ -30,7 +30,7 @@ void ISPCC_EnterChipProgrammingMode(void)
 
 	MAIN_Delay1MS(PacketBytes[2]);                        // Wait before continuing, amount specified in the packet
 
-	if ((!(Attempts)) || (Attempts > 100))                // If no attempts or too high a value is specified, a fixed number is chosen
+	if ((!(Attempts)) || (Attempts > 100))
 	   Attempts = 24;
 		
 	while (Attempts--)
@@ -106,7 +106,7 @@ void ISPCC_ProgramChip(void)
 				if ((PacketBytes[8] != ByteToWrite)       // Can do polling
 				   && ((CmdMemType == AICB_CMD_PROGRAM_FLASH_ISP) || ((CmdMemType == AICB_CMD_PROGRAM_EEPROM_ISP) && (PacketBytes[9] != ByteToWrite))))
 				{
-					PollAddress = (CurrAddress & 0xFFFF); // Save the current address
+					PollAddress = (CurrAddress & 0xFFFF); // Save the current address for later polling
 				
 					if (CmdMemType == AICB_CMD_PROGRAM_FLASH_ISP)
 					  PollAddress = ((PollAddress << 1) + (WriteByte & 0x01));
@@ -197,7 +197,7 @@ static void ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr)
 				PollAddr    >>= 1;
 			}
 
-			TCNT1  = 0;                                   // Clear timer 1
+			TCNT1  = 0; 
 			TCCR1B = ((1 << CS12) | (1 << CS10));         // Start timer 1 with a Fcpu/1024 clock
 
 			do
@@ -207,8 +207,8 @@ static void ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr)
 			}
 			while ((USI_SPITransmit(0x00) == PacketBytes[8]) && (TCNT1 < ISPCC_COMM_TIMEOUT));
 
-			TCCR1B = 0;                                   // Stop timer 1
-						
+			TCCR1B = 0;
+			
 			break;
 		case ISPCC_POLLTYPE_READY:
 			PM_WaitWhileTargetBusy();

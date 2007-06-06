@@ -34,7 +34,7 @@ ISR(TIMER0_COMP_vect, ISR_NOBLOCK)
 	if (PacketTimeOutTicksLCL++ == TIMEOUT_PACKET_TIMEOUTTICKS)
 	{
 		PacketTimeOutTicksLCL = 0;
-		PacketTimeOut      = TRUE;
+		PacketTimeOut         = TRUE;
 	}
 	
 	PacketTimeOutTicks = PacketTimeOutTicksLCL;

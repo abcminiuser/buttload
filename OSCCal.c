@@ -59,7 +59,6 @@ void OSCCAL_Calibrate(void)
 			// Stop timer 1 so it can be read
 			TCCR1B = 0x00;
 			
-			// Check timer value against ideal constant
 			if (TCNT1 > OSCCAL_TARGETCOUNT)      // Clock is running too fast
 			  OSCCAL--;
 			else if (TCNT1 < OSCCAL_TARGETCOUNT) // Clock is running too slow

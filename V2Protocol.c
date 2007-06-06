@@ -177,32 +177,6 @@ void V2P_SendPacket(void)
 }
 
 /*
- NAME:      | V2P_IncrementCurrAddress
- PURPOSE:   | Increments the current target memory address
- ARGUMENTS: | None
- RETURNS:   | None
-*/
-void V2P_IncrementCurrAddress(void)
-{
-	/* Since CurrAddress is incremented often (and requires many bytes to do so), I've opted
-	   to place the code inside its own function to save space. In order to cut down on the
-	   overhead I've used inline assembly to do the increment, so only the lower 24 bits (that
-	   are used, upper byte is for flags) are loaded, incremented and stored back to SRAM.     */
-
-	uint16_t TempWord;
-
-	asm volatile ( "LD	  r24, %a1+            \n\t"
-	               "LD	  r25, %a1+            \n\t"
-	               "LD	  r23, %a1+            \n\t"
-	               "ADIW  r24, 0x01            \n\t"
-	               "ADC	  r23, __zero_reg__    \n\t"
-	               "ST	 -%a1, r23             \n\t"
-	               "ST	 -%a1, r25             \n\t"
-	               "ST	 -%a1, r24             \n\t"
-				   : "=&w" (TempWord) : "e" (&CurrAddress) : "r23", "r24", "r25" );
-}
-
-/*
  NAME:      | V2P_CheckForExtendedAddress
  PURPOSE:   | Checks the current address to see if an extended address command needs to be sent, and if so sends it
  ARGUMENTS: | None

@@ -15,6 +15,7 @@
 static uint8_t  CurrentMode         = SM_NO_SETUP;
 static uint16_t GPageLength         = 0;
 static uint8_t  WriteCmdStored      = FALSE;
+static uint8_t  PageLengthFound     = FALSE;
 
 const char StorageText[] PROGMEM    = "*STORAGE MODE*";
 
@@ -28,11 +29,11 @@ const char StorageText[] PROGMEM    = "*STORAGE MODE*";
 */
 uint32_t SM_GetStoredDataSize(const uint8_t Type)
 {
-	uint32_t ProgDataSize = 0;
+	uint32_t ProgDataSize;
+	uint16_t PagesUsed = 0;
 	uint16_t PageLength;
 	uint8_t  BlockStart;
 	uint8_t  BlockEnd;
-	uint16_t BytesInLastPage;	
 
 	VAMM_EnterStorageMode();
 
@@ -49,30 +50,24 @@ uint32_t SM_GetStoredDataSize(const uint8_t Type)
 		PageLength = eeprom_read_word(&EEPROMVars.EPageLength);
 	}
 
-	for (uint8_t DFPageBlock = BlockEnd; DFPageBlock >= BlockStart; DFPageBlock--)
+	for (uint16_t DFPageBlock = BlockEnd; DFPageBlock >= BlockStart; DFPageBlock--)
 	{
-		if (PageErasedFlags[DFPageBlock] != 0xFF)                                              // Find first non-erased block, staring from the end of memory
+		uint8_t  CurrentBlock = ~PageErasedFlags[DFPageBlock];          // Inverted so that each set bit equates to one dataflash page used
+		uint8_t  PagesInLastBlock;
+		
+		if (CurrentBlock)                                               // Find first non-erased block, staring from the end of memory
 		{
-			uint8_t Mask = (1 << 7);
+			for (PagesInLastBlock = 0; CurrentBlock; PagesInLastBlock++)
+			  CurrentBlock &= (CurrentBlock - 1);                       // Clear LSb - K&R's way of finding total number of set bits
 
-			ProgDataSize = ((DFPageBlock - BlockStart - 1) * DF_INTERNALDF_BUFFBYTES);
+			PagesUsed = (((uint16_t)(DFPageBlock - BlockStart - 1) << 3) + PagesInLastBlock); // Find dataflash pages used
 
-			while (Mask)
-			{
-				if (!(PageErasedFlags[DFPageBlock] & Mask))                                    // Check if page not empty
-				  ProgDataSize += DF_INTERNALDF_BUFFBYTES;
-	
-				Mask >>= 1;
-			}
-			
 			break;
 		}
 	}
 	
-	BytesInLastPage = (ProgDataSize % PageLength);
-
-	if (BytesInLastPage)                                                // If size is more than an equal number of pages in length
-	  ProgDataSize += (PageLength - BytesInLastPage);                   // Increase size to the next page in length
+	ProgDataSize  = ((uint32_t)PagesUsed * DF_INTERNALDF_BUFFBYTES);    // Translate pages used into bytes used
+	ProgDataSize += (ProgDataSize % PageLength);                        // Round up to nearest page size
 
 	// No VAMM_ExitStorageMode call here since no changes are made to the dataflash
 
@@ -102,7 +97,7 @@ void SM_InterpretAVRISPPacket(void)
 
 			InProgrammingMode = TRUE;                                   // Set the flag, prevent the user from exiting the V2P state machine			
 			CurrentMode = SM_NO_SETUP;                                  // Clear the current mode variable
-			WriteCmdStored = 0;                                         // lear Flash/EEPROM write command stored flag
+			WriteCmdStored = FALSE;                                     // Clear Flash/EEPROM write command stored flag
 			CurrAddress = 0;
 
 			VAMM_EnterStorageMode();
@@ -240,7 +235,8 @@ void SM_InterpretAVRISPPacket(void)
 					MemoryType  = TYPE_EEPROM;
 				}
 
-				GPageLength = 0;				
+				GPageLength = 0;
+				PageLengthFound	= FALSE;
 				CurrentMode = SM_DATAFLASH_WRITE;
 				
 				if (!(WriteCmdStored))
@@ -264,11 +260,11 @@ void SM_InterpretAVRISPPacket(void)
 				GPageLength++;
 			}
 
-			if (!(GPageLength & SM_PAGELENGTH_FOUNDBIT) && (PacketBytes[3] & ISPCC_PROG_MODE_PAGEDONE) && (GPageLength))
+			if (!(PageLengthFound) && (PacketBytes[3] & ISPCC_PROG_MODE_PAGEDONE)) // Page done - save the target's memory page length to EEPROM for later use if not already done so
 			{
 				eeprom_write_word(((MemoryType == TYPE_FLASH)? &EEPROMVars.PageLength : &EEPROMVars.EPageLength), GPageLength);
-		
-				GPageLength |= SM_PAGELENGTH_FOUNDBIT;                  // Bit 15 is used to indicate if the length has been found
+
+				PageLengthFound = TRUE;
 			}
 
 			PacketBytes[1] = AICB_STATUS_CMD_OK;

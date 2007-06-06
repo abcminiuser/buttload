@@ -52,7 +52,7 @@ void VAMM_ExitStorageMode(void)
 		  SPI_SPITransmit(PageErasedFlags[ByteNum]);
 
 		for (uint16_t ByteNum = 0; ByteNum < (DF_INTERNALDF_BUFFBYTES - sizeof(PageErasedFlags)); ByteNum++)
-		  SPI_SPITransmit(0xFF); // Fill remainder of buffer with 0xFFs so that compare can execute correctly
+		  SPI_SPITransmit(0xFF);                            // Fill remainder of buffer with 0xFFs so that compare can execute correctly
 
 		if (DF_BufferCompare(VAMM_PAGEERASED_DF_PAGE) != DF_COMPARE_MATCH) // Compare so that write is only executed if page data is different
 		  DF_CopyPage(VAMM_PAGEERASED_DF_PAGE, DF_BUFFER_TO_FLASH); // Last dataflash page contains the erased page flag array
@@ -74,8 +74,8 @@ void VAMM_EraseAVRMemory(void)
 
 	EraseFlagsTransReq = TRUE;
 
-	for (uint16_t CurrPage = 0; CurrPage < sizeof(PageErasedFlags); CurrPage++)
-	  PageErasedFlags[CurrPage] = 0xFF;                     // Set all page erased flags in each block
+	for (uint16_t CurrPageBlock = 0; CurrPageBlock < sizeof(PageErasedFlags); CurrPageBlock++)
+	  PageErasedFlags[CurrPageBlock] = 0xFF;                // Set all page erased flags in each block
 }
 
 /*
@@ -92,8 +92,8 @@ void VAMM_SetAddress(void)
 		uint32_t UnsignedLong;
 	} StartAddress;
 
-	StartAddress.UnsignedLong = CurrAddress;                // Load the 32-bit CurrAddress variable into the union
-
+	StartAddress.UnsignedLong = CurrAddress;
+	
 	// Upper byte is for flags only (lower 24 bits contains the address). Clear the flag byte here:
 	StartAddress.Bytes[3] = 0x00;
 

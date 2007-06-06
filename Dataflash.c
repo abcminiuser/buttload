@@ -23,11 +23,11 @@ DFinfo         DataflashInfo            = {CurrPageAddress: 0, CurrBuffByte: 0};
 
 /*
  NAME:      | DF_CheckCorrectOnboardChip
- PURPOSE:   | Checks for the existance and expected type of the onboard dataflash chip
+ PURPOSE:   | Checks for the existance, correct operation and type of the onboard dataflash chip
  ARGUMENTS: | None
  RETURNS:   | Boolean flag for whether the dataflash is valid and present
 */
-uint8_t DF_CheckCorrectOnboardChip(void)          // Ensures onboard Butterfly dataflash is working and the correct type
+uint8_t DF_CheckCorrectOnboardChip(void)
 {
 	DF_WaitWhileBusy();
 	
