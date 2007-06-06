@@ -19,8 +19,8 @@
 	typedef void (*FuncPtr)(void);
 	
 	// Version Macros:
-	#define VERSION_MAJOR             2
-	#define VERSION_MINOR             1
+	#define VERSION_MAJOR             3
+	#define VERSION_MINOR             0
 	#define VERSION_VSTRING           {'V','0' + VERSION_MAJOR,'-','0' + VERSION_MINOR, '\0'}
 	
 	#define MAGIC_NUM                 (0xDC | 0x1337) // Magic number, used for first-run detection

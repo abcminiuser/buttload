@@ -9,7 +9,8 @@
 
 #include "VirtualAVRMemManager.h"
 
-static volatile uint8_t  VAMMSetup = VAMM_SETUP_NA;
+static volatile uint8_t  VAMMSetup        = VAMM_SETUP_NA;
+				uint8_t  EraseDataflash   = FALSE;
 
 // ======================================================================================
 
@@ -26,8 +27,7 @@ void VAMM_EraseAVRMemory(void)
 
 	eeprom_write_byte(&EEPROMVars.EraseCmdStored, TRUE);
 
-	for (uint16_t CurrBlock = 0; CurrBlock < DF_DATAFLASH_BLOCKS; CurrBlock++)
-	  DF_EraseBlock(CurrBlock);
+	EraseDataflash = TRUE;
 }
 
 /*

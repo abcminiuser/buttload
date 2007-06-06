@@ -25,6 +25,9 @@
 	#define VAMM_SETUP_READ           2
 	#define VAMM_SETUP_ADDR_DONE      3
 	
+	// EXTERNAL VARIABLES:
+	uint8_t EraseDataflash;
+	
 	// PROTOTYPES:
 	void    VAMM_EraseAVRMemory(void);
 	void    VAMM_SetAddress(void);

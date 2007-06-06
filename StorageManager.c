@@ -104,7 +104,10 @@ void SM_InterpretAVRISPPacket(void)
 			SM_CheckEndOfFuseLockData();                                // Check for remaining bytes to be stored and general cleanup
 			VAMM_Cleanup();
 
-			TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);
+			if (EraseDataflash)
+			  TG_PlayToneSeq(TONEGEN_SEQ_ERASINGDF);
+			else
+			  TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);
 		
 			InProgrammingMode = FALSE;                                  // Clear the flag, allow the user to exit the V2P state machine
 
@@ -294,6 +297,29 @@ void SM_InterpretAVRISPPacket(void)
 	}
 
 	V2P_SendPacket();                                                   // Send the response packet
+
+	if (EraseDataflash && !(InProgrammingMode))
+	{
+		LCD_PutStr_f(WaitText);
+	
+		uint8_t CurrBlock = (DF_DATAFLASH_BLOCKS - 1);
+		
+		DF_ENABLEDATAFLASH(TRUE);
+		SPI_SPIInit();
+		MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);
+
+		do
+		  DF_EraseBlock(CurrBlock);
+		while (CurrBlock--);
+
+		MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);
+		DF_ENABLEDATAFLASH(FALSE);
+		SPI_SPIOFF();
+
+		LCD_PutStr_f(StorageText);
+
+		TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);
+	}
 }
 
 /*

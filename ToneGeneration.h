@@ -27,6 +27,7 @@
 	#define TONEGEN_SEQ_SLEEP      ToneSeq_Sleep
 	#define TONEGEN_SEQ_RESUME     ToneSeq_Resume
 	#define TONEGEN_SEQ_ERROR      ToneSeq_Error
+	#define TONEGEN_SEQ_ERASINGDF  ToneSeq_VolTest
 
 	#define TONEGEN_GET_TONE_VOL() MACROS{ ToneVol = eeprom_read_byte(&EEPROMVars.ToneVolume); }MACROE
 	

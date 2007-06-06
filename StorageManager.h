@@ -30,7 +30,7 @@
 	
 	#define SM_MAX_FUSELOCKBITS     20
 	
-	#define SM_EEPROM_OFFSET        ((DF_DATAFLASH_PAGES / 2) * DF_INTERNALDF_BUFFBYTES)
+	#define SM_EEPROM_OFFSET        (((unsigned long)DF_DATAFLASH_PAGES / 2) * DF_INTERNALDF_BUFFBYTES)
 	
 	// EXTERNAL VARIABLES:
 	extern uint8_t  MemoryType;
