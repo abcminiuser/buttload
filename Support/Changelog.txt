@@ -1,9 +1,6 @@
-Current Version: Public Release 2.1
-	
-	TODO:
-	 1) Return correct stored program size
-	 
-	IN PUBLIC RELEASE 2.1:
+Current Version: Public Release 3.0
+		 
+	IN PUBLIC RELEASE 3.0:
 	=======================================
 	  * Added in audio feedback for several situations
 	  * Removed direct dataflash programming code to save space (nobody used it anyway)
@@ -33,7 +30,7 @@ Current Version: Public Release 2.1
 	  * Fixed logic error in the extended address checking that was preventing >128KB devices from being programmed correctly
 	  * Slimmed down LCD driver routines, eliminated unneeded segment buffering
 	  * LOGIC level reset now hard drives, rather than uses the AVR's internal pullup
-	  * Address loaded in from computer via a union to save space; byte order checking performed to ensure ordering is correct
+	  * Address loaded in from computer via a union to save space (non-portable, but smaller/faster)
 	  * Fixed incorrect buffer size in MAIN_ShowProgType, preventing possible overflows and RAM corruption
 	  * Fixed delays while scrolling a LCD message changed over a loop to wait until the LCD message has finished scrolling
 	  * Delay header changed over to a custom one written by Hans-Juergen Heinrichs for more accuracy and flexibility
@@ -53,6 +50,7 @@ Current Version: Public Release 2.1
 	  * SYNC ERROR message now displayed when programming both lock and fuse bytes from PROGRAM AVR mode, and the re-sync fails
 	  * Most of the comments removed, leaving only the important ones to clean up the code a bit
 	  * VirtualAVRMemMamager now saves the Erase Chip command bytes without wasting EEPROM saving the V2Protocol command
+	  * ButtLoad busy "*WAIT*" message is now "*BUSY*"
 	  
 	IN PUBLIC RELEASE 2.0:
 	=======================================

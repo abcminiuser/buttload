@@ -13,6 +13,7 @@
 #define DFCB_H
 
 	// DATAFLASH OPCODES:
+	#define DFCB_BLOCKERASE          0x50  // Block erase, added by Dean Camera
 	#define DFCB_FLASHPAGEREAD       0x52  // Main memory page read
 	#define DFCB_FLASHTOBUF1TRANSFER 0x53  // Main memory page to buffer 1 transfer
 	#define DFCB_BUF1READ            0x54  // Buffer 1 read
@@ -25,7 +26,6 @@
 	#define DFCB_FLASHTOBUF2COMPARE  0x61  // Main memory page to buffer 2 compare
 	#define DFCB_CONTARRAYREAD       0x68  // Continuous Array Read (Note : Only A/B-parts supported)
 	#define DFCB_PAGEERASE           0x81  // Page erase, added by Martin Thomas
-	#define DFCB_BLOCKERASE          0x50  // Block erase, added by Dean Camera
 	#define DFCB_FLASHPROGBUF1       0x82  // Main memory page program through buffer 1
 	#define DFCB_BUF1TOFLASHWE       0x83  // Buffer 1 to main memory page program with built-in erase
 	#define DFCB_BUF1WRITE           0x84  // Buffer 1 write

@@ -24,48 +24,59 @@ const char StorageText[] PROGMEM    = "*STORAGE MODE*";
 /*
  NAME:      | SM_GetStoredDataSize
  PURPOSE:   | Returns the size of the requested stored data type
- ARGUMENTS: | Type of data to get the size of (TYPE_FLASH, TYPE_EEPROM, TYPE_FUSE or TYPE_LOCK)
+ ARGUMENTS: | Type of data to get the size of (TYPE_FLASH or TYPE_EEPROM)
  RETURNS:   | Size of requested data type in bytes
 */
 uint32_t SM_GetStoredDataSize(const uint8_t Type)
 {
 	uint16_t TargetPageLength;
-	uint16_t PagesUsed = 0;
-	uint16_t PageStart;
-	uint16_t PageEnd;
-	uint32_t ProgDataSize;
+	uint32_t ProgDataSize = 0;
+	int16_t PageStart;
+	int16_t PageEnd;
 	
 	DF_BufferWriteEnable(0);
 
-	for (uint16_t b = 0; b < DF_INTERNALDF_BUFFBYTES; b++)
+	for (uint16_t b = 0; b < DF_INTERNALDF_BUFFBYTES; b++) // Erase buffer for page empty comparisons
 	  SPI_SPITransmit(0xFF);
 
 	if (Type == TYPE_FLASH)
 	{
 		PageStart = 0;
-		PageEnd   = ((DF_DATAFLASH_PAGES / 2) - 1);
+		PageEnd   = (DF_DATAFLASH_PAGES / 2);
 		TargetPageLength = eeprom_read_word(&EEPROMVars.PageLength);
 	}
 	else
 	{
 		PageStart = (DF_DATAFLASH_PAGES / 2);
-		PageEnd   = (DF_DATAFLASH_PAGES - 1);
+		PageEnd   = DF_DATAFLASH_PAGES;
 		TargetPageLength = eeprom_read_word(&EEPROMVars.EPageLength);
 	}
 
-	for (uint16_t CheckPage = PageEnd; CheckPage >= PageStart; CheckPage--)
+	for (int16_t CurrPage = (PageEnd - 1); CurrPage >= PageStart; CurrPage--)
 	{
-		if (DF_BufferCompare(CheckPage) != DF_COMPARE_MATCH)
+		if (DF_BufferCompare(CurrPage) == DF_COMPARE_MISMATCH)          // Found last non-empty page
 		{
-			PagesUsed = ((CheckPage + 1) - PageStart);
+			ProgDataSize = (((uint32_t)(CurrPage - PageStart)) * DF_INTERNALDF_BUFFBYTES);
+
+			for (int16_t CurrByte = (DF_INTERNALDF_BUFFBYTES - 1); CurrByte >= 0; CurrByte--) // Found last non-blank byte
+			{
+				DF_ContinuousReadEnable(CurrPage, CurrByte);
+
+				if (SPI_SPITransmit(0x00) != 0xFF)                      // Find last used byte
+				{
+					ProgDataSize += (CurrByte + 1);
+					
+					break;
+				}
+			}
+
+			ProgDataSize += (ProgDataSize % TargetPageLength);          // Round up to nearest page size
+
 			break;
 		}
 	}
 	
-	ProgDataSize  = ((uint32_t)PagesUsed * DF_INTERNALDF_BUFFBYTES);    // Translate pages used into bytes used
-	ProgDataSize += (ProgDataSize % TargetPageLength);                  // Round up to nearest page size
-
-	return PagesUsed; //ProgDataSize;
+	return ProgDataSize;
 }
 
 /*
@@ -300,7 +311,7 @@ void SM_InterpretAVRISPPacket(void)
 
 	if (EraseDataflash && !(InProgrammingMode))
 	{
-		LCD_PutStr_f(WaitText);
+		LCD_PutStr_f(BusyText);
 	
 		uint8_t CurrBlock = (DF_DATAFLASH_BLOCKS - 1);
 		

@@ -51,14 +51,14 @@ uint8_t DF_CheckCorrectOnboardChip(void)
  ARGUMENTS: | Block address to erase
  RETURNS:   | None
 */
-void DF_EraseBlock(const uint16_t BlockToErase)
+void DF_EraseBlock(const uint8_t BlockToErase)
 {
 	DF_WaitWhileBusy();
 	DF_TOGGLEENABLE();
 
 	SPI_SPITransmit(DFCB_BLOCKERASE);
-	SPI_SPITransmit((uint8_t)(BlockToErase >> 8));
-	SPI_SPITransmit((uint8_t)(BlockToErase));
+	SPI_SPITransmit((uint8_t)(BlockToErase >> 4));
+	SPI_SPITransmit((uint8_t)(BlockToErase << 4));
 	SPI_SPITransmit(0x00);
 }
 
@@ -127,7 +127,7 @@ uint8_t DF_BufferCompare(const uint16_t PageAddress)
 	DF_WaitWhileBusy();
 	DF_TOGGLEENABLE();
 	
-	SPI_SPITransmit(DFCB_FLASHTOBUF1COMPARE);	
+	SPI_SPITransmit(DFCB_FLASHTOBUF1COMPARE);
 	SPI_SPITransmit((uint8_t)(PageAddress >> DF_PAGESHIFT_HIGH));
 	SPI_SPITransmit((uint8_t)(PageAddress << DF_PAGESHIFT_LOW));
 	SPI_SPITransmit(0x00);

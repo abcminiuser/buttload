@@ -29,6 +29,8 @@
 		
 		3) Devices with larger than 16-bit flash addresses (such as the MEGA2560) are supported.
 
+
+
 			      Status Colour   | Description
 			      ----------------+-------------
 			       Green          | Ready
@@ -124,14 +126,15 @@
 
 // PROGRAM TAGS:
 BUTTLOADTAG(Title,     "BUTTLOAD AVRISP");
-BUTTLOADTAG(Version,   VERSION_VSTRING);
 BUTTLOADTAG(Author,    "BY DEAN CAMERA");
+BUTTLOADTAG(Version,   VERSION_VSTRING);
 BUTTLOADTAG(Copyright, "<C> 2007 - GPL");
+BUTTLOADTAG(BTIME,     __TIME__ " " __DATE__);
 
 // PROGMEM CONSTANTS:
 const char*   AboutTextPtrs[]                   PROGMEM = {BUTTTAG_Title.TagData, BUTTTAG_Version.TagData, BUTTTAG_Author.TagData, BUTTTAG_Copyright.TagData};
 
-const char    WaitText[]                        PROGMEM = "*WAIT*";
+const char    BusyText[]                        PROGMEM = "*BUSY*";
 
 const char    Func_ISPPRGM[]                    PROGMEM = "AVRISP MODE";
 const char    Func_STOREPRGM[]                  PROGMEM = "STORE PRGM";
@@ -197,13 +200,13 @@ int main(void)
 	EIMSK   = ((1 << PCIE0) | (1 << PCIE1));     // | interrupts
 	EIFR    = ((1 << PCIF0) | (1 << PCIF1));     // /
 
-	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);      // Set status LEDs to orange (busy)
-	MAIN_SetTargetResetLine(MAIN_RESET_INACTIVE); // Set target reset line to inactive
+	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);
+	MAIN_SetTargetResetLine(MAIN_RESET_INACTIVE);
 
 	sei();                                       // Enable interrupts
 
 	LCD_Init();
-	LCD_PutStr_f(WaitText);
+	LCD_PutStr_f(BusyText);
 	
 	if ((eeprom_read_word(&EEPROMVars.MagicNumber) != MAGIC_NUM) || (eeprom_read_byte(&EEPROMVars.VersionNumber) != ((VERSION_MAJOR << 4) | VERSION_MINOR)))
 	{
@@ -215,13 +218,13 @@ int main(void)
 	}
 	
 	LCD_CONTRAST_LEVEL(eeprom_read_byte(&EEPROMVars.LCDContrast));
-	DF_ENABLEDATAFLASH(FALSE);                   // Pull internal Dataflash /CS high to disable it and thus save power
-	OSCCAL_Calibrate();                          // Calibrate the internal RC occilator
+	DF_ENABLEDATAFLASH(FALSE);
+	OSCCAL_Calibrate();
 	TOUT_SetupSleepTimer();                      // Set up and start the auto-sleep timer
-	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);	     // Set status LEDs to green (ready)	
+	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);
 	
 	TONEGEN_GET_TONE_VOL();                      // Setup the tone generator's volume
-	TG_PlayToneSeq(TONEGEN_SEQ_STARTUP);         // Play startup tone
+	TG_PlayToneSeq(TONEGEN_SEQ_STARTUP);
 
 	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
 	                                             // name of the default command onto the LCD
@@ -402,28 +405,12 @@ void MAIN_IntToStr(uint16_t IntV, char *Buff)
 }
 
 /*
- NAME:      | MAIN_ShowProgType
- PURPOSE:   | Shows the programming message ("PRG> ") to the LCD, followed by the specified type letter
- ARGUMENTS: | Letter to display after programming message text
- RETURNS:   | None
-*/
-void MAIN_ShowProgType(const uint8_t Letter)
-{
-	char ProgTypeBuffer[7];
-
-	strcpy_P(ProgTypeBuffer, PSTR("PRG>  "));
-	ProgTypeBuffer[5] = Letter;
-	
-	LCD_PutStr(ProgTypeBuffer);
-}
-
-/*
  NAME:      | MAIN_ShowError
  PURPOSE:   | Shows the specified error text to the LCD, prefixed by "E>", and waits for the joystick to be pressed
  ARGUMENTS: | Pointer to error string located in flash memory
  RETURNS:   | None
 */
-void MAIN_ShowError(const char *pFlashStr)
+void MAIN_ShowError(const char *ErrorStr)
 {
 	char    ErrorBuff[LCD_TEXTBUFFER_SIZE + 3];  // New buffer, LCD text buffer size plus space for the "E>" prefix and null-termination
 	uint8_t CurrLedStatus = (MAIN_STATUSLED_PORT & MAIN_STATLED_ORANGE);
@@ -431,7 +418,7 @@ void MAIN_ShowError(const char *pFlashStr)
 	ErrorBuff[0] = 'E';
 	ErrorBuff[1] = '>';
 
-	strcpy_P(&ErrorBuff[2], pFlashStr);
+	strcpy_P(&ErrorBuff[2], ErrorStr);
 	
 	LCD_PutStr(ErrorBuff);
 	MAIN_SETSTATUSLED(MAIN_STATLED_RED);	
@@ -774,7 +761,7 @@ static void MAIN_ClearMem(void)
 
 	MAIN_WaitForJoyRelease();
 
-	LCD_PutStr_f(WaitText);
+	LCD_PutStr_f(BusyText);
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);      // Set status LEDs to orange (busy)
 
 	for (uint16_t EAddr = 0; EAddr < sizeof(EEPROMVars); EAddr++)

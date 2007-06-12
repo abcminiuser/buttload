@@ -68,6 +68,8 @@ void VAMM_StoreByte(const uint8_t Data)
 {
 	if ((VAMMSetup != VAMM_SETUP_WRITE) || (DataflashInfo.CurrBuffByte == DF_INTERNALDF_BUFFBYTES)) // End of dataflash page or not set up for writing yet
 	{
+		EraseDataflash = FALSE;
+	
 		VAMM_SetAddress();
 
 		DF_CopyPage(DataflashInfo.CurrPageAddress, DF_FLASH_TO_BUFFER); // Page contains data already, copy it into the buffer

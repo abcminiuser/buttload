@@ -85,6 +85,7 @@ void PM_StartProgAVR(void)
 {
 	uint8_t StoredLocksFuses;
 	uint8_t ProgOptions = eeprom_read_byte(&EEPROMVars.PGOptions);
+	char ProgTypeBuffer[7];
 
 	if (!(ProgOptions) || (ProgOptions > 15))
 	{
@@ -97,7 +98,7 @@ void PM_StartProgAVR(void)
 		return;		
 	}
 
-	LCD_PutStr(WaitText);
+	LCD_PutStr(BusyText);
 	
 	DF_ENABLEDATAFLASH(TRUE);
 	SPI_SPIInit();
@@ -115,13 +116,16 @@ void PM_StartProgAVR(void)
 		
 	V2P_ClearCurrAddress();
 	ProgrammingFault = ISPCC_NO_FAULT;
+
+	strcpy_P(ProgTypeBuffer, PSTR("PRG>  "));
 	
 	ISPCC_EnterChipProgrammingMode();            // Try to sync with the slave AVR
 	if (InProgrammingMode)                       // ISPCC_EnterChipProgrammingMode alters the InProgrammingMode flag
 	{						
 		if ((ProgOptions & PM_OPT_FLASH) && (ProgrammingFault == ISPCC_NO_FAULT))
 		{
-			MAIN_ShowProgType('C');
+			ProgTypeBuffer[5] = 'C';
+			LCD_PutStr(ProgTypeBuffer);
 			
 			if (!(eeprom_read_byte(&EEPROMVars.EraseCmdStored) == TRUE))
 			{
@@ -136,7 +140,8 @@ void PM_StartProgAVR(void)
 
 		if ((ProgOptions & PM_OPT_FLASH) && (ProgrammingFault == ISPCC_NO_FAULT))
 		{
-			MAIN_ShowProgType('D');
+			ProgTypeBuffer[5] = 'D';
+			LCD_PutStr(ProgTypeBuffer);
 
 			if (!(SM_GetStoredDataSize(TYPE_FLASH))) // Check to make sure a program is present in memory
 			{
@@ -152,7 +157,8 @@ void PM_StartProgAVR(void)
 	
 		if ((ProgOptions & PM_OPT_EEPROM) && (ProgrammingFault == ISPCC_NO_FAULT))
 		{
-			MAIN_ShowProgType('E');
+			ProgTypeBuffer[5] = 'E';
+			LCD_PutStr(ProgTypeBuffer);
 
 			if (!(SM_GetStoredDataSize(TYPE_EEPROM))) // Check to make sure EEPROM data is present in memory
 			{
@@ -168,7 +174,8 @@ void PM_StartProgAVR(void)
 
 		if ((ProgOptions & PM_OPT_FUSE) && (ProgrammingFault == ISPCC_NO_FAULT))
 		{
-			MAIN_ShowProgType('F');
+			ProgTypeBuffer[5] = 'F';
+			LCD_PutStr(ProgTypeBuffer);
 			
 			StoredLocksFuses = eeprom_read_byte(&EEPROMVars.TotalFuseBytes);
 			if (!(StoredLocksFuses) || (StoredLocksFuses == 0xFF))
@@ -194,7 +201,8 @@ void PM_StartProgAVR(void)
 
 			if (InProgrammingMode)
 			{
-				MAIN_ShowProgType('L');
+				ProgTypeBuffer[5] = 'L';
+				LCD_PutStr(ProgTypeBuffer);
 			
 				StoredLocksFuses = eeprom_read_byte(&EEPROMVars.TotalLockBytes);
 				if (!(StoredLocksFuses) || (StoredLocksFuses == 0xFF))
@@ -325,7 +333,7 @@ void PM_SetProgramDataType(uint8_t Mask)
 	if (ProgOptions > 15)
 	  ProgOptions = 0;
 
-	if (Mask & PM_OPT_CLEARFLAGS)
+	if (Mask == PM_OPT_CLEARFLAGS)
 	  ProgOptions  = 0;
 	else
 	  ProgOptions |= Mask;

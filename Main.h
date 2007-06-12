@@ -58,7 +58,7 @@
 	#endif
 	
 	// EXTERNAL VARIABLES:
-	extern const char WaitText[];
+	extern const char BusyText[];
 	extern const char VersionInfo[];
 
 	#define JoyStatus                  GPIOR1 // Psudo-variable, GPIO register for speed
@@ -82,13 +82,12 @@
 	#define MAIN_RESET_INACTIVE        1
 		
 	// PROTOTYPES:
-	int main(void) ATTR_NO_RETURN; // Remove main prologue designed to allow for recursive use of main (not needed)
+	int main(void) ATTR_NAKED ATTR_NO_RETURN; // Remove main prologue designed to allow for recursive use of main (not needed)
 
 	void MAIN_SetTargetResetLine(const uint8_t ActiveInactive);
 	void MAIN_WaitForJoyRelease(void);
 	void MAIN_IntToStr(uint16_t IntV, char *Buff) ATTR_NON_NULL_PTR_ARGS(2);
-	void MAIN_ShowProgType(const uint8_t Letter);
-	void MAIN_ShowError(const char *pFlashStr) ATTR_NON_NULL_PTR_ARGS(1);
+	void MAIN_ShowError(const char *ErrorStr) ATTR_NON_NULL_PTR_ARGS(1);
 	
 	void MAIN_Delay10MS(uint8_t loops);
 	void MAIN_Delay1MS(uint8_t loops);

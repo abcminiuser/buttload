@@ -30,8 +30,8 @@
 	
 	#define LCD_SCROLLCOUNT_DEFAULT    6
 	#define LCD_DELAYCOUNT_DEFAULT     20
+
 	#define LCD_TEXTBUFFER_SIZE        20
-	#define LCD_SEGBUFFER_SIZE         19
 	#define LCD_DISPLAY_SIZE           6
 
 	#define LCD_FLAG_SCROLL            (1 << 0)
