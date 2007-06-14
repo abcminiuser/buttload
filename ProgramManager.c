@@ -45,6 +45,9 @@ void PM_ShowStoredItemSizes(void)
 			SPI_SPIInit();
 			DF_ENABLEDATAFLASH(TRUE);
 
+			if (!(DF_CheckCorrectOnboardChip()))
+			  return;
+
 			switch (ItemInfoIndex)
 			{
 				case 0:

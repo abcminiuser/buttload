@@ -40,14 +40,6 @@
 */
 
 /*
-	KNOWN ISSUES:
-
-		1) A maximum of 20 fuse bytes and 20 lock bytes can be stored in memory at any one
-		   time (writing the same fuse overwrites the existing value). If it is attempted to
-		   write more than this maximum, the extra bytes will be ignored.
-*/
-
-/*
 	CONNECTIONS:
 	
 	 * Because the on-board dataflash is connected to the SPI interface, the code uses

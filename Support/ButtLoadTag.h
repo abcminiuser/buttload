@@ -12,8 +12,9 @@
    allow the embedding of “ButtTags”, small strings of text
    which may be read by ButtLoad (if the program is stored in
    ButtLoad's non-volatile memory) or by other C management
-   programs. Each ButtTag must have a unique name and be less
-   that 20 characters in length.
+   programs. Each ButtTag must have a unique name and may be
+   of any length, however ButtLoad will only display the first
+   20 characters of each tag's contents.
 */
 
 #ifndef BLTAG_H

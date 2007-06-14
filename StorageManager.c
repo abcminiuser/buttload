@@ -324,11 +324,12 @@ void SM_InterpretAVRISPPacket(void)
 		while (CurrBlock--);
 
 		MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);
-		DF_ENABLEDATAFLASH(FALSE);
 		SPI_SPIOFF();
+		DF_ENABLEDATAFLASH(FALSE);
 
 		LCD_PutStr_f(StorageText);
 
+		EraseDataflash = FALSE;
 		TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);
 	}
 }

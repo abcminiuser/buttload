@@ -527,12 +527,11 @@ $(OBJDIR)/%.o : %.S
 
 
 # Target: clean project.
-clean: begin clean_list end
+clean: begin clean_list clean_bin end
 
 clean_list :
 	@echo
 	@echo $(MSG_CLEANING)
-	$(REMOVE) $(TARGET).hex
 	$(REMOVE) $(TARGET).eep
 	$(REMOVE) $(TARGET).cof
 	$(REMOVE) $(TARGET).elf
@@ -545,7 +544,10 @@ clean_list :
 	$(REMOVE) $(SRC:.c=.d)
 	$(REMOVE) $(SRC:.c=.i)
 	$(REMOVEDIR) .dep
+	$(REMOVEDIR) .obj
 
+clean_bin :
+	$(REMOVE) $(TARGET).hex
 
 # Create object files directory
 $(shell mkdir $(OBJDIR) 2>/dev/null)
@@ -558,4 +560,4 @@ $(shell mkdir $(OBJDIR) 2>/dev/null)
 # Listing of phony targets.
 .PHONY : all begin finish end sizebefore sizeafter gccversion \
 build elf hex eep lss sym coff extcoff \
-clean clean_list preprocess program debug gdb-config
+clean clean_list clean_bin preprocess program debug gdb-config
