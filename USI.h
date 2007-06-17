@@ -47,8 +47,15 @@
 		void           USI_SPIInitMaster(void);
 		void           USI_SPIOff(void);
 		void           USI_SPIToggleClock(void);
-		uint8_t        USI_SPITransmitWord(const uint16_t val);
 		extern uint8_t USI_SPITransmit(const uint8_t val);
+
+		// PUBLIC INLINE FUNCTIONS:
+		static inline uint8_t USI_SPITransmitWord(const uint16_t val) ATTR_ALWAYS_INLINE;
+		static inline uint8_t USI_SPITransmitWord(const uint16_t val)
+		{
+			USI_SPITransmit(val >> 8);
+			return USI_SPITransmit(val & 0xFF);
+		}
 	
 	#endif
 #endif

@@ -31,7 +31,7 @@ uint8_t DF_CheckCorrectOnboardChip(void)
 {
 	DF_WaitWhileBusy();
 	
-	if (((SPI_SPITransmit(0x00) & DF_DFINFOMASK)) != (3 << 3)) // Bits 3, 4 and 5 contain the dataflash type info
+	if (((SPI_SPITransmit(0x00) & DF_DFINFOMASK)) != DF_AT45DB041B_DENSITYMASK)
 	{
 		DF_ENABLEDATAFLASH(FALSE);
 		SPI_SPIOFF();

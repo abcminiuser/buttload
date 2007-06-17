@@ -50,25 +50,25 @@
 	#define V2P_SW_VERSION_MINOR_DEFAULT 10
 	
 	// EXTERNAL VARIABLES:
-	extern uint8_t   PacketBytes[V2P_MAXBUFFSIZE];
-	extern uint16_t  MessageSize;
-	extern uint8_t   InProgrammingMode;
-	extern uint32_t  CurrAddress;
+	extern uint8_t  PacketBytes[V2P_MAXBUFFSIZE];
+	extern uint16_t MessageSize;
+	extern uint8_t  InProgrammingMode;
+	extern uint32_t CurrAddress;
 	
 	// PROTOTYPES:
-	void    V2P_RunStateMachine(FuncPtr PacketDecodeFunction) ATTR_NON_NULL_PTR_ARGS(1);
-	void    V2P_SendPacket(void);
-	void    V2P_CheckForExtendedAddress(void);
-	void    V2P_ClearCurrAddress(void);
+	void V2P_RunStateMachine(const FuncPtr PacketDecodeFunction) ATTR_NON_NULL_PTR_ARGS(1);
+	void V2P_SendPacket(void);
+	void V2P_CheckForExtendedAddress(void);
+	void V2P_ClearCurrAddress(void);
 
 	#if defined(INC_FROM_V2P)
 	  static uint8_t V2P_GetChecksum(void) ATTR_WARN_UNUSED_RESULT;
-	  static void    V2P_ProcessPacketData(FuncPtr PacketDecodeFunction) ATTR_NON_NULL_PTR_ARGS(1);
+	  static void    V2P_ProcessPacketData(const FuncPtr PacketDecodeFunction) ATTR_NON_NULL_PTR_ARGS(1);
 	  static void    V2P_GetSetParameter(void);
 	#endif
 
 	// PUBLIC INLINE FUNCTIONS:
-	static inline void V2P_IncrementCurrAddress(void);
+	static inline void V2P_IncrementCurrAddress(void) ATTR_ALWAYS_INLINE;
 	static inline void V2P_IncrementCurrAddress(void)
 	{
 		/* Since CurrAddress is incremented often (and requires many bytes to do so), I've opted

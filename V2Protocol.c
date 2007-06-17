@@ -31,7 +31,7 @@ static uint8_t  Param_ControllerInit           = 0; // This is set to zero on re
  ARGUMENTS: | Pointer to secondary interpreter function for mode-specific commands
  RETURNS:   | None
 */
-void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
+void V2P_RunStateMachine(const FuncPtr PacketDecodeFunction)
 {
 	uint8_t  V2PState           = V2P_STATE_IDLE;
 	uint16_t CurrentMessageByte = 0;
@@ -65,7 +65,7 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 				SLEEPCPU(SLEEP_IDLE);              // Can idle here, since USART or Joystick interrupt will cause execution to continue
 
 				break;
-			case V2P_STATE_START:			
+			case V2P_STATE_START:
 				if (USART_Rx() == AICB_MESSAGE_START) // Start bit is always 0x1B
 				  V2PState = V2P_STATE_GETSEQUENCENUM;
 				else
@@ -78,7 +78,7 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 
 				break;
 			case V2P_STATE_GETMESSAGESIZE1:
-				MessageSize = ((uint16_t)USART_Rx() << 8);  // Message size is MSB first				
+				MessageSize = ((uint16_t)USART_Rx() << 8); // Message size is MSB first				
 				V2PState    = V2P_STATE_GETMESSAGESIZE2;
 				
 				break;
@@ -105,10 +105,10 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 				  V2PState = V2P_STATE_GETCHECKSUM;
 				else
 				  PacketBytes[CurrentMessageByte++] = USART_Rx();
-	
+
 				break;
 			case V2P_STATE_GETCHECKSUM:
-				if  (!(PacketTimeOut))        // Only try to process the packet if there is no timeout
+				if (!(PacketTimeOut))             // Only try to process the packet if there is no timeout
 				{
 					if (V2P_GetChecksum() == USART_Rx()) // If checksum is ok, process the packet
 					{
@@ -123,23 +123,14 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 
 				break;
 			case V2P_STATE_BADCHKSUM:
-				PacketBytes[1] = AICB_STATUS_CKSUM_ERROR;
-
-				MessageSize = 2;
-				V2P_SendPacket();
-
-				V2PState = V2P_STATE_PACKOK;
-				break;
-			case V2P_STATE_TIMEOUT:
-				PacketBytes[1] = AICB_STATUS_CMD_TOUT;
-
-				MessageSize = 2;
-				V2P_SendPacket();
-				
-				V2PState = V2P_STATE_PACKOK;
-				break;
 			case V2P_STATE_PACKERR:
-				PacketBytes[1] = AICB_STATUS_CMD_FAILED;
+			case V2P_STATE_TIMEOUT:
+				if (V2PState == V2P_STATE_BADCHKSUM)
+				  PacketBytes[1] = AICB_STATUS_CKSUM_ERROR;
+				else if (V2PState == V2P_STATE_PACKERR)
+				  PacketBytes[1] = AICB_STATUS_CMD_FAILED;
+				else
+				  PacketBytes[1] = AICB_STATUS_CMD_TOUT;
 
 				MessageSize = 2;
 				V2P_SendPacket();
@@ -148,7 +139,7 @@ void V2P_RunStateMachine(FuncPtr PacketDecodeFunction)
 				break;
 			case V2P_STATE_PACKOK:
 				PacketTimeOut = FALSE;
-				BUFF_InitializeBuffer();      // Flush the ringbuffer
+				BUFF_InitializeBuffer();
 				TIMEOUT_PACKET_TIMER_OFF();
 
 				V2PState = V2P_STATE_IDLE;
@@ -237,7 +228,7 @@ static uint8_t V2P_GetChecksum(void)
  ARGUMENTS: | Pointer to the second (mode-specific) packet decoding routine
  RETURNS:   | None
 */
-static void V2P_ProcessPacketData(FuncPtr PacketDecodeFunction)
+static void V2P_ProcessPacketData(const FuncPtr PacketDecodeFunction)
 {
 	switch (PacketBytes[0])                   // Look for generic commands which can be interpreted here, otherwise run the custom interpret routine
 	{ 

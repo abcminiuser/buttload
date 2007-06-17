@@ -142,6 +142,7 @@ void AICI_InterpretPacket(void)
 			uint8_t  ReadCommand = PacketBytes[3];
 			uint16_t BytesToRead = ((uint16_t)PacketBytes[1] << 8) // Load in the number of bytes that is to
 			                     | PacketBytes[2];                 // be read into a temp variable (MSB first)
+			uint8_t  MemoryType  = PacketBytes[0];
 
 			MessageSize = BytesToRead + 3;
 
@@ -156,20 +157,8 @@ void AICI_InterpretPacket(void)
 
 				PacketBytes[2 + ReadByte] = USI_SPITransmit(0x00); // Read in the byte stored at the requested location
 
-				if ((ReadByte & 0x01) || (PacketBytes[0] == AICB_CMD_READ_EEPROM_ISP)) // Flash addresses are given in words; only increment on the odd byte if reading the flash.
-				{
-					V2P_IncrementCurrAddress();
-				}
-				else
-				{
-					V2P_CheckForExtendedAddress();
-
-					if (BYTE(CurrAddress, 2) && !(BYTE(CurrAddress, 0) | BYTE(CurrAddress, 1)))
-					{
-						BYTE(CurrAddress, 3) = (1 << 7); // Set MSB set of the address, indicates a LOAD_EXTENDED_ADDRESS must be executed			  
-						V2P_CheckForExtendedAddress();
-					}
-				}
+				if ((ReadByte & 0x01) || (MemoryType == AICB_CMD_READ_EEPROM_ISP)) // Flash addresses are given in words; only increment on the odd byte if reading the flash.
+				  V2P_IncrementCurrAddress();
 			}
 			
 			PacketBytes[1]               = AICB_STATUS_CMD_OK; // Return data should be encompassed in STATUS_CMD_OKs

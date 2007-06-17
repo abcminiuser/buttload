@@ -42,7 +42,7 @@
 	void     SM_InterpretAVRISPPacket(void);
 	
 	#if defined(INC_FROM_SM)
-	  static void     SM_CheckEndOfFuseLockData(void);
+	  static void SM_CheckEndOfFuseLockData(void);
 	#endif
 	
 #endif

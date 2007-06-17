@@ -35,16 +35,16 @@
 	#define PM_LARGE_PAGE_LENGTH   160
 	
 	// PROTOTYPES:
-	void   PM_ShowStoredItemSizes(void);
-	void   PM_StartProgAVR(void);
-	void   PM_ChooseProgAVROpts(void);
-	void   PM_SetProgramDataType(uint8_t Mask);
-	void   PM_WaitWhileTargetBusy(void);
+	void PM_ShowStoredItemSizes(void);
+	void PM_StartProgAVR(void);
+	void PM_ChooseProgAVROpts(void);
+	void PM_SetProgramDataType(uint8_t Mask);
+	void PM_WaitWhileTargetBusy(void);
 
 	#if defined(INC_FROM_PM)
-	  static void   PM_SendFuseLockBytes(const uint8_t Type);
-	  static void   PM_SendEraseCommand(void);
-	  static void   PM_CreateProgrammingPackets(void);
+	  static void PM_SendFuseLockBytes(const uint8_t Type);
+	  static void PM_SendEraseCommand(void);
+	  static void PM_CreateProgrammingPackets(void);
 	#endif
 	
 #endif

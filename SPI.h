@@ -20,8 +20,16 @@
 	#define SPI_SPIOFF()	     MACROS{ PRR |= (1 << PRSPI); }MACROE
 	
 	// PROTOTYPES:
-	void    SPI_SPIInit(void);
-	uint8_t SPI_SPITransmit(const uint8_t Data);
-	uint8_t SPI_SPITransmitWord(const uint16_t Data);
+	void SPI_SPIInit(void);
+
+	// INLINE FUNCTIONS:
+	static inline uint8_t SPI_SPITransmit(const uint8_t Data) ATTR_ALWAYS_INLINE;
+	static inline uint8_t SPI_SPITransmit(const uint8_t Data)
+	{
+		SPDR = Data;                       // Loading a byte into the data register, data is shifted out automatically
+		while (!(SPSR & (1 << SPIF)));     // Wait until transmission completed
+
+		return SPDR;
+	}
 	
 #endif

@@ -43,12 +43,12 @@
 	#define TIMEOUT_SLEEP_TIMEOUT_RESET()    MACROS{ SleepTimeOutSecs = 0; TCNT2 = 0; }MACROE
 	
 	// EXTERNAL VARIABLES:
-	extern volatile uint8_t  PacketTimeOut;
-	extern volatile uint8_t  PacketTimeOutTicks;
-	extern volatile uint8_t  SleepTimeOutSecs;
-	extern volatile uint8_t  SecsBeforeAutoSleep;
+	extern volatile uint8_t PacketTimeOut;
+	extern volatile uint8_t PacketTimeOutTicks;
+	extern volatile uint8_t SleepTimeOutSecs;
+	extern volatile uint8_t SecsBeforeAutoSleep;
 
-	extern const    uint8_t  AutoSleepTOValues[5] PROGMEM;	
+	extern const    uint8_t AutoSleepTOValues[5] PROGMEM;
 
 	// PROTOTYPES:
 	void TOUT_SetupSleepTimer(void);

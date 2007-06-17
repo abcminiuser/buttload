@@ -62,15 +62,3 @@ void USI_SPIToggleClock(void)
 	USICR = (USICONTROLREGS | (1 << USICLK));
 	_delay_us(100);
 }
-
-/*
- NAME:      | USI_SPITransmitWord
- PURPOSE:   | Transmits two bytes and recieves a single byte via the USI subsystem (in SPI mode)
- ARGUMENTS: | None
- RETURNS:   | None
-*/
-uint8_t USI_SPITransmitWord(const uint16_t val)
-{
-	USI_SPITransmit((uint8_t)(val >> 8));
-	return USI_SPITransmit((uint8_t)val);
-}

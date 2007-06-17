@@ -43,18 +43,6 @@ void USART_Init(void)
 }
 
 /*
- NAME:      | USART_Tx
- PURPOSE:   | Transmits a byte via the USART, waiting until USART is ready if needed
- ARGUMENTS: | Byte to transmit
- RETURNS:   | None
-*/
-void USART_Tx(const char data)
-{
-	while (!(UCSRA & (1 << UDRE)));
-	UDR = data;
-}
-
-/*
  NAME:      | USART_Rx
  PURPOSE:   | Returns the next byte out of the ring buffer, looping until data ready or timeout expires
  ARGUMENTS: | None

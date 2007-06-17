@@ -9,10 +9,10 @@
 
 #include "RingBuff.h"
 
-static volatile char    RingBuffer[BUFF_BUFFLEN] = {};
-static volatile uint8_t InPos                    = 0;
-static volatile uint8_t OutPos                   = 0;
-       volatile uint8_t BuffElements             = 0;
+volatile char    RingBuffer[BUFF_BUFFLEN] = {};
+volatile uint8_t InPos                    = 0;
+volatile uint8_t OutPos                   = 0;
+volatile uint8_t BuffElements             = 0;
 
 // ======================================================================================
 
@@ -49,31 +49,4 @@ void BUFF_InitializeBuffer(void)
 		OutPos = 0;
 		BuffElements = 0;
 	}
-}
-
-/*
- NAME:      | BUFF_GetBuffByte
- PURPOSE:   | Returns the next byte in the FIFO ring buffer
- ARGUMENTS: | None
- RETURNS:   | Next bytes in the ring buffer
-*/
-char BUFF_GetBuffByte(void)
-{
-	uint8_t RetrievedData;
-
-	if (!(BuffElements))
-	  return 0;
-
-	ATOMIC_BLOCK(ATOMIC_FORCEON)
-	{
-		RetrievedData = RingBuffer[OutPos];
-		BuffElements--;
-		
-		OutPos++;
-		
-		if (OutPos == BUFF_BUFFLEN)
-		  OutPos = 0;
-	}
-		
-	return RetrievedData;
 }

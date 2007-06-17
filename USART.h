@@ -27,7 +27,13 @@
 	
 	// PROTOTYPES:
 	void USART_Init(void);
-	void USART_Tx(const char data);
 	char USART_Rx(void) ATTR_WARN_UNUSED_RESULT;
 	
+	// INLINE FUNCTIONS:
+	static inline void USART_Tx(const char data) ATTR_ALWAYS_INLINE;
+	static inline void USART_Tx(const char data)
+	{
+		while (!(UCSRA & (1 << UDRE)));
+		UDR = data;
+	}
 #endif

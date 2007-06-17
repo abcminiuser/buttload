@@ -29,17 +29,17 @@
 	#define ISPCC_POLL_BUSYFLAG               0x01
 	
 	#define ISPCC_PAGE_POLLTYPE_MASK          0x70
-	#define ISPCC_PAGE_POLLTYPE_MASKSHIFT     4
+	#define ISPCC_PAGE_POLLTYPE_MASKSHIFT     3
 	#define ISPCC_PAGE_POLLTYPE_WAIT          (1 << 4)
 	
 	#define ISPCC_WORD_POLLTYPE_MASK          0x0E
-	#define ISPCC_WORD_POLLTYPE_MASKSHIFT     1
+	#define ISPCC_WORD_POLLTYPE_MASKSHIFT     0
 	#define ISPCC_WORD_POLLTYPE_WAIT          (1 << 1)
 	
-	#define ISPCC_POLLTYPE_MASK               0x07
-	#define ISPCC_POLLTYPE_WAIT               (1 << 0)
-	#define ISPCC_POLLTYPE_DATA               (1 << 1)
-	#define ISPCC_POLLTYPE_READY              (1 << 2)
+	#define ISPCC_POLLTYPE_MASK               0x0E
+	#define ISPCC_POLLTYPE_WAIT               (1 << 1)
+	#define ISPCC_POLLTYPE_DATA               (1 << 2)
+	#define ISPCC_POLLTYPE_READY              (1 << 3)
 	
 	#define ISPCC_HIGH_BYTE_READ              (1 << 3)
 	#define ISPCC_LOW_BYTE_READ               (0 << 3)
@@ -58,11 +58,11 @@
 	#define ProgrammingFault                  GPIOR2 // Psudo-variable, GPIO register for speed
 	
 	// PROTOTYPES:
-	void   ISPCC_EnterChipProgrammingMode(void);
-	void   ISPCC_ProgramChip(void);
+	void ISPCC_EnterChipProgrammingMode(void);
+	void ISPCC_ProgramChip(void);
 	
 	#if defined(INC_FROM_ISPCC)
-	  static void   ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr);
+	  static void ISPCC_PollForProgComplete(const uint8_t PollData, uint16_t PollAddr);
 	#endif
 
 #endif

@@ -52,6 +52,9 @@ Current Version: Public Release 3.0
 	  * VirtualAVRMemMamager now saves the Erase Chip command bytes without wasting EEPROM saving the V2Protocol command
 	  * ButtLoad busy "*WAIT*" message is now "*BUSY*"
 	  * DATAFLASH STATS mode now checks the dataflash before displaying data, to guard against faulty readings from a damaged/missing chip
+	  * Removed redundant extended address checking code from AICB_CMD_READ_FLASH_ISP handler in AVRISP mode
+	  * USI word transmit and BUFF_GetBuffByte functions converterted to static inline for speed
+	  * Removed unused SPI_TransmitWord function
 	  
 	IN PUBLIC RELEASE 2.0:
 	=======================================

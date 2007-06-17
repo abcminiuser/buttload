@@ -212,10 +212,10 @@ int main(void)
 	LCD_CONTRAST_LEVEL(eeprom_read_byte(&EEPROMVars.LCDContrast));
 	DF_ENABLEDATAFLASH(FALSE);
 	OSCCAL_Calibrate();
-	TOUT_SetupSleepTimer();                      // Set up and start the auto-sleep timer
+	TOUT_SetupSleepTimer();
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);
 	
-	TONEGEN_GET_TONE_VOL();                      // Setup the tone generator's volume
+	TONEGEN_GET_TONE_VOL();
 	TG_PlayToneSeq(TONEGEN_SEQ_STARTUP);
 
 	JoyStatus = JOY_INVALID;                     // Use an invalid joystick value to force the program to write the
@@ -234,18 +234,17 @@ int main(void)
 
 	for (;;)
 	{
-		if (JoyStatus)                           // Joystick is in the non-center position
+		if (JoyStatus)
 		{
-			if (JoyStatus & JOY_UP)              // Previous function
+			if (JoyStatus & JOY_UP)
 			  (CurrFunc == 0)? CurrFunc = ARRAY_UPPERBOUND(MainFunctionPtrs): CurrFunc--;
-			else if (JoyStatus & JOY_DOWN)       // Next function
+			else if (JoyStatus & JOY_DOWN)
 			  (CurrFunc == ARRAY_UPPERBOUND(MainFunctionPtrs))? CurrFunc = 0 : CurrFunc++;
-			else if (JoyStatus & JOY_PRESS)      // Select current function
+			else if (JoyStatus & JOY_PRESS)
 			  ((FuncPtr)pgm_read_word(&MainFunctionPtrs[CurrFunc]))(); // Run associated function
-			else if (JoyStatus & JOY_RIGHT)      // About ButtLoad list
+			else if (JoyStatus & JOY_RIGHT)
 			  MAIN_ShowAbout();
 
-			// Show current setting function onto the LCD:
 			LCD_PutStr_f((char*)pgm_read_word(&MainFunctionNames[CurrFunc]));
 
 			MAIN_WaitForJoyRelease();
@@ -424,7 +423,7 @@ void MAIN_ShowError(const char *ErrorStr)
 	while (!(JoyStatus & JOY_PRESS)) { SLEEPCPU(SLEEP_IDLE); }; // Wait until center button pushed before continuing
 	MAIN_WaitForJoyRelease();
 
-	TCCR1B = 0;                                  // Turn off timer 1
+	TCCR1B = 0;
 	TIMSK1 = 0;                                  // Turn off compare match interrupt
 	MAIN_SETSTATUSLED(CurrLedStatus);            // Restore previous LED status
 }
@@ -494,27 +493,24 @@ void MAIN_SleepMode(void)
 		while (!(LCDCRA & (1<<LCDIF)));          // Wait for blanking to be effective
 	}
 
-	LCDCRA &= ~(1 << LCDEN);                     // Turn off LCD driver while sleeping
-	PRR    |=  (1 << PRLCD);                     // Enable LCD power reduction bit
+	LCDCRA &= ~(1 << LCDEN);
+	PRR    |=  (1 << PRLCD);
 
 	TG_PlayToneSeq(TONEGEN_SEQ_SLEEP);
-
-	MAIN_SETSTATUSLED(MAIN_STATLED_OFF);         // Save battery power - turn off status LED
-
+	MAIN_SETSTATUSLED(MAIN_STATLED_OFF);
 	TIMEOUT_SLEEP_TIMER_OFF();
 
-	while (!(JoyStatus & JOY_UP))                // Joystick interrupt wakes the micro
+	while (!(JoyStatus & JOY_UP))
 	  SLEEPCPU(SLEEP_POWERDOWN);
 	   
 	TOUT_SetupSleepTimer();
-
-	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Turn status LED back on
-		
+	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);
 	TG_PlayToneSeq(TONEGEN_SEQ_RESUME);
 
-	PRR    &= ~(1 << PRLCD);                     // Disable LCD power reduction bit
-	LCDCRA |=  (1 << LCDEN);                     // Re-enable LCD driver
-	LCDCRA &= ~(1 << LCDBL);                     // Un-blank LCD to enable all segments
+	PRR    &= ~(1 << PRLCD);
+	LCDCRA |=  (1 << LCDEN);
+	
+	LCDCRA &= ~(1 << LCDBL);
 	
 	MAIN_WaitForJoyRelease();
 }
@@ -646,18 +642,17 @@ static void MAIN_ChangeSettings(void)
 	                                             // name of the default command onto the LCD
 	for (;;)
 	{
-		if (JoyStatus)                           // Joystick is in the non-center position
+		if (JoyStatus)
 		{
-			if (JoyStatus & JOY_UP)              // Previous function
+			if (JoyStatus & JOY_UP)
 			  (CurrSFunc == 0)? CurrSFunc = ARRAY_UPPERBOUND(SettingFunctionPtrs) : CurrSFunc--;
-			else if (JoyStatus & JOY_DOWN)       // Next function
+			else if (JoyStatus & JOY_DOWN)
 			  (CurrSFunc == ARRAY_UPPERBOUND(SettingFunctionPtrs))? CurrSFunc = 0 : CurrSFunc++;
-			else if (JoyStatus & JOY_PRESS)      // Select current function
-			  ((FuncPtr)pgm_read_word(&SettingFunctionPtrs[CurrSFunc]))(); // Run associated function
+			else if (JoyStatus & JOY_PRESS)
+			  ((FuncPtr)pgm_read_word(&SettingFunctionPtrs[CurrSFunc]))();
 			else if (JoyStatus & JOY_LEFT)
 			  return;
-		
-			// Show current function onto the LCD:
+
 			LCD_PutStr_f((char*)pgm_read_word(&SettingFunctionNames[CurrSFunc]));
 
 			MAIN_WaitForJoyRelease();
@@ -754,14 +749,14 @@ static void MAIN_ClearMem(void)
 	MAIN_WaitForJoyRelease();
 
 	LCD_PutStr_f(BusyText);
-	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);      // Set status LEDs to orange (busy)
+	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);
 
 	for (uint16_t EAddr = 0; EAddr < sizeof(EEPROMVars); EAddr++)
 	  eeprom_write_byte((uint8_t*)EAddr, 0xFF);
 	
 	eeprom_write_word(&EEPROMVars.MagicNumber, MAGIC_NUM);
 
-	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);       // Set status LEDs to green (ready)
+	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);
 	LCD_PutStr_f(PSTR("MEM CLEARED"));
 	LCD_WAIT_FOR_SCROLL_DONE();
 }

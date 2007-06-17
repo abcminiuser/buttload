@@ -149,7 +149,7 @@ void VAMM_Cleanup(void)
 {
 	if (VAMMSetup == VAMM_SETUP_WRITE)                      // Save partially written page if in write mode
 	{
-		if (DF_BufferCompare(DataflashInfo.CurrPageAddress) != DF_COMPARE_MATCH) // Compare so that write is only executed if page data is different
+		if (DF_BufferCompare(DataflashInfo.CurrPageAddress) == DF_COMPARE_MISMATCH) // Compare so that write is only executed if page data is different
 		  DF_CopyPage(DataflashInfo.CurrPageAddress, DF_BUFFER_TO_FLASH);
 	}
 
