@@ -39,7 +39,9 @@
 		uint8_t  ToneVolume;
 		uint8_t  PGOptions;
 		uint8_t  StartupMode;
-
+		uint8_t  StoredData;
+		uint8_t  StoredEEPROM;
+		
 		uint16_t MagicNumber;
 		uint8_t  VersionNumber;
 	} EEPROMVarsType;

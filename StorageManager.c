@@ -11,13 +11,14 @@
 #include "StorageManager.h"
 
 // GLOBAL VARIABLES:
-       uint8_t  MemoryType          = TYPE_FLASH;
-static uint8_t  CurrentMode         = SM_NO_SETUP;
-static uint16_t GPageLength         = 0;
-static uint8_t  WriteCmdStored      = FALSE;
-static uint8_t  PageLengthFound     = FALSE;
+       uint8_t  MemoryType           = TYPE_FLASH;
+static uint8_t  CurrentMode          = SM_NO_SETUP;
+static uint16_t GPageLength          = 0;
+static uint8_t  WriteCmdStored       = FALSE;
+static uint8_t  PageLengthFound      = FALSE;
 
-const char StorageText[] PROGMEM    = "*STORAGE MODE*";
+const char StorageText[] PROGMEM     = "*STORAGE MODE*";
+const char EraseNeededText[] PROGMEM = "ERASE NEEDED";
 
 // ======================================================================================
 
@@ -115,7 +116,9 @@ void SM_InterpretAVRISPPacket(void)
 			SM_CheckEndOfFuseLockData();                                // Check for remaining bytes to be stored and general cleanup
 			VAMM_Cleanup();
 
-			if (EraseDataflash)
+			if (InProgrammingMode == FALSE)                             // Flag is reset if an error occured in STORAGE MODE
+			  TG_PlayToneSeq(TONEGEN_SEQ_ERROR);			
+			else if (EraseDataflash)
 			  TG_PlayToneSeq(TONEGEN_SEQ_ERASINGDF);
 			else
 			  TG_PlayToneSeq(TONEGEN_SEQ_PROGDONE);
@@ -140,7 +143,7 @@ void SM_InterpretAVRISPPacket(void)
 		case AICB_CMD_CHIP_ERASE_ISP:
 			MessageSize = 2;
 
-			VAMM_EraseAVRMemory();
+			EraseDataflash = TRUE;
 			PM_SetProgramDataType(PM_OPT_CLEARFLAGS);
 			
 			PacketBytes[1] = AICB_STATUS_CMD_OK;
@@ -228,17 +231,39 @@ void SM_InterpretAVRISPPacket(void)
 
 			if (CurrentMode != SM_DATAFLASH_WRITE)                      // First programming packet
 			{
+				uint8_t NeedToEraseDF = FALSE;
+			
 				if (PacketBytes[0] == AICB_CMD_PROGRAM_FLASH_ISP)       // Flash programming mode
 				{
+					if (eeprom_read_byte(&EEPROMVars.StoredData) == TRUE)
+					  NeedToEraseDF = TRUE;
+					else
+					  eeprom_write_byte(&EEPROMVars.StoredData, TRUE);
+
 					EEPROMAddress = (uint8_t*)&EEPROMVars.WriteProgram;
 					PM_SetProgramDataType(PM_OPT_FLASH);
 					MemoryType  = TYPE_FLASH;
 				}
 				else                                                    // EEPROM programming mode
 				{
+					if (eeprom_read_byte(&EEPROMVars.StoredEEPROM) == TRUE)
+					  NeedToEraseDF = TRUE;
+					else
+					  eeprom_write_byte(&EEPROMVars.StoredEEPROM, TRUE);
+
 					EEPROMAddress = (uint8_t*)&EEPROMVars.WriteEEPROM;
 					PM_SetProgramDataType(PM_OPT_EEPROM);
 					MemoryType  = TYPE_EEPROM;
+				}
+
+				if (NeedToEraseDF)
+				{
+					LCD_PutStr_f(EraseNeededText);
+					
+					InProgrammingMode = FALSE;
+					PacketBytes[1] = AICB_STATUS_CMD_FAILED;
+
+					break;
 				}
 
 				GPageLength = 0;
@@ -312,16 +337,12 @@ void SM_InterpretAVRISPPacket(void)
 	if (EraseDataflash && !(InProgrammingMode))
 	{
 		LCD_PutStr_f(BusyText);
-	
-		uint8_t CurrBlock = (DF_DATAFLASH_BLOCKS - 1);
-		
+
 		DF_ENABLEDATAFLASH(TRUE);
 		SPI_SPIInit();
 		MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);
-
-		do
-		  DF_EraseBlock(CurrBlock);
-		while (CurrBlock--);
+	
+		VAMM_EraseAVRMemory();
 
 		MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);
 		SPI_SPIOFF();

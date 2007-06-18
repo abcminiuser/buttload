@@ -22,12 +22,19 @@ static volatile uint8_t  VAMMSetup        = VAMM_SETUP_NA;
 */
 void VAMM_EraseAVRMemory(void)
 {
+	uint8_t CurrBlock = (DF_DATAFLASH_BLOCKS - 1);
+
 	for (uint8_t PacketB = 1; PacketB < 7; PacketB++)       // Save the erase chip command bytes to EEPROM
 	  eeprom_write_byte(&EEPROMVars.EraseChip[PacketB - 1], PacketBytes[PacketB]);
 
 	eeprom_write_byte(&EEPROMVars.EraseCmdStored, TRUE);
 
-	EraseDataflash = TRUE;
+	eeprom_write_byte(&EEPROMVars.StoredData, FALSE);
+	eeprom_write_byte(&EEPROMVars.StoredEEPROM, FALSE);
+
+	do
+	  DF_EraseBlock(CurrBlock);
+	while (CurrBlock--);
 }
 
 /*
@@ -150,7 +157,7 @@ void VAMM_Cleanup(void)
 	if (VAMMSetup == VAMM_SETUP_WRITE)                      // Save partially written page if in write mode
 	{
 		if (DF_BufferCompare(DataflashInfo.CurrPageAddress) == DF_COMPARE_MISMATCH) // Compare so that write is only executed if page data is different
-		  DF_CopyPage(DataflashInfo.CurrPageAddress, DF_BUFFER_TO_FLASH);
+		  DF_CopyPage(DataflashInfo.CurrPageAddress, DF_BUFFER_TO_FLASH_NE);
 	}
 
 	VAMMSetup = VAMM_SETUP_NA;

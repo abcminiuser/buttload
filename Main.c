@@ -224,6 +224,7 @@ int main(void)
 	if (StartupMode == 1)                        // Check if production startup mode
 	{
 		CurrFunc  = 2;                           // Index for PROGRAM AVR mode	
+		LCD_PutStr_f(ProgramAVROptions[0]);      // Show default PROGRAM AVR submenu item
 		JoyStatus = JOY_PRESS;                   // Force a joy press to enter the function in the main menu loop
 	}
 	else if (StartupMode == 2)                   // Check if AVRISP startup mode

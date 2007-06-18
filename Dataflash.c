@@ -65,7 +65,7 @@ void DF_EraseBlock(const uint8_t BlockToErase)
 /*
  NAME:      | DF_CopyPage
  PURPOSE:   | Copys a page to or from the dataflash's internal buffer
- ARGUMENTS: | Page address to copy to/from, operation to perform (DF_BUFFER_TO_FLASH or DF_FLASH_TO_BUFFER)
+ ARGUMENTS: | Page address to copy to/from, operation to perform (DF_BUFFER_TO_FLASH_NE, DF_BUFFER_TO_FLASH or DF_FLASH_TO_BUFFER)
  RETURNS:   | None
 */
 void DF_CopyPage(const uint16_t PageAddress, uint8_t Operation)
