@@ -36,39 +36,15 @@
 
 	#define LCD_FLAG_SCROLL            (1 << 0)
 	#define LCD_FLAG_SCROLL_DONE       (1 << 1)	
-	
-	/*                        DIRTY HACK ALERT!!
-	   This will display the "val" number of arrows running atop the Butterfly's
-	   display. It will be cleared if the currently displayed text is scrolling
-	   or changed.
-	*/
-	#define LCD_BARGRAPH_SIZE         6
-	#define LCD_BARGRAPH(val)         MACROS{                      \
-	                                  switch (val)                 \
-                                      {                            \
-										default:                   \
-	                                 		LCDDR3 |= (1 << 0);    \
-	                                 	case 4:                    \
-	                                 		LCDDR1 |= (1 << 6);    \
-	                                 	case 3:                    \
-	                                 		LCDDR1 |= (1 << 2);    \
-	                                 	case 2:                    \
-	                                 		LCDDR0 |= (1 << 5);    \
-	                                 	case 1:                    \
-	                                 		LCDDR0 |= (1 << 1);    \
-											break;                 \
-										case 0:                    \
-	                                 		LCDDR3 &= ~(1 << 0);   \
-	                                 		LCDDR1 &= ~((1 << 6) | (1 << 2)); \
-	                                 		LCDDR0 &= ~((1 << 5) | (1 << 1)); \
-											break;                 \
-	                                  }                            \
-									  }MACROE
+
+	#define LCD_BARGRAPH_SIZE          5
 
 	// PROTOTYPES:
+	void LCD_Init(void);
+	void LCD_Bargraph(const uint8_t Segments);
 	void LCD_PutStr_f(const char *FlashData) ATTR_NON_NULL_PTR_ARGS(1);
 	void LCD_PutStr(const char *Data) ATTR_NON_NULL_PTR_ARGS(1);
-	void LCD_Init(void);
+	void LCD_Bargraph(const uint8_t Segments);
 	
 	#if defined(INC_FROM_DRIVER)
 	  static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit);

@@ -20,21 +20,29 @@ static volatile uint8_t  VAMMSetup        = VAMM_SETUP_NA;
  ARGUMENTS: | None
  RETURNS:   | None
 */
-void VAMM_EraseAVRMemory(void)
+void VAMM_EraseAVRMemory(uint8_t Mode)
 {
-	uint8_t CurrBlock = (DF_DATAFLASH_BLOCKS - 1);
+	if (Mode == VAMM_ERASE_STOREPACKET)
+	{
+		for (uint8_t PacketB = 1; PacketB < 7; PacketB++)       // Save the erase chip command bytes to EEPROM
+		  eeprom_write_byte(&EEPROMVars.EraseChip[PacketB - 1], PacketBytes[PacketB]);
 
-	for (uint8_t PacketB = 1; PacketB < 7; PacketB++)       // Save the erase chip command bytes to EEPROM
-	  eeprom_write_byte(&EEPROMVars.EraseChip[PacketB - 1], PacketBytes[PacketB]);
+		eeprom_write_byte(&EEPROMVars.EraseCmdStored, TRUE);
+	}
+	else
+	{
+		uint8_t CurrBlock = (DF_DATAFLASH_BLOCKS - 1);
 
-	eeprom_write_byte(&EEPROMVars.EraseCmdStored, TRUE);
+		eeprom_write_byte(&EEPROMVars.StoredData, FALSE);
+		eeprom_write_byte(&EEPROMVars.StoredEEPROM, FALSE);
 
-	eeprom_write_byte(&EEPROMVars.StoredData, FALSE);
-	eeprom_write_byte(&EEPROMVars.StoredEEPROM, FALSE);
-
-	do
-	  DF_EraseBlock(CurrBlock);
-	while (CurrBlock--);
+		do
+		{
+			DF_EraseBlock(CurrBlock);
+			LCD_Bargraph(CurrBlock / (uint8_t)(DF_DATAFLASH_BLOCKS / LCD_BARGRAPH_SIZE));
+		}
+		while (CurrBlock--);
+	}
 }
 
 /*

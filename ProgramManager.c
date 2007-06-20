@@ -146,7 +146,7 @@ void PM_StartProgAVR(void)
 			ProgTypeBuffer[5] = 'D';
 			LCD_PutStr(ProgTypeBuffer);
 
-			if (!(SM_GetStoredDataSize(TYPE_FLASH))) // Check to make sure a program is present in memory
+			if (eeprom_read_byte(&EEPROMVars.StoredData) != TRUE) // Check to make sure a program is present in memory
 			{
 				ProgrammingFault = ISPCC_FAULT_NODATATYPE;					
 				MAIN_ShowError(PSTR("NO DATA"));
@@ -163,7 +163,7 @@ void PM_StartProgAVR(void)
 			ProgTypeBuffer[5] = 'E';
 			LCD_PutStr(ProgTypeBuffer);
 
-			if (!(SM_GetStoredDataSize(TYPE_EEPROM))) // Check to make sure EEPROM data is present in memory
+			if (eeprom_read_byte(&EEPROMVars.StoredEEPROM) != TRUE) // Check to make sure EEPROM data is present in memory
 			{
 				ProgrammingFault = ISPCC_FAULT_NODATATYPE;
 				MAIN_ShowError(PSTR("NO EEPROM"));
@@ -430,7 +430,7 @@ static void PM_CreateProgrammingPackets(void)
 	uint32_t BytesToRead      = SM_GetStoredDataSize(MemoryType);
 	uint16_t BytesPerProgram  = (((uint16_t)PacketBytes[1] << 8) | PacketBytes[2]);
 	uint16_t PageLength       = eeprom_read_word((MemoryType == TYPE_FLASH)? &EEPROMVars.PageLength : &EEPROMVars.EPageLength);
-	uint16_t BytesPerProgress = (BytesToRead / (LCD_BARGRAPH_SIZE - 1));
+	uint16_t BytesPerProgress = (BytesToRead / LCD_BARGRAPH_SIZE);
 	uint8_t  ContinuedPage    = FALSE;
 	uint8_t* EEPROMAddress;
 	
@@ -516,12 +516,11 @@ static void PM_CreateProgrammingPackets(void)
 		}
 
 		ISPCC_ProgramChip();                                            // Start the program cycle
-		LCD_BARGRAPH((uint8_t)(BytesRead / BytesPerProgress));          // Show the progress onto the LCD
+		LCD_Bargraph(BytesRead / BytesPerProgress);                     // Show the progress onto the LCD
 
 		if (ProgrammingFault)                                           // Error out early if there's a problem such as a timeout
 		  break;
 	}
 	
-	LCD_BARGRAPH(0);
 	VAMM_Cleanup();
 }

@@ -18,7 +18,6 @@ static uint8_t  WriteCmdStored       = FALSE;
 static uint8_t  PageLengthFound      = FALSE;
 
 const char StorageText[] PROGMEM     = "*STORAGE MODE*";
-const char EraseNeededText[] PROGMEM = "ERASE NEEDED";
 
 // ======================================================================================
 
@@ -144,6 +143,7 @@ void SM_InterpretAVRISPPacket(void)
 			MessageSize = 2;
 
 			EraseDataflash = TRUE;
+			VAMM_EraseAVRMemory(VAMM_ERASE_STOREPACKET);
 			PM_SetProgramDataType(PM_OPT_CLEARFLAGS);
 			
 			PacketBytes[1] = AICB_STATUS_CMD_OK;
@@ -258,7 +258,7 @@ void SM_InterpretAVRISPPacket(void)
 
 				if (NeedToEraseDF)
 				{
-					LCD_PutStr_f(EraseNeededText);
+					LCD_PutStr_f(PSTR("ERASE NEEDED"));
 					
 					InProgrammingMode = FALSE;
 					PacketBytes[1] = AICB_STATUS_CMD_FAILED;
@@ -342,7 +342,7 @@ void SM_InterpretAVRISPPacket(void)
 		SPI_SPIInit();
 		MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);
 	
-		VAMM_EraseAVRMemory();
+		VAMM_EraseAVRMemory(VAMM_ERASE_ERASEDATA);
 
 		MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);
 		SPI_SPIOFF();

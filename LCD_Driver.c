@@ -20,7 +20,7 @@
 #define INC_FROM_DRIVER
 #include "LCD_Driver.h"
 
-//                                  LCD Text            + Nulls for scrolling + Null Termination
+//                                 LCD Text            + Nulls for scrolling + Null Termination
 static          char    TextBuffer[LCD_TEXTBUFFER_SIZE + LCD_DISPLAY_SIZE    + 1] = {};
 static          uint8_t StrStart        = 0;
 static volatile uint8_t StrEnd          = 0; // Volatile here because it saves space in the ISR
@@ -167,6 +167,34 @@ void LCD_PutStr(const char *Data)
 	StrEnd        = LoadB;
 	ScrollCount   = LCD_SCROLLCOUNT_DEFAULT + LCD_DELAYCOUNT_DEFAULT;
 	UpdateDisplay = TRUE;
+}
+
+/*
+ NAME:      | LCD_Bargraph
+ PURPOSE:   | Displays a bargraph of the specified length onto the Butterfly's LCD (non persistant)
+ ARGUMENTS: | Number of segments from 0 to LCD_BARGRAPH_SIZE
+ RETURNS:   | None
+*/
+void LCD_Bargraph(const uint8_t Segments)
+{
+	switch (Segments)
+	{
+		default:
+			LCDDR3 |= (1 << 0);
+		case 4:
+			LCDDR1 |= (1 << 6);
+		case 3:
+			LCDDR1 |= (1 << 2);
+		case 2:
+			LCDDR0 |= (1 << 5);
+		case 1:
+			LCDDR0 |= (1 << 1);
+			break;
+		case 0:
+			LCDDR3 &= ~(1 << 0);
+			LCDDR1 &= ~((1 << 6) | (1 << 2));
+			LCDDR0 &= ~((1 << 5) | (1 << 1));
+	}    
 }
 
 /*

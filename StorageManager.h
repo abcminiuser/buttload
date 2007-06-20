@@ -33,7 +33,7 @@
 	#define SM_EEPROM_OFFSET        (((unsigned long)DF_DATAFLASH_PAGES / 2) * DF_INTERNALDF_BUFFBYTES)
 	
 	// EXTERNAL VARIABLES:
-	extern uint8_t  MemoryType;
+	extern uint8_t MemoryType;
 	
 	extern const char StorageText[] PROGMEM;
 

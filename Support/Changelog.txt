@@ -56,6 +56,8 @@ Current Version: Public Release 3.0
 	  * USI word transmit and BUFF_GetBuffByte functions converterted to static inline for speed
 	  * Removed unused SPI_TransmitWord function
 	  * Added in ERASE NEEDED error for STORAGE MODE, which allowed for the use of the faster BUFFER_TO_FLASH without erase Dataflash command
+	  * PROGRAM AVR now checks EEPROM flags to determine if Flash/EEPROM data has been stored rather than calling SM_GetStoredDataSize
+	  * Clearing memory now clears the Virtual AVR as well, including inside the startup conditional clearing
 	  
 	IN PUBLIC RELEASE 2.0:
 	=======================================

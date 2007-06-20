@@ -204,6 +204,14 @@ int main(void)
 	{
 		for (uint16_t EAddr = 0; EAddr < sizeof(EEPROMVars); EAddr++) // Clear the EEPROM if first run
 		  eeprom_write_byte((uint8_t*)EAddr, 0xFF);
+		  
+		SPI_SPIInit();
+		DF_ENABLEDATAFLASH(TRUE);
+
+		VAMM_EraseAVRMemory(VAMM_ERASE_ERASEDATA);
+
+		DF_ENABLEDATAFLASH(FALSE);
+		SPI_SPIOFF();
 
 		eeprom_write_word(&EEPROMVars.MagicNumber, MAGIC_NUM);
 		eeprom_write_byte(&EEPROMVars.VersionNumber, ((VERSION_MAJOR << 4) | VERSION_MINOR));
@@ -696,7 +704,7 @@ static void MAIN_StorageInfo(void)
 					SPI_SPIInit();
 					DF_ENABLEDATAFLASH(TRUE);
 
-					if (!(SM_GetStoredDataSize(TYPE_FLASH)))
+					if (eeprom_read_byte(&EEPROMVars.StoredData) != TRUE)
 					  MAIN_ShowError(PSTR("NO STORED PRGM"));
 					else if (DF_CheckCorrectOnboardChip())
 					  TM_ShowTags();
@@ -755,8 +763,17 @@ static void MAIN_ClearMem(void)
 	for (uint16_t EAddr = 0; EAddr < sizeof(EEPROMVars); EAddr++)
 	  eeprom_write_byte((uint8_t*)EAddr, 0xFF);
 	
-	eeprom_write_word(&EEPROMVars.MagicNumber, MAGIC_NUM);
+	SPI_SPIInit();
+	DF_ENABLEDATAFLASH(TRUE);
 
+	VAMM_EraseAVRMemory(VAMM_ERASE_ERASEDATA);
+
+	DF_ENABLEDATAFLASH(FALSE);
+	SPI_SPIOFF();
+
+	eeprom_write_word(&EEPROMVars.MagicNumber, MAGIC_NUM);
+	eeprom_write_byte(&EEPROMVars.VersionNumber, ((VERSION_MAJOR << 4) | VERSION_MINOR));
+		
 	MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);
 	LCD_PutStr_f(PSTR("MEM CLEARED"));
 	LCD_WAIT_FOR_SCROLL_DONE();
