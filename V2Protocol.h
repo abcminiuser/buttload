@@ -42,9 +42,6 @@
 	
 	#define V2P_LOAD_EXTENDED_ADDR_CMD   0x4D
 	
-	#define V2P_CMD_DUMP_DATAFLASH       0xA0
-	#define V2P_CMD_DUMP_DATAFLASH_RAW   0xA1
-	
 	#define V2P_HW_VERSION               2
 	#define V2P_SW_VERSION_MAJOR         2
 	#define V2P_SW_VERSION_MINOR_DEFAULT 10

@@ -282,8 +282,7 @@ void SM_InterpretAVRISPPacket(void)
 				}
 			}
 
-			uint16_t BytesToWrite = ((uint16_t)PacketBytes[1] << 8)
-			                      | PacketBytes[2];
+			uint16_t BytesToWrite = (((uint16_t)PacketBytes[1] << 8) | PacketBytes[2]);
 
 			for (uint16_t CurrByte = 0; CurrByte < BytesToWrite; CurrByte++)
 			{
@@ -314,9 +313,8 @@ void SM_InterpretAVRISPPacket(void)
 				  MemoryType = TYPE_EEPROM;
 			}
 
-			uint16_t BytesToRead = ((uint16_t)PacketBytes[1] << 8)      // \. Load in the number of bytes that is to
-			                     | PacketBytes[2];                      // /  be read into a temp variable (MSB first)
-								 
+			uint16_t BytesToRead = (((uint16_t)PacketBytes[1] << 8) | PacketBytes[2]);
+	 
 			for (uint16_t ReadByte = 0; ReadByte < BytesToRead; ReadByte++)
 			  PacketBytes[2 + ReadByte] = VAMM_ReadByte();              // Read in the next dataflash byte if present
 

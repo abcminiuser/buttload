@@ -83,8 +83,7 @@ void ISPCC_ProgramChip(void)
 	uint8_t  WriteCommandL = PacketBytes[5] | ISPCC_LOW_BYTE_WRITE;
 	uint8_t  WriteCommandE = PacketBytes[5];
 	uint16_t StartAddress  = (uint16_t)CurrAddress;
-	uint16_t BytesToWrite  = ((uint16_t)PacketBytes[1] << 8)
-	                       | PacketBytes[2];
+	uint16_t BytesToWrite  = (((uint16_t)PacketBytes[1] << 8) | PacketBytes[2]);
 	uint8_t  CmdMemType    = PacketBytes[0];  
 	uint8_t  PollType;
 	uint8_t  ByteToWrite;

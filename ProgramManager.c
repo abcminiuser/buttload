@@ -521,6 +521,7 @@ static void PM_CreateProgrammingPackets(void)
 		if (ProgrammingFault)                                           // Error out early if there's a problem such as a timeout
 		  break;
 	}
-	
+
+	LCD_Bargraph(0);
 	VAMM_Cleanup();
 }

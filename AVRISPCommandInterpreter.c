@@ -93,17 +93,17 @@ void AICI_InterpretPacket(void)
 
 			while (TxByteNum++ < TxBytes)              // Still bytes to transfer
 			{
-				RecievedByte = USI_SPITransmit(PacketBytes[3 + TxByteNum]); // Transmit the byte, store the answer
+				RecievedByte = USI_SPITransmit(PacketBytes[4 + TxByteNum]); // Transmit the byte, store the answer
 
 				if ((TxByteNum >= RxStartByte) && (RxByteNum < RxBytes))
 				  PacketBytes[2 + RxByteNum++] = RecievedByte;
 			}
 
-			while (RxByteNum++ < RxBytes)                          // Still more bytes to recieve
-			  PacketBytes[2 + RxByteNum] = USI_SPITransmit(0x00);  // Send dummy bytes to fetch the response(s)
+			while (RxByteNum < RxBytes)                              // Still more bytes to recieve
+			  PacketBytes[2 + RxByteNum++] = USI_SPITransmit(0x00);  // Send dummy bytes to fetch the response(s)
 
-			PacketBytes[1]             = AICB_STATUS_CMD_OK; // Data should be encompassed
-			PacketBytes[3 + RxByteNum] = AICB_STATUS_CMD_OK; //  by STATS_CMD_OKs
+			PacketBytes[1]             = AICB_STATUS_CMD_OK;
+			PacketBytes[3 + RxByteNum] = AICB_STATUS_CMD_OK;
 
 			break;
 		case AICB_CMD_READ_SIGNATURE_ISP:
@@ -140,8 +140,7 @@ void AICI_InterpretPacket(void)
 			MessageSize = 0;                           // Here to prevent compiler from complaining if a var dec appears straight after a case
 
 			uint8_t  ReadCommand = PacketBytes[3];
-			uint16_t BytesToRead = ((uint16_t)PacketBytes[1] << 8) // Load in the number of bytes that is to
-			                     | PacketBytes[2];                 // be read into a temp variable (MSB first)
+			uint16_t BytesToRead = (((uint16_t)PacketBytes[1] << 8) | PacketBytes[2]);
 			uint8_t  MemoryType  = PacketBytes[0];
 
 			MessageSize = BytesToRead + 3;

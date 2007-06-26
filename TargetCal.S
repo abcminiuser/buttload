@@ -49,7 +49,7 @@ AICI_SendCalibrationClocks:
 	ldi  PL(CAL_CLOCKSREM_ASM_REG), LOW(1024 * 2)
 	ldi  PH(CAL_CLOCKSREM_ASM_REG), HIGH(1024 * 2)
 
-	ldi  CAL_RETCLOCKREM_ASM_REG, (2 * 2)
+	ldi  CAL_RETCLOCKREM_ASM_REG, (4 * 2)
 
 	cli
 
@@ -59,15 +59,14 @@ AICI_SendCalibrationClocks:
 	in   PL(CAL_TEMPW_ASM_REG), IO_ADDR(PINE)
 	eor  PL(CAL_TEMPW_ASM_REG), CAL_PREVMISO_ASM_REG
 	andi PL(CAL_TEMPW_ASM_REG), USI_DATAIN_PIN
-	breq NopContinue
+	breq Continue
 
 	dec  CAL_RETCLOCKREM_ASM_REG
 	breq ExitOk
 
-  NopContinue:
+  Continue:
 	nop
 	
-  Continue:
 	in   CAL_PREVMISO_ASM_REG, IO_ADDR(PINE)
 	
 	ldi  CAL_DELAY_ASM_REG, ((((F_CPU / 32768) - 17) / 2) / 4)
@@ -91,7 +90,7 @@ AICI_SendCalibrationClocks:
   ExitOk:
 	ldi  CAL_PARAM_ASM_REG, 1
 
-Epilogue:
+  Epilogue:
 	sei
 	ret
 

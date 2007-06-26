@@ -275,45 +275,6 @@ static void V2P_ProcessPacketData(const FuncPtr PacketDecodeFunction)
 			V2P_GetSetParameter();
 			
 			break;
-#ifdef DEBUG_DFDUMPCMDS
-		case V2P_CMD_DUMP_DATAFLASH:          // Buttload-only command - dump empty-page corrected dataflash contents
-		case V2P_CMD_DUMP_DATAFLASH_RAW:      // Buttload-only command - dump raw dataflash contents
-			DF_ENABLEDATAFLASH(TRUE);
-			SPI_SPIInit();
-
-			MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);
-
-			if (PacketBytes[0] == V2P_CMD_DUMP_DATAFLASH)
-			{
-				VAMM_EnterStorageMode();
-				V2P_ClearCurrAddress();
-	
-				for (uint16_t DFPage = 0; DFPage < DF_DATAFLASH_PAGES; DFPage++)
-				{
-					for (uint16_t DFByte = 0; DFByte < DF_INTERNALDF_BUFFBYTES; DFByte++)
-					  USART_Tx(VAMM_ReadConsec());
-				}
-				
-				VAMM_ExitStorageMode();			
-			}
-			else
-			{
-				DF_ContinuousReadEnable(0, 0);
-	
-				for (uint16_t DFPage = 0; DFPage < DF_DATAFLASH_PAGES; DFPage++)
-				{
-					for (uint16_t DFByte = 0; DFByte < DF_INTERNALDF_BUFFBYTES; DFByte++)
-					  USART_Tx(SPI_SPITransmit(0x00));
-				}
-			}
-			
-			MAIN_SETSTATUSLED(MAIN_STATLED_GREEN);
-
-			SPI_SPIOFF();			
-			DF_ENABLEDATAFLASH(FALSE);
-			
-			break;
-#endif
 		default:
 			((FuncPtr)PacketDecodeFunction)(); // Run the interpret packet routine as set by the pointer
 	}

@@ -55,9 +55,11 @@ Current Version: Public Release 3.0
 	  * Removed redundant extended address checking code from AICB_CMD_READ_FLASH_ISP handler in AVRISP mode
 	  * USI word transmit and BUFF_GetBuffByte functions converterted to static inline for speed
 	  * Removed unused SPI_TransmitWord function
-	  * Added in ERASE NEEDED error for STORAGE MODE, which allowed for the use of the faster BUFFER_TO_FLASH without erase Dataflash command
+	  * Added in ERASE NEEDED error for STORAGE MODE, which allowed for the use of the faster Buffer to Flash Without Erase Dataflash command
 	  * PROGRAM AVR now checks EEPROM flags to determine if Flash/EEPROM data has been stored rather than calling SM_GetStoredDataSize
 	  * Clearing memory now clears the Virtual AVR as well, including inside the startup conditional clearing
+	  * SPI speed reduced again to about 114KHz - greater noise immunity, and most of the delay is due to the Dataflash write times
+	  * More bounds error fixes to AICB_CMD_SPI_MULTI command
 	  
 	IN PUBLIC RELEASE 2.0:
 	=======================================

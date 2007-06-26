@@ -39,9 +39,11 @@ void VAMM_EraseAVRMemory(uint8_t Mode)
 		do
 		{
 			DF_EraseBlock(CurrBlock);
-			LCD_Bargraph(CurrBlock / (uint8_t)(DF_DATAFLASH_BLOCKS / LCD_BARGRAPH_SIZE));
+			LCD_Bargraph((DF_DATAFLASH_BLOCKS - CurrBlock) / (uint8_t)(DF_DATAFLASH_BLOCKS / LCD_BARGRAPH_SIZE));
 		}
 		while (CurrBlock--);
+		
+		LCD_Bargraph(0);
 	}
 }
 
