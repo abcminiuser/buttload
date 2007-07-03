@@ -55,3 +55,4 @@ char USART_Rx(void)
 
 	return BUFF_GetBuffByte();
 }
+

@@ -50,3 +50,30 @@ void BUFF_InitializeBuffer(void)
 		BuffElements = 0;
 	}
 }
+
+/*
+ NAME:      | BUFF_GetBuffByte
+ PURPOSE:   | Fetches the next byte from the ringbuffer
+ ARGUMENTS: | None
+ RETURNS:   | Next byte in ringbuffer, zero if buffer is empty
+*/
+char BUFF_GetBuffByte(void)
+{
+	uint8_t RetrievedData;
+
+	if (!(BuffElements))
+	  return 0;
+
+	ATOMIC_BLOCK(ATOMIC_FORCEON)
+	{
+		RetrievedData = RingBuffer[OutPos];
+		BuffElements--;
+		
+		OutPos++;
+		
+		if (OutPos == BUFF_BUFFLEN)
+		  OutPos = 0;
+	}
+		
+	return RetrievedData;
+}
