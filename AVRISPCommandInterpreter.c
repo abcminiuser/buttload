@@ -85,25 +85,27 @@ void AICI_InterpretPacket(void)
 			MessageSize = (3 + PacketBytes[2]);        // Number of recieved bytes, plus two OKs and the command byte
 	
 			uint8_t TxBytes      = PacketBytes[1];     // \. The packet data is overwritten during the transfer. Because
-			uint8_t RxStartByte  = PacketBytes[2];     // |  of this each data byte must be stored into temp variables
-			uint8_t RxBytes      = PacketBytes[3];     // /  so that their values are not lost.
+			uint8_t RxBytes      = PacketBytes[2];     // |  of this each data byte must be stored into temp variables
+			uint8_t RxStartByte  = PacketBytes[3];     // /  so that their values are not lost.
 			uint8_t RxByteNum    = 0;
 			uint8_t TxByteNum    = 0;
 			uint8_t RecievedByte = 0;
 
-			while (TxByteNum++ < TxBytes)              // Still bytes to transfer
+			while (TxByteNum < TxBytes)              // Still bytes to transfer
 			{
 				RecievedByte = USI_SPITransmit(PacketBytes[4 + TxByteNum]); // Transmit the byte, store the answer
 
 				if ((TxByteNum >= RxStartByte) && (RxByteNum < RxBytes))
 				  PacketBytes[2 + RxByteNum++] = RecievedByte;
+				  
+				TxByteNum++;
 			}
 
 			while (RxByteNum < RxBytes)                              // Still more bytes to recieve
 			  PacketBytes[2 + RxByteNum++] = USI_SPITransmit(0x00);  // Send dummy bytes to fetch the response(s)
 
 			PacketBytes[1]             = AICB_STATUS_CMD_OK;
-			PacketBytes[3 + RxByteNum] = AICB_STATUS_CMD_OK;
+			PacketBytes[2 + RxByteNum] = AICB_STATUS_CMD_OK;
 
 			break;
 		case AICB_CMD_READ_SIGNATURE_ISP:

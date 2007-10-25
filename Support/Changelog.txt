@@ -1,5 +1,9 @@
-Current Version: Public Release 3.0
+Current Version: Public Release 3.2
 		 
+	IN PUBLIC RELEASE 3.1:
+	=======================================
+	  * Fixed SPI Multi command (bytes for RxBytes and RxStart Byte reversed)
+
 	IN PUBLIC RELEASE 3.0:
 	=======================================
 	  * Added in audio feedback for several situations
@@ -60,6 +64,7 @@ Current Version: Public Release 3.0
 	  * Clearing memory now clears the Virtual AVR as well, including inside the startup conditional clearing
 	  * SPI speed reduced again to about 114KHz - greater noise immunity, and most of the delay is due to the Dataflash write times
 	  * More bounds error fixes to AICB_CMD_SPI_MULTI command
+	  * Fixed incorrect return data for AICB_CMD_SPI_MULTI command (thanks to Luke of AVRFreaks)
 	  
 	IN PUBLIC RELEASE 2.0:
 	=======================================

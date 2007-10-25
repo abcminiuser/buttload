@@ -23,9 +23,9 @@ static uint32_t DFDataBytesLeft    = 0x00000000;
 */
 void TM_ShowTags(void)
 {
-	DF_ContinuousReadEnable(0, 0);
 	TagExists = FALSE;
 	DFDataBytesLeft = SM_GetStoredDataSize(TYPE_FLASH);
+	DF_ContinuousReadEnable(0, 0);
 
 	TM_FindNextTag();
 	if (!(TagExists))
@@ -61,6 +61,7 @@ static void TM_FindNextTag(void)
 	uint8_t    TotalOkHeadBytes = 0;
 	
 	MAIN_SETSTATUSLED(MAIN_STATLED_ORANGE);
+	LCD_PutStr_f(BusyText);
 
 	while (DFDataBytesLeft)
 	{		
@@ -68,7 +69,7 @@ static void TM_FindNextTag(void)
 		
 		if (TagByte == HeadBuff[TotalOkHeadBytes++])
 		{
-			if (TotalOkHeadBytes == 4)
+			if (TotalOkHeadBytes == sizeof(HeadBuff))
 			{
 				for (uint8_t BuffPos = 0; BuffPos < 20; BuffPos++)
 				{
