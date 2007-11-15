@@ -5,6 +5,8 @@
               
              dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
+
+           Released under the GPL Licence, Version 2.
 */
 
 #include "ToneGeneration.h"
@@ -16,7 +18,7 @@
    that the tone generation is syncronous; program execution halts while the
    tone plays.                                                                 */
 
-                                          // Tone1,......,ToneN, 0x00
+                                        // Tone1,.......,ToneN, 0x00
 const uint8_t ToneSeq_Startup[]  PROGMEM = {156, 125,  94,  63, 0x00};
 const uint8_t ToneSeq_SyncFail[] PROGMEM = { 94, 156,           0x00};
 const uint8_t ToneSeq_ProgDone[] PROGMEM = {156,  94,           0x00};

@@ -6,6 +6,7 @@
 ;            dean [at] fourwalledcubicle [dot] com
 ;                  www.fourwalledcubicle.com
 ;
+;           Released under the GPL Licence, Version 2.
 
 ; Routine sends a byte in the SPI format via the USI subsystem. Routine sets and returns the
 ; USI data according to the AVR-GCC ABI. The clock speed is configurable via a value preloaded

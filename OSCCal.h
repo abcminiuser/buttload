@@ -5,6 +5,8 @@
               
              dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
+
+           Released under the GPL Licence, Version 2.
 */
 
 #ifndef OSCCAL_H
@@ -18,6 +20,7 @@
 
 	// DEFINES:
 	#define OSCCAL_TARGETCOUNT         (uint16_t)(F_CPU / (32768 / 256)) // (Target Freq / Reference Freq)	
+	#define OSCCAL_TOLLERANCE          2
 	
 	// PROTOTYPES:
 	void OSCCAL_Calibrate(void);

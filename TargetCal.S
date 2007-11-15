@@ -6,6 +6,7 @@
 ;            dean [at] fourwalledcubicle [dot] com
 ;                  www.fourwalledcubicle.com
 ;
+;           Released under the GPL Licence, Version 2.
 
 ; Routine provides a 32.768KHz clock to the target via the MOSI line, while listening for clocks on the
 ; MISO line. This is used to calibrate the target's OSCCAL value - see AVR053 for more details. Routine

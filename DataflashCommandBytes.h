@@ -5,6 +5,8 @@
               
              dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
+
+           Released under the GPL Licence, Version 2.
 */
 
 // This file originally by Atmel, modified by Martin Thomas and Dean Camera.

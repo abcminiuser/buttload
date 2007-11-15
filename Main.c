@@ -8,6 +8,8 @@
 
    Requires AVR-GCC 3.4.3 or above, AVRLibC version 1.4.1 or
  above. Compile in GNU99 standards mode, with optimization -0s.
+
+           Released under the GPL Licence, Version 2.
 */
 
 /*

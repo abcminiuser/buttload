@@ -5,6 +5,8 @@
               
              dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
+
+           Released under the GPL Licence, Version 2.
 */
 
 #include "OSCCal.h"
@@ -46,33 +48,31 @@ void OSCCAL_Calibrate(void)
 	while (ASSR & ((1 << TCN2UB) | (1 << TCR2UB) | (1 << OCR2UB)));
 		
 	ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-	{
-		// Clear the timer values
-		TCNT1  = 0;
-		TCNT2  = 0;
-	
+	{	
 		while (LoopCount--)
 		{
+			// Clear the timer values
+			TCNT1  = 0;
+			TCNT2  = 0;
+
 			// Wait until timer 2 overflows
 			while (!(TIFR2 & (1 << TOV2)));
 		
 			// Stop timer 1 so it can be read
 			TCCR1B = 0x00;
 			
-			if (TCNT1 > OSCCAL_TARGETCOUNT)      // Clock is running too fast
+			if (TCNT1 > (OSCCAL_TARGETCOUNT + OSCCAL_TOLLERANCE))      // Clock is running too fast
 			  OSCCAL--;
-			else if (TCNT1 < OSCCAL_TARGETCOUNT) // Clock is running too slow
+			else if (TCNT1 < (OSCCAL_TARGETCOUNT - OSCCAL_TOLLERANCE)) // Clock is running too slow
 			  OSCCAL++;
+			else                                                       // Clock within tollerance
+			  LoopCount = 0;
 			
 			// Clear timer 2 overflow flag
 			TIFR2 |= (1 << TOV2);
 	
 			// Restart timer 1
-			TCCR1B = (1 << CS10);
-	
-			// Reset counters
-			TCNT1  = 0;
-			TCNT2  = 0;
+			TCCR1B = (1 << CS10);	
 		}
 
 		// Stop the timers
