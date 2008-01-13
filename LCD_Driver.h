@@ -17,7 +17,6 @@
 	#include <avr/pgmspace.h>
 	#include <avr/interrupt.h>
 	
-	#include "ISRMacro.h"
 	#include "GlobalMacros.h"
 	
 	// EXTERNAL VARIABLES:

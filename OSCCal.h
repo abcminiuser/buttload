@@ -14,8 +14,8 @@
 
 	// INCLUDES:
 	#include <avr/io.h>
-
-	#include "Atomic.h"
+	#include <util/atomic.h>
+	
 	#include "GlobalMacros.h"
 
 	// DEFINES:

@@ -6,7 +6,7 @@
              dean [at] fourwalledcubicle [dot] com
                   www.fourwalledcubicle.com
 
-   Requires AVR-GCC 3.4.3 or above, AVRLibC version 1.4.1 or
+   Requires AVR-GCC 4.2.2 or above, AVRLibC version 1.5.1 or
  above. Compile in GNU99 standards mode, with optimization -0s.
 
            Released under the GPL Licence, Version 2.
@@ -180,6 +180,9 @@ int main(void)
 		MCUCR = MD;
 	#endif
 
+	DIDR0   = 0;
+	DIDR1   = 0;
+	
 	ACSR    = (1 << ACD);                        // Disable the unused Analogue Comparitor to save power
 	PRR     = ((1 << PRADC) | (1 << PRSPI) | (1 << PRUSART0)); // Disable subsystems (for now) to save power
 	

@@ -37,7 +37,6 @@
 		#include "AVRISPCommandBytes.h"
 		#include "Delay.h"
 		#include "GlobalMacros.h"
-		#include "ISRMacro.h"
 		#include "Main.h"
 		#include "Settings.h"
 

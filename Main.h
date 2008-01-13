@@ -23,6 +23,7 @@
 	#include <avr/interrupt.h>
 	#include <avr/pgmspace.h>
 	#include <avr/version.h>
+	#include <util/atomic.h>
 
 	#include "EEPROMVariables.h"
 	#include "GlobalMacros.h"
@@ -30,7 +31,6 @@
 	#if defined(INC_FROM_MAIN)
 		#include "Dataflash.h"
 		#include "Delay.h"
-		#include "ISRMacro.h"
 		#include "LCD_Driver.h"
 		#include "OSCCal.h"
 		#include "ProgramManager.h"
