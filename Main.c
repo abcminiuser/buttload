@@ -173,6 +173,8 @@ int main(void)
 {	
 	uint8_t CurrFunc    = 0;
 	uint8_t StartupMode = eeprom_read_byte(&EEPROMVars.StartupMode);
+	
+	clock_prescale_set(clock_div_1);
 
 	#ifndef DEBUG_JTAGON
 		register volatile uint8_t MD asm("r24") = (MCUCR | (1 << JTD)); // Forces compiler to use IN, OR plus two OUTs rather than two lots of IN/AND/OUTs
@@ -266,6 +268,8 @@ int main(void)
 
 		MAIN_MenuSleep();
 	}
+	
+	return 0;
 }
 
 // ======================================================================================

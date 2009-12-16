@@ -45,7 +45,6 @@
 	void LCD_Bargraph(const uint8_t Segments);
 	void LCD_PutStr_f(const char *FlashData) ATTR_NON_NULL_PTR_ARGS(1);
 	void LCD_PutStr(const char *Data) ATTR_NON_NULL_PTR_ARGS(1);
-	void LCD_Bargraph(const uint8_t Segments);
 	
 	#if defined(INC_FROM_DRIVER)
 	  static inline void LCD_WriteChar(const uint8_t Byte, const uint8_t Digit);

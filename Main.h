@@ -24,6 +24,7 @@
 	#include <avr/pgmspace.h>
 	#include <avr/version.h>
 	#include <util/atomic.h>
+	#include <avr/power.h>
 
 	#include "EEPROMVariables.h"
 	#include "GlobalMacros.h"
@@ -83,8 +84,6 @@
 	#define MAIN_RESET_INACTIVE        1
 		
 	// PROTOTYPES:
-	int main(void) ATTR_NAKED ATTR_NO_RETURN; // Remove main prologue designed to allow for recursive use of main (not needed)
-
 	void MAIN_SetTargetResetLine(const uint8_t ActiveInactive);
 	void MAIN_WaitForJoyRelease(void);
 	void MAIN_IntToStr(uint16_t IntV, char *Buff) ATTR_NON_NULL_PTR_ARGS(2);
